@@ -2,7 +2,15 @@
   "permissions": {
     "allow": [
       "Bash(cargo init:*)",
-      "Bash(cargo:*)"
+      "Bash(cargo:*)",
+      "Bash(find:*)",
+      "Bash(mkdir:*)",
+      "Bash(../target/debug/ailog new:*)",
+      "Bash(../target/debug/ailog build)",
+      "Bash(/Users/syui/ai/log/target/debug/ailog build)",
+      "Bash(ls:*)",
+      "Bash(curl:*)",
+      "Bash(pkill:*)"
     ],
     "deny": []
   }

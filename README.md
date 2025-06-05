@@ -63,10 +63,24 @@ Designed for GitHub Actions and Cloudflare Pages deployment. Push to main branch
 ## Development Status
 
 Currently implemented:
-- Basic static site generation
-- Markdown parsing and HTML generation
-- Template system
-- Development server
+- ✅ Project structure and Cargo.toml setup
+- ✅ Basic command-line interface (init, new, build, serve, clean)
+- ✅ Configuration system with TOML support
+- ✅ Markdown parsing with frontmatter support
+- ✅ Template system with Handlebars
+- ✅ Static site generation with posts and pages
+- ✅ Development server with hot reload
+- ✅ AI integration foundation (GPT client, translator, comment system)
+- ✅ atproto client with OAuth support
+- ✅ MCP server integration for AI tools
+- ✅ Test blog with sample content and styling
+
+Planned features:
+- AI-powered content enhancement and suggestions
+- Automatic translation (ja → en) pipeline
+- atproto comment system with OAuth authentication
+- Advanced template customization
+- Plugin system for extensibility
 
 ## License
 

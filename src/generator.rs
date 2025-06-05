@@ -6,24 +6,37 @@ use std::fs;
 use crate::config::Config;
 use crate::markdown::MarkdownProcessor;
 use crate::template::TemplateEngine;
+use crate::ai::AiManager;
 
 pub struct Generator {
     base_path: PathBuf,
     config: Config,
     markdown_processor: MarkdownProcessor,
     template_engine: TemplateEngine,
+    ai_manager: Option<AiManager>,
 }
 
 impl Generator {
     pub fn new(base_path: PathBuf, config: Config) -> Result<Self> {
         let markdown_processor = MarkdownProcessor::new(config.build.highlight_code);
         let template_engine = TemplateEngine::new(base_path.join("templates"))?;
+        
+        let ai_manager = if let Some(ref ai_config) = config.ai {
+            if ai_config.enabled {
+                Some(AiManager::new(ai_config.clone()))
+            } else {
+                None
+            }
+        } else {
+            None
+        };
 
         Ok(Self {
             base_path,
             config,
             markdown_processor,
             template_engine,
+            ai_manager,
         })
     }
 
@@ -47,6 +60,13 @@ impl Generator {
         // Generate post pages
         for post in &posts {
             self.generate_post_page(post).await?;
+            
+            // Generate translation pages
+            if let Some(ref translations) = post.translations {
+                for translation in translations {
+                    self.generate_translation_page(post, translation).await?;
+                }
+            }
         }
 
         println!("{} {} posts", "Generated".cyan(), posts.len());
@@ -106,7 +126,21 @@ impl Generator {
 
     async fn process_single_post(&self, path: &std::path::Path) -> Result<Post> {
         let content = fs::read_to_string(path)?;
-        let (frontmatter, content) = self.markdown_processor.parse_frontmatter(&content)?;
+        let (frontmatter, mut content) = self.markdown_processor.parse_frontmatter(&content)?;
+        
+        // Apply AI enhancements if enabled
+        if let Some(ref ai_manager) = self.ai_manager {
+            // Enhance content with AI
+            let title = frontmatter.get("title")
+                .and_then(|v| v.as_str())
+                .unwrap_or("Untitled");
+            
+            content = ai_manager.enhance_content(&content, title).await
+                .unwrap_or_else(|e| {
+                    eprintln!("AI enhancement failed: {}", e);
+                    content
+                });
+        }
         
         let html_content = self.markdown_processor.render(&content)?;
         
@@ -116,7 +150,7 @@ impl Generator {
             .unwrap_or("post")
             .to_string();
 
-        let post = Post {
+        let mut post = Post {
             title: frontmatter.get("title")
                 .and_then(|v| v.as_str())
                 .unwrap_or("Untitled")
@@ -135,7 +169,43 @@ impl Generator {
                     .map(|s| s.to_string())
                     .collect())
                 .unwrap_or_default(),
+            translations: None,
+            ai_comment: None,
         };
+        
+        // Auto-translate if enabled and post is in Japanese
+        if let Some(ref ai_manager) = self.ai_manager {
+            if self.config.ai.as_ref().map_or(false, |ai| ai.auto_translate) 
+                && self.config.site.language == "ja" {
+                
+                match ai_manager.translate(&content, "ja", "en").await {
+                    Ok(translated_content) => {
+                        let translated_html = self.markdown_processor.render(&translated_content)?;
+                        let translated_title = ai_manager.translate(&post.title, "ja", "en").await
+                            .unwrap_or_else(|_| post.title.clone());
+                        
+                        post.translations = Some(vec![Translation {
+                            lang: "en".to_string(),
+                            title: translated_title,
+                            content: translated_html,
+                            url: format!("/posts/{}-en.html", post.slug),
+                        }]);
+                    }
+                    Err(e) => eprintln!("Translation failed: {}", e),
+                }
+            }
+            
+            // Generate AI comment
+            if self.config.ai.as_ref().map_or(false, |ai| ai.comment_moderation) {
+                match ai_manager.generate_comment(&post.title, &content).await {
+                    Ok(Some(comment)) => {
+                        post.ai_comment = Some(comment.content);
+                    }
+                    Ok(None) => {}
+                    Err(e) => eprintln!("AI comment generation failed: {}", e),
+                }
+            }
+        }
 
         Ok(post)
     }
@@ -165,6 +235,43 @@ impl Generator {
 
         Ok(())
     }
+    
+    async fn generate_translation_page(&self, post: &Post, translation: &Translation) -> Result<()> {
+        let mut context = tera::Context::new();
+        context.insert("config", &self.config.site);
+        context.insert("post", &TranslatedPost {
+            title: translation.title.clone(),
+            date: post.date.clone(),
+            content: translation.content.clone(),
+            slug: post.slug.clone(),
+            url: translation.url.clone(),
+            tags: post.tags.clone(),
+            original_url: post.url.clone(),
+            lang: translation.lang.clone(),
+        });
+
+        let html = self.template_engine.render_with_context("post.html", &context)?;
+        
+        let output_dir = self.base_path.join("public/posts");
+        fs::create_dir_all(&output_dir)?;
+        
+        let output_path = output_dir.join(format!("{}-{}.html", post.slug, translation.lang));
+        fs::write(output_path, html)?;
+
+        Ok(())
+    }
+}
+
+#[derive(Debug, Clone, serde::Serialize)]
+struct TranslatedPost {
+    pub title: String,
+    pub date: String,
+    pub content: String,
+    pub slug: String,
+    pub url: String,
+    pub tags: Vec<String>,
+    pub original_url: String,
+    pub lang: String,
 }
 
 #[derive(Debug, Clone, serde::Serialize)]
@@ -175,4 +282,14 @@ pub struct Post {
     pub slug: String,
     pub url: String,
     pub tags: Vec<String>,
+    pub translations: Option<Vec<Translation>>,
+    pub ai_comment: Option<String>,
+}
+
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct Translation {
+    pub lang: String,
+    pub title: String,
+    pub content: String,
+    pub url: String,
 }

@@ -7,6 +7,9 @@ mod generator;
 mod markdown;
 mod template;
 mod config;
+mod ai;
+mod atproto;
+mod mcp;
 
 #[derive(Parser)]
 #[command(name = "ailog")]
@@ -47,6 +50,15 @@ enum Commands {
     },
     /// Clean build artifacts
     Clean,
+    /// Start MCP server for ai.gpt integration
+    Mcp {
+        /// Port to serve MCP on
+        #[arg(short, long, default_value = "8002")]
+        port: u16,
+        /// Path to the blog directory
+        #[arg(default_value = ".")]
+        path: PathBuf,
+    },
 }
 
 #[tokio::main]
@@ -68,6 +80,11 @@ async fn main() -> Result<()> {
         }
         Commands::Clean => {
             commands::clean::execute().await?;
+        }
+        Commands::Mcp { port, path } => {
+            use crate::mcp::McpServer;
+            let server = McpServer::new(path);
+            server.serve(port).await?;
         }
     }
 

@@ -1,0 +1,21 @@
+[site]
+title = "My Blog"
+description = "A blog powered by ailog"
+base_url = "https://example.com"
+language = "ja"
+
+[build]
+highlight_code = true
+minify = false
+
+[ai]
+enabled = true
+auto_translate = true
+comment_moderation = true
+# api_key = "your-openai-api-key"
+# gpt_endpoint = "https://api.openai.com/v1/chat/completions"
+
+# [ai.atproto_config]
+# client_id = "https://example.com/client-metadata.json"
+# redirect_uri = "https://example.com/callback"
+# handle_resolver = "https://bsky.social"
