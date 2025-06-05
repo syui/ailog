@@ -2,10 +2,13 @@ use anyhow::Result;
 use clap::{Parser, Subcommand};
 use std::path::PathBuf;
 
+mod analyzer;
 mod commands;
+mod doc_generator;
 mod generator;
 mod markdown;
 mod template;
+mod translator;
 mod config;
 mod ai;
 mod atproto;
@@ -59,6 +62,8 @@ enum Commands {
         #[arg(default_value = ".")]
         path: PathBuf,
     },
+    /// Generate documentation from code
+    Doc(commands::doc::DocCommand),
 }
 
 #[tokio::main]
@@ -85,6 +90,9 @@ async fn main() -> Result<()> {
             use crate::mcp::McpServer;
             let server = McpServer::new(path);
             server.serve(port).await?;
+        }
+        Commands::Doc(doc_cmd) => {
+            doc_cmd.execute(std::env::current_dir()?).await?;
         }
     }
 

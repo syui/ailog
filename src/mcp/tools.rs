@@ -217,6 +217,141 @@ impl BlogTools {
         })
     }
 
+    pub async fn translate_document(&self, args: Value) -> Result<ToolResult> {
+        use crate::commands::doc::DocCommand;
+        use crate::commands::doc::DocAction;
+
+        let input_file = args.get("input_file")
+            .and_then(|v| v.as_str())
+            .ok_or_else(|| anyhow::anyhow!("input_file is required"))?;
+        
+        let target_lang = args.get("target_lang")
+            .and_then(|v| v.as_str())
+            .ok_or_else(|| anyhow::anyhow!("target_lang is required"))?;
+        
+        let source_lang = args.get("source_lang").and_then(|v| v.as_str()).map(|s| s.to_string());
+        let output_file = args.get("output_file").and_then(|v| v.as_str()).map(|s| PathBuf::from(s));
+        let model = args.get("model").and_then(|v| v.as_str()).unwrap_or("qwen2.5:latest");
+        let ollama_endpoint = args.get("ollama_endpoint").and_then(|v| v.as_str()).unwrap_or("http://localhost:11434");
+
+        let doc_cmd = DocCommand {
+            action: DocAction::Translate {
+                input: PathBuf::from(input_file),
+                target_lang: target_lang.to_string(),
+                source_lang: source_lang.clone(),
+                output: output_file,
+                model: model.to_string(),
+                ollama_endpoint: ollama_endpoint.to_string(),
+            }
+        };
+
+        match doc_cmd.execute(self.base_path.clone()).await {
+            Ok(_) => {
+                let output_path = if let Some(output) = args.get("output_file").and_then(|v| v.as_str()) {
+                    output.to_string()
+                } else {
+                    let input_path = PathBuf::from(input_file);
+                    let stem = input_path.file_stem().unwrap().to_string_lossy();
+                    let ext = input_path.extension().unwrap_or_default().to_string_lossy();
+                    format!("{}.{}.{}", stem, target_lang, ext)
+                };
+
+                Ok(ToolResult {
+                    content: vec![Content {
+                        content_type: "text".to_string(),
+                        text: format!("Document translated successfully from {} to {}. Output: {}", 
+                                    source_lang.unwrap_or_else(|| "auto-detected".to_string()), 
+                                    target_lang, output_path),
+                    }],
+                    is_error: None,
+                })
+            }
+            Err(e) => Ok(ToolResult {
+                content: vec![Content {
+                    content_type: "text".to_string(),
+                    text: format!("Translation failed: {}", e),
+                }],
+                is_error: Some(true),
+            })
+        }
+    }
+
+    pub async fn generate_documentation(&self, args: Value) -> Result<ToolResult> {
+        use crate::commands::doc::DocCommand;
+        use crate::commands::doc::DocAction;
+
+        let doc_type = args.get("doc_type")
+            .and_then(|v| v.as_str())
+            .ok_or_else(|| anyhow::anyhow!("doc_type is required"))?;
+
+        let source_path = args.get("source_path").and_then(|v| v.as_str()).unwrap_or(".");
+        let output_path = args.get("output_path").and_then(|v| v.as_str());
+        let with_ai = args.get("with_ai").and_then(|v| v.as_bool()).unwrap_or(true);
+        let include_deps = args.get("include_deps").and_then(|v| v.as_bool()).unwrap_or(false);
+        let format_type = args.get("format_type").and_then(|v| v.as_str()).unwrap_or("markdown");
+
+        let action = match doc_type {
+            "readme" => DocAction::Readme {
+                source: PathBuf::from(source_path),
+                output: PathBuf::from(output_path.unwrap_or("README.md")),
+                with_ai,
+            },
+            "api" => DocAction::Api {
+                source: PathBuf::from(source_path),
+                output: PathBuf::from(output_path.unwrap_or("./docs")),
+                format: format_type.to_string(),
+            },
+            "structure" => DocAction::Structure {
+                source: PathBuf::from(source_path),
+                output: PathBuf::from(output_path.unwrap_or("docs/structure.md")),
+                include_deps,
+            },
+            "changelog" => DocAction::Changelog {
+                from: None,
+                to: None,
+                output: PathBuf::from(output_path.unwrap_or("CHANGELOG.md")),
+                explain_changes: with_ai,
+            },
+            _ => return Ok(ToolResult {
+                content: vec![Content {
+                    content_type: "text".to_string(),
+                    text: format!("Unsupported doc_type: {}. Supported types: readme, api, structure, changelog", doc_type),
+                }],
+                is_error: Some(true),
+            })
+        };
+
+        let doc_cmd = DocCommand { action };
+
+        match doc_cmd.execute(self.base_path.clone()).await {
+            Ok(_) => {
+                let output_path = match doc_type {
+                    "readme" => output_path.unwrap_or("README.md"),
+                    "api" => output_path.unwrap_or("./docs"),
+                    "structure" => output_path.unwrap_or("docs/structure.md"),
+                    "changelog" => output_path.unwrap_or("CHANGELOG.md"),
+                    _ => "unknown"
+                };
+
+                Ok(ToolResult {
+                    content: vec![Content {
+                        content_type: "text".to_string(),
+                        text: format!("{} documentation generated successfully. Output: {}", 
+                                    doc_type.to_uppercase(), output_path),
+                    }],
+                    is_error: None,
+                })
+            }
+            Err(e) => Ok(ToolResult {
+                content: vec![Content {
+                    content_type: "text".to_string(),
+                    text: format!("Documentation generation failed: {}", e),
+                }],
+                is_error: Some(true),
+            })
+        }
+    }
+
     pub fn get_tools() -> Vec<Tool> {
         vec![
             Tool {
@@ -292,6 +427,76 @@ impl BlogTools {
                         }
                     },
                     "required": ["slug"]
+                }),
+            },
+            Tool {
+                name: "translate_document".to_string(),
+                description: "Translate markdown documents using Ollama AI while preserving structure".to_string(),
+                input_schema: json!({
+                    "type": "object",
+                    "properties": {
+                        "input_file": {
+                            "type": "string",
+                            "description": "Path to the input markdown file"
+                        },
+                        "target_lang": {
+                            "type": "string",
+                            "description": "Target language code (en, ja, zh, ko, es)"
+                        },
+                        "source_lang": {
+                            "type": "string",
+                            "description": "Source language code (auto-detect if not specified)"
+                        },
+                        "output_file": {
+                            "type": "string",
+                            "description": "Output file path (auto-generated if not specified)"
+                        },
+                        "model": {
+                            "type": "string",
+                            "description": "Ollama model to use (default: qwen2.5:latest)"
+                        },
+                        "ollama_endpoint": {
+                            "type": "string",
+                            "description": "Ollama API endpoint (default: http://localhost:11434)"
+                        }
+                    },
+                    "required": ["input_file", "target_lang"]
+                }),
+            },
+            Tool {
+                name: "generate_documentation".to_string(),
+                description: "Generate various types of documentation from code analysis".to_string(),
+                input_schema: json!({
+                    "type": "object",
+                    "properties": {
+                        "doc_type": {
+                            "type": "string",
+                            "enum": ["readme", "api", "structure", "changelog"],
+                            "description": "Type of documentation to generate"
+                        },
+                        "source_path": {
+                            "type": "string",
+                            "description": "Source directory to analyze (default: current directory)"
+                        },
+                        "output_path": {
+                            "type": "string",
+                            "description": "Output file or directory path"
+                        },
+                        "with_ai": {
+                            "type": "boolean",
+                            "description": "Include AI-generated insights (default: true)"
+                        },
+                        "include_deps": {
+                            "type": "boolean",
+                            "description": "Include dependency analysis (default: false)"
+                        },
+                        "format_type": {
+                            "type": "string",
+                            "enum": ["markdown", "html", "json"],
+                            "description": "Output format (default: markdown)"
+                        }
+                    },
+                    "required": ["doc_type"]
                 }),
             },
         ]

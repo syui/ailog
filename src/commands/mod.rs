@@ -3,3 +3,4 @@ pub mod build;
 pub mod new;
 pub mod serve;
 pub mod clean;
+pub mod doc;

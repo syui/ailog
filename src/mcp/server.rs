@@ -113,6 +113,12 @@ async fn call_tool(
                 .ok_or(StatusCode::BAD_REQUEST)?;
             state.blog_tools.get_post_content(slug).await
         }
+        "translate_document" => {
+            state.blog_tools.translate_document(arguments).await
+        }
+        "generate_documentation" => {
+            state.blog_tools.generate_documentation(arguments).await
+        }
         _ => {
             return Ok(Json(McpResponse {
                 jsonrpc: "2.0".to_string(),
