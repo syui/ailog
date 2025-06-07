@@ -1,0 +1,55 @@
+#!/bin/zsh
+
+# Simple build script for ai.log
+# Usage: ./run.zsh [serve|build|oauth|clean|tunnel|all]
+
+function _env() {
+	d=${0:a:h}
+	ailog=$d/target/release/ailog
+}
+
+function _server() {
+	_env
+	lsof -ti:8080 | xargs kill -9 2>/dev/null || true
+	cd $d/my-blog
+	$ailog build --release
+	$ailog serve --port 8080
+}
+
+function _server_public() {
+	_env
+	cloudflared tunnel --config $d/aicard-web-oauth/cloudflared-config.yml run 
+}
+
+function _oauth_build() {
+	_env
+	cd $d/aicard-web-oauth
+	export NVM_DIR="$HOME/.nvm"
+	[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
+	[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+	nvm use 21
+	npm i
+	npm run build
+	npm run preview
+}
+
+function _server_comment() {
+	_env
+	cargo build --release
+	AILOG_DEBUG_ALL=1 $ailog stream start
+}
+
+case "${1:-serve}" in
+	tunnel|c)
+		_server_public
+		;;
+	oauth|o)
+		_oauth_build
+		;;
+	comment|co)
+		_server_comment
+		;;
+	serve|s|*)
+		_server
+		;;
+esac

@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "my-blog/public/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/ask",
+      "dest": "/api/ask.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/my-blog/public/$1"
+    }
+  ]
+}

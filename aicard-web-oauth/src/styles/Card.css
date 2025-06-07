@@ -1,0 +1,331 @@
+.card {
+  width: 250px;
+  height: 380px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  border: 2px solid #333;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card-inner {
+  padding: 20px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+}
+
+/* Rarity effects */
+.card-normal {
+  border-color: #666;
+}
+
+.card-rare {
+  border-color: #4a90e2;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+.card-super-rare {
+  border-color: #9c27b0;
+  background: linear-gradient(135deg, #2d1b69 0%, #0f0c29 100%);
+}
+
+.card-kira {
+  border-color: #ffd700;
+  background: linear-gradient(135deg, #232526 0%, #414345 100%);
+  position: relative;
+}
+
+.card-kira::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(255, 215, 0, 0.1) 50%,
+    transparent 70%
+  );
+  animation: shimmer 3s infinite;
+}
+
+.card-unique {
+  border-color: #ff00ff;
+  background: linear-gradient(135deg, #000000 0%, #1a0033 100%);
+  box-shadow: 0 0 30px rgba(255, 0, 255, 0.5);
+}
+
+.card-unique::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    circle at center,
+    transparent 0%,
+    rgba(255, 0, 255, 0.2) 100%
+  );
+  animation: pulse 2s infinite;
+}
+
+/* Card content */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 10px;
+}
+
+.card-image-container {
+  width: 100%;
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+  overflow: hidden;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.card-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.card-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-name {
+  font-size: 28px;
+  margin: 0;
+  color: var(--card-color, #fff);
+  text-align: center;
+  font-weight: bold;
+}
+
+.unique-badge {
+  margin-top: 10px;
+  padding: 5px 15px;
+  background: linear-gradient(90deg, #ff00ff, #00ffff);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+  animation: glow 2s ease-in-out infinite;
+}
+
+.card-skill {
+  margin-top: 20px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.card-footer {
+  text-align: center;
+  font-size: 12px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Animations */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes pulse {
+  0% { opacity: 0.5; }
+  50% { opacity: 1; }
+  100% { opacity: 0.5; }
+}
+
+@keyframes glow {
+  0% { box-shadow: 0 0 5px rgba(255, 0, 255, 0.5); }
+  50% { box-shadow: 0 0 20px rgba(255, 0, 255, 0.8); }
+  100% { box-shadow: 0 0 5px rgba(255, 0, 255, 0.5); }
+}
+
+/* Simple Card Styles */
+.card-simple {
+  width: 240px;
+  height: auto;
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.card-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3/4;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #1a1a1a;
+  padding: 25px 25px 30px 25px;
+  border: 3px solid #666;
+  box-sizing: border-box;
+}
+
+/* Normal card - no effects */
+.card-simple.card-normal .card-frame {
+  border-color: #666;
+  background: #1a1a1a;
+}
+
+/* Unique (rare) card - glowing effects */
+.card-simple.card-unique .card-frame {
+  border-color: #ffd700;
+  background: linear-gradient(135deg, #2a2a1a 0%, #3a3a2a 50%, #2a2a1a 100%);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+/* Particle/grainy texture for rare cards */
+.card-simple.card-unique .card-frame::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    repeating-radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.1) 0px, transparent 1px, transparent 2px),
+    repeating-radial-gradient(circle at 3px 3px, rgba(255, 215, 0, 0.1) 0px, transparent 2px, transparent 4px);
+  background-size: 20px 20px, 30px 30px;
+  opacity: 0.8;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Reflection effect for rare cards */
+.card-simple.card-unique .card-frame::after {
+  content: "";
+  height: 100%;
+  width: 40px;
+  position: absolute;
+  top: -180px;
+  left: 0;
+  background: linear-gradient(90deg, 
+    transparent 0%,
+    rgba(255, 215, 0, 0.8) 20%,
+    rgba(255, 255, 0, 0.9) 40%,
+    rgba(255, 223, 0, 1) 50%,
+    rgba(255, 255, 0, 0.9) 60%,
+    rgba(255, 215, 0, 0.8) 80%,
+    transparent 100%
+  );
+  opacity: 0;
+  transform: rotate(45deg);
+  animation: gold-reflection 6s ease-in-out infinite;
+  z-index: 2;
+}
+
+@keyframes gold-reflection {
+  0% { transform: scale(0) rotate(45deg); opacity: 0; }
+  15% { transform: scale(0) rotate(45deg); opacity: 0; }
+  17% { transform: scale(4) rotate(45deg); opacity: 0.8; }
+  20% { transform: scale(50) rotate(45deg); opacity: 0; }
+  100% { transform: scale(50) rotate(45deg); opacity: 0; }
+}
+
+/* Glowing backlight effect */
+.card-simple.card-unique {
+  position: relative;
+}
+
+.card-simple.card-unique::after {
+  position: absolute;
+  content: "";
+  top: 5px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  height: 100%;
+  width: 100%;
+  margin: 0 auto;
+  transform: scale(0.95);
+  filter: blur(15px);
+  background: radial-gradient(ellipse at center, #ffd700 0%, #ffb347 50%, transparent 70%);
+  opacity: 0.6;
+}
+
+/* Glowing border effect for rare cards */
+.card-simple.card-unique .card-frame {
+  box-shadow: 
+    0 0 10px rgba(255, 215, 0, 0.5),
+    inset 0 0 10px rgba(255, 215, 0, 0.1);
+}
+
+
+
+.card-image-simple {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+  position: relative;
+  z-index: 1;
+}
+
+.card-cp-bar {
+  width: 100%;
+  height: 50px;
+  background: #333;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 12px;
+  margin-bottom: 8px;
+  border: 2px solid #666;
+  position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.card-simple.card-unique .card-cp-bar {
+  background: linear-gradient(135deg, #2a2a1a 0%, #3a3a2a 50%, #2a2a1a 100%);
+  border-color: #ffd700;
+  box-shadow: 
+    0 0 5px rgba(255, 215, 0, 0.3),
+    inset 0 0 5px rgba(255, 215, 0, 0.1);
+}
+
+
+.cp-value {
+  font-size: 20px;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  z-index: 1;
+  position: relative;
+}
+
+
+

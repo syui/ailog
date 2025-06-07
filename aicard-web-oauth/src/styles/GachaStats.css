@@ -1,0 +1,219 @@
+.gacha-stats {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  padding: 24px;
+  margin: 20px 0;
+  color: white;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.gacha-stats h3 {
+  margin: 0 0 20px 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.stats-overview {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.overview-card {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: inline-block;
+  min-width: 200px;
+}
+
+.overview-value {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.overview-label {
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+.rarity-stats {
+  margin-bottom: 24px;
+}
+
+.rarity-stats h4 {
+  margin: 0 0 16px 0;
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.rarity-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+}
+
+.rarity-stat {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.rarity-stat::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--rarity-color);
+}
+
+.rarity-stat.rarity-common { --rarity-color: #4CAF50; }
+.rarity-stat.rarity-rare { --rarity-color: #2196F3; }
+.rarity-stat.rarity-epic { --rarity-color: #9C27B0; }
+.rarity-stat.rarity-legendary { --rarity-color: #FF9800; }
+.rarity-stat.rarity-mythic { --rarity-color: #F44336; }
+
+.rarity-count {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.rarity-name {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  text-transform: capitalize;
+  margin-bottom: 4px;
+}
+
+.success-rate {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  padding: 2px 6px;
+  display: inline-block;
+}
+
+.recent-activity {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.recent-activity h4 {
+  margin: 0 0 12px 0;
+  font-size: 1.1rem;
+}
+
+.activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.activity-item {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.activity-time {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  min-width: 120px;
+}
+
+.activity-details {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.card-rarity {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.card-rarity.rarity-common { background: #4CAF50; }
+.card-rarity.rarity-rare { background: #2196F3; }
+.card-rarity.rarity-epic { background: #9C27B0; }
+.card-rarity.rarity-legendary { background: #FF9800; }
+.card-rarity.rarity-mythic { background: #F44336; }
+
+.card-name {
+  font-weight: 500;
+}
+
+.refresh-stats,
+.load-stats-button,
+.retry-button {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: block;
+  margin: 0 auto;
+}
+
+.refresh-stats:hover,
+.load-stats-button:hover,
+.retry-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.stats-loading,
+.stats-error,
+.stats-empty {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top: 3px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.stats-error p {
+  color: #ffcdd2;
+  margin-bottom: 16px;
+}
+
+.stats-empty p {
+  opacity: 0.8;
+  margin-bottom: 16px;
+}

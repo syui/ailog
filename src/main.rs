@@ -8,6 +8,7 @@ mod doc_generator;
 mod generator;
 mod markdown;
 mod template;
+mod oauth;
 mod translator;
 mod config;
 mod ai;
@@ -44,15 +45,25 @@ enum Commands {
         /// Post format
         #[arg(short, long, default_value = "md")]
         format: String,
+        /// Path to the blog directory
+        #[arg(default_value = ".")]
+        path: PathBuf,
     },
     /// Serve the blog locally
     Serve {
         /// Port to serve on
         #[arg(short, long, default_value = "8080")]
         port: u16,
+        /// Path to the blog directory
+        #[arg(default_value = ".")]
+        path: PathBuf,
     },
     /// Clean build artifacts
-    Clean,
+    Clean {
+        /// Path to the blog directory
+        #[arg(default_value = ".")]
+        path: PathBuf,
+    },
     /// Start MCP server for ai.gpt integration
     Mcp {
         /// Port to serve MCP on
@@ -64,6 +75,42 @@ enum Commands {
     },
     /// Generate documentation from code
     Doc(commands::doc::DocCommand),
+    /// ATProto authentication
+    Auth {
+        #[command(subcommand)]
+        command: AuthCommands,
+    },
+    /// ATProto stream monitoring
+    Stream {
+        #[command(subcommand)]
+        command: StreamCommands,
+    },
+}
+
+#[derive(Subcommand)]
+enum AuthCommands {
+    /// Initialize OAuth authentication
+    Init,
+    /// Show current authentication status
+    Status,
+    /// Logout and clear credentials
+    Logout,
+}
+
+#[derive(Subcommand)]
+enum StreamCommands {
+    /// Start monitoring ATProto streams
+    Start {
+        /// Run as daemon
+        #[arg(short, long)]
+        daemon: bool,
+    },
+    /// Stop monitoring
+    Stop,
+    /// Show monitoring status
+    Status,
+    /// Test API access to comments collection
+    Test,
 }
 
 #[tokio::main]
@@ -77,13 +124,16 @@ async fn main() -> Result<()> {
         Commands::Build { path } => {
             commands::build::execute(path).await?;
         }
-        Commands::New { title, format } => {
+        Commands::New { title, format, path } => {
+            std::env::set_current_dir(path)?;
             commands::new::execute(title, format).await?;
         }
-        Commands::Serve { port } => {
+        Commands::Serve { port, path } => {
+            std::env::set_current_dir(path)?;
             commands::serve::execute(port).await?;
         }
-        Commands::Clean => {
+        Commands::Clean { path } => {
+            std::env::set_current_dir(path)?;
             commands::clean::execute().await?;
         }
         Commands::Mcp { port, path } => {
@@ -93,6 +143,35 @@ async fn main() -> Result<()> {
         }
         Commands::Doc(doc_cmd) => {
             doc_cmd.execute(std::env::current_dir()?).await?;
+        }
+        Commands::Auth { command } => {
+            match command {
+                AuthCommands::Init => {
+                    commands::auth::init().await?;
+                }
+                AuthCommands::Status => {
+                    commands::auth::status().await?;
+                }
+                AuthCommands::Logout => {
+                    commands::auth::logout().await?;
+                }
+            }
+        }
+        Commands::Stream { command } => {
+            match command {
+                StreamCommands::Start { daemon } => {
+                    commands::stream::start(daemon).await?;
+                }
+                StreamCommands::Stop => {
+                    commands::stream::stop().await?;
+                }
+                StreamCommands::Status => {
+                    commands::stream::status().await?;
+                }
+                StreamCommands::Test => {
+                    commands::stream::test_api().await?;
+                }
+            }
         }
     }
 

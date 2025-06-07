@@ -4,3 +4,5 @@ pub mod new;
 pub mod serve;
 pub mod clean;
 pub mod doc;
+pub mod auth;
+pub mod stream;

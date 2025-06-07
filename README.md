@@ -1,10 +1,92 @@
 # ai.log
 
-A Rust-based static blog generator with AI integration capabilities.
+AI-powered static blog generator with ATProto integration, part of the ai.ai ecosystem.
 
-## Overview
+## 🚀 Quick Start
 
-ai.log is part of the ai ecosystem - a static site generator that creates blogs with built-in AI features for content enhancement and atproto integration. The system follows the yui system principles with dual-layer MCP architecture.
+```bash
+# Development
+./run.zsh serve
+
+# Production (with Cloudflare Tunnel)  
+./run.zsh tunnel
+```
+
+## 📋 Commands
+
+| Command | Description |
+|---------|-------------|
+| `./run.zsh serve` | Start development server |
+| `./run.zsh build` | Build blog only |
+| `./run.zsh oauth` | Copy OAuth files to static/ |
+| `./run.zsh all` | Build OAuth + blog |
+| `./run.zsh clean` | Clean all build artifacts |
+| `./run.zsh tunnel` | Production deployment |
+| `./run.zsh c` | Enable Cloudflare tunnel (xxxcard.syui.ai) for OAuth |
+| `./run.zsh o` | Start OAuth web server (port:4173 = xxxcard.syui.ai) |
+| `./run.zsh co` | Start comment system (ATProto stream monitor) |
+
+## 🏗️ Architecture (Pure Rust + HTML + JS)
+
+```
+ai.log/
+├── oauth/                  # 🎯 OAuth files (protected)
+│   ├── oauth-widget-simple.js  # Self-contained OAuth widget
+│   ├── oauth-simple.html       # OAuth authentication page
+│   ├── client-metadata.json    # ATProto configuration
+│   └── README.md               # Usage guide
+├── my-blog/                # Blog content and templates
+│   ├── content/posts/      # Markdown blog posts
+│   ├── templates/          # Tera templates
+│   ├── static/             # Static assets (OAuth copied here)
+│   └── public/             # Generated site (build output)
+├── src/                    # Rust blog generator
+├── scripts/                # Build and deployment scripts
+└── run.zsh                 # 🎯 Main build script
+```
+
+### ✅ Node.js Dependencies Eliminated
+- ❌ `package.json` - Removed
+- ❌ `node_modules/` - Removed  
+- ❌ `npm run build` - Not needed
+- ✅ Pure JavaScript OAuth implementation
+- ✅ CDN-free, self-contained code
+- ✅ Rust-only build process
+
+---
+
+## 📖 Original Features
+
+[![Rust](https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white)](https://www.rust-lang.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+## 概要
+
+ai.logは、[Anthropic Docs](https://docs.anthropic.com/)にインスパイアされたモダンなインターフェースを持つ、次世代静的ブログジェネレーターです。ai.gptとの深い統合、ローカルAI機能、atproto OAuth連携により、従来のブログシステムを超えた体験を提供します。
+
+## 主な特徴
+
+### 🎨 モダンインターフェース
+- **Anthropic Docs風デザイン**: プロフェッショナルで読みやすい
+- **Timeline形式**: BlueskyライクなタイムラインUI  
+- **自動TOC**: 右サイドバーに目次を自動生成
+- **レスポンシブ**: モバイル・デスクトップ対応
+
+### 🤖 AI統合機能
+- **Ask AI**: ローカルLLM(Ollama)による質問応答
+- **自動翻訳**: 日本語↔英語の自動生成
+- **AI記事強化**: コンテンツの自動改善
+- **AIコメント**: 記事への一言コメント生成
+
+### 🌐 分散SNS連携
+- **atproto OAuth**: Blueskyアカウントでログイン
+- **コメントシステム**: 分散SNSコメント
+- **データ主権**: ユーザーがデータを所有
+
+### 🔗 エコシステム統合
+- **ai.gpt**: ドキュメント同期・AI機能連携
+- **MCP Server**: ai.gptからの操作をサポート
+- **ai.wiki**: 自動ドキュメント同期
 
 ## Architecture
 
@@ -161,9 +243,12 @@ Generate comprehensive documentation and translate content:
 - Collection storage in atproto
 
 ### Comment System
-- atproto account login
-- Distributed comment storage
-- Real-time comment synchronization
+- **ATProto Stream Monitoring**: Real-time Jetstream connection monitoring
+- **Collection Tracking**: Monitors `ai.syui.log` collection for new comments
+- **User Management**: Automatically adds commenting users to `ai.syui.log.user` collection
+- **Comment Display**: Fetches and displays comments from registered users
+- **OAuth Integration**: atproto account login via Cloudflare tunnel
+- **Distributed Storage**: Comments stored in user-owned atproto collections
 
 ## Build & Deploy
 
@@ -201,11 +286,14 @@ Generate comprehensive documentation and translate content:
 - **🌍 Ollama-powered translation system**
 - **🚀 Complete MCP integration with ai.gpt**
 - **📄 Markdown-aware translation preserving structure**
+- **💬 ATProto comment system with Jetstream monitoring**
+- **🔄 Real-time comment collection and user management**
+- **🔐 OAuth 2.1 integration with Cloudflare tunnel**
 - Test blog with sample content and styling
 
 ### 🚧 In Progress
 - AI-powered content enhancement pipeline
-- atproto OAuth implementation
+- Advanced comment moderation system
 
 ### 📋 Planned Features
 - Advanced template customization

@@ -1,0 +1,24 @@
+{
+  "client_id": "https://xxxcard.syui.ai/client-metadata.json",
+  "client_name": "ai.card",
+  "client_uri": "https://xxxcard.syui.ai",
+  "logo_uri": "https://xxxcard.syui.ai/favicon.ico",
+  "tos_uri": "https://xxxcard.syui.ai/terms",
+  "policy_uri": "https://xxxcard.syui.ai/privacy",
+  "redirect_uris": [
+    "https://xxxcard.syui.ai/oauth/callback",
+    "https://xxxcard.syui.ai/"
+  ],
+  "response_types": [
+    "code"
+  ],
+  "grant_types": [
+    "authorization_code",
+    "refresh_token"
+  ],
+  "token_endpoint_auth_method": "none",
+  "scope": "atproto transition:generic",
+  "subject_type": "public",
+  "application_type": "web",
+  "dpop_bound_access_tokens": true
+}

@@ -5,3 +5,8 @@
 *.swo
 *~
 .DS_Store
+cloudflare*
+my-blog
+dist
+package-lock.json
+node_modules
