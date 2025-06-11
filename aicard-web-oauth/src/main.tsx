@@ -10,7 +10,7 @@ import { OAuthEndpointHandler } from './utils/oauth-endpoints'
 // DISABLED: This may interfere with BrowserOAuthClient
 // OAuthEndpointHandler.init()
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(document.getElementById('comment-atproto')!).render(
   <React.StrictMode>
     <BrowserRouter>
       <Routes>
