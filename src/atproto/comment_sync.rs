@@ -20,11 +20,13 @@ pub struct CommentStorage {
     pub comments: Vec<Comment>,
 }
 
+#[allow(dead_code)]
 pub struct CommentSync {
     client: AtprotoClient,
     storage_path: PathBuf,
 }
 
+#[allow(dead_code)]
 impl CommentSync {
     pub fn new(client: AtprotoClient, base_path: PathBuf) -> Self {
         let storage_path = base_path.join("data/comments.json");
@@ -91,6 +93,7 @@ impl CommentSync {
 }
 
 // Helper to generate comment HTML
+#[allow(dead_code)]
 pub fn render_comments_html(comments: &[Comment]) -> String {
     let mut html = String::from("<div class=\"comments\">\n");
     html.push_str("  <h3>コメント</h3>\n");

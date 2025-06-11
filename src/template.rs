@@ -16,6 +16,7 @@ impl TemplateEngine {
         Ok(Self { tera })
     }
 
+    #[allow(dead_code)]
     pub fn create_context(&self, config: &Config, posts: &[Post]) -> Result<Context> {
         let mut context = Context::new();
         context.insert("config", &config.site);

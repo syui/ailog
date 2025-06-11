@@ -8,6 +8,7 @@ use std::path::PathBuf;
 pub struct AuthConfig {
     pub admin: AdminConfig,
     pub jetstream: JetstreamConfig,
+    pub collections: CollectionConfig,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -25,6 +26,12 @@ pub struct JetstreamConfig {
     pub collections: Vec<String>,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CollectionConfig {
+    pub comment: String,
+    pub user: String,
+}
+
 impl Default for AuthConfig {
     fn default() -> Self {
         Self {
@@ -38,6 +45,10 @@ impl Default for AuthConfig {
             jetstream: JetstreamConfig {
                 url: "wss://jetstream2.us-east.bsky.network/subscribe".to_string(),
                 collections: vec!["ai.syui.log".to_string()],
+            },
+            collections: CollectionConfig {
+                comment: "ai.syui.log".to_string(),
+                user: "ai.syui.log.user".to_string(),
             },
         }
     }
@@ -105,6 +116,7 @@ pub async fn init() -> Result<()> {
             url: "wss://jetstream2.us-east.bsky.network/subscribe".to_string(),
             collections: vec!["ai.syui.log".to_string()],
         },
+        collections: generate_collection_config(),
     };
     
     // Save config
@@ -208,7 +220,10 @@ pub fn load_config() -> Result<AuthConfig> {
     }
     
     let config_json = fs::read_to_string(&config_path)?;
-    let config: AuthConfig = serde_json::from_str(&config_json)?;
+    let mut config: AuthConfig = serde_json::from_str(&config_json)?;
+    
+    // Update collection configuration
+    update_config_collections(&mut config);
     
     Ok(config)
 }
@@ -233,14 +248,18 @@ pub async fn load_config_with_refresh() -> Result<AuthConfig> {
         }
     }
     
+    // Update collection configuration
+    update_config_collections(&mut config);
+    
     Ok(config)
 }
 
 async fn test_api_access_with_auth(config: &AuthConfig) -> Result<()> {
     let client = reqwest::Client::new();
-    let url = format!("{}/xrpc/com.atproto.repo.listRecords?repo={}&collection=ai.syui.log&limit=1",
+    let url = format!("{}/xrpc/com.atproto.repo.listRecords?repo={}&collection={}&limit=1",
                      config.admin.pds,
-                     urlencoding::encode(&config.admin.did));
+                     urlencoding::encode(&config.admin.did),
+                     urlencoding::encode(&config.collections.comment));
     
     let response = client
         .get(&url)
@@ -290,4 +309,31 @@ fn save_config(config: &AuthConfig) -> Result<()> {
     let config_json = serde_json::to_string_pretty(config)?;
     fs::write(&config_path, config_json)?;
     Ok(())
+}
+
+// Generate collection names from admin DID or environment
+fn generate_collection_config() -> CollectionConfig {
+    // Check environment variables first
+    if let (Ok(comment), Ok(user)) = (
+        std::env::var("AILOG_COLLECTION_COMMENT"),
+        std::env::var("AILOG_COLLECTION_USER")
+    ) {
+        return CollectionConfig {
+            comment,
+            user,
+        };
+    }
+    
+    // Default collections
+    CollectionConfig {
+        comment: "ai.syui.log".to_string(),
+        user: "ai.syui.log.user".to_string(),
+    }
+}
+
+// Update existing config with collection settings
+pub fn update_config_collections(config: &mut AuthConfig) {
+    config.collections = generate_collection_config();
+    // Also update jetstream collections to monitor the comment collection
+    config.jetstream.collections = vec![config.collections.comment.clone()];
 }

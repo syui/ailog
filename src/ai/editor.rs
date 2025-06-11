@@ -28,6 +28,7 @@ Only return the enhanced content without explanations.";
         self.client.chat(system_prompt, &user_prompt).await
     }
 
+    #[allow(dead_code)]
     pub async fn suggest_improvements(&self, content: &str) -> Result<Vec<String>> {
         let system_prompt = "You are a content analyzer. Analyze the given content and provide:
 1. Suggestions for improving the content

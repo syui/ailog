@@ -3,6 +3,7 @@ use std::path::PathBuf;
 use crate::analyzer::{ProjectInfo, ApiInfo, ProjectStructure};
 use crate::ai::gpt_client::GptClient;
 
+#[allow(dead_code)]
 pub struct DocGenerator {
     base_path: PathBuf,
     ai_enabled: bool,
@@ -201,6 +202,7 @@ impl DocGenerator {
 }
 
 #[derive(Debug)]
+#[allow(dead_code)]
 pub struct GitCommit {
     pub hash: String,
     pub message: String,

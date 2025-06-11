@@ -33,7 +33,8 @@
       "Bash(./scripts/test-oauth.sh:*)",
       "Bash(./run.zsh:*)",
       "Bash(npm run dev:*)",
-      "Bash(./target/release/ailog:*)"
+      "Bash(./target/release/ailog:*)",
+      "Bash(rg:*)"
     ],
     "deny": []
   }

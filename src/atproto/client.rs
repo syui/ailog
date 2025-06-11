@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use reqwest::header::{AUTHORIZATION, CONTENT_TYPE};
 
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub struct AtprotoClient {
     client: reqwest::Client,
     handle_resolver: String,
@@ -27,8 +28,10 @@ pub struct CommentRecord {
     #[serde(rename = "$type")]
     pub record_type: String,
     pub text: String,
-    pub createdAt: String,
-    pub postUri: String,
+    #[serde(rename = "createdAt")]
+    pub created_at: String,
+    #[serde(rename = "postUri")]
+    pub post_uri: String,
     pub author: AuthorInfo,
 }
 
@@ -38,6 +41,7 @@ pub struct AuthorInfo {
     pub handle: String,
 }
 
+#[allow(dead_code)]
 impl AtprotoClient {
     pub fn new(handle_resolver: String) -> Self {
         Self {
@@ -59,8 +63,8 @@ impl AtprotoClient {
         let record = CommentRecord {
             record_type: "app.bsky.feed.post".to_string(),
             text: text.to_string(),
-            createdAt: chrono::Utc::now().to_rfc3339(),
-            postUri: post_uri.to_string(),
+            created_at: chrono::Utc::now().to_rfc3339(),
+            post_uri: post_uri.to_string(),
             author: AuthorInfo {
                 did: did.to_string(),
                 handle: "".to_string(), // Will be resolved by the server

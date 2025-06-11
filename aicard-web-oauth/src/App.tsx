@@ -402,8 +402,28 @@ function App() {
           }
           
           const data = await response.json();
-          const userComments = data.records || [];
-          console.log(`Found ${userComments.length} comments from ${user.handle}`);
+          const userRecords = data.records || [];
+          console.log(`Found ${userRecords.length} comment records from ${user.handle}`);
+          
+          // Flatten comments from new array format
+          const userComments = [];
+          for (const record of userRecords) {
+            if (record.value.comments && Array.isArray(record.value.comments)) {
+              // New format: array of comments
+              for (const comment of record.value.comments) {
+                userComments.push({
+                  ...record,
+                  value: comment,
+                  originalRecord: record // Keep reference to original record
+                });
+              }
+            } else if (record.value.text) {
+              // Old format: single comment
+              userComments.push(record);
+            }
+          }
+          
+          console.log(`Flattened to ${userComments.length} individual comments from ${user.handle}`);
           
           // ページURLでフィルタリング（指定された場合）
           const filteredComments = pageUrl 
@@ -496,8 +516,7 @@ function App() {
       // Use post rkey if on post page, otherwise use timestamp-based rkey
       const rkey = appConfig.rkey || now.toISOString().replace(/[:.]/g, '-');
       
-      const record = {
-        $type: appConfig.collections.comment,
+      const newComment = {
         text: commentText,
         url: window.location.href,
         createdAt: now.toISOString(),
@@ -507,6 +526,44 @@ function App() {
           avatar: user.avatar,
           displayName: user.displayName || user.handle,
         },
+      };
+
+      // Check if record with this rkey already exists
+      let existingComments = [];
+      try {
+        const existingResponse = await agent.api.com.atproto.repo.getRecord({
+          repo: user.did,
+          collection: appConfig.collections.comment,
+          rkey: rkey,
+        });
+        
+        // Handle both old single comment format and new array format
+        if (existingResponse.data.value.comments) {
+          // New format: array of comments
+          existingComments = existingResponse.data.value.comments;
+        } else if (existingResponse.data.value.text) {
+          // Old format: single comment, convert to array
+          existingComments = [{
+            text: existingResponse.data.value.text,
+            url: existingResponse.data.value.url,
+            createdAt: existingResponse.data.value.createdAt,
+            author: existingResponse.data.value.author,
+          }];
+        }
+      } catch (err) {
+        // Record doesn't exist yet, that's fine
+        console.log('No existing record found, creating new one');
+      }
+
+      // Add new comment to the array
+      existingComments.push(newComment);
+
+      // Create the record with comments array
+      const record = {
+        $type: appConfig.collections.comment,
+        comments: existingComments,
+        url: window.location.href,
+        createdAt: now.toISOString(), // Latest update time
       };
 
       // Post to ATProto with rkey
@@ -811,7 +868,7 @@ function App() {
                   <div className="user-details">
                     <h3>{user.displayName || user.handle}</h3>
                     <p className="user-handle">@{user.handle}</p>
-                    <p className="user-did">DID: {user.did}</p>
+                    <p className="user-did">{user.did}</p>
                   </div>
                 </div>
                 <button onClick={handleLogout} className="logout-button">
@@ -943,16 +1000,25 @@ function App() {
                     <span className="comment-date">
                       {new Date(record.value.createdAt).toLocaleString()}
                     </span>
-                    {/* Show delete button only for current user's comments */}
-                    {user && record.value.author?.did === user.did && (
+                    <div className="comment-actions">
                       <button 
-                        onClick={() => handleDeleteComment(record.uri)}
-                        className="delete-button"
-                        title="Delete comment"
+                        onClick={() => toggleJsonDisplay(record.uri)}
+                        className="json-button"
+                        title="Show/Hide JSON"
                       >
-                        🗑️
+                        {showJsonFor === record.uri ? '📄' : '📄'}
                       </button>
-                    )}
+                      {/* Show delete button only for current user's comments */}
+                      {user && record.value.author?.did === user.did && (
+                        <button 
+                          onClick={() => handleDeleteComment(record.uri)}
+                          className="delete-button"
+                          title="Delete comment"
+                        >
+                          🗑️
+                        </button>
+                      )}
+                    </div>
                   </div>
                   <div className="comment-content">
                     {record.value.text}
@@ -960,6 +1026,16 @@ function App() {
                   <div className="comment-meta">
                     <small>{record.uri}</small>
                   </div>
+                  
+                  {/* JSON Display */}
+                  {showJsonFor === record.uri && (
+                    <div className="json-display">
+                      <h5>JSON Record:</h5>
+                      <pre className="json-content">
+                        {JSON.stringify(record, null, 2)}
+                      </pre>
+                    </div>
+                  )}
                 </div>
               ))
             )}

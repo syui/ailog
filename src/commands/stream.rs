@@ -267,7 +267,7 @@ async fn handle_message(text: &str, config: &mut AuthConfig) -> Result<()> {
     if let (Some(collection), Some(commit), Some(did)) = 
         (&message.collection, &message.commit, &message.did) {
         
-        if collection == "ai.syui.log" && commit.operation.as_deref() == Some("create") {
+        if collection == &config.collections.comment && commit.operation.as_deref() == Some("create") {
             let unknown_uri = "unknown".to_string();
             let uri = commit.uri.as_ref().unwrap_or(&unknown_uri);
             
@@ -358,9 +358,10 @@ async fn update_user_list(config: &mut AuthConfig, did: &str, handle: &str) -> R
 
 async fn get_current_user_list(config: &mut AuthConfig) -> Result<Vec<UserRecord>> {
     let client = reqwest::Client::new();
-    let url = format!("{}/xrpc/com.atproto.repo.listRecords?repo={}&collection=ai.syui.log.user&limit=10",
+    let url = format!("{}/xrpc/com.atproto.repo.listRecords?repo={}&collection={}&limit=10",
                      config.admin.pds,
-                     urlencoding::encode(&config.admin.did));
+                     urlencoding::encode(&config.admin.did),
+                     urlencoding::encode(&config.collections.user));
     
     let response = client
         .get(&url)
@@ -416,10 +417,14 @@ async fn post_user_list(config: &mut AuthConfig, users: &[UserRecord], metadata:
     let client = reqwest::Client::new();
     
     let now = chrono::Utc::now();
-    let rkey = now.format("%Y-%m-%dT%H-%M-%S-%3fZ").to_string().replace(".", "-");
+    // Extract short ID from DID (did:plc:xxx -> xxx) for rkey
+    let short_did = config.admin.did
+        .strip_prefix("did:plc:")
+        .unwrap_or(&config.admin.did);
+    let rkey = format!("{}-{}", short_did, now.format("%Y-%m-%dT%H-%M-%S-%3fZ").to_string().replace(".", "-"));
     
     let record = UserListRecord {
-        record_type: "ai.syui.log.user".to_string(),
+        record_type: config.collections.user.clone(),
         users: users.to_vec(),
         created_at: now.to_rfc3339(),
         updated_by: UserInfo {
@@ -433,7 +438,7 @@ async fn post_user_list(config: &mut AuthConfig, users: &[UserRecord], metadata:
     
     let request_body = json!({
         "repo": config.admin.did,
-        "collection": "ai.syui.log.user",
+        "collection": config.collections.user,
         "rkey": rkey,
         "record": record
     });
@@ -674,9 +679,10 @@ async fn poll_comments_periodically(mut config: AuthConfig) -> Result<()> {
 
 async fn get_recent_comments(config: &mut AuthConfig) -> Result<Vec<Value>> {
     let client = reqwest::Client::new();
-    let url = format!("{}/xrpc/com.atproto.repo.listRecords?repo={}&collection=ai.syui.log&limit=20",
+    let url = format!("{}/xrpc/com.atproto.repo.listRecords?repo={}&collection={}&limit=20",
                      config.admin.pds,
-                     urlencoding::encode(&config.admin.did));
+                     urlencoding::encode(&config.admin.did),
+                     urlencoding::encode(&config.collections.comment));
     
     if std::env::var("AILOG_DEBUG").is_ok() {
         println!("{}", format!("🌐 API Request URL: {}", url).yellow());
@@ -757,7 +763,7 @@ pub async fn test_api() -> Result<()> {
             println!("{}", format!("✅ Successfully retrieved {} comments", comments.len()).green());
             
             if comments.is_empty() {
-                println!("{}", "ℹ️  No comments found in ai.syui.log collection".blue());
+                println!("{}", format!("ℹ️  No comments found in {} collection", config.collections.comment).blue());
                 println!("💡 Try posting a comment first using the web interface");
             } else {
                 println!("{}", "📝 Comment details:".cyan());

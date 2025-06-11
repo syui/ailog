@@ -1,18 +1,17 @@
 use anyhow::Result;
 use axum::{
-    extract::{Query, State},
+    extract::State,
     http::StatusCode,
     response::Json,
     routing::{get, post},
     Router,
 };
 use serde_json::{json, Value};
-use std::collections::HashMap;
 use std::path::PathBuf;
 use std::sync::Arc;
 use tower_http::cors::CorsLayer;
-use crate::mcp::types::*;
 use crate::mcp::tools::BlogTools;
+use crate::mcp::types::{McpRequest, McpResponse, McpError, CreatePostRequest, ListPostsRequest, BuildRequest};
 
 #[derive(Clone)]
 pub struct AppState {

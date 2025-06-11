@@ -41,11 +41,13 @@ pub enum MarkdownSection {
 }
 
 pub trait Translator {
+    #[allow(dead_code)]
     async fn translate(&self, content: &str, config: &TranslationConfig) -> Result<String>;
     async fn translate_markdown(&self, content: &str, config: &TranslationConfig) -> Result<String>;
     async fn translate_sections(&self, sections: Vec<MarkdownSection>, config: &TranslationConfig) -> Result<Vec<MarkdownSection>>;
 }
 
+#[allow(dead_code)]
 pub struct TranslationResult {
     pub original: String,
     pub translated: String,
@@ -56,6 +58,7 @@ pub struct TranslationResult {
 }
 
 #[derive(Debug, Clone, Default)]
+#[allow(dead_code)]
 pub struct TranslationMetrics {
     pub character_count: usize,
     pub word_count: usize,
@@ -117,6 +120,7 @@ impl LanguageMapping {
         self.mappings.get(code)
     }
     
+    #[allow(dead_code)]
     pub fn get_supported_languages(&self) -> Vec<String> {
         self.mappings.keys().cloned().collect()
     }

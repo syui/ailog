@@ -21,6 +21,7 @@ pub struct ClientMetadata {
 }
 
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub struct OAuthHandler {
     config: AtprotoConfig,
     client: reqwest::Client,
@@ -46,6 +47,7 @@ pub struct TokenResponse {
     pub scope: String,
 }
 
+#[allow(dead_code)]
 impl OAuthHandler {
     pub fn new(config: AtprotoConfig) -> Self {
         Self {
@@ -137,6 +139,7 @@ impl OAuthHandler {
 }
 
 // PKCE helpers
+#[allow(dead_code)]
 pub fn generate_code_verifier() -> String {
     use rand::Rng;
     const CHARSET: &[u8] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~";
@@ -150,6 +153,7 @@ pub fn generate_code_verifier() -> String {
         .collect()
 }
 
+#[allow(dead_code)]
 pub fn generate_code_challenge(verifier: &str) -> String {
     use sha2::{Sha256, Digest};
     use base64::{Engine as _, engine::general_purpose};

@@ -155,7 +155,7 @@ impl Translator for OllamaTranslator {
             println!("  🔤 Processing section {}", index + 1);
             
             let translated_section = match &section {
-                MarkdownSection::Code(content, lang) => {
+                MarkdownSection::Code(_content, _lang) => {
                     if config.preserve_code {
                         println!("    ⏭️  Preserving code block");
                         section // Preserve code blocks
@@ -174,7 +174,7 @@ impl Translator for OllamaTranslator {
                         MarkdownSection::Link(translated_text.trim().to_string(), url.clone())
                     }
                 }
-                MarkdownSection::Image(alt, url) => {
+                MarkdownSection::Image(_alt, _url) => {
                     println!("    🖼️  Preserving image");
                     section // Preserve images
                 }

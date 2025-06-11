@@ -114,6 +114,7 @@ impl Config {
         }
     }
     
+    #[allow(dead_code)]
     pub fn save_global(&self) -> Result<()> {
         let config_dir = Self::global_config_dir();
         fs::create_dir_all(&config_dir)?;

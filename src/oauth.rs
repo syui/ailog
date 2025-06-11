@@ -1,11 +1,10 @@
 use serde::{Deserialize, Serialize};
 use tower_sessions::Session;
 use axum::{
-    extract::{Query, State},
-    response::{Html, Redirect},
+    extract::Query,
+    response::Html,
     Json,
 };
-use std::collections::HashMap;
 use jsonwebtoken::{encode, decode, Header, Algorithm, Validation, EncodingKey, DecodingKey};
 use anyhow::Result;
 
@@ -38,8 +37,9 @@ pub struct Claims {
     pub iat: usize,
 }
 
-const JWT_SECRET: &[u8] = b"ailog-oauth-secret-key-2025";
+const _JWT_SECRET: &[u8] = b"ailog-oauth-secret-key-2025";
 
+#[allow(dead_code)]
 pub fn create_jwt(oauth_data: &OAuthData) -> Result<String> {
     let now = chrono::Utc::now().timestamp() as usize;
     let claims = Claims {
@@ -54,22 +54,24 @@ pub fn create_jwt(oauth_data: &OAuthData) -> Result<String> {
     let token = encode(
         &Header::default(),
         &claims,
-        &EncodingKey::from_secret(JWT_SECRET),
+        &EncodingKey::from_secret(_JWT_SECRET),
     )?;
 
     Ok(token)
 }
 
+#[allow(dead_code)]
 pub fn verify_jwt(token: &str) -> Result<Claims> {
     let token_data = decode::<Claims>(
         token,
-        &DecodingKey::from_secret(JWT_SECRET),
+        &DecodingKey::from_secret(_JWT_SECRET),
         &Validation::new(Algorithm::HS256),
     )?;
 
     Ok(token_data.claims)
 }
 
+#[allow(dead_code)]
 pub async fn oauth_callback_handler(
     Query(params): Query<OAuthCallback>,
     session: Session,
@@ -179,6 +181,7 @@ pub async fn oauth_callback_handler(
     Err("No authorization code received".to_string())
 }
 
+#[allow(dead_code)]
 pub async fn oauth_session_handler(session: Session) -> Json<serde_json::Value> {
     if let Ok(Some(oauth_data)) = session.get::<OAuthData>("oauth_data").await {
         if let Ok(Some(jwt_token)) = session.get::<String>("jwt_token").await {
@@ -195,6 +198,7 @@ pub async fn oauth_session_handler(session: Session) -> Json<serde_json::Value> 
     }))
 }
 
+#[allow(dead_code)]
 pub async fn oauth_logout_handler(session: Session) -> Json<serde_json::Value> {
     let _ = session.remove::<OAuthData>("oauth_data").await;
     let _ = session.remove::<String>("jwt_token").await;

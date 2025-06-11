@@ -3,7 +3,7 @@ use regex::Regex;
 use super::MarkdownSection;
 
 pub struct MarkdownParser {
-    code_block_regex: Regex,
+    _code_block_regex: Regex,
     header_regex: Regex,
     link_regex: Regex,
     image_regex: Regex,
@@ -15,7 +15,7 @@ pub struct MarkdownParser {
 impl MarkdownParser {
     pub fn new() -> Self {
         Self {
-            code_block_regex: Regex::new(r"```([a-zA-Z0-9]*)\n([\s\S]*?)\n```").unwrap(),
+            _code_block_regex: Regex::new(r"```([a-zA-Z0-9]*)\n([\s\S]*?)\n```").unwrap(),
             header_regex: Regex::new(r"^(#{1,6})\s+(.+)$").unwrap(),
             link_regex: Regex::new(r"\[([^\]]+)\]\(([^)]+)\)").unwrap(),
             image_regex: Regex::new(r"!\[([^\]]*)\]\(([^)]+)\)").unwrap(),

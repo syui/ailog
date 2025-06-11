@@ -21,6 +21,7 @@ impl<'a> Translator<'a> {
         self.client.chat(&system_prompt, content).await
     }
 
+    #[allow(dead_code)]
     pub async fn translate_post(&self, title: &str, content: &str, from: &str, to: &str) -> Result<(String, String)> {
         // Translate title
         let translated_title = self.translate(title, from, to).await?;
