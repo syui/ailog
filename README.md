@@ -16,12 +16,6 @@ AI-powered static blog generator with ATProto integration, part of the ai.ai eco
 
 | Command | Description |
 |---------|-------------|
-| `./run.zsh serve` | Start development server |
-| `./run.zsh build` | Build blog only |
-| `./run.zsh oauth` | Copy OAuth files to static/ |
-| `./run.zsh all` | Build OAuth + blog |
-| `./run.zsh clean` | Clean all build artifacts |
-| `./run.zsh tunnel` | Production deployment |
 | `./run.zsh c` | Enable Cloudflare tunnel (xxxcard.syui.ai) for OAuth |
 | `./run.zsh o` | Start OAuth web server (port:4173 = xxxcard.syui.ai) |
 | `./run.zsh co` | Start comment system (ATProto stream monitor) |
