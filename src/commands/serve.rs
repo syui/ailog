@@ -268,23 +268,37 @@ async fn serve_oauth_callback() -> Result<(&'static str, Vec<u8>, &'static str)>
         
         localStorage.setItem('oauth_callback_data', JSON.stringify(oauthData));
         
-        // Redirect to parent window or main page with callback indication
+        // For both popup and direct navigation, redirect to main page with hash parameters
+        // This ensures React app can properly handle the OAuth callback
+        const redirectUrl = new URL(window.location.origin);
+        
+        // Use hash parameters to avoid server-side processing
+        redirectUrl.hash = `#code=${encodeURIComponent(code)}&state=${encodeURIComponent(state)}` + 
+                          (iss ? `&iss=${encodeURIComponent(iss)}` : '');
+        
+        console.log('Redirecting to:', redirectUrl.toString());
+        
         if (window.opener) {
             // Popup window - notify parent and close
             try {
                 window.opener.postMessage({
                     type: 'oauth_callback',
-                    data: oauthData
+                    data: oauthData,
+                    redirectUrl: redirectUrl.toString()
                 }, '*');
                 console.log('Notified parent window');
+                
+                // Give parent time to process, then close
+                setTimeout(() => window.close(), 500);
             } catch (e) {
                 console.error('Failed to notify parent:', e);
+                // Fallback - redirect parent window
+                window.opener.location.href = redirectUrl.toString();
+                window.close();
             }
-            window.close();
         } else {
-            // Direct navigation - redirect to main page
-            console.log('Redirecting to main page');
-            window.location.href = '/?oauth_callback=true';
+            // Direct navigation - redirect to main page with hash parameters
+            window.location.href = redirectUrl.toString();
         }
     } else {
         console.error('Invalid OAuth callback - missing code or state');

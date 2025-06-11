@@ -13,7 +13,7 @@ function _server() {
 	lsof -ti:4173 | xargs kill -9 2>/dev/null || true
 	cd $d/my-blog
 	cargo build --release
-	#$ailog build
+	$ailog build
 	$ailog serve --port 4173
 }
 
@@ -40,7 +40,7 @@ function _oauth_build() {
 	npm run build
 	#npm run preview
 	cp -rf dist/* $d/my-blog/static/
-	cp -rf dist/index.html $d/my-blog/public/
+	#cp -rf dist/index.html $d/my-blog/public/
 }
 
 function _server_comment() {
