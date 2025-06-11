@@ -157,40 +157,19 @@ export class OAuthKeyManager {
  * Generate dynamic client metadata based on current URL
  */
 export function generateClientMetadata(): any {
-  const origin = window.location.origin;
-  const clientId = `${origin}/client-metadata.json`;
+  // Use environment variables if available, fallback to current origin
+  const host = import.meta.env.VITE_APP_HOST || window.location.origin;
+  const clientId = import.meta.env.VITE_OAUTH_CLIENT_ID || `${host}/client-metadata.json`;
+  const redirectUri = import.meta.env.VITE_OAUTH_REDIRECT_URI || `${host}/oauth/callback`;
 
-  // Use static production metadata for xxxcard.syui.ai
-  if (origin === 'https://xxxcard.syui.ai') {
-    return {
-      client_id: 'https://xxxcard.syui.ai/client-metadata.json',
-      client_name: 'ai.card',
-      client_uri: 'https://xxxcard.syui.ai',
-      logo_uri: 'https://xxxcard.syui.ai/favicon.ico',
-      tos_uri: 'https://xxxcard.syui.ai/terms',
-      policy_uri: 'https://xxxcard.syui.ai/privacy',
-      redirect_uris: ['https://xxxcard.syui.ai/oauth/callback'],
-      response_types: ['code'],
-      grant_types: ['authorization_code', 'refresh_token'],
-      token_endpoint_auth_method: 'private_key_jwt',
-      token_endpoint_auth_signing_alg: 'ES256',
-      scope: 'atproto transition:generic',
-      subject_type: 'public',
-      application_type: 'web',
-      dpop_bound_access_tokens: true,
-      jwks_uri: 'https://xxxcard.syui.ai/.well-known/jwks.json'
-    };
-  }
-
-  // Dynamic metadata for development
   return {
     client_id: clientId,
     client_name: 'ai.card',
-    client_uri: origin,
-    logo_uri: `${origin}/favicon.ico`,
-    tos_uri: `${origin}/terms`,
-    policy_uri: `${origin}/privacy`,
-    redirect_uris: [`${origin}/oauth/callback`],
+    client_uri: host,
+    logo_uri: `${host}/favicon.ico`,
+    tos_uri: `${host}/terms`,
+    policy_uri: `${host}/privacy`,
+    redirect_uris: [redirectUri, host],
     response_types: ['code'],
     grant_types: ['authorization_code', 'refresh_token'],
     token_endpoint_auth_method: 'private_key_jwt',
@@ -199,6 +178,6 @@ export function generateClientMetadata(): any {
     subject_type: 'public',
     application_type: 'web',
     dpop_bound_access_tokens: true,
-    jwks_uri: `${origin}/.well-known/jwks.json`
+    jwks_uri: `${host}/.well-known/jwks.json`
   };
 }

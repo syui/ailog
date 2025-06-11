@@ -1,13 +1,13 @@
 {
-  "client_id": "https://xxxcard.syui.ai/client-metadata.json",
+  "client_id": "https://log.syui.ai/client-metadata.json",
   "client_name": "ai.card",
-  "client_uri": "https://xxxcard.syui.ai",
-  "logo_uri": "https://xxxcard.syui.ai/favicon.ico",
-  "tos_uri": "https://xxxcard.syui.ai/terms",
-  "policy_uri": "https://xxxcard.syui.ai/privacy",
+  "client_uri": "https://log.syui.ai",
+  "logo_uri": "https://log.syui.ai/favicon.ico",
+  "tos_uri": "https://log.syui.ai/terms",
+  "policy_uri": "https://log.syui.ai/privacy",
   "redirect_uris": [
-    "https://xxxcard.syui.ai/oauth/callback",
-    "https://xxxcard.syui.ai/"
+    "https://log.syui.ai/oauth/callback",
+    "https://log.syui.ai/"
   ],
   "response_types": [
     "code"

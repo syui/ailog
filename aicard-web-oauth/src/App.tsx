@@ -99,9 +99,9 @@ function App() {
       return false;
     };
     
-    // キャッシュがなければ、ATProtoから取得
+    // キャッシュがなければ、ATProtoから取得（認証状態に関係なく）
     if (!loadCachedComments()) {
-      loadAllComments(window.location.href);
+      loadAllComments(); // URLフィルタリングを無効にして全コメント表示
     }
 
     // Handle popstate events for mock OAuth flow
@@ -142,7 +142,8 @@ function App() {
         setUser(userProfile);
         
         // Load all comments for display (this will be the default view)
-        loadAllComments(window.location.href);
+        // Temporarily disable URL filtering to see all comments
+        loadAllComments();
         
         // Load user list records if admin
         if (userProfile.did === 'did:plc:uqzpqmrjnptsxezjx4xuh2mn') {
@@ -161,7 +162,8 @@ function App() {
         setUser(verifiedUser);
         
         // Load all comments for display (this will be the default view)
-        loadAllComments(window.location.href);
+        // Temporarily disable URL filtering to see all comments
+        loadAllComments();
         
         // Load user list records if admin
         if (verifiedUser.did === 'did:plc:uqzpqmrjnptsxezjx4xuh2mn') {
@@ -169,6 +171,9 @@ function App() {
         }
       }
       setIsLoading(false);
+      
+      // 認証状態に関係なく、コメントを読み込む
+      loadAllComments();
     };
 
     checkAuth();
@@ -265,17 +270,20 @@ function App() {
     try {
       // 管理者のユーザーリストを取得 (ai.syui.log.user collection)
       const adminDid = 'did:plc:uqzpqmrjnptsxezjx4xuh2mn'; // syui.ai
+      console.log('Fetching user list from admin DID:', adminDid);
       const response = await fetch(`https://bsky.social/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(adminDid)}&collection=ai.syui.log.user&limit=100`);
       
       if (!response.ok) {
-        console.warn('Failed to fetch user list from admin, using default users');
+        console.warn('Failed to fetch user list from admin, using default users. Status:', response.status);
         return getDefaultUsers();
       }
       
       const data = await response.json();
       const userRecords = data.records || [];
+      console.log('User records found:', userRecords.length);
       
       if (userRecords.length === 0) {
+        console.log('No user records found, using default users');
         return getDefaultUsers();
       }
       
@@ -349,20 +357,33 @@ function App() {
   };
 
   const getDefaultUsers = () => {
-    return [
+    const defaultUsers = [
       // bsky.social - 実際のDIDを使用
       { did: 'did:plc:uqzpqmrjnptsxezjx4xuh2mn', handle: 'syui.ai', pds: 'https://bsky.social' },
-      // 他のユーザーは実際のDIDが不明なので、実在するユーザーのみ含める
     ];
+    
+    // 現在ログインしているユーザーも追加（重複チェック）
+    if (user && user.did && user.handle && !defaultUsers.find(u => u.did === user.did)) {
+      defaultUsers.push({
+        did: user.did,
+        handle: user.handle,
+        pds: user.handle.endsWith('.syu.is') ? 'https://syu.is' : 'https://bsky.social'
+      });
+    }
+    
+    console.log('Default users list (including current user):', defaultUsers);
+    return defaultUsers;
   };
 
   // 新しい関数: 全ユーザーからコメントを収集
   const loadAllComments = async (pageUrl?: string) => {
     try {
       console.log('Loading comments from all users...');
+      console.log('Page URL filter:', pageUrl);
       
       // ユーザーリストを動的に取得
       const knownUsers = await loadUsersFromRecord();
+      console.log('Known users for comment fetching:', knownUsers);
 
       const allComments = [];
 
@@ -388,7 +409,8 @@ function App() {
             ? userComments.filter(record => record.value.url === pageUrl)
             : userComments;
 
-          console.log(`After URL filtering: ${filteredComments.length} comments from ${user.handle}`);
+          console.log(`After URL filtering (${pageUrl}): ${filteredComments.length} comments from ${user.handle}`);
+          console.log('All comments from this user:', userComments.map(r => ({ url: r.value.url, text: r.value.text })));
           allComments.push(...filteredComments);
         } catch (err) {
           console.warn(`Failed to load comments from ${user.handle}:`, err);
@@ -859,14 +881,16 @@ function App() {
                 <button 
                   onClick={() => user && loadUserComments(user.did)}
                   className="comments-toggle-button"
+                  disabled={!user}
+                  title={!user ? "Login required to view your comments" : ""}
                 >
-                  My Comments
+                  My Comments {!user && "(Login Required)"}
                 </button>
                 <button 
-                  onClick={() => loadAllComments(window.location.href)}
+                  onClick={() => loadAllComments()}
                   className="comments-toggle-button"
                 >
-                  All Comments
+                  All Comments (No Filter)
                 </button>
               </div>
             </div>

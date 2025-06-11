@@ -188,12 +188,14 @@ class AtprotoOAuthService {
   }
 
   private getClientId(): string {
-    const origin = window.location.origin;
-    
-    // For production (xxxcard.syui.ai), use the actual URL
-    if (origin.includes('xxxcard.syui.ai')) {
-      return `${origin}/client-metadata.json`;
+    // Use environment variable if available
+    const envClientId = import.meta.env.VITE_OAUTH_CLIENT_ID;
+    if (envClientId) {
+      console.log('Using client ID from environment:', envClientId);
+      return envClientId;
     }
+    
+    const origin = window.location.origin;
     
     // For localhost development, use undefined for loopback client
     // The BrowserOAuthClient will handle this automatically

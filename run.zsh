@@ -18,7 +18,8 @@ function _server() {
 
 function _server_public() {
 	_env
-	cloudflared tunnel --config $d/aicard-web-oauth/cloudflared-config.yml run 
+	#cloudflared tunnel --config $d/aicard-web-oauth/cloudflared-config.yml run 
+	cloudflared tunnel --config $d/cloudflared-config.yml run 
 }
 
 function _oauth_build() {
@@ -29,6 +30,12 @@ function _oauth_build() {
 	[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 	nvm use 21
 	npm i
+	
+	# Build with production environment variables
+	export VITE_APP_HOST="https://log.syui.ai"
+	export VITE_OAUTH_CLIENT_ID="https://log.syui.ai/client-metadata.json"
+	export VITE_OAUTH_REDIRECT_URI="https://log.syui.ai/oauth/callback"
+	
 	npm run build
 	npm run preview
 }
