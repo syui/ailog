@@ -720,6 +720,29 @@ function App() {
     }
   };
 
+  // OAuth実行関数
+  const executeOAuth = async () => {
+    if (!handleInput.trim()) {
+      alert('Please enter your Bluesky handle first');
+      return;
+    }
+    try {
+      await atprotoOAuthService.initiateOAuthFlow(handleInput);
+    } catch (err) {
+      console.error('OAuth failed:', err);
+      alert('認証の開始に失敗しました。再度お試しください。');
+    }
+  };
+
+  // ユーザーハンドルからプロフィールURLを生成
+  const generateProfileUrl = (handle: string, did: string): string => {
+    if (handle.endsWith('.syu.is')) {
+      return `https://web.syu.is/profile/${did}`;
+    } else {
+      return `https://bsky.app/profile/${did}`;
+    }
+  };
+
   // OAuth callback is now handled by React Router in main.tsx
   console.log('=== APP.TSX URL CHECK ===');
   console.log('Full URL:', window.location.href);
@@ -737,18 +760,7 @@ function App() {
           {!user ? (
             <div className="auth-section">
               <button 
-                onClick={async () => {
-                  if (!handleInput.trim()) {
-                    alert('Please enter your Bluesky handle first');
-                    return;
-                  }
-                  try {
-                    await atprotoOAuthService.initiateOAuthFlow(handleInput);
-                  } catch (err) {
-                    console.error('OAuth failed:', err);
-                    alert('認証の開始に失敗しました。再度お試しください。');
-                  }
-                }} 
+                onClick={executeOAuth}
                 className="atproto-button"
               >
                 atproto
@@ -760,6 +772,12 @@ function App() {
                   className="handle-input"
                   value={handleInput}
                   onChange={(e) => setHandleInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      executeOAuth();
+                    }
+                  }}
                 />
               </div>
             </div>
@@ -877,22 +895,6 @@ function App() {
           <div className="comments-list">
             <div className="comments-header">
               <h3>Comments</h3>
-              <div className="comments-controls">
-                <button 
-                  onClick={() => user && loadUserComments(user.did)}
-                  className="comments-toggle-button"
-                  disabled={!user}
-                  title={!user ? "Login required to view your comments" : ""}
-                >
-                  My Comments {!user && "(Login Required)"}
-                </button>
-                <button 
-                  onClick={() => loadAllComments()}
-                  className="comments-toggle-button"
-                >
-                  All Comments (No Filter)
-                </button>
-              </div>
             </div>
             {comments.length === 0 ? (
               <p className="no-comments">No comments yet</p>
@@ -909,7 +911,14 @@ function App() {
                       <span className="comment-author">
                         {record.value.author?.displayName || record.value.author?.handle || 'unknown'}
                       </span>
-                      <span className="comment-handle">@{record.value.author?.handle || 'unknown'}</span>
+                      <a 
+                        href={generateProfileUrl(record.value.author?.handle || '', record.value.author?.did || '')}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="comment-handle"
+                      >
+                        @{record.value.author?.handle || 'unknown'}
+                      </a>
                     </div>
                     <span className="comment-date">
                       {new Date(record.value.createdAt).toLocaleString()}
@@ -929,7 +938,7 @@ function App() {
                     {record.value.text}
                   </div>
                   <div className="comment-meta">
-                    <small>URI: {record.uri}</small>
+                    <small>{record.uri}</small>
                   </div>
                 </div>
               ))

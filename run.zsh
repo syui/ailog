@@ -38,9 +38,9 @@ function _oauth_build() {
 	export VITE_OAUTH_REDIRECT_URI="https://log.syui.ai/oauth/callback"
 	
 	npm run build
-	#npm run preview
 	cp -rf dist/* $d/my-blog/static/
 	#cp -rf dist/index.html $d/my-blog/public/
+	#npm run preview
 }
 
 function _server_comment() {
