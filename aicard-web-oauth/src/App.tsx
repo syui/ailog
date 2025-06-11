@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { OAuthCallback } from './components/OAuthCallback';
 import { authService, User } from './services/auth';
 import { atprotoOAuthService } from './services/atproto-oauth';
+import { appConfig } from './config/app';
 import './App.css';
 
 function App() {
@@ -54,14 +55,14 @@ function App() {
         ws.onopen = () => {
           console.log('Jetstream connected');
           ws.send(JSON.stringify({
-            wantedCollections: ['ai.syui.log']
+            wantedCollections: [appConfig.collections.comment]
           }));
         };
         
         ws.onmessage = (event) => {
           try {
             const data = JSON.parse(event.data);
-            if (data.collection === 'ai.syui.log' && data.commit?.operation === 'create') {
+            if (data.collection === appConfig.collections.comment && data.commit?.operation === 'create') {
               console.log('New comment detected via Jetstream:', data);
               // Optionally reload comments
               // loadAllComments(window.location.href);
@@ -146,7 +147,7 @@ function App() {
         loadAllComments();
         
         // Load user list records if admin
-        if (userProfile.did === 'did:plc:uqzpqmrjnptsxezjx4xuh2mn') {
+        if (userProfile.did === appConfig.adminDid) {
           loadUserListRecords();
         }
         
@@ -166,7 +167,7 @@ function App() {
         loadAllComments();
         
         // Load user list records if admin
-        if (verifiedUser.did === 'did:plc:uqzpqmrjnptsxezjx4xuh2mn') {
+        if (verifiedUser.did === appConfig.adminDid) {
           loadUserListRecords();
         }
       }
@@ -225,7 +226,7 @@ function App() {
       // Get comments from current user
       const response = await agent.api.com.atproto.repo.listRecords({
         repo: did,
-        collection: 'ai.syui.log',
+        collection: appConfig.collections.comment,
         limit: 100,
       });
 
@@ -268,10 +269,10 @@ function App() {
   // JSONからユーザーリストを取得
   const loadUsersFromRecord = async () => {
     try {
-      // 管理者のユーザーリストを取得 (ai.syui.log.user collection)
-      const adminDid = 'did:plc:uqzpqmrjnptsxezjx4xuh2mn'; // syui.ai
+      // 管理者のユーザーリストを取得
+      const adminDid = appConfig.adminDid;
       console.log('Fetching user list from admin DID:', adminDid);
-      const response = await fetch(`https://bsky.social/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(adminDid)}&collection=ai.syui.log.user&limit=100`);
+      const response = await fetch(`https://bsky.social/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(adminDid)}&collection=${encodeURIComponent(appConfig.collections.user)}&limit=100`);
       
       if (!response.ok) {
         console.warn('Failed to fetch user list from admin, using default users. Status:', response.status);
@@ -331,8 +332,8 @@ function App() {
   const loadUserListRecords = async () => {
     try {
       console.log('Loading user list records...');
-      const adminDid = 'did:plc:uqzpqmrjnptsxezjx4xuh2mn'; // syui.ai
-      const response = await fetch(`https://bsky.social/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(adminDid)}&collection=ai.syui.log.user&limit=100`);
+      const adminDid = appConfig.adminDid;
+      const response = await fetch(`https://bsky.social/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(adminDid)}&collection=${encodeURIComponent(appConfig.collections.user)}&limit=100`);
       
       if (!response.ok) {
         console.warn('Failed to fetch user list records');
@@ -358,8 +359,8 @@ function App() {
 
   const getDefaultUsers = () => {
     const defaultUsers = [
-      // bsky.social - 実際のDIDを使用
-      { did: 'did:plc:uqzpqmrjnptsxezjx4xuh2mn', handle: 'syui.ai', pds: 'https://bsky.social' },
+      // Default admin user
+      { did: appConfig.adminDid, handle: 'syui.ai', pds: 'https://bsky.social' },
     ];
     
     // 現在ログインしているユーザーも追加（重複チェック）
@@ -393,7 +394,7 @@ function App() {
           console.log(`Fetching comments from user: ${user.handle} (${user.did}) at ${user.pds}`);
           
           // Public API使用（認証不要）
-          const response = await fetch(`${user.pds}/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(user.did)}&collection=ai.syui.log&limit=100`);
+          const response = await fetch(`${user.pds}/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(user.did)}&collection=${encodeURIComponent(appConfig.collections.comment)}&limit=100`);
           
           if (!response.ok) {
             console.warn(`Failed to fetch from ${user.handle} (${response.status}): ${response.statusText}`);
@@ -490,12 +491,13 @@ function App() {
         throw new Error('No agent available');
       }
 
-      // Create comment record with ISO datetime rkey
+      // Create comment record with post-specific rkey
       const now = new Date();
-      const rkey = now.toISOString().replace(/[:.]/g, '-'); // Replace : and . with - for valid rkey
+      // Use post rkey if on post page, otherwise use timestamp-based rkey
+      const rkey = appConfig.rkey || now.toISOString().replace(/[:.]/g, '-');
       
       const record = {
-        $type: 'ai.syui.log',
+        $type: appConfig.collections.comment,
         text: commentText,
         url: window.location.href,
         createdAt: now.toISOString(),
@@ -510,7 +512,7 @@ function App() {
       // Post to ATProto with rkey
       const response = await agent.api.com.atproto.repo.putRecord({
         repo: user.did,
-        collection: 'ai.syui.log',
+        collection: appConfig.collections.comment,
         rkey: rkey,
         record: record,
       });
@@ -553,7 +555,7 @@ function App() {
       // Delete the record
       await agent.api.com.atproto.repo.deleteRecord({
         repo: user.did,
-        collection: 'ai.syui.log',
+        collection: appConfig.collections.comment,
         rkey: rkey,
       });
 
@@ -578,7 +580,7 @@ function App() {
 
   // 管理者チェック
   const isAdmin = (user: User | null): boolean => {
-    return user?.did === 'did:plc:uqzpqmrjnptsxezjx4xuh2mn'; // syui.ai
+    return user?.did === appConfig.adminDid;
   };
 
   // ユーザーリスト投稿
@@ -640,7 +642,7 @@ function App() {
       const rkey = now.toISOString().replace(/[:.]/g, '-');
       
       const record = {
-        $type: 'ai.syui.log.user',
+        $type: appConfig.collections.user,
         users: users,
         createdAt: now.toISOString(),
         updatedBy: {
@@ -652,7 +654,7 @@ function App() {
       // Post to ATProto with rkey
       const response = await agent.api.com.atproto.repo.putRecord({
         repo: user.did,
-        collection: 'ai.syui.log.user',
+        collection: appConfig.collections.user,
         rkey: rkey,
         record: record,
       });
@@ -697,7 +699,7 @@ function App() {
       // Delete the record
       await agent.api.com.atproto.repo.deleteRecord({
         repo: user.did,
-        collection: 'ai.syui.log.user',
+        collection: appConfig.collections.user,
         rkey: rkey,
       });
 
@@ -741,6 +743,22 @@ function App() {
     } else {
       return `https://bsky.app/profile/${did}`;
     }
+  };
+
+  // Rkey-based comment filtering
+  // If on post page (/posts/xxx.html), only show comments with rkey=xxx
+  const shouldShowComment = (record: any): boolean => {
+    // If not on a post page, show all comments
+    if (!appConfig.rkey) {
+      return true;
+    }
+    
+    // Extract rkey from comment URI: at://did:plc:xxx/collection/rkey
+    const uriParts = record.uri.split('/');
+    const commentRkey = uriParts[uriParts.length - 1];
+    
+    // Show comment only if rkey matches current post
+    return commentRkey === appConfig.rkey;
   };
 
   // OAuth callback is now handled by React Router in main.tsx
@@ -896,10 +914,12 @@ function App() {
             <div className="comments-header">
               <h3>Comments</h3>
             </div>
-            {comments.length === 0 ? (
-              <p className="no-comments">No comments yet</p>
+            {comments.filter(shouldShowComment).length === 0 ? (
+              <p className="no-comments">
+                {appConfig.rkey ? `No comments for this post yet` : `No comments yet`}
+              </p>
             ) : (
-              comments.map((record, index) => (
+              comments.filter(shouldShowComment).map((record, index) => (
                 <div key={index} className="comment-item">
                   <div className="comment-header">
                     <img 
@@ -945,8 +965,8 @@ function App() {
             )}
           </div>
 
-          {/* Comment Form - Outside user section, after comments list */}
-          {user && (
+          {/* Comment Form - Only show on post pages */}
+          {user && appConfig.rkey && (
             <div className="comment-form">
               <h3>Post a Comment</h3>
               <textarea
@@ -967,6 +987,14 @@ function App() {
                 </button>
               </div>
               {error && <p className="error">{error}</p>}
+            </div>
+          )}
+
+          {/* Show authentication status on non-post pages */}
+          {user && !appConfig.rkey && (
+            <div className="auth-status">
+              <p>✅ Authenticated as @{user.handle}</p>
+              <p><small>Visit a post page to comment</small></p>
             </div>
           )}
         </section>
