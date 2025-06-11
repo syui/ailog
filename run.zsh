@@ -10,10 +10,11 @@ function _env() {
 
 function _server() {
 	_env
-	lsof -ti:8080 | xargs kill -9 2>/dev/null || true
+	lsof -ti:4173 | xargs kill -9 2>/dev/null || true
 	cd $d/my-blog
-	$ailog build --release
-	$ailog serve --port 8080
+	cargo build --release
+	#$ailog build
+	$ailog serve --port 4173
 }
 
 function _server_public() {
@@ -37,7 +38,9 @@ function _oauth_build() {
 	export VITE_OAUTH_REDIRECT_URI="https://log.syui.ai/oauth/callback"
 	
 	npm run build
-	npm run preview
+	#npm run preview
+	cp -rf dist/* $d/my-blog/static/
+	cp -rf dist/index.html $d/my-blog/public/
 }
 
 function _server_comment() {
