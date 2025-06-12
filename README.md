@@ -4,12 +4,70 @@ AI-powered static blog generator with ATProto integration, part of the ai.ai eco
 
 ## 🚀 Quick Start
 
+### Basic Blog Setup
+
+```bash
+# 1. Initialize a new blog
+ailog init my-blog
+
+# 2. Configure your blog (edit my-blog/config.toml)
+[site]
+title = "My Blog"
+description = "A blog powered by ailog"
+base_url = "https://yourdomain.com"
+language = "ja"
+
+[build]
+highlight_code = true
+minify = false
+
+[ai]
+enabled = false
+auto_translate = false
+comment_moderation = false
+
+# 3. Build your blog
+ailog build
+
+# 4. Serve locally
+ailog serve
+```
+
+### ATProto Comment System
+
+```bash
+# 1. Add OAuth configuration to my-blog/config.toml
+[oauth]
+json = "client-metadata.json"
+redirect = "oauth/callback"
+admin = "your-did-here"
+collection_comment = "ai.syui.log"
+collection_user = "ai.syui.log.user"
+
+# 2. Build OAuth app
+ailog oauth build my-blog
+
+# 3. Authenticate with ATProto
+ailog auth init
+
+# 4. Start stream monitoring
+ailog stream start my-blog
+```
+
+### Development with run.zsh
+
 ```bash
 # Development
 ./run.zsh serve
 
 # Production (with Cloudflare Tunnel)  
 ./run.zsh tunnel
+
+# OAuth app development
+./run.zsh o
+
+# Comment system monitoring
+./run.zsh co
 ```
 
 ## 📋 Commands
