@@ -920,14 +920,14 @@ function App() {
                                 className="json-button"
                                 title="Show/Hide JSON"
                               >
-                                {showJsonFor === record.uri ? '📄 Hide JSON' : '📄 Show JSON'}
+                                {showJsonFor === record.uri ? 'Hide JSON' : 'Show JSON'}
                               </button>
                               <button 
                                 onClick={() => handleDeleteUserList(record.uri)}
                                 className="delete-button"
                                 title="Delete user list"
                               >
-                                🗑️
+                                Delete
                               </button>
                             </div>
                           </div>
@@ -1006,7 +1006,7 @@ function App() {
                         className="json-button"
                         title="Show/Hide JSON"
                       >
-                        {showJsonFor === record.uri ? '📄' : '📄'}
+                        {showJsonFor === record.uri ? 'Hide' : 'JSON'}
                       </button>
                       {/* Show delete button only for current user's comments */}
                       {user && record.value.author?.did === user.did && (
@@ -1015,7 +1015,7 @@ function App() {
                           className="delete-button"
                           title="Delete comment"
                         >
-                          🗑️
+                          Delete
                         </button>
                       )}
                     </div>

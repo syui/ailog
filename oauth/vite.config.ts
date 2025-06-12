@@ -31,32 +31,18 @@ export default defineConfig(({ mode }) => {
       // Generate standalone index.html for testing
       {
         name: 'generate-standalone-html',
-        writeBundle() {
-          // Generate standalone index.html for testing
+        writeBundle(options, bundle) {
+          // Find actual generated filenames
+          const jsFile = Object.keys(bundle).find(fileName => fileName.startsWith('assets/comment-atproto') && fileName.endsWith('.js'))
+          const cssFile = Object.keys(bundle).find(fileName => fileName.startsWith('assets/comment-atproto') && fileName.endsWith('.css'))
+          
+          // Generate minimal index.html with just asset references
           const indexHtmlPath = path.resolve(__dirname, 'dist/index.html')
-          const indexHtmlContent = `<!DOCTYPE html>
-<html lang="ja">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ai.card OAuth Test</title>
-    <style>
-      body {
-        margin: 0;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        background-color: #0a0a0a;
-        color: #ffffff;
-      }
-    </style>
-    <script type="module" crossorigin src="/assets/comment-atproto.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/comment-atproto.css">
-  </head>
-  <body>
-    <div id="comment-atproto"></div>
-  </body>
-</html>`
+          const indexHtmlContent = `<!-- OAuth Comment System - Load globally for session management -->
+<script type="module" crossorigin src="/${jsFile}"></script>
+<link rel="stylesheet" crossorigin href="/${cssFile}">`
           fs.writeFileSync(indexHtmlPath, indexHtmlContent)
-          console.log('Generated standalone index.html for testing')
+          console.log('Generated minimal index.html with asset references')
         }
       }
     ],
@@ -65,14 +51,14 @@ export default defineConfig(({ mode }) => {
       minify: 'esbuild',
       rollupOptions: {
         output: {
-          // Fixed filenames for ailog integration
-          entryFileNames: 'assets/comment-atproto.js',
-          chunkFileNames: 'assets/comment-atproto-[name].js',
+          // Hash-based filenames to bust cache
+          entryFileNames: 'assets/comment-atproto-[hash].js',
+          chunkFileNames: 'assets/comment-atproto-[name]-[hash].js',
           assetFileNames: (assetInfo) => {
             if (assetInfo.name && assetInfo.name.endsWith('.css')) {
-              return 'assets/comment-atproto.css';
+              return 'assets/comment-atproto-[hash].css';
             }
-            return 'assets/[name].[ext]';
+            return 'assets/[name]-[hash].[ext]';
           }
         }
       }

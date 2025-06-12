@@ -3,12 +3,14 @@
 function _env() {
 	d=${0:a:h}
 	ailog=$d/target/release/ailog
+	oauth=$d/oauth
+	myblog=$d/my-blog
 	port=4173
 	case $OSTYPE in
 		darwin*)
 			export NVM_DIR="$HOME/.nvm"
-			[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
-			[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+			[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
+			[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
 			;;
 	esac
 }
@@ -29,12 +31,13 @@ function _server_public() {
 
 function _oauth_build() {
 	_env
-	cd $d/aicard-web-oauth
+	cd $oauth
 	nvm use 21
 	npm i
 	source .env.production
 	npm run build
-	cp -rf dist/* $d/my-blog/static/
+	cp -rf dist/* $myblog/static/
+	cp $oauth/dist/index.html $myblog/templates/oauth-assets.html
 	#npm run preview
 }
 
