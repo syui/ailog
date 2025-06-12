@@ -85,6 +85,11 @@ enum Commands {
         #[command(subcommand)]
         command: StreamCommands,
     },
+    /// OAuth app management
+    Oauth {
+        #[command(subcommand)]
+        command: OauthCommands,
+    },
 }
 
 #[derive(Subcommand)]
@@ -101,6 +106,8 @@ enum AuthCommands {
 enum StreamCommands {
     /// Start monitoring ATProto streams
     Start {
+        /// Path to the blog project directory
+        project_dir: Option<PathBuf>,
         /// Run as daemon
         #[arg(short, long)]
         daemon: bool,
@@ -111,6 +118,15 @@ enum StreamCommands {
     Status,
     /// Test API access to comments collection
     Test,
+}
+
+#[derive(Subcommand)]
+enum OauthCommands {
+    /// Build OAuth app
+    Build {
+        /// Path to the blog project directory
+        project_dir: PathBuf,
+    },
 }
 
 #[tokio::main]
@@ -159,8 +175,8 @@ async fn main() -> Result<()> {
         }
         Commands::Stream { command } => {
             match command {
-                StreamCommands::Start { daemon } => {
-                    commands::stream::start(daemon).await?;
+                StreamCommands::Start { project_dir, daemon } => {
+                    commands::stream::start(project_dir, daemon).await?;
                 }
                 StreamCommands::Stop => {
                     commands::stream::stop().await?;
@@ -170,6 +186,13 @@ async fn main() -> Result<()> {
                 }
                 StreamCommands::Test => {
                     commands::stream::test_api().await?;
+                }
+            }
+        }
+        Commands::Oauth { command } => {
+            match command {
+                OauthCommands::Build { project_dir } => {
+                    commands::oauth::build(project_dir).await?;
                 }
             }
         }

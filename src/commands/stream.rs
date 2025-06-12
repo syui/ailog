@@ -5,12 +5,73 @@ use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::collections::HashSet;
 use std::fs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 use tokio::time::{sleep, Duration, interval};
 use tokio_tungstenite::{connect_async, tungstenite::Message};
+use toml;
 
 use super::auth::{load_config, load_config_with_refresh, AuthConfig};
+
+// Load collection config with priority: env vars > project config.toml > defaults
+fn load_collection_config(project_dir: Option<&Path>) -> Result<(String, String)> {
+    // 1. Check environment variables first (highest priority)
+    if let (Ok(comment), Ok(user)) = (
+        std::env::var("AILOG_COLLECTION_COMMENT"),
+        std::env::var("AILOG_COLLECTION_USER")
+    ) {
+        println!("{}", "📂 Using collection config from environment variables".cyan());
+        return Ok((comment, user));
+    }
+
+    // 2. Try to load from project config.toml (second priority)
+    if let Some(project_path) = project_dir {
+        match load_collection_config_from_project(project_path) {
+            Ok(config) => {
+                println!("{}", format!("📂 Using collection config from: {}", project_path.display()).cyan());
+                return Ok(config);
+            }
+            Err(e) => {
+                println!("{}", format!("⚠️  Failed to load project config: {}", e).yellow());
+                println!("{}", "📂 Falling back to default collections".cyan());
+            }
+        }
+    }
+
+    // 3. Use defaults (lowest priority)
+    println!("{}", "📂 Using default collection configuration".cyan());
+    Ok(("ai.syui.log".to_string(), "ai.syui.log.user".to_string()))
+}
+
+// Load collection config from project's config.toml
+fn load_collection_config_from_project(project_dir: &Path) -> Result<(String, String)> {
+    let config_path = project_dir.join("config.toml");
+    if !config_path.exists() {
+        return Err(anyhow::anyhow!("config.toml not found in {}", project_dir.display()));
+    }
+
+    let config_content = fs::read_to_string(&config_path)
+        .with_context(|| format!("Failed to read config.toml from {}", config_path.display()))?;
+    
+    let config: toml::Value = config_content.parse()
+        .with_context(|| "Failed to parse config.toml")?;
+
+    let oauth_config = config.get("oauth")
+        .and_then(|v| v.as_table())
+        .ok_or_else(|| anyhow::anyhow!("No [oauth] section found in config.toml"))?;
+
+    let collection_comment = oauth_config.get("collection_comment")
+        .and_then(|v| v.as_str())
+        .unwrap_or("ai.syui.log")
+        .to_string();
+
+    let collection_user = oauth_config.get("collection_user")
+        .and_then(|v| v.as_str())
+        .unwrap_or("ai.syui.log.user")
+        .to_string();
+
+    Ok((collection_comment, collection_user))
+}
 
 #[derive(Debug, Serialize, Deserialize)]
 struct JetstreamMessage {
@@ -57,8 +118,17 @@ fn get_pid_file() -> Result<PathBuf> {
     Ok(pid_dir.join("stream.pid"))
 }
 
-pub async fn start(daemon: bool) -> Result<()> {
-    let config = load_config_with_refresh().await?;
+pub async fn start(project_dir: Option<PathBuf>, daemon: bool) -> Result<()> {
+    let mut config = load_config_with_refresh().await?;
+    
+    // Load collection config with priority: env vars > project config > defaults
+    let (collection_comment, collection_user) = load_collection_config(project_dir.as_deref())?;
+    
+    // Update config with loaded collections
+    config.collections.comment = collection_comment.clone();
+    config.collections.user = collection_user;
+    config.jetstream.collections = vec![collection_comment];
+    
     let pid_file = get_pid_file()?;
     
     // Check if already running
@@ -74,8 +144,15 @@ pub async fn start(daemon: bool) -> Result<()> {
         
         // Fork process for daemon mode
         let current_exe = std::env::current_exe()?;
+        let mut args = vec!["stream".to_string(), "start".to_string()];
+        
+        // Add project_dir argument if provided
+        if let Some(project_path) = &project_dir {
+            args.push(project_path.to_string_lossy().to_string());
+        }
+        
         let child = Command::new(current_exe)
-            .args(&["stream", "start"])
+            .args(&args)
             .stdin(Stdio::null())
             .stdout(Stdio::null())
             .stderr(Stdio::null())

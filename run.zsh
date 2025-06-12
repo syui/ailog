@@ -6,6 +6,7 @@ function _env() {
 	oauth=$d/oauth
 	myblog=$d/my-blog
 	port=4173
+	source $oauth/.env.production
 	case $OSTYPE in
 		darwin*)
 			export NVM_DIR="$HOME/.nvm"
@@ -34,7 +35,6 @@ function _oauth_build() {
 	cd $oauth
 	nvm use 21
 	npm i
-	source .env.production
 	npm run build
 	rm -rf $myblog/static/assets
 	cp -rf dist/* $myblog/static/
