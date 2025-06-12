@@ -36,6 +36,7 @@ function _oauth_build() {
 	npm i
 	source .env.production
 	npm run build
+	rm -rf $myblog/static/assets
 	cp -rf dist/* $myblog/static/
 	cp $oauth/dist/index.html $myblog/templates/oauth-assets.html
 	#npm run preview
