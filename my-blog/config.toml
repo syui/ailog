@@ -1,0 +1,29 @@
+[site]
+title = "syui.ai"
+description = "a blog powered by ailog"
+base_url = "https://syui.ai"
+language = "ja"
+author = "syui"
+
+[build]
+highlight_code = true
+minify = false
+
+[ai]
+enabled = true
+auto_translate = false
+comment_moderation = false
+ask_ai = true
+provider = "ollama"
+model = "gemma3:2b"
+host = "https://ollama.syui.ai"
+system_prompt = "you are a helpful ai assistant trained on this blog's content. you can answer questions about the articles, provide insights, and help users understand the topics discussed."
+ai_did = "did:plc:4hqjfn7m6n5hno3doamuhgef"
+
+[oauth]
+json = "client-metadata.json"
+redirect = "oauth/callback"
+admin = "did:plc:uqzpqmrjnptsxezjx4xuh2mn"
+collection_comment = "ai.syui.log"
+collection_user = "ai.syui.log.user"
+collection_chat = "ai.syui.log.chat"

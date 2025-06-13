@@ -36,7 +36,8 @@
       "Bash(./target/release/ailog:*)",
       "Bash(rg:*)",
       "Bash(../target/release/ailog build)",
-      "Bash(zsh run.zsh:*)"
+      "Bash(zsh run.zsh:*)",
+      "Bash(hugo:*)"
     ],
     "deny": []
   }

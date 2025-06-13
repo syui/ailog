@@ -1,0 +1,30 @@
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-XSS-Protection: 1; mode=block
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+# OAuth specific headers
+/oauth/*
+  Access-Control-Allow-Origin: https://bsky.social
+  Access-Control-Allow-Methods: GET, POST, OPTIONS
+  Access-Control-Allow-Headers: Content-Type, Authorization
+
+# Static assets caching
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/css/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/*.js
+  Cache-Control: public, max-age=31536000, immutable
+
+/posts/*
+  Cache-Control: public, max-age=3600
+
+# Client metadata for OAuth
+/client-metadata.json
+  Content-Type: application/json
+  Cache-Control: public, max-age=3600

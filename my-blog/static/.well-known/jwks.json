@@ -1,0 +1,14 @@
+{
+  "keys": [
+    {
+      "kty": "EC",
+      "crv": "P-256",
+      "x": "mock_x_coordinate_base64url",
+      "y": "mock_y_coordinate_base64url",
+      "d": "mock_private_key_base64url",
+      "use": "sig",
+      "kid": "ai-card-oauth-key-1",
+      "alg": "ES256"
+    }
+  ]
+}

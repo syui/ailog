@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="{{ config.language }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ config.title }}{% endblock %}</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    {% include "oauth-assets.html" %}
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <div class="container">
+        <header class="main-header">
+            <div class="header-content">
+                <h1><a href="/" class="site-title">{{ config.title }}</a></h1>
+                <div class="header-actions">
+                    <!-- Ask AI button on all pages -->
+                    <button class="ask-ai-btn" onclick="toggleAskAI()" id="askAiButton">
+                        <span class="ai-icon">🤖</span>
+                        Ask AI
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Ask AI panel on all pages -->
+        <div class="ask-ai-panel" id="askAiPanel" style="display: none;">
+            <div class="ask-ai-content">
+                <!-- Authentication check -->
+                <div id="authCheck" class="auth-check">
+                    <p>🔒 Please login with ATProto to use Ask AI feature</p>
+                </div>
+                
+                <!-- Chat form (hidden until authenticated) -->
+                <div id="chatForm" class="ask-ai-form" style="display: none;">
+                    <input type="text" id="aiQuestion" placeholder="What would you like to know?" />
+                    <button onclick="askQuestion()" id="askButton">Ask</button>
+                </div>
+                
+                <!-- Chat history -->
+                <div id="chatHistory" class="chat-history" style="display: none;"></div>
+            </div>
+        </div>
+        
+        <main class="main-content">
+            {% block content %}{% endblock %}
+        </main>
+
+        {% block sidebar %}{% endblock %}
+    </div>
+    
+    <footer class="main-footer">
+        <p>&copy; {{ config.author }}</p>
+    </footer>
+
+    <script>
+        function toggleAskAI() {
+            const panel = document.getElementById('askAiPanel');
+            const isVisible = panel.style.display !== 'none';
+            panel.style.display = isVisible ? 'none' : 'block';
+            
+            if (!isVisible) {
+                checkAuthenticationStatus();
+            }
+        }
+
+        function checkAuthenticationStatus() {
+            const userSections = document.querySelectorAll('.user-section');
+            const isAuthenticated = userSections.length > 0;
+            
+            if (isAuthenticated) {
+                // User is authenticated - show Ask AI UI
+                document.getElementById('authCheck').style.display = 'none';
+                document.getElementById('chatForm').style.display = 'block';
+                document.getElementById('chatHistory').style.display = 'block';
+                
+                // Show initial greeting if chat history is empty
+                const chatHistory = document.getElementById('chatHistory');
+                if (chatHistory.children.length === 0) {
+                    showInitialGreeting();
+                }
+                
+                // Focus after a small delay to ensure element is visible
+                setTimeout(() => {
+                    document.getElementById('aiQuestion').focus();
+                }, 50);
+            } else {
+                // User is not authenticated - show login message only
+                document.getElementById('authCheck').style.display = 'block';
+                document.getElementById('chatForm').style.display = 'none';
+                document.getElementById('chatHistory').style.display = 'none';
+            }
+        }
+
+        let isAIChatReady = false;
+        let aiProfileData = null;
+        
+        // Listen for AI ready signal
+        window.addEventListener('aiChatReady', function() {
+            isAIChatReady = true;
+            console.log('AI Chat is ready');
+        });
+        
+        
+        // Listen for AI profile updates from OAuth app
+        window.addEventListener('aiProfileLoaded', function(event) {
+            aiProfileData = event.detail;
+            console.log('AI profile loaded:', aiProfileData);
+            updateAskAIButton();
+        });
+        
+        function updateAskAIButton() {
+            const button = document.getElementById('askAiButton');
+            const iconSpan = button.querySelector('.ai-icon');
+            
+            if (aiProfileData && aiProfileData.avatar) {
+                iconSpan.innerHTML = `<img src="${aiProfileData.avatar}" alt="${aiProfileData.displayName || 'AI'}" class="ai-avatar-small">`;
+            }
+            
+            if (aiProfileData && aiProfileData.displayName) {
+                button.childNodes[2].textContent = `Ask ${aiProfileData.displayName}`;
+            }
+        }
+        
+        function showInitialGreeting() {
+            const chatHistory = document.getElementById('chatHistory');
+            const greetingDiv = document.createElement('div');
+            greetingDiv.className = 'chat-message ai-message comment-style initial-greeting';
+            
+            if (!aiProfileData) {
+                return; // Don't show greeting if no AI profile data
+            }
+            
+            let avatarElement = '🤖';
+            if (aiProfileData.avatar) {
+                avatarElement = `<img src="${aiProfileData.avatar}" alt="${aiProfileData.displayName}" class="profile-avatar">`;
+            }
+            
+            const displayName = aiProfileData.displayName;
+            const handle = aiProfileData.handle;
+            
+            greetingDiv.innerHTML = `
+                <div class="message-header">
+                    <div class="avatar">${avatarElement}</div>
+                    <div class="user-info">
+                        <div class="display-name">${displayName}</div>
+                        <div class="handle">@${handle}</div>
+                        <div class="timestamp">${new Date().toLocaleString()}</div>
+                    </div>
+                </div>
+                <div class="message-content">
+                    Hello! I'm an AI assistant trained on this blog's content. I can answer questions about the articles, provide insights, and help you understand the topics discussed here. What would you like to know?
+                </div>
+            `;
+            chatHistory.appendChild(greetingDiv);
+        }
+        
+        async function askQuestion() {
+            const question = document.getElementById('aiQuestion').value;
+            const chatHistory = document.getElementById('chatHistory');
+            const askButton = document.getElementById('askButton');
+            
+            if (!question.trim()) return;
+            
+            // Wait for AI to be ready
+            if (!isAIChatReady) {
+                console.log('Waiting for AI Chat to be ready...');
+                await new Promise(resolve => {
+                    const checkReady = setInterval(() => {
+                        if (isAIChatReady) {
+                            clearInterval(checkReady);
+                            resolve();
+                        }
+                    }, 100);
+                });
+            }
+            
+            // Disable button and show loading
+            askButton.disabled = true;
+            askButton.textContent = 'Posting...';
+            
+            // Get user info from OAuth component
+            const userSection = document.querySelector('.user-section');
+            let userAvatar = '👤';
+            let userDisplay = 'You';
+            let userHandle = 'user';
+            
+            if (userSection) {
+                const avatarImg = userSection.querySelector('.user-avatar');
+                const displayName = userSection.querySelector('.user-display-name');
+                const handle = userSection.querySelector('.user-handle');
+                
+                if (avatarImg && avatarImg.src) {
+                    userAvatar = `<img src="${avatarImg.src}" alt="${displayName?.textContent || 'User'}" class="profile-avatar">`;
+                }
+                if (displayName?.textContent) {
+                    userDisplay = displayName.textContent;
+                }
+                if (handle?.textContent) {
+                    userHandle = handle.textContent.replace('@', '');
+                }
+            }
+            
+            // Add question to chat history in comment style
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'chat-message user-message comment-style';
+            questionDiv.innerHTML = `
+                <div class="message-header">
+                    <div class="avatar">${userAvatar}</div>
+                    <div class="user-info">
+                        <div class="display-name">${userDisplay}</div>
+                        <div class="handle">@${userHandle}</div>
+                        <div class="timestamp">${new Date().toLocaleString()}</div>
+                    </div>
+                </div>
+                <div class="message-content">${question}</div>
+            `;
+            chatHistory.appendChild(questionDiv);
+            
+            // Clear input
+            document.getElementById('aiQuestion').value = '';
+            
+            try {
+                // Show loading immediately
+                const loadingDiv = document.createElement('div');
+                loadingDiv.className = 'ai-loading-simple';
+                loadingDiv.innerHTML = `
+                    <i class="fas fa-robot"></i>
+                    <span>考えています</span>
+                    <i class="fas fa-spinner fa-spin"></i>
+                `;
+                chatHistory.appendChild(loadingDiv);
+                
+                // Post question to ATProto via OAuth app
+                const event = new CustomEvent('postAIQuestion', {
+                    detail: { question: question }
+                });
+                window.dispatchEvent(event);
+                
+            } catch (error) {
+                // Remove loading indicator and show error
+                const loadingMsg = chatHistory.querySelector('.ai-loading-simple');
+                if (loadingMsg) {
+                    loadingMsg.remove();
+                }
+                
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'chat-message error-message comment-style';
+                errorDiv.innerHTML = `
+                    <div class="message-header">
+                        <div class="avatar">⚠️</div>
+                        <div class="user-info">
+                            <div class="display-name">System</div>
+                            <div class="handle">@system</div>
+                            <div class="timestamp">${new Date().toLocaleString()}</div>
+                        </div>
+                    </div>
+                    <div class="message-content">Sorry, I encountered an error. Please try again.</div>
+                `;
+                chatHistory.appendChild(errorDiv);
+            } finally {
+                askButton.disabled = false;
+                askButton.textContent = 'Ask';
+            }
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.getElementById('askAiPanel').style.display = 'none';
+            }
+            
+            // Enter key to send message
+            if (e.key === 'Enter' && e.target.id === 'aiQuestion' && !e.shiftKey) {
+                e.preventDefault();
+                askQuestion();
+            }
+        });
+        
+        // Monitor authentication state changes
+        const authObserver = new MutationObserver(function(mutations) {
+            const userSections = document.querySelectorAll('.user-section');
+            if (userSections.length > 0) {
+                checkAuthenticationStatus();
+                // Stop observing once authenticated
+                authObserver.disconnect();
+            }
+        });
+        
+        // Start observing for authentication changes
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initial authentication check with slight delay for OAuth component
+            setTimeout(() => {
+                checkAuthenticationStatus();
+            }, 500);
+            
+            authObserver.observe(document.body, { 
+                childList: true, 
+                subtree: true 
+            });
+        });
+        
+        // Listen for AI responses from OAuth app
+        window.addEventListener('aiResponseReceived', function(event) {
+            const chatHistory = document.getElementById('chatHistory');
+            const loadingMsg = chatHistory.querySelector('.ai-loading-simple');
+            
+            if (loadingMsg) {
+                loadingMsg.remove();
+            }
+            
+            const aiProfile = event.detail.aiProfile;
+            if (!aiProfile || !aiProfile.handle || !aiProfile.displayName) {
+                console.error('AI profile data is missing, cannot display response');
+                return;
+            }
+            
+            const timestamp = new Date(event.detail.timestamp || Date.now());
+            
+            // Create comment-style AI response
+            const answerDiv = document.createElement('div');
+            answerDiv.className = 'chat-message ai-message comment-style';
+            
+            // Prepare avatar
+            let avatarElement = '🤖';
+            if (aiProfile.avatar) {
+                avatarElement = `<img src="${aiProfile.avatar}" alt="${aiProfile.displayName}" class="profile-avatar">`;
+            }
+            
+            answerDiv.innerHTML = `
+                <div class="message-header">
+                    <div class="avatar">${avatarElement}</div>
+                    <div class="user-info">
+                        <div class="display-name">${aiProfile.displayName}</div>
+                        <div class="handle">@${aiProfile.handle}</div>
+                        <div class="timestamp">${timestamp.toLocaleString()}</div>
+                    </div>
+                </div>
+                <div class="message-content">${event.detail.answer}</div>
+            `;
+            chatHistory.appendChild(answerDiv);
+            
+            // Auto-expand content instead of scrolling
+            if (chatHistory.children.length > 5) {
+                const oldestMessage = chatHistory.children[0];
+                if (oldestMessage && oldestMessage.classList.contains('user-message')) {
+                    // Keep the latest 5 exchanges (10 messages)
+                    if (chatHistory.children.length > 10) {
+                        chatHistory.removeChild(oldestMessage);
+                        if (chatHistory.children.length > 0) {
+                            chatHistory.removeChild(chatHistory.children[0]);
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+name: Deploy to Cloudflare Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '21'
+
+      - name: Install dependencies
+        run: |
+          cd oauth
+          npm install
+
+      - name: Build OAuth app
+        run: |
+          cd oauth
+          npm run build
+          
+      - name: Copy OAuth build to static
+        run: |
+          mkdir -p my-blog/static/assets
+          cp -r oauth/dist/assets/* my-blog/static/assets/
+          cp oauth/dist/index.html my-blog/static/oauth/index.html || true
+          
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: Build ailog
+        run: cargo build --release
+
+      - name: Build site with ailog
+        run: |
+          cd my-blog
+          ../target/release/ailog build
+
+      - name: List public directory
+        run: |
+          ls -la my-blog/public/
+          
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: ${{ secrets.CLOUDFLARE_PROJECT_NAME }}
+          directory: my-blog/public
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          wranglerVersion: '3'

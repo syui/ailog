@@ -1,0 +1,18 @@
+tunnel: ec5a422d-7678-4e73-bf38-6105ffd4766a
+credentials-file: /Users/syui/.cloudflared/ec5a422d-7678-4e73-bf38-6105ffd4766a.json
+
+ingress:
+  - hostname: log.syui.ai
+    service: http://localhost:4173
+    originRequest:
+      noHappyEyeballs: true
+ 
+  - hostname: ollama.syui.ai
+    service: http://localhost:11434
+    originRequest:
+      noHappyEyeballs: true
+      httpHostHeader: "localhost:11434"
+      # Cloudflare Accessを無効化する場合は以下をコメントアウト
+      # accessPolicy: bypass
+      
+  - service: http_status:404

@@ -1,0 +1,11 @@
+# AI機能をai.gpt MCP serverにリダイレクト
+/api/ask https://ai-gpt-mcp.syui.ai/ask 200
+
+# Ollama API proxy (Cloudflare Workers)
+/api/ollama-proxy https://ollama-proxy.YOUR-SUBDOMAIN.workers.dev/:splat 200
+
+# OAuth routes
+/oauth/* /oauth/index.html 200
+
+# SPA routing support
+/*    /index.html   200
