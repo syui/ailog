@@ -1,0 +1,22 @@
+[Unit]
+Description=ailog stream monitoring service
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=syui
+Group=syui
+WorkingDirectory=/home/syui/git/log
+ExecStart=/home/syui/.cargo/bin/ailog stream start my-blog
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+# Environment variables if needed
+Environment=RUST_LOG=info
+Environment=AILOG_DEBUG_ALL=1
+
+[Install]
+WantedBy=multi-user.target

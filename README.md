@@ -603,6 +603,41 @@ translation = true
 - Check AI provider configuration
 - Ensure sufficient context in memory system
 
+## systemd
+
+```sh
+# ファイルをsystemdディレクトリにコピー
+sudo cp ./systemd/system/ailog-stream.service /etc/systemd/system/
+sudo cp ./systemd/system/cloudflared-log.service /etc/systemd/system/
+
+# 権限設定
+sudo chmod 644 /etc/systemd/system/ailog-stream.service
+sudo chmod 644 /etc/systemd/system/cloudflared-log.service
+
+# systemd設定reload
+sudo systemctl daemon-reload
+
+# サービス有効化・開始
+sudo systemctl enable ailog-stream.service
+sudo systemctl enable cloudflared-log.service
+
+sudo systemctl start ailog-stream.service
+sudo systemctl start cloudflared-log.service
+
+# 状態確認
+sudo systemctl status ailog-stream.service
+sudo systemctl status cloudflared-log.service
+
+# ログ確認
+journalctl -u ailog-stream.service -f
+journalctl -u cloudflared-log.service -f
+
+設定のポイント：
+- User=syui でユーザー権限で実行
+- Restart=always で異常終了時自動再起動
+- After=network.target でネットワーク起動後に実行
+- StandardOutput=journal でログをjournalctlで確認可能
+```
 
 ## License
 

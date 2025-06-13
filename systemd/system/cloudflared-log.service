@@ -1,0 +1,25 @@
+[Unit]
+Description=Cloudflared tunnel for log.syui.ai
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=syui
+Group=syui
+WorkingDirectory=/home/syui/git/log
+ExecStart=/usr/bin/cloudflared tunnel --config /home/syui/git/log/cloudflared-config.yml run
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+# Security hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/home/syui/git/log
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
