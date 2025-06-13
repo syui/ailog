@@ -1052,8 +1052,8 @@ body {
 }
 
 .chat-message.ai-message.comment-style {
-    border-left: 4px solid var(--light-gray);
-    border: 2px solid var(--white);
+    border-left: 4px solid #fff700;
+    /* border: 2px solid #3F51B5; */
     background: #faf8ff;
 }
 

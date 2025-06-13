@@ -13,14 +13,14 @@ cd log
 
 # 2. Start development services
 ./run.zsh serve    # Blog development server
-./run.zsh c        # Cloudflare tunnel (log.syui.ai)
+./run.zsh c        # Cloudflare tunnel (example.com)
 ./run.zsh o        # OAuth web server  
 ./run.zsh co       # Comment system monitor
 
 # 3. Start Ollama (for Ask AI)
 brew install ollama
 ollama pull gemma2:2b
-OLLAMA_ORIGINS="https://log.syui.ai" ollama serve
+OLLAMA_ORIGINS="https://example.com" ollama serve
 ```
 
 ### Production Deployment
@@ -43,9 +43,9 @@ git push origin main
 ```bash
 # 1. OAuth Client Setup (oauth/client-metadata.json)
 {
-  "client_id": "https://log.syui.ai/client-metadata.json",
+  "client_id": "https://example.com/client-metadata.json",
   "client_name": "ai.log Blog System",
-  "redirect_uris": ["https://log.syui.ai/oauth/callback"],
+  "redirect_uris": ["https://example.com/oauth/callback"],
   "scope": "atproto",
   "grant_types": ["authorization_code", "refresh_token"],
   "response_types": ["code"],
@@ -82,8 +82,8 @@ git push origin main
 
 | Command | Description |
 |---------|-------------|
-| `./run.zsh c` | Enable Cloudflare tunnel (log.syui.ai) for OAuth |
-| `./run.zsh o` | Start OAuth web server (port:4173 = log.syui.ai) |
+| `./run.zsh c` | Enable Cloudflare tunnel (example.com) for OAuth |
+| `./run.zsh o` | Start OAuth web server (port:4173 = example.com) |
 | `./run.zsh co` | Start comment system (ATProto stream monitor) |
 
 ## 🏗️ Architecture (Pure Rust + HTML + JS)
@@ -148,7 +148,7 @@ brew install ollama
 ollama pull gemma2:2b
 
 # 2. CORS設定で起動
-OLLAMA_ORIGINS="https://log.syui.ai" ollama serve
+OLLAMA_ORIGINS="https://example.com" ollama serve
 
 # 3. AI DID設定 (my-blog/templates/base.html)
 const aiConfig = {
@@ -604,6 +604,12 @@ translation = true
 - Ensure sufficient context in memory system
 
 ## systemd
+
+```sh
+$ sudo vim /usr/lib/systemd/system/ollama.service
+[Service]
+Environment="OLLAMA_ORIGINS=https://example.com"
+```
 
 ```sh
 # ファイルをsystemdディレクトリにコピー
