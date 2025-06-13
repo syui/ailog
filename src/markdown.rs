@@ -88,10 +88,11 @@ impl MarkdownProcessor {
         let parser = Parser::new_ext(content, options);
         let mut html_output = String::new();
         let mut code_block = None;
-        let theme = self.theme_set.themes.get(&self.highlight_theme)
-            .or_else(|| self.theme_set.themes.get("Monokai"))
-            .or_else(|| self.theme_set.themes.get("InspiredGitHub"))
+        // Force use dark theme for better visibility on dark background
+        let theme = self.theme_set.themes.get("base16-monokai.dark")
             .or_else(|| self.theme_set.themes.get("base16-ocean.dark"))
+            .or_else(|| self.theme_set.themes.get("Solarized (dark)"))
+            .or_else(|| self.theme_set.themes.get(&self.highlight_theme))
             .unwrap_or_else(|| self.theme_set.themes.values().next().unwrap());
 
         let mut events = Vec::new();

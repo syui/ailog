@@ -2,7 +2,7 @@
 :root {
     --theme-color: #FF4500;
     --white: #fff;
-    --light-gray: #aaa;
+    --light-gray: #f6f8fa;
     --dark-gray: #666;
     --background: #fff;
 }
@@ -65,9 +65,9 @@ body {
 
 /* Ask AI styles */
 .ask-ai-btn {
-    background: var(--light-gray);
+    background: var(--theme-color);
     color: var(--white);
-    border: 2px solid var(--white);
+    /* border: 2px solid var(--white); */
     padding: 8px 16px;
     border-radius: 6px;
     cursor: pointer;
@@ -423,9 +423,9 @@ body {
 }
 
 .markdown-btn {
-    background: #fd7e14;
+    background: #d1d9e0;
     color: white;
-    border-color: #fd7e14;
+    /* border-color: #fd7e14; */
 }
 
 .markdown-btn:hover {
@@ -479,7 +479,7 @@ body {
     color: #656d76;
 }
 
-/* Molokai-inspired code blocks */
+/* Code blocks - Molokai theme */
 .article-body pre {
     background: #1B1D1E;
     border: 1px solid #3E3D32;
@@ -516,13 +516,13 @@ body {
 
 /* Inline code */
 .article-body code {
-    background: #2F3129;
-    color: #A6E22E;
+    background: #f5f5f5;
+    color: var(--theme-color);
     padding: 2px 6px;
     border-radius: 4px;
     font-family: 'SF Mono', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
     font-size: 13px;
-    border: 1px solid #3E3D32;
+    /* border: 1px solid var(--white); */
 }
 
 /* Molokai color scheme for syntax highlighting */
@@ -1062,6 +1062,18 @@ body {
     background: #fef2f2;
 }
 
+/* Fix long URI display on mobile */
+.chat-message small,
+.comment-item small {
+    word-wrap: break-word;
+    word-break: break-all;
+    overflow-wrap: break-word;
+    display: block;
+    font-size: 12px;
+    color: #656d76;
+    margin-top: 4px;
+}
+
 .message-header {
     display: flex;
     align-items: center;
@@ -1158,5 +1170,44 @@ body {
     .message-header {
         gap: 8px;
         margin-bottom: 8px;
+    }
+}
+
+/* Mobile optimizations for screens under 700px */
+@media (max-width: 700px) {
+    .comment-section {
+        max-width: 100%;
+        padding: 0 16px;
+        box-sizing: border-box;
+    }
+    
+    .app-main {
+        max-width: 100%;
+        padding: 20px 16px;
+        box-sizing: border-box;
+    }
+    
+    /* Ensure long URIs break properly on small screens */
+    .chat-message small,
+    .comment-item small {
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    /* Adjust spacing for mobile */
+    .comment-item,
+    .chat-message {
+        margin-bottom: 8px;
+    }
+    
+    /* Stack buttons vertically on very small screens */
+    .button-group {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .button-group button {
+        width: 100%;
     }
 }
