@@ -17,6 +17,7 @@ pub struct SiteConfig {
     pub description: String,
     pub base_url: String,
     pub language: String,
+    pub author: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -30,6 +31,12 @@ pub struct AiConfig {
     pub enabled: bool,
     pub auto_translate: bool,
     pub comment_moderation: bool,
+    pub ask_ai: Option<bool>,
+    pub provider: Option<String>,
+    pub model: Option<String>,
+    pub host: Option<String>,
+    pub system_prompt: Option<String>,
+    pub ai_did: Option<String>,
     pub api_key: Option<String>,
     pub gpt_endpoint: Option<String>,
     pub atproto_config: Option<AtprotoConfig>,
@@ -135,6 +142,7 @@ impl Default for Config {
                 description: "A blog powered by ailog".to_string(),
                 base_url: "https://example.com".to_string(),
                 language: "ja".to_string(),
+                author: None,
             },
             build: BuildConfig {
                 highlight_code: true,
@@ -144,6 +152,12 @@ impl Default for Config {
                 enabled: false,
                 auto_translate: false,
                 comment_moderation: false,
+                ask_ai: Some(false),
+                provider: Some("ollama".to_string()),
+                model: Some("gemma3:4b".to_string()),
+                host: None,
+                system_prompt: Some("You are a helpful AI assistant trained on this blog's content.".to_string()),
+                ai_did: None,
                 api_key: None,
                 gpt_endpoint: None,
                 atproto_config: None,

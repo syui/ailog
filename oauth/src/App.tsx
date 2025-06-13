@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { OAuthCallback } from './components/OAuthCallback';
+import { AIChat } from './components/AIChat';
 import { authService, User } from './services/auth';
 import { atprotoOAuthService } from './services/atproto-oauth';
 import { appConfig } from './config/app';
@@ -83,8 +84,8 @@ function App() {
       }
     };
     
-    // Jetstream + Cache example
-    const jetstream = setupJetstream();
+    // Jetstream + Cache example (disabled for now)
+    // const jetstream = setupJetstream();
     
     // キャッシュからコメント読み込み
     const loadCachedComments = () => {
@@ -102,7 +103,10 @@ function App() {
     
     // キャッシュがなければ、ATProtoから取得（認証状態に関係なく）
     if (!loadCachedComments()) {
+      console.log('No cached comments found, loading from ATProto...');
       loadAllComments(); // URLフィルタリングを無効にして全コメント表示
+    } else {
+      console.log('Cached comments loaded successfully');
     }
 
     // Handle popstate events for mock OAuth flow
@@ -144,6 +148,7 @@ function App() {
         
         // Load all comments for display (this will be the default view)
         // Temporarily disable URL filtering to see all comments
+        console.log('OAuth session found, loading all comments...');
         loadAllComments();
         
         // Load user list records if admin
@@ -164,6 +169,7 @@ function App() {
         
         // Load all comments for display (this will be the default view)
         // Temporarily disable URL filtering to see all comments
+        console.log('Legacy auth session found, loading all comments...');
         loadAllComments();
         
         // Load user list records if admin
@@ -174,6 +180,7 @@ function App() {
       setIsLoading(false);
       
       // 認証状態に関係なく、コメントを読み込む
+      console.log('No auth session found, loading all comments anyway...');
       loadAllComments();
     };
 
@@ -480,6 +487,7 @@ function App() {
       console.log('Known users used:', knownUsers);
       
       setComments(enhancedComments);
+      console.log('Comments state updated with', enhancedComments.length, 'comments');
       
       // キャッシュに保存（5分間有効）
       if (pageUrl) {
@@ -1076,6 +1084,8 @@ function App() {
         </section>
       </main>
 
+      {/* AI Chat Component - handles all AI functionality */}
+      <AIChat user={user} isEnabled={appConfig.aiEnabled && appConfig.aiAskAi} />
     </div>
   );
 }

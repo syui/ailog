@@ -30,6 +30,7 @@ title = "My Blog"
 description = "A blog powered by ailog"
 base_url = "https://example.com"
 language = "ja"
+author = "Your Name"
 
 [build]
 highlight_code = true
@@ -88,7 +89,7 @@ comment_moderation = false
     </div>
     
     <footer class="main-footer">
-        <p>&copy; 2025 {{ config.title }}</p>
+        <p>&copy; {{ config.author | default(value=config.title) }}</p>
     </footer>
 
     <script>

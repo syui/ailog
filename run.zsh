@@ -17,8 +17,8 @@ function _env() {
 }
 
 function _server() {
-	_env
 	lsof -ti:$port | xargs kill -9 2>/dev/null || true
+	lsof -ti:11434 | xargs kill -9 2>/dev/null || true
 	cd $d/my-blog
 	cargo build --release
 	$ailog build
@@ -26,12 +26,10 @@ function _server() {
 }
 
 function _server_public() {
-	_env
 	cloudflared tunnel --config $d/cloudflared-config.yml run 
 }
 
 function _oauth_build() {
-	_env
 	cd $oauth
 	nvm use 21
 	npm i
@@ -43,10 +41,16 @@ function _oauth_build() {
 }
 
 function _server_comment() {
-	_env
 	cargo build --release
-	AILOG_DEBUG_ALL=1 $ailog stream start
+	AILOG_DEBUG_ALL=1 $ailog stream start my-blog
 }
+
+function _server_ollama(){
+	brew services stop ollama
+	OLLAMA_ORIGINS="https://log.syui.ai" ollama serve
+}
+
+_env
 
 case "${1:-serve}" in
 	tunnel|c)
@@ -57,6 +61,12 @@ case "${1:-serve}" in
 		;;
 	comment|co)
 		_server_comment
+		;;
+	ollama|ol)
+		_server_ollama
+		;;
+	proxy|p)
+		_server_proxy
 		;;
 	serve|s|*)
 		_server

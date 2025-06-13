@@ -53,6 +53,39 @@ pub async fn build(project_dir: PathBuf) -> Result<()> {
         .and_then(|v| v.as_str())
         .unwrap_or("ai.syui.log.user");
 
+    let collection_chat = oauth_config.get("collection_chat")
+        .and_then(|v| v.as_str())
+        .unwrap_or("ai.syui.log.chat");
+
+    // Extract AI config if present
+    let ai_config = config.get("ai")
+        .and_then(|v| v.as_table());
+    
+    let ai_enabled = ai_config
+        .and_then(|ai| ai.get("enabled"))
+        .and_then(|v| v.as_bool())
+        .unwrap_or(false);
+    
+    let ai_ask_ai = ai_config
+        .and_then(|ai| ai.get("ask_ai"))
+        .and_then(|v| v.as_bool())
+        .unwrap_or(false);
+    
+    let ai_provider = ai_config
+        .and_then(|ai| ai.get("provider"))
+        .and_then(|v| v.as_str())
+        .unwrap_or("ollama");
+    
+    let ai_model = ai_config
+        .and_then(|ai| ai.get("model"))
+        .and_then(|v| v.as_str())
+        .unwrap_or("gemma2:2b");
+    
+    let ai_host = ai_config
+        .and_then(|ai| ai.get("host"))
+        .and_then(|v| v.as_str())
+        .unwrap_or("https://ollama.syui.ai");
+
     // 4. Create .env.production content
     let env_content = format!(
         r#"# Production environment variables
@@ -64,10 +97,19 @@ VITE_ADMIN_DID={}
 # Collection names for OAuth app
 VITE_COLLECTION_COMMENT={}
 VITE_COLLECTION_USER={}
+VITE_COLLECTION_CHAT={}
 
 # Collection names for ailog (backward compatibility)
 AILOG_COLLECTION_COMMENT={}
 AILOG_COLLECTION_USER={}
+AILOG_COLLECTION_CHAT={}
+
+# AI Configuration
+VITE_AI_ENABLED={}
+VITE_AI_ASK_AI={}
+VITE_AI_PROVIDER={}
+VITE_AI_MODEL={}
+VITE_AI_HOST={}
 "#,
         base_url,
         base_url, client_id_path,
@@ -75,8 +117,15 @@ AILOG_COLLECTION_USER={}
         admin_did,
         collection_comment,
         collection_user,
+        collection_chat,
         collection_comment,
-        collection_user
+        collection_user,
+        collection_chat,
+        ai_enabled,
+        ai_ask_ai,
+        ai_provider,
+        ai_model,
+        ai_host
     );
 
     // 5. Find oauth directory (relative to current working directory)
