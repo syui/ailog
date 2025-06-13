@@ -23,6 +23,7 @@ pub struct SiteConfig {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct BuildConfig {
     pub highlight_code: bool,
+    pub highlight_theme: Option<String>,
     pub minify: bool,
 }
 
@@ -146,6 +147,7 @@ impl Default for Config {
             },
             build: BuildConfig {
                 highlight_code: true,
+                highlight_theme: Some("Monokai".to_string()),
                 minify: false,
             },
             ai: Some(AiConfig {

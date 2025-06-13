@@ -9,14 +9,16 @@ use serde_json::Value;
 
 pub struct MarkdownProcessor {
     highlight_code: bool,
+    highlight_theme: String,
     syntax_set: SyntaxSet,
     theme_set: ThemeSet,
 }
 
 impl MarkdownProcessor {
-    pub fn new(highlight_code: bool) -> Self {
+    pub fn new(highlight_code: bool, highlight_theme: Option<String>) -> Self {
         Self {
             highlight_code,
+            highlight_theme: highlight_theme.unwrap_or_else(|| "Monokai".to_string()),
             syntax_set: SyntaxSet::load_defaults_newlines(),
             theme_set: ThemeSet::load_defaults(),
         }
@@ -86,7 +88,11 @@ impl MarkdownProcessor {
         let parser = Parser::new_ext(content, options);
         let mut html_output = String::new();
         let mut code_block = None;
-        let theme = &self.theme_set.themes["base16-ocean.dark"];
+        let theme = self.theme_set.themes.get(&self.highlight_theme)
+            .or_else(|| self.theme_set.themes.get("Monokai"))
+            .or_else(|| self.theme_set.themes.get("InspiredGitHub"))
+            .or_else(|| self.theme_set.themes.get("base16-ocean.dark"))
+            .unwrap_or_else(|| self.theme_set.themes.values().next().unwrap());
 
         let mut events = Vec::new();
         for event in parser {

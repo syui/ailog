@@ -18,7 +18,7 @@ pub struct Generator {
 
 impl Generator {
     pub fn new(base_path: PathBuf, config: Config) -> Result<Self> {
-        let markdown_processor = MarkdownProcessor::new(config.build.highlight_code);
+        let markdown_processor = MarkdownProcessor::new(config.build.highlight_code, config.build.highlight_theme.clone());
         let template_engine = TemplateEngine::new(base_path.join("templates"))?;
         
         let ai_manager = if let Some(ref ai_config) = config.ai {
