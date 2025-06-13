@@ -40,13 +40,17 @@ export const AIChat: React.FC<AIChatProps> = ({ user, isEnabled }) => {
           console.log('Fetching AI profile with agent for DID:', aiConfig.aiDid);
           const profile = await agent.getProfile({ actor: aiConfig.aiDid });
           console.log('AI profile fetched successfully:', profile.data);
-          setAiProfile({
+          const profileData = {
             did: aiConfig.aiDid,
             handle: profile.data.handle || 'ai-assistant',
             displayName: profile.data.displayName || 'AI Assistant',
             avatar: profile.data.avatar || null,
             description: profile.data.description || null
-          });
+          };
+          setAiProfile(profileData);
+          
+          // Dispatch event to update Ask AI button
+          window.dispatchEvent(new CustomEvent('aiProfileLoaded', { detail: profileData }));
           return;
         }
         
@@ -56,24 +60,32 @@ export const AIChat: React.FC<AIChatProps> = ({ user, isEnabled }) => {
         if (response.ok) {
           const profileData = await response.json();
           console.log('AI profile fetched via public API:', profileData);
-          setAiProfile({
+          const profile = {
             did: aiConfig.aiDid,
             handle: profileData.handle || 'ai-assistant',
             displayName: profileData.displayName || 'AI Assistant',
             avatar: profileData.avatar || null,
             description: profileData.description || null
-          });
+          };
+          setAiProfile(profile);
+          
+          // Dispatch event to update Ask AI button
+          window.dispatchEvent(new CustomEvent('aiProfileLoaded', { detail: profile }));
           return;
         }
       } catch (error) {
         console.log('Failed to fetch AI profile, using defaults:', error);
-        setAiProfile({
+        const fallbackProfile = {
           did: aiConfig.aiDid,
           handle: 'ai-assistant',
           displayName: 'AI Assistant',
           avatar: null,
           description: 'AI assistant for this blog'
-        });
+        };
+        setAiProfile(fallbackProfile);
+        
+        // Dispatch event even with fallback profile
+        window.dispatchEvent(new CustomEvent('aiProfileLoaded', { detail: fallbackProfile }));
       }
     };
 
@@ -178,11 +190,9 @@ export const AIChat: React.FC<AIChatProps> = ({ user, isEnabled }) => {
       if (aiConfig.provider === 'ollama') {
         const prompt = `${aiConfig.systemPrompt}
 
-${chatHistoryText ? `履歴: ${chatHistoryText}` : ''}
+Question: ${question}
 
-質問: ${question}
-
-簡潔に回答:`;
+Answer:`;
 
         const response = await fetch(`${aiConfig.host}/api/generate`, {
           method: 'POST',
@@ -194,9 +204,10 @@ ${chatHistoryText ? `履歴: ${chatHistoryText}` : ''}
             prompt: prompt,
             stream: false,
             options: {
-              temperature: 0.7,
+              temperature: 0.9,
               top_p: 0.9,
               num_predict: 80, // Shorter responses for faster generation
+              repeat_penalty: 1.1,
             }
           }),
         });
@@ -210,7 +221,6 @@ ${chatHistoryText ? `履歴: ${chatHistoryText}` : ''}
       }
 
       // 4. Immediately dispatch event to update UI
-      console.log('Dispatching AI response with profile:', aiProfile);
       window.dispatchEvent(new CustomEvent('aiResponseReceived', {
         detail: { 
           answer: aiAnswer,

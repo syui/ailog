@@ -18,7 +18,6 @@ function _env() {
 
 function _server() {
 	lsof -ti:$port | xargs kill -9 2>/dev/null || true
-	lsof -ti:11434 | xargs kill -9 2>/dev/null || true
 	cd $d/my-blog
 	cargo build --release
 	$ailog build
@@ -46,6 +45,7 @@ function _server_comment() {
 }
 
 function _server_ollama(){
+	lsof -ti:11434 | xargs kill -9 2>/dev/null || true
 	brew services stop ollama
 	OLLAMA_ORIGINS="https://log.syui.ai" ollama serve
 }
@@ -64,9 +64,6 @@ case "${1:-serve}" in
 		;;
 	ollama|ol)
 		_server_ollama
-		;;
-	proxy|p)
-		_server_proxy
 		;;
 	serve|s|*)
 		_server
