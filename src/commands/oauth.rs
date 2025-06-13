@@ -85,6 +85,21 @@ pub async fn build(project_dir: PathBuf) -> Result<()> {
         .and_then(|ai| ai.get("host"))
         .and_then(|v| v.as_str())
         .unwrap_or("https://ollama.syui.ai");
+    
+    let ai_system_prompt = ai_config
+        .and_then(|ai| ai.get("system_prompt"))
+        .and_then(|v| v.as_str())
+        .unwrap_or("you are a helpful ai assistant");
+    
+    let ai_did = ai_config
+        .and_then(|ai| ai.get("ai_did"))
+        .and_then(|v| v.as_str())
+        .unwrap_or("did:plc:4hqjfn7m6n5hno3doamuhgef");
+
+    // Extract bsky_api from oauth config
+    let bsky_api = oauth_config.get("bsky_api")
+        .and_then(|v| v.as_str())
+        .unwrap_or("https://public.api.bsky.app");
 
     // 4. Create .env.production content
     let env_content = format!(
@@ -110,6 +125,11 @@ VITE_AI_ASK_AI={}
 VITE_AI_PROVIDER={}
 VITE_AI_MODEL={}
 VITE_AI_HOST={}
+VITE_AI_SYSTEM_PROMPT="{}"
+VITE_AI_DID={}
+
+# API Configuration
+VITE_BSKY_PUBLIC_API={}
 "#,
         base_url,
         base_url, client_id_path,
@@ -125,7 +145,10 @@ VITE_AI_HOST={}
         ai_ask_ai,
         ai_provider,
         ai_model,
-        ai_host
+        ai_host,
+        ai_system_prompt,
+        ai_did,
+        bsky_api
     );
 
     // 5. Find oauth directory (relative to current working directory)
