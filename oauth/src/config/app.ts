@@ -13,6 +13,7 @@ export interface AppConfig {
   aiProvider: string;
   aiModel: string;
   aiHost: string;
+  bskyPublicApi: string;
 }
 
 // Generate collection names from host
@@ -80,13 +81,15 @@ export function getAppConfig(): AppConfig {
   const aiProvider = import.meta.env.VITE_AI_PROVIDER || 'ollama';
   const aiModel = import.meta.env.VITE_AI_MODEL || 'gemma2:2b';
   const aiHost = import.meta.env.VITE_AI_HOST || 'https://ollama.syui.ai';
+  const bskyPublicApi = import.meta.env.VITE_BSKY_PUBLIC_API || 'https://public.api.bsky.app';
   
   console.log('App configuration:', {
     host,
     adminDid,
     collections,
     rkey: rkey || 'none (not on post page)',
-    ai: { enabled: aiEnabled, askAi: aiAskAi, provider: aiProvider, model: aiModel, host: aiHost }
+    ai: { enabled: aiEnabled, askAi: aiAskAi, provider: aiProvider, model: aiModel, host: aiHost },
+    bskyPublicApi
   });
   
   return {
@@ -98,7 +101,8 @@ export function getAppConfig(): AppConfig {
     aiAskAi,
     aiProvider,
     aiModel,
-    aiHost
+    aiHost,
+    bskyPublicApi
   };
 }
 

@@ -46,6 +46,8 @@ function App() {
   const [isPostingUserList, setIsPostingUserList] = useState(false);
   const [userListRecords, setUserListRecords] = useState<any[]>([]);
   const [showJsonFor, setShowJsonFor] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'comments' | 'ai-chat'>('comments');
+  const [aiChatHistory, setAiChatHistory] = useState<any[]>([]);
 
   useEffect(() => {
     // Setup Jetstream WebSocket for real-time comments (optional)
@@ -151,6 +153,9 @@ function App() {
         console.log('OAuth session found, loading all comments...');
         loadAllComments();
         
+        // Load AI chat history
+        loadAiChatHistory(userProfile.did);
+        
         // Load user list records if admin
         if (userProfile.did === appConfig.adminDid) {
           loadUserListRecords();
@@ -219,6 +224,50 @@ function App() {
   const generatePlaceholderAvatar = (handle: string): string => {
     const initial = handle ? handle.charAt(0).toUpperCase() : 'U';
     return `https://via.placeholder.com/48x48/1185fe/ffffff?text=${initial}`;
+  };
+
+  const loadAiChatHistory = async (did: string) => {
+    try {
+      console.log('Loading AI chat history for DID:', did);
+      const agent = atprotoOAuthService.getAgent();
+      if (!agent) {
+        console.log('No agent available');
+        return;
+      }
+
+      // Get AI chat records from current user
+      const response = await agent.api.com.atproto.repo.listRecords({
+        repo: did,
+        collection: appConfig.collections.chat,
+        limit: 100,
+      });
+
+      console.log('AI chat history loaded:', response.data);
+      const chatRecords = response.data.records || [];
+      
+      // Filter out old records with invalid AI profile data (temporary fix for migration)
+      const validRecords = chatRecords.filter(record => {
+        if (record.value.answer) {
+          // This is an AI answer - check if it has valid AI profile
+          return record.value.author?.handle && 
+                 record.value.author?.handle !== 'ai-assistant' &&
+                 record.value.author?.displayName !== 'AI Assistant';
+        }
+        return true; // Keep all questions
+      });
+      
+      console.log(`Filtered ${chatRecords.length} records to ${validRecords.length} valid records`);
+      
+      // Sort by creation time and group question-answer pairs
+      const sortedRecords = validRecords.sort((a, b) => 
+        new Date(a.value.createdAt).getTime() - new Date(b.value.createdAt).getTime()
+      );
+      
+      setAiChatHistory(sortedRecords);
+    } catch (err) {
+      console.error('Failed to load AI chat history:', err);
+      setAiChatHistory([]);
+    }
   };
 
   const loadUserComments = async (did: string) => {
@@ -305,7 +354,7 @@ function App() {
               if (user.did && user.did.includes('-placeholder')) {
                 console.log(`Resolving placeholder DID for ${user.handle}`);
                 try {
-                  const profileResponse = await fetch(`https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=${encodeURIComponent(user.handle)}`);
+                  const profileResponse = await fetch(`${appConfig.bskyPublicApi}/xrpc/app.bsky.actor.getProfile?actor=${encodeURIComponent(user.handle)}`);
                   if (profileResponse.ok) {
                     const profileData = await profileResponse.json();
                     if (profileData.did) {
@@ -456,7 +505,7 @@ function App() {
           if (!record.value.author?.avatar && record.value.author?.handle) {
             try {
               // Public API でプロフィール取得
-              const profileResponse = await fetch(`https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=${encodeURIComponent(record.value.author.handle)}`);
+              const profileResponse = await fetch(`${appConfig.bskyPublicApi}/xrpc/app.bsky.actor.getProfile?actor=${encodeURIComponent(record.value.author.handle)}`);
               
               if (profileResponse.ok) {
                 const profileData = await profileResponse.json();
@@ -683,7 +732,7 @@ function App() {
         
         try {
           // Public APIでプロフィールを取得してDIDを解決
-          const profileResponse = await fetch(`https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=${encodeURIComponent(handle)}`);
+          const profileResponse = await fetch(`${appConfig.bskyPublicApi}/xrpc/app.bsky.actor.getProfile?actor=${encodeURIComponent(handle)}`);
           if (profileResponse.ok) {
             const profileData = await profileResponse.json();
             if (profileData.did) {
@@ -974,11 +1023,30 @@ function App() {
             </div>
           )}
 
+          {/* Tab Navigation */}
+          <div className="tab-navigation">
+            <button 
+              className={`tab-button ${activeTab === 'comments' ? 'active' : ''}`}
+              onClick={() => setActiveTab('comments')}
+            >
+              Comments ({comments.filter(shouldShowComment).length})
+            </button>
+            {user && (
+              <button 
+                className={`tab-button ${activeTab === 'ai-chat' ? 'active' : ''}`}
+                onClick={() => setActiveTab('ai-chat')}
+              >
+                AI Chat History ({aiChatHistory.length})
+              </button>
+            )}
+          </div>
+
           {/* Comments List */}
-          <div className="comments-list">
-            <div className="comments-header">
-              <h3>Comments</h3>
-            </div>
+          {activeTab === 'comments' && (
+            <div className="comments-list">
+              <div className="comments-header">
+                <h3>Comments</h3>
+              </div>
             {comments.filter(shouldShowComment).length === 0 ? (
               <p className="no-comments">
                 {appConfig.rkey ? `No comments for this post yet` : `No comments yet`}
@@ -988,9 +1056,25 @@ function App() {
                 <div key={index} className="comment-item">
                   <div className="comment-header">
                     <img 
-                      src={record.value.author?.avatar || generatePlaceholderAvatar(record.value.author?.handle || 'unknown')} 
+                      src={generatePlaceholderAvatar(record.value.author?.handle || 'unknown')} 
                       alt="User Avatar" 
                       className="comment-avatar"
+                      ref={(img) => {
+                        // Fetch fresh avatar from API when component mounts
+                        if (img && record.value.author?.did) {
+                          fetch(`${appConfig.bskyPublicApi}/xrpc/app.bsky.actor.getProfile?actor=${encodeURIComponent(record.value.author.did)}`)
+                            .then(res => res.json())
+                            .then(data => {
+                              if (data.avatar && img) {
+                                img.src = data.avatar;
+                              }
+                            })
+                            .catch(err => {
+                              console.warn('Failed to fetch fresh avatar:', err);
+                              // Keep placeholder on error
+                            });
+                        }
+                      }}
                     />
                     <div className="comment-author-info">
                       <span className="comment-author">
@@ -1047,7 +1131,92 @@ function App() {
                 </div>
               ))
             )}
-          </div>
+            </div>
+          )}
+
+          {/* AI Chat History List */}
+          {activeTab === 'ai-chat' && user && (
+            <div className="ai-chat-list">
+              <div className="chat-header">
+                <h3>AI Chat History</h3>
+              </div>
+              {aiChatHistory.length === 0 ? (
+                <p className="no-chat">No AI conversations yet. Start chatting with Ask AI!</p>
+              ) : (
+                aiChatHistory.map((record, index) => (
+                  <div key={index} className="chat-item">
+                    <div className="chat-header">
+                      <img 
+                        src={generatePlaceholderAvatar(record.value.author?.handle || 'unknown')} 
+                        alt="User Avatar" 
+                        className="comment-avatar"
+                        ref={(img) => {
+                          // Fetch fresh avatar from API when component mounts
+                          if (img && record.value.author?.did) {
+                            fetch(`${appConfig.bskyPublicApi}/xrpc/app.bsky.actor.getProfile?actor=${encodeURIComponent(record.value.author.did)}`)
+                              .then(res => res.json())
+                              .then(data => {
+                                if (data.avatar && img) {
+                                  img.src = data.avatar;
+                                }
+                              })
+                              .catch(err => {
+                                console.warn('Failed to fetch fresh avatar:', err);
+                                // Keep placeholder on error
+                              });
+                          }
+                        }}
+                      />
+                      <div className="comment-author-info">
+                        <span className="comment-author">
+                          {record.value.author?.displayName || record.value.author?.handle || 'unknown'}
+                        </span>
+                        <a 
+                          href={generateProfileUrl(record.value.author?.handle || '', record.value.author?.did || '')}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="comment-handle"
+                        >
+                          @{record.value.author?.handle || 'unknown'}
+                        </a>
+                      </div>
+                      <span className="comment-date">
+                        {new Date(record.value.createdAt).toLocaleString()}
+                      </span>
+                      <div className="comment-actions">
+                        <button 
+                          onClick={() => toggleJsonDisplay(record.uri)}
+                          className="json-button"
+                          title="Show/Hide JSON"
+                        >
+                          {showJsonFor === record.uri ? 'Hide' : 'JSON'}
+                        </button>
+                        <button className="chat-type-button">
+                          {record.value.question ? 'Question' : 'Answer'}
+                        </button>
+                      </div>
+                    </div>
+                    <div className="comment-content">
+                      {record.value.question || record.value.answer}
+                    </div>
+                    <div className="comment-meta">
+                      <small>{record.uri}</small>
+                    </div>
+                    
+                    {/* JSON Display */}
+                    {showJsonFor === record.uri && (
+                      <div className="json-display">
+                        <h5>JSON Record:</h5>
+                        <pre className="json-content">
+                          {JSON.stringify(record, null, 2)}
+                        </pre>
+                      </div>
+                    )}
+                  </div>
+                ))
+              )}
+            </div>
+          )}
 
           {/* Comment Form - Only show on post pages */}
           {user && appConfig.rkey && (

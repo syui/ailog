@@ -23,11 +23,15 @@ export const AIChat: React.FC<AIChatProps> = ({ user, isEnabled }) => {
     host: import.meta.env.VITE_AI_HOST || 'https://ollama.syui.ai',
     systemPrompt: import.meta.env.VITE_AI_SYSTEM_PROMPT || 'You are a helpful AI assistant trained on this blog\'s content.',
     aiDid: import.meta.env.VITE_AI_DID || 'did:plc:uqzpqmrjnptsxezjx4xuh2mn',
+    bskyPublicApi: import.meta.env.VITE_BSKY_PUBLIC_API || 'https://public.api.bsky.app',
   };
 
   // Fetch AI profile on load
   useEffect(() => {
     const fetchAIProfile = async () => {
+      console.log('=== AI PROFILE FETCH START ===');
+      console.log('AI DID:', aiConfig.aiDid);
+      
       if (!aiConfig.aiDid) {
         console.log('No AI DID configured');
         return;
@@ -42,51 +46,48 @@ export const AIChat: React.FC<AIChatProps> = ({ user, isEnabled }) => {
           console.log('AI profile fetched successfully:', profile.data);
           const profileData = {
             did: aiConfig.aiDid,
-            handle: profile.data.handle || 'ai-assistant',
-            displayName: profile.data.displayName || 'AI Assistant',
-            avatar: profile.data.avatar || null,
-            description: profile.data.description || null
+            handle: profile.data.handle,
+            displayName: profile.data.displayName,
+            avatar: profile.data.avatar,
+            description: profile.data.description
           };
+          console.log('Setting aiProfile to:', profileData);
           setAiProfile(profileData);
           
           // Dispatch event to update Ask AI button
           window.dispatchEvent(new CustomEvent('aiProfileLoaded', { detail: profileData }));
+          console.log('=== AI PROFILE FETCH SUCCESS (AGENT) ===');
           return;
         }
         
         // Fallback to public API
         console.log('No agent available, trying public API for AI profile');
-        const response = await fetch(`https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=${encodeURIComponent(aiConfig.aiDid)}`);
+        const response = await fetch(`${aiConfig.bskyPublicApi}/xrpc/app.bsky.actor.getProfile?actor=${encodeURIComponent(aiConfig.aiDid)}`);
         if (response.ok) {
           const profileData = await response.json();
           console.log('AI profile fetched via public API:', profileData);
           const profile = {
             did: aiConfig.aiDid,
-            handle: profileData.handle || 'ai-assistant',
-            displayName: profileData.displayName || 'AI Assistant',
-            avatar: profileData.avatar || null,
-            description: profileData.description || null
+            handle: profileData.handle,
+            displayName: profileData.displayName,
+            avatar: profileData.avatar,
+            description: profileData.description
           };
+          console.log('Setting aiProfile to:', profile);
           setAiProfile(profile);
           
           // Dispatch event to update Ask AI button
           window.dispatchEvent(new CustomEvent('aiProfileLoaded', { detail: profile }));
+          console.log('=== AI PROFILE FETCH SUCCESS (PUBLIC API) ===');
           return;
+        } else {
+          console.error('Public API failed with status:', response.status);
         }
       } catch (error) {
-        console.log('Failed to fetch AI profile, using defaults:', error);
-        const fallbackProfile = {
-          did: aiConfig.aiDid,
-          handle: 'ai-assistant',
-          displayName: 'AI Assistant',
-          avatar: null,
-          description: 'AI assistant for this blog'
-        };
-        setAiProfile(fallbackProfile);
-        
-        // Dispatch event even with fallback profile
-        window.dispatchEvent(new CustomEvent('aiProfileLoaded', { detail: fallbackProfile }));
+        console.error('Failed to fetch AI profile:', error);
+        setAiProfile(null);
       }
+      console.log('=== AI PROFILE FETCH FAILED ===');
     };
 
     fetchAIProfile();
@@ -97,9 +98,11 @@ export const AIChat: React.FC<AIChatProps> = ({ user, isEnabled }) => {
 
     // Listen for AI question posts from base.html
     const handleAIQuestion = async (event: any) => {
-      if (!user || !event.detail || !event.detail.question || isProcessing) return;
+      if (!user || !event.detail || !event.detail.question || isProcessing || !aiProfile) return;
       
       console.log('AIChat received question:', event.detail.question);
+      console.log('Current aiProfile state:', aiProfile);
+      
       setIsProcessing(true);
       try {
         await postQuestionAndGenerateResponse(event.detail.question);
@@ -120,10 +123,10 @@ export const AIChat: React.FC<AIChatProps> = ({ user, isEnabled }) => {
     return () => {
       window.removeEventListener('postAIQuestion', handleAIQuestion);
     };
-  }, [user, isEnabled, isProcessing]);
+  }, [user, isEnabled, isProcessing, aiProfile]);
 
   const postQuestionAndGenerateResponse = async (question: string) => {
-    if (!user || !aiConfig.askAi) return;
+    if (!user || !aiConfig.askAi || !aiProfile) return;
 
     setIsLoading(true);
     
@@ -232,6 +235,9 @@ Answer:`;
       // 5. Save AI response in background
       const answerRkey = now.toISOString().replace(/[:.]/g, '-') + '-answer';
       
+      console.log('=== SAVING AI ANSWER ===');
+      console.log('Current aiProfile:', aiProfile);
+      
       const answerRecord = {
         $type: appConfig.collections.chat,
         answer: aiAnswer,
@@ -239,11 +245,14 @@ Answer:`;
         url: window.location.href,
         createdAt: now.toISOString(),
         author: {
-          did: aiConfig.aiDid,
-          handle: 'AI Assistant',
-          displayName: 'AI Assistant',
+          did: aiProfile.did,
+          handle: aiProfile.handle,
+          displayName: aiProfile.displayName,
+          avatar: aiProfile.avatar,
         },
       };
+      
+      console.log('Answer record to save:', answerRecord);
 
       // Save to ATProto asynchronously (don't wait for it)
       agent.api.com.atproto.repo.putRecord({
