@@ -92,8 +92,8 @@ impl MarkdownProcessor {
         for event in parser {
             match event {
                 pulldown_cmark::Event::Start(pulldown_cmark::Tag::CodeBlock(kind)) => {
-                    if let CodeBlockKind::Fenced(lang) = &kind {
-                        code_block = Some((String::new(), lang.to_string()));
+                    if let CodeBlockKind::Fenced(lang_info) = &kind {
+                        code_block = Some((String::new(), lang_info.to_string()));
                     }
                 }
                 pulldown_cmark::Event::Text(text) => {
@@ -104,8 +104,8 @@ impl MarkdownProcessor {
                     }
                 }
                 pulldown_cmark::Event::End(pulldown_cmark::TagEnd::CodeBlock) => {
-                    if let Some((code, lang)) = code_block.take() {
-                        let highlighted = self.highlight_code_block(&code, &lang, theme);
+                    if let Some((code, lang_info)) = code_block.take() {
+                        let highlighted = self.highlight_code_block(&code, &lang_info, theme);
                         events.push(pulldown_cmark::Event::Html(highlighted.into()));
                     }
                 }
@@ -117,13 +117,29 @@ impl MarkdownProcessor {
         Ok(html_output)
     }
 
-    fn highlight_code_block(&self, code: &str, lang: &str, theme: &syntect::highlighting::Theme) -> String {
+    fn highlight_code_block(&self, code: &str, lang_info: &str, theme: &syntect::highlighting::Theme) -> String {
+        // Parse language and filename from lang_info (e.g., "sh:/path/to/file" or "rust:main.rs")
+        let (lang, filename) = if lang_info.contains(':') {
+            let parts: Vec<&str> = lang_info.splitn(2, ':').collect();
+            (parts[0], Some(parts[1]))
+        } else {
+            (lang_info, None)
+        };
+
         let syntax = self.syntax_set
             .find_syntax_by_token(lang)
             .unwrap_or_else(|| self.syntax_set.find_syntax_plain_text());
 
         let mut highlighter = syntect::easy::HighlightLines::new(syntax, theme);
-        let mut output = String::from("<pre><code>");
+        
+        // Create pre tag with optional filename attribute
+        let pre_tag = if let Some(filename) = filename {
+            format!("<pre data-filename=\"{}\">", filename)
+        } else {
+            "<pre>".to_string()
+        };
+        
+        let mut output = format!("{}<code>", pre_tag);
 
         for line in code.lines() {
             let ranges = highlighter.highlight_line(line, &self.syntax_set).unwrap();

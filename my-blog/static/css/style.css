@@ -479,28 +479,62 @@ body {
     color: #656d76;
 }
 
+/* Molokai-inspired code blocks */
 .article-body pre {
-    background: #f6f8fa;
-    border: 1px solid #d1d9e0;
-    border-radius: 6px;
-    padding: 16px;
-    overflow-x: auto;
+    background: #1B1D1E;
+    border: 1px solid #3E3D32;
+    border-radius: 8px;
+    padding: 0;
+    overflow: hidden;
     margin: 16px 0;
     font-size: 14px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
-.article-body code {
-    background: #f6f8fa;
-    padding: 2px 4px;
-    border-radius: 4px;
+/* Code filename header */
+.article-body pre[data-filename]::before {
+    content: attr(data-filename);
+    display: block;
+    background: #272822;
+    color: #A6E22E;
+    padding: 8px 16px;
+    border-bottom: 1px solid #3E3D32;
     font-family: 'SF Mono', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
-    font-size: 14px;
+    font-size: 12px;
+    font-weight: 500;
 }
 
 .article-body pre code {
+    display: block;
     background: none;
-    padding: 0;
+    padding: 16px;
+    color: #F8F8F2;
+    font-family: 'SF Mono', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
+    overflow-x: auto;
+    line-height: 1.4;
 }
+
+/* Inline code */
+.article-body code {
+    background: #2F3129;
+    color: #A6E22E;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'SF Mono', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
+    font-size: 13px;
+    border: 1px solid #3E3D32;
+}
+
+/* Molokai color scheme for syntax highlighting */
+.article-body pre code .hljs-keyword { color: #F92672; }
+.article-body pre code .hljs-string { color: #E6DB74; }
+.article-body pre code .hljs-comment { color: #75715E; font-style: italic; }
+.article-body pre code .hljs-number { color: #AE81FF; }
+.article-body pre code .hljs-variable { color: #FD971F; }
+.article-body pre code .hljs-function { color: #A6E22E; }
+.article-body pre code .hljs-tag { color: #F92672; }
+.article-body pre code .hljs-attr { color: #A6E22E; }
+.article-body pre code .hljs-value { color: #E6DB74; }
 
 /* Sidebar styles */
 .article-sidebar {
