@@ -517,25 +517,21 @@ a.view-markdown:any-link {
     margin: 16px 0;
     font-size: 14px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    position: relative;
 }
 
-/* File name display for code blocks */
+/* File name display for code blocks - top bar style */
 .article-body pre[data-filename]::before {
     content: attr(data-filename);
-    position: absolute;
-    top: 0;
-    right: 0;
+    display: block;
     background: #2D2D30;
-    color: #CCCCCC;
-    padding: 4px 12px;
+    color: #AE81FF;
+    padding: 8px 16px;
     font-size: 12px;
     font-family: 'SF Mono', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
-    border-bottom-left-radius: 4px;
-    border: 1px solid #3E3D32;
-    border-top: none;
-    border-right: none;
-    z-index: 1;
+    border-bottom: 1px solid #3E3D32;
+    margin: 0;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .article-body pre code {
@@ -546,6 +542,11 @@ a.view-markdown:any-link {
     font-family: 'SF Mono', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
     overflow-x: auto;
     line-height: 1.4;
+}
+
+/* Adjust padding when filename is present */
+.article-body pre[data-filename] code {
+    padding: 16px;
 }
 
 /* Inline code (not in pre blocks) */
@@ -851,6 +852,16 @@ a.view-markdown:any-link {
         padding: 20px 12px;
         word-wrap: break-word;
         white-space: pre-wrap;
+    }
+    
+    /* Mobile filename display */
+    .article-body pre[data-filename]::before {
+        padding: 6px 12px;
+        font-size: 11px;
+    }
+    
+    .article-body pre[data-filename] code {
+        padding: 12px;
     }
     
     .article-body code {
