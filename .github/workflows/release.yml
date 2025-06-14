@@ -11,6 +11,10 @@ on:
         required: true
         default: 'v0.1.0'
 
+permissions:
+  contents: write
+  actions: read
+
 env:
   CARGO_TERM_COLOR: always
   OPENSSL_STATIC: true
@@ -103,14 +107,15 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: ${{ matrix.asset_name }}
-        path: |
-          ${{ matrix.asset_name }}.tar.gz
-          ${{ matrix.asset_name }}.zip
+        path: ${{ matrix.asset_name }}.tar.gz
 
   release:
     name: Create Release
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
     steps:
     - uses: actions/checkout@v4
 
@@ -159,8 +164,6 @@ jobs:
         body_path: release_notes.md
         draft: false
         prerelease: ${{ contains(steps.tag_name.outputs.tag, 'alpha') || contains(steps.tag_name.outputs.tag, 'beta') || contains(steps.tag_name.outputs.tag, 'rc') }}
-        files: |
-          artifacts/*/ailog-*.tar.gz
-          artifacts/*/ailog-*.zip
+        files: artifacts/*/ailog-*.tar.gz
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
