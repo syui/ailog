@@ -1,0 +1,50 @@
+name: github pages (fast)
+
+on:
+  push:
+    branches:
+    - main
+    paths-ignore:
+      - 'src/**'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Get latest release
+      id: latest_release
+      run: |
+        LATEST_TAG=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r .tag_name)
+        echo "tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+        
+    - name: Download pre-built binary from release
+      run: |
+        curl -sL https://github.com/${{ github.repository }}/releases/download/${{ steps.latest_release.outputs.tag }}/ailog-linux-x86_64.tar.gz | tar -xzf -
+        chmod +x ailog
+        mkdir -p ./bin
+        mv ailog ./bin/
+      
+    - name: Setup Hugo
+      uses: peaceiris/actions-hugo@v3
+      with:
+        hugo-version: "0.139.2"
+        extended: true
+        
+    - name: Build with ailog
+      env: 
+        TZ: "Asia/Tokyo"
+      run: |
+          # Use pre-built ailog binary instead of cargo build
+          ./bin/ailog build --output ./public
+          touch ./public/.nojekyll
+          
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./public
+        publish_branch: gh-pages
