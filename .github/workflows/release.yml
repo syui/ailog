@@ -13,6 +13,8 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
+  OPENSSL_STATIC: true
+  OPENSSL_VENDOR: true
 
 jobs:
   build:
