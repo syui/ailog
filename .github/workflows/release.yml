@@ -20,6 +20,7 @@ jobs:
   build:
     name: Build ${{ matrix.target }}
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
     strategy:
       matrix:
         include:
@@ -27,10 +28,6 @@ jobs:
             os: ubuntu-latest
             artifact_name: ailog
             asset_name: ailog-linux-x86_64
-          - target: x86_64-unknown-linux-musl
-            os: ubuntu-latest
-            artifact_name: ailog
-            asset_name: ailog-linux-x86_64-musl
           - target: aarch64-unknown-linux-gnu
             os: ubuntu-latest
             artifact_name: ailog
@@ -43,10 +40,6 @@ jobs:
             os: macos-latest
             artifact_name: ailog
             asset_name: ailog-macos-aarch64
-          - target: x86_64-pc-windows-msvc
-            os: windows-latest
-            artifact_name: ailog.exe
-            asset_name: ailog-windows-x86_64.exe
 
     steps:
     - uses: actions/checkout@v4
@@ -57,16 +50,10 @@ jobs:
         targets: ${{ matrix.target }}
 
     - name: Install cross-compilation tools (Linux)
-      if: matrix.os == 'ubuntu-latest'
+      if: matrix.os == 'ubuntu-latest' && matrix.target == 'aarch64-unknown-linux-gnu'
       run: |
         sudo apt-get update
-        sudo apt-get install -y gcc-multilib
-        if [[ "${{ matrix.target }}" == "aarch64-unknown-linux-gnu" ]]; then
-          sudo apt-get install -y gcc-aarch64-linux-gnu
-        fi
-        if [[ "${{ matrix.target }}" == "x86_64-unknown-linux-musl" ]]; then
-          sudo apt-get install -y musl-tools
-        fi
+        sudo apt-get install -y gcc-aarch64-linux-gnu binutils-aarch64-linux-gnu
 
     - name: Configure cross-compilation (Linux ARM64)
       if: matrix.target == 'aarch64-unknown-linux-gnu'
@@ -95,11 +82,17 @@ jobs:
       shell: bash
       run: |
         cd target/${{ matrix.target }}/release
-        if [[ "${{ matrix.os }}" == "windows-latest" ]]; then
-          strip ${{ matrix.artifact_name }} || true
+        
+        # Use appropriate strip command for cross-compilation
+        if [[ "${{ matrix.target }}" == "aarch64-unknown-linux-gnu" ]]; then
+          aarch64-linux-gnu-strip ${{ matrix.artifact_name }} || echo "Strip failed, continuing..."
+        elif [[ "${{ matrix.os }}" == "windows-latest" ]]; then
+          strip ${{ matrix.artifact_name }} || echo "Strip failed, continuing..."
         else
-          strip ${{ matrix.artifact_name }}
+          strip ${{ matrix.artifact_name }} || echo "Strip failed, continuing..."
         fi
+        
+        # Create archive
         if [[ "${{ matrix.target }}" == *"windows"* ]]; then
           7z a ../../../${{ matrix.asset_name }}.zip ${{ matrix.artifact_name }}
         else
@@ -137,9 +130,8 @@ jobs:
         echo "- AI comment system" >> release_notes.md
         echo "" >> release_notes.md
         echo "### Platforms" >> release_notes.md
-        echo "- Linux (x86_64, aarch64, musl)" >> release_notes.md
+        echo "- Linux (x86_64, aarch64)" >> release_notes.md
         echo "- macOS (Intel, Apple Silicon)" >> release_notes.md
-        echo "- Windows (x86_64)" >> release_notes.md
         echo "" >> release_notes.md
         echo "### Installation" >> release_notes.md
         echo "\`\`\`bash" >> release_notes.md
@@ -148,8 +140,6 @@ jobs:
         echo "chmod +x ailog" >> release_notes.md
         echo "sudo mv ailog /usr/local/bin/" >> release_notes.md
         echo "" >> release_notes.md
-        echo "# Windows" >> release_notes.md
-        echo "# Extract ailog-windows-x86_64.zip and add to PATH" >> release_notes.md
         echo "\`\`\`" >> release_notes.md
 
     - name: Get tag name

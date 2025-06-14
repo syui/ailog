@@ -47,17 +47,57 @@ outputs:
 runs:
   using: 'composite'
   steps:
-    - name: Setup Rust
-      uses: actions-rs/toolchain@v1
+    - name: Cache ailog binary
+      uses: actions/cache@v4
       with:
-        toolchain: stable
-        override: true
-        
-    - name: Install ailog
+        path: ./bin
+        key: ailog-bin-${{ runner.os }}
+        restore-keys: |
+          ailog-bin-${{ runner.os }}
+    
+    - name: Check and update ailog binary
       shell: bash
       run: |
-        if [ ! -f "./target/release/ailog" ]; then
-          cargo build --release
+        # Get latest release version (for Gitea, adjust API endpoint if needed)
+        if command -v curl >/dev/null 2>&1; then
+          LATEST_VERSION=$(curl -s https://api.github.com/repos/syui/ailog/releases/latest | jq -r .tag_name 2>/dev/null || echo "v0.1.1")
+        else
+          LATEST_VERSION="v0.1.1"  # fallback version
+        fi
+        echo "Target version: $LATEST_VERSION"
+        
+        # Check current binary version if exists
+        mkdir -p ./bin
+        if [ -f "./bin/ailog" ]; then
+          CURRENT_VERSION=$(./bin/ailog --version | awk '{print $2}' 2>/dev/null || echo "unknown")
+          echo "Current version: $CURRENT_VERSION"
+        else
+          CURRENT_VERSION="none"
+          echo "No binary found"
+        fi
+        
+        # Download if version is different or binary doesn't exist
+        if [ "$CURRENT_VERSION" != "${LATEST_VERSION#v}" ]; then
+          echo "Downloading ailog $LATEST_VERSION..."
+          # Try GitHub first, then fallback to local build
+          if curl -sL https://github.com/syui/ailog/releases/download/$LATEST_VERSION/ailog-linux-x86_64.tar.gz | tar -xzf - 2>/dev/null; then
+            mv ailog ./bin/ailog
+            chmod +x ./bin/ailog
+            echo "Downloaded binary: $(./bin/ailog --version)"
+          else
+            echo "Download failed, building from source..."
+            if command -v cargo >/dev/null 2>&1; then
+              cargo build --release
+              cp ./target/release/ailog ./bin/ailog
+              echo "Built from source: $(./bin/ailog --version)"
+            else
+              echo "Error: Neither download nor cargo build available"
+              exit 1
+            fi
+          fi
+        else
+          echo "Binary is up to date"
+          chmod +x ./bin/ailog
         fi
         
     - name: Setup Node.js for OAuth app
@@ -83,8 +123,8 @@ runs:
       run: |
         start_time=$(date +%s)
         
-        ./target/release/ailog generate \
-          --input ${{ inputs.content-dir }} \
+        ./bin/ailog build \
+          --content ${{ inputs.content-dir }} \
           --output ${{ inputs.output-dir }} \
           --templates ${{ inputs.template-dir }} \
           --static ${{ inputs.static-dir }} \
