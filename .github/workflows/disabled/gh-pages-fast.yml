@@ -1,0 +1,92 @@
+name: github pages (fast)
+
+on:
+  push:
+    branches:
+    - main
+    paths-ignore:
+      - 'src/**'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Cache ailog binary
+      uses: actions/cache@v4
+      with:
+        path: ./bin
+        key: ailog-bin-${{ runner.os }}
+        restore-keys: |
+          ailog-bin-${{ runner.os }}
+    
+    - name: Setup ailog binary
+      run: |
+        # Get expected version from Cargo.toml
+        EXPECTED_VERSION=$(grep '^version' Cargo.toml | cut -d'"' -f2)
+        echo "Expected version from Cargo.toml: $EXPECTED_VERSION"
+        
+        # Check current binary version if exists
+        if [ -f "./bin/ailog" ]; then
+          CURRENT_VERSION=$(./bin/ailog --version 2>/dev/null || echo "unknown")
+          echo "Current binary version: $CURRENT_VERSION"
+        else
+          CURRENT_VERSION="none"
+          echo "No binary found"
+        fi
+        
+        # Check OS
+        OS="${{ runner.os }}"
+        echo "Runner OS: $OS"
+        
+        # Use pre-packaged binary if version matches or extract from tar.gz
+        if [ "$CURRENT_VERSION" = "$EXPECTED_VERSION" ]; then
+          echo "Binary is up to date"
+          chmod +x ./bin/ailog
+        elif [ "$OS" = "Linux" ] && [ -f "./bin/ailog-linux-x86_64.tar.gz" ]; then
+          echo "Extracting ailog from pre-packaged tar.gz..."
+          cd bin
+          tar -xzf ailog-linux-x86_64.tar.gz
+          chmod +x ailog
+          cd ..
+          
+          # Verify extracted version
+          EXTRACTED_VERSION=$(./bin/ailog --version 2>/dev/null || echo "unknown")
+          echo "Extracted binary version: $EXTRACTED_VERSION"
+          
+          if [ "$EXTRACTED_VERSION" != "$EXPECTED_VERSION" ]; then
+            echo "Warning: Binary version mismatch. Expected $EXPECTED_VERSION but got $EXTRACTED_VERSION"
+          fi
+        else
+          echo "Error: No suitable binary found for OS: $OS"
+          exit 1
+        fi
+      
+    - name: Setup Hugo
+      uses: peaceiris/actions-hugo@v3
+      with:
+        hugo-version: "0.139.2"
+        extended: true
+        
+    - name: Build with ailog
+      env: 
+        TZ: "Asia/Tokyo"
+      run: |
+          # Use pre-built ailog binary instead of cargo build
+          cd my-blog
+          ../bin/ailog build
+          touch ./public/.nojekyll
+          
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./my-blog/public
+        publish_branch: gh-pages

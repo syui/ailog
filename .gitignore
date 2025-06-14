@@ -11,3 +11,4 @@ dist
 node_modules
 package-lock.json 
 my-blog/static/assets/comment-atproto-*
+bin/ailog

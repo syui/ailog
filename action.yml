@@ -47,17 +47,34 @@ outputs:
 runs:
   using: 'composite'
   steps:
-    - name: Setup Rust
-      uses: actions-rs/toolchain@v1
+    - name: Cache ailog binary
+      uses: actions/cache@v4
       with:
-        toolchain: stable
-        override: true
-        
-    - name: Install ailog
+        path: ./bin
+        key: ailog-bin-${{ runner.os }}
+        restore-keys: |
+          ailog-bin-${{ runner.os }}
+    
+    - name: Setup ailog binary
       shell: bash
       run: |
-        if [ ! -f "./target/release/ailog" ]; then
-          cargo build --release
+        # Check if pre-built binary exists
+        if [ -f "./bin/ailog-linux-x86_64" ]; then
+          echo "Using pre-built binary from repository"
+          chmod +x ./bin/ailog-linux-x86_64
+          CURRENT_VERSION=$(./bin/ailog-linux-x86_64 --version 2>/dev/null || echo "unknown")
+          echo "Binary version: $CURRENT_VERSION"
+        else
+          echo "No pre-built binary found, trying to build from source..."
+          if command -v cargo >/dev/null 2>&1; then
+            cargo build --release
+            mkdir -p ./bin
+            cp ./target/release/ailog ./bin/ailog-linux-x86_64
+            echo "Built from source: $(./bin/ailog-linux-x86_64 --version 2>/dev/null)"
+          else
+            echo "Error: No binary found and cargo not available"
+            exit 1
+          fi
         fi
         
     - name: Setup Node.js for OAuth app
@@ -83,12 +100,15 @@ runs:
       run: |
         start_time=$(date +%s)
         
-        ./target/release/ailog generate \
-          --input ${{ inputs.content-dir }} \
-          --output ${{ inputs.output-dir }} \
-          --templates ${{ inputs.template-dir }} \
-          --static ${{ inputs.static-dir }} \
-          --config ${{ inputs.config-file }}
+        # Change to blog directory and run build
+        # Note: ailog build only takes a path argument, not options
+        if [ -d "my-blog" ]; then
+          cd my-blog
+          ../bin/ailog-linux-x86_64 build
+        else
+          # If no my-blog directory, use current directory
+          ./bin/ailog-linux-x86_64 build .
+        fi
           
         end_time=$(date +%s)
         build_time=$((end_time - start_time))

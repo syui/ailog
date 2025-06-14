@@ -39,7 +39,14 @@
       "Bash(zsh run.zsh:*)",
       "Bash(hugo:*)",
       "WebFetch(domain:docs.bsky.app)",
-      "WebFetch(domain:syui.ai)"
+      "WebFetch(domain:syui.ai)",
+      "Bash(rustup target list:*)",
+      "Bash(rustup target:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git tag:*)",
+      "Bash(../bin/ailog:*)"
     ],
     "deny": []
   }

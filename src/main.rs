@@ -18,10 +18,14 @@ mod mcp;
 #[derive(Parser)]
 #[command(name = "ailog")]
 #[command(about = "A static blog generator with AI features")]
-#[command(version)]
+#[command(disable_version_flag = true)]
 struct Cli {
+    /// Print version information
+    #[arg(short = 'V', long = "version")]
+    version: bool,
+    
     #[command(subcommand)]
-    command: Commands,
+    command: Option<Commands>,
 }
 
 #[derive(Subcommand)]
@@ -135,8 +139,19 @@ enum OauthCommands {
 #[tokio::main]
 async fn main() -> Result<()> {
     let cli = Cli::parse();
+    
+    // Handle version flag
+    if cli.version {
+        println!("{}", env!("CARGO_PKG_VERSION"));
+        return Ok(());
+    }
+    
+    // Require subcommand if no version flag
+    let command = cli.command.ok_or_else(|| {
+        anyhow::anyhow!("No subcommand provided. Use --help for usage information.")
+    })?;
 
-    match cli.command {
+    match command {
         Commands::Init { path } => {
             commands::init::execute(path).await?;
         }
