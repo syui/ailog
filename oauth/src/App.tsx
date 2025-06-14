@@ -1048,9 +1048,6 @@ function App() {
           {/* Comments List */}
           {activeTab === 'comments' && (
             <div className="comments-list">
-              <div className="comments-header">
-                <h3>Comments</h3>
-              </div>
             {comments.filter(shouldShowComment).length === 0 ? (
               <p className="no-comments">
                 {appConfig.rkey ? `No comments for this post yet` : `No comments yet`}
