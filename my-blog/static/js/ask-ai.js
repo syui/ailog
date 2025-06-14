@@ -186,12 +186,7 @@ function updateAskAIButton() {
     const button = document.getElementById('askAiButton');
     if (!button) return;
     
-    const iconSpan = button.querySelector('.ai-icon');
-    
-    if (aiProfileData && aiProfileData.avatar && iconSpan) {
-        iconSpan.innerHTML = `<img src="${aiProfileData.avatar}" alt="${aiProfileData.displayName || 'AI'}" class="ai-avatar-small">`;
-    }
-    
+    // Only update text, never modify the icon
     if (aiProfileData && aiProfileData.displayName) {
         const textNode = button.childNodes[2] || button.lastChild;
         if (textNode && textNode.nodeType === Node.TEXT_NODE) {

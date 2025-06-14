@@ -17,7 +17,7 @@
 
 /css/*
   Content-Type: text/css
-  Cache-Control: public, max-age=60
+  Cache-Control: no-cache
 
 /*.js
   Content-Type: application/javascript

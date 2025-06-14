@@ -1,6 +1,3 @@
-# Ask-AI機能をOllamaにプロキシ
-/api/ask https://ollama.syui.ai/api/generate 200
-
 # OAuth routes
 /oauth/* /oauth/index.html 200
 
