@@ -53,10 +53,10 @@ function generateCollectionNames(host: string): { comment: string; user: string;
 }
 
 // Extract rkey from current URL
-// /posts/xxx.html -> xxx
+// /posts/xxx -> xxx
 function extractRkeyFromUrl(): string | undefined {
   const pathname = window.location.pathname;
-  const match = pathname.match(/\/posts\/([^/]+)\.html$/);
+  const match = pathname.match(/\/posts\/([^/]+)\/?$/);
   return match ? match[1] : undefined;
 }
 
