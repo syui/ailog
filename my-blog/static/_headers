@@ -16,10 +16,31 @@
   Cache-Control: public, max-age=31536000, immutable
 
 /css/*
-  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: text/css
+  Cache-Control: public, max-age=60
 
 /*.js
+  Content-Type: application/javascript
   Cache-Control: public, max-age=31536000, immutable
+
+/assets/*.js
+  Content-Type: application/javascript
+  Cache-Control: public, max-age=31536000, immutable
+
+# Ensure ES6 modules are served correctly
+/assets/comment-atproto-*.js
+  Content-Type: text/javascript; charset=utf-8
+  Cache-Control: public, max-age=31536000, immutable
+
+# All JS assets
+/assets/*-*.js
+  Content-Type: text/javascript; charset=utf-8
+  Cache-Control: public, max-age=31536000, immutable
+
+# CSS assets
+/assets/*.css
+  Content-Type: text/css
+  Cache-Control: public, max-age=60
 
 /posts/*
   Cache-Control: public, max-age=3600

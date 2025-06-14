@@ -42,6 +42,9 @@ enum Commands {
     New {
         /// Title of the post
         title: String,
+        /// Slug for the post (optional, derived from title if not provided)
+        #[arg(short, long)]
+        slug: Option<String>,
         /// Post format
         #[arg(short, long, default_value = "md")]
         format: String,
@@ -140,9 +143,9 @@ async fn main() -> Result<()> {
         Commands::Build { path } => {
             commands::build::execute(path).await?;
         }
-        Commands::New { title, format, path } => {
+        Commands::New { title, slug, format, path } => {
             std::env::set_current_dir(path)?;
-            commands::new::execute(title, format).await?;
+            commands::new::execute(title, slug, format).await?;
         }
         Commands::Serve { port, path } => {
             std::env::set_current_dir(path)?;

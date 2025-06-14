@@ -1,0 +1,108 @@
+name: 'ailog Static Site Generator'
+description: 'AI-powered static blog generator with atproto integration'
+author: 'syui'
+
+branding:
+  icon: 'book-open'
+  color: 'orange'
+
+inputs:
+  content-dir:
+    description: 'Content directory containing markdown files'
+    required: false
+    default: 'content'
+  output-dir:
+    description: 'Output directory for generated site'
+    required: false
+    default: 'public'
+  template-dir:
+    description: 'Template directory'
+    required: false
+    default: 'templates'
+  static-dir:
+    description: 'Static assets directory'
+    required: false
+    default: 'static'
+  config-file:
+    description: 'Configuration file path'
+    required: false
+    default: 'ailog.toml'
+  ai-integration:
+    description: 'Enable AI features'
+    required: false
+    default: 'true'
+  atproto-integration:
+    description: 'Enable atproto/OAuth features'
+    required: false
+    default: 'true'
+
+outputs:
+  site-url:
+    description: 'Generated site URL'
+    value: ${{ steps.generate.outputs.site-url }}
+  build-time:
+    description: 'Build time in seconds'
+    value: ${{ steps.generate.outputs.build-time }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        override: true
+        
+    - name: Install ailog
+      shell: bash
+      run: |
+        if [ ! -f "./target/release/ailog" ]; then
+          cargo build --release
+        fi
+        
+    - name: Setup Node.js for OAuth app
+      if: ${{ inputs.atproto-integration == 'true' }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        
+    - name: Build OAuth app
+      if: ${{ inputs.atproto-integration == 'true' }}
+      shell: bash
+      run: |
+        if [ -d "oauth" ]; then
+          cd oauth
+          npm install
+          npm run build
+          cp -r dist/* ../${{ inputs.static-dir }}/
+        fi
+        
+    - name: Generate site
+      id: generate
+      shell: bash
+      run: |
+        start_time=$(date +%s)
+        
+        ./target/release/ailog generate \
+          --input ${{ inputs.content-dir }} \
+          --output ${{ inputs.output-dir }} \
+          --templates ${{ inputs.template-dir }} \
+          --static ${{ inputs.static-dir }} \
+          --config ${{ inputs.config-file }}
+          
+        end_time=$(date +%s)
+        build_time=$((end_time - start_time))
+        
+        echo "build-time=${build_time}" >> $GITHUB_OUTPUT
+        echo "site-url=file://$(pwd)/${{ inputs.output-dir }}" >> $GITHUB_OUTPUT
+        
+    - name: Display build summary
+      shell: bash
+      run: |
+        echo "✅ ailog build completed successfully"
+        echo "📁 Output directory: ${{ inputs.output-dir }}"
+        echo "⏱️ Build time: ${{ steps.generate.outputs.build-time }}s"
+        if [ -d "${{ inputs.output-dir }}" ]; then
+          echo "📄 Generated files:"
+          find ${{ inputs.output-dir }} -type f | head -10
+        fi

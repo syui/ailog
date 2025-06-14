@@ -1,0 +1,28 @@
+name: Example ailog usage
+
+on:
+  workflow_dispatch:  # Manual trigger for testing
+
+jobs:
+  build-with-ailog-action:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Build with ailog action
+      uses: ai/log@v1  # This will reference this repository
+      with:
+        content-dir: 'content'
+        output-dir: 'public'
+        ai-integration: true
+        atproto-integration: true
+        
+    - name: Deploy to Cloudflare Pages
+      uses: cloudflare/pages-action@v1
+      with:
+        apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        projectName: my-blog
+        directory: public

@@ -39,6 +39,20 @@ impl Generator {
             ai_manager,
         })
     }
+    
+    fn create_config_with_timestamp(&self) -> Result<serde_json::Value> {
+        let mut config_with_timestamp = serde_json::to_value(&self.config.site)?;
+        if let Some(config_obj) = config_with_timestamp.as_object_mut() {
+            config_obj.insert("build_timestamp".to_string(), serde_json::Value::String(
+                std::time::SystemTime::now()
+                    .duration_since(std::time::UNIX_EPOCH)
+                    .unwrap()
+                    .as_secs()
+                    .to_string()
+            ));
+        }
+        Ok(config_with_timestamp)
+    }
 
     pub async fn build(&self) -> Result<()> {
         // Clean public directory
@@ -184,16 +198,17 @@ impl Generator {
         
         let html_content = self.markdown_processor.render(&content)?;
         
-        // Use slug from frontmatter if available, otherwise derive from filename
-        let slug = frontmatter.get("slug")
+        // Use filename (without extension) as URL slug to include date
+        let filename_slug = path.file_stem()
+            .and_then(|s| s.to_str())
+            .unwrap_or("post")
+            .to_string();
+            
+        // Still keep the slug field from frontmatter for other purposes
+        let frontmatter_slug = frontmatter.get("slug")
             .and_then(|v| v.as_str())
             .map(|s| s.to_string())
-            .unwrap_or_else(|| {
-                path.file_stem()
-                    .and_then(|s| s.to_str())
-                    .unwrap_or("post")
-                    .to_string()
-            });
+            .unwrap_or_else(|| filename_slug.clone());
 
         let mut post = Post {
             title: frontmatter.get("title")
@@ -205,8 +220,9 @@ impl Generator {
                 .unwrap_or("")
                 .to_string(),
             content: html_content,
-            slug: slug.clone(),
-            url: format!("/posts/{}.html", slug),
+            slug: frontmatter_slug.clone(),
+            filename_slug: filename_slug.clone(),
+            url: format!("/posts/{}.html", filename_slug),
             tags: frontmatter.get("tags")
                 .and_then(|v| v.as_array())
                 .map(|arr| arr.iter()
@@ -233,7 +249,7 @@ impl Generator {
                             lang: "en".to_string(),
                             title: translated_title,
                             content: translated_html,
-                            url: format!("/posts/{}-en.html", post.slug),
+                            url: format!("/posts/{}-en.html", post.filename_slug),
                         }]);
                     }
                     Err(e) => eprintln!("Translation failed: {}", e),
@@ -259,7 +275,7 @@ impl Generator {
         // Enhance posts with additional metadata for timeline view
         let enhanced_posts: Vec<serde_json::Value> = posts.iter().map(|post| {
             let excerpt = self.extract_excerpt(&post.content);
-            let markdown_url = format!("/posts/{}.md", post.slug);
+            let markdown_url = format!("/posts/{}.md", post.filename_slug);
             let translation_url = if let Some(ref translations) = post.translations {
                 translations.first().map(|t| t.url.clone())
             } else {
@@ -281,7 +297,8 @@ impl Generator {
         }).collect();
         
         let mut context = tera::Context::new();
-        context.insert("config", &self.config.site);
+        let config_with_timestamp = self.create_config_with_timestamp()?;
+        context.insert("config", &config_with_timestamp);
         context.insert("posts", &enhanced_posts);
         
         let html = self.template_engine.render("index.html", &context)?;
@@ -294,14 +311,15 @@ impl Generator {
 
     async fn generate_post_page(&self, post: &Post) -> Result<()> {
         let mut context = tera::Context::new();
-        context.insert("config", &self.config.site);
+        let config_with_timestamp = self.create_config_with_timestamp()?;
+        context.insert("config", &config_with_timestamp);
         
         // Create enhanced post with additional URLs
         let mut enhanced_post = post.clone();
-        enhanced_post.url = format!("/posts/{}.html", post.slug);
+        enhanced_post.url = format!("/posts/{}.html", post.filename_slug);
         
         // Add markdown view URL
-        let markdown_url = format!("/posts/{}.md", post.slug);
+        let markdown_url = format!("/posts/{}.md", post.filename_slug);
         
         // Add translation URLs if available
         let translation_urls: Vec<String> = if let Some(ref translations) = post.translations {
@@ -328,7 +346,7 @@ impl Generator {
         let output_dir = self.base_path.join("public/posts");
         fs::create_dir_all(&output_dir)?;
         
-        let output_path = output_dir.join(format!("{}.html", post.slug));
+        let output_path = output_dir.join(format!("{}.html", post.filename_slug));
         fs::write(output_path, html)?;
         
         // Generate markdown view
@@ -339,7 +357,8 @@ impl Generator {
     
     async fn generate_translation_page(&self, post: &Post, translation: &Translation) -> Result<()> {
         let mut context = tera::Context::new();
-        context.insert("config", &self.config.site);
+        let config_with_timestamp = self.create_config_with_timestamp()?;
+        context.insert("config", &config_with_timestamp);
         context.insert("post", &TranslatedPost {
             title: translation.title.clone(),
             date: post.date.clone(),
@@ -356,7 +375,7 @@ impl Generator {
         let output_dir = self.base_path.join("public/posts");
         fs::create_dir_all(&output_dir)?;
         
-        let output_path = output_dir.join(format!("{}-{}.html", post.slug, translation.lang));
+        let output_path = output_dir.join(format!("{}-{}.html", post.filename_slug, translation.lang));
         fs::write(output_path, html)?;
 
         Ok(())
@@ -413,11 +432,11 @@ impl Generator {
                                 .unwrap_or("")
                         });
                     
-                    if file_slug == post.slug {
+                    if file_slug == post.slug || path.file_stem().and_then(|s| s.to_str()).unwrap_or("") == post.filename_slug {
                         let output_dir = self.base_path.join("public/posts");
                         fs::create_dir_all(&output_dir)?;
                         
-                        let output_path = output_dir.join(format!("{}.md", post.slug));
+                        let output_path = output_dir.join(format!("{}.md", post.filename_slug));
                         fs::write(output_path, content)?;
                         break;
                     }
@@ -447,6 +466,7 @@ pub struct Post {
     pub date: String,
     pub content: String,
     pub slug: String,
+    pub filename_slug: String, // Added for URL generation
     pub url: String,
     pub tags: Vec<String>,
     pub translations: Option<Vec<Translation>>,

@@ -223,7 +223,11 @@ function App() {
 
   const generatePlaceholderAvatar = (handle: string): string => {
     const initial = handle ? handle.charAt(0).toUpperCase() : 'U';
-    return `https://via.placeholder.com/48x48/1185fe/ffffff?text=${initial}`;
+    const svg = `<svg width="48" height="48" xmlns="http://www.w3.org/2000/svg">
+      <rect width="48" height="48" fill="#1185fe"/>
+      <text x="24" y="32" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="white" text-anchor="middle">${initial}</text>
+    </svg>`;
+    return `data:image/svg+xml;base64,${btoa(svg)}`;
   };
 
   const loadAiChatHistory = async (did: string) => {

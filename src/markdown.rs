@@ -133,6 +133,18 @@ impl MarkdownProcessor {
             (lang_info, None)
         };
 
+        // Map short language names to full names
+        let lang = match lang {
+            "rs" => "rust",
+            "js" => "javascript",
+            "ts" => "typescript",
+            "sh" => "bash",
+            "yml" => "yaml",
+            "md" => "markdown",
+            "py" => "python",
+            _ => lang,
+        };
+
         let syntax = self.syntax_set
             .find_syntax_by_token(lang)
             .unwrap_or_else(|| self.syntax_set.find_syntax_plain_text());

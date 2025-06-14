@@ -37,7 +37,9 @@
       "Bash(rg:*)",
       "Bash(../target/release/ailog build)",
       "Bash(zsh run.zsh:*)",
-      "Bash(hugo:*)"
+      "Bash(hugo:*)",
+      "WebFetch(domain:docs.bsky.app)",
+      "WebFetch(domain:syui.ai)"
     ],
     "deny": []
   }

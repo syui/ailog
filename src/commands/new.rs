@@ -4,20 +4,32 @@ use colored::Colorize;
 use std::fs;
 use std::path::PathBuf;
 
-pub async fn execute(title: String, format: String) -> Result<()> {
+pub async fn execute(title: String, slug: Option<String>, format: String) -> Result<()> {
     println!("{} {}", "Creating new post:".green(), title);
 
     let date = Local::now();
+    
+    // Use provided slug or generate from title
+    let slug_part = slug.unwrap_or_else(|| {
+        title
+            .to_lowercase()
+            .replace(' ', "-")
+            .chars()
+            .filter(|c| c.is_alphanumeric() || *c == '-')
+            .collect()
+    });
+    
     let filename = format!(
         "{}-{}.{}",
         date.format("%Y-%m-%d"),
-        title.to_lowercase().replace(' ', "-"),
+        slug_part,
         format
     );
 
     let content = format!(
         r#"---
 title: "{}"
+slug: "{}"
 date: {}
 tags: []
 draft: false
@@ -28,6 +40,7 @@ draft: false
 Write your content here...
 "#,
         title,
+        slug_part,
         date.format("%Y-%m-%d"),
         title
     );

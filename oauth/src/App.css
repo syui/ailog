@@ -162,9 +162,15 @@
 }
 
 .app-main {
-  max-width: 1200px;
+  max-width: 1000px;
   margin: 0 auto;
   padding: 40px 20px;
+}
+
+@media (max-width: 1000px) {
+  .app .app-main {
+    padding: 0px !important;
+  }
 }
 
 .gacha-section {
@@ -264,7 +270,7 @@
 .comment-section {
   max-width: 800px;
   margin: 0 auto;
-  padding: 20px;
+  /* padding: 20px; - removed to avoid double padding */
 }
 
 .auth-section {

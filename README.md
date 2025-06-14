@@ -2,6 +2,35 @@
 
 AI-powered static blog generator with ATProto integration, part of the ai.ai ecosystem.
 
+## 🎯 Gitea Action Usage
+
+Use ailog in your Gitea Actions workflow:
+
+```yaml
+name: Deploy Blog
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: ai/log@v1
+      with:
+        content-dir: 'content'
+        output-dir: 'public'
+        ai-integration: true
+        atproto-integration: true
+    - uses: cloudflare/pages-action@v1
+      with:
+        apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        projectName: my-blog
+        directory: public
+```
+
 ## 🚀 Quick Start
 
 ### Development Setup
