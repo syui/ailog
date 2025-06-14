@@ -35,7 +35,7 @@ jobs:
         # Check current binary version if exists
         mkdir -p ./bin
         if [ -f "./bin/ailog" ]; then
-          CURRENT_VERSION=$(./bin/ailog --version | awk '{print $2}' || echo "unknown")
+          CURRENT_VERSION=$(./bin/ailog --version 2>/dev/null || echo "unknown")
           echo "Current version: $CURRENT_VERSION"
         else
           CURRENT_VERSION="none"
@@ -49,7 +49,7 @@ jobs:
             https://github.com/${{ github.repository }}/releases/download/$LATEST_VERSION/ailog-linux-x86_64.tar.gz | tar -xzf -
           mv ailog ./bin/ailog
           chmod +x ./bin/ailog
-          echo "Updated to version: $(./bin/ailog --version)"
+          echo "Updated to version: $(./bin/ailog --version 2>/dev/null)"
         else
           echo "Binary is up to date"
           chmod +x ./bin/ailog

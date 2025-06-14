@@ -69,7 +69,7 @@ runs:
         # Check current binary version if exists
         mkdir -p ./bin
         if [ -f "./bin/ailog" ]; then
-          CURRENT_VERSION=$(./bin/ailog --version | awk '{print $2}' 2>/dev/null || echo "unknown")
+          CURRENT_VERSION=$(./bin/ailog --version 2>/dev/null || echo "unknown")
           echo "Current version: $CURRENT_VERSION"
         else
           CURRENT_VERSION="none"
@@ -83,13 +83,13 @@ runs:
           if curl -sL https://github.com/syui/ailog/releases/download/$LATEST_VERSION/ailog-linux-x86_64.tar.gz | tar -xzf - 2>/dev/null; then
             mv ailog ./bin/ailog
             chmod +x ./bin/ailog
-            echo "Downloaded binary: $(./bin/ailog --version)"
+            echo "Downloaded binary: $(./bin/ailog --version 2>/dev/null)"
           else
             echo "Download failed, building from source..."
             if command -v cargo >/dev/null 2>&1; then
               cargo build --release
               cp ./target/release/ailog ./bin/ailog
-              echo "Built from source: $(./bin/ailog --version)"
+              echo "Built from source: $(./bin/ailog --version 2>/dev/null)"
             else
               echo "Error: Neither download nor cargo build available"
               exit 1

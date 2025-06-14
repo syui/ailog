@@ -1,6 +1,6 @@
 [package]
 name = "ailog"
-version = "0.1.0"
+version = "0.1.3"
 edition = "2021"
 authors = ["syui"]
 description = "A static blog generator with AI features"
