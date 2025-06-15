@@ -1197,25 +1197,25 @@ function App() {
               className={`tab-button ${activeTab === 'comments' ? 'active' : ''}`}
               onClick={() => setActiveTab('comments')}
             >
-              Comments ({comments.filter(shouldShowComment).length})
+              comment ({comments.filter(shouldShowComment).length})
             </button>
             <button 
               className={`tab-button ${activeTab === 'ai-chat' ? 'active' : ''}`}
               onClick={() => setActiveTab('ai-chat')}
             >
-              AI Chat ({aiChatHistory.length})
+              chat ({aiChatHistory.length})
             </button>
             <button 
               className={`tab-button ${activeTab === 'lang-en' ? 'active' : ''}`}
               onClick={() => setActiveTab('lang-en')}
             >
-              AI Lang:en ({langEnRecords.length})
+              en ({langEnRecords.length})
             </button>
             <button 
               className={`tab-button ${activeTab === 'ai-comment' ? 'active' : ''}`}
               onClick={() => setActiveTab('ai-comment')}
             >
-              AI Comment ({aiCommentRecords.length})
+              feedback ({aiCommentRecords.length})
             </button>
           </div>
 
