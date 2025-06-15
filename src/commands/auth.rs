@@ -28,8 +28,31 @@ pub struct JetstreamConfig {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CollectionConfig {
-    pub comment: String,
-    pub user: String,
+    pub base: String,  // Base collection name like "ai.syui.log"
+}
+
+impl CollectionConfig {
+    // Collection name builders
+    pub fn comment(&self) -> String {
+        self.base.clone()
+    }
+    
+    pub fn user(&self) -> String {
+        format!("{}.user", self.base)
+    }
+    
+    #[allow(dead_code)]
+    pub fn chat(&self) -> String {
+        format!("{}.chat", self.base)
+    }
+    
+    pub fn chat_lang(&self) -> String {
+        format!("{}.chat.lang", self.base)
+    }
+    
+    pub fn chat_comment(&self) -> String {
+        format!("{}.chat.comment", self.base)
+    }
 }
 
 impl Default for AuthConfig {
@@ -47,8 +70,7 @@ impl Default for AuthConfig {
                 collections: vec!["ai.syui.log".to_string()],
             },
             collections: CollectionConfig {
-                comment: "ai.syui.log".to_string(),
-                user: "ai.syui.log.user".to_string(),
+                base: "ai.syui.log".to_string(),
             },
         }
     }
@@ -220,10 +242,49 @@ pub fn load_config() -> Result<AuthConfig> {
     }
     
     let config_json = fs::read_to_string(&config_path)?;
-    let mut config: AuthConfig = serde_json::from_str(&config_json)?;
     
-    // Update collection configuration
+    // Try to load as new format first, then migrate if needed
+    match serde_json::from_str::<AuthConfig>(&config_json) {
+        Ok(mut config) => {
+            // Update collection configuration
+            update_config_collections(&mut config);
+            Ok(config)
+        }
+        Err(e) => {
+            println!("{}", format!("Parse error: {}, attempting migration...", e).yellow());
+            // Try to migrate from old format
+            migrate_config_if_needed(&config_path, &config_json)
+        }
+    }
+}
+
+fn migrate_config_if_needed(config_path: &std::path::Path, config_json: &str) -> Result<AuthConfig> {
+    // Try to parse as old format and migrate to new simple format
+    let mut old_config: serde_json::Value = serde_json::from_str(config_json)?;
+    
+    // Migrate old collections structure to new base-only structure
+    if let Some(collections) = old_config.get_mut("collections") {
+        // Extract base collection name from comment field or use default
+        let base_collection = collections.get("comment")
+            .and_then(|v| v.as_str())
+            .unwrap_or("ai.syui.log")
+            .to_string();
+        
+        // Replace entire collections structure with new format
+        old_config["collections"] = serde_json::json!({
+            "base": base_collection
+        });
+    }
+    
+    // Save migrated config
+    let migrated_config_json = serde_json::to_string_pretty(&old_config)?;
+    fs::write(config_path, migrated_config_json)?;
+    
+    // Parse as new format
+    let mut config: AuthConfig = serde_json::from_value(old_config)?;
     update_config_collections(&mut config);
+    
+    println!("{}", "✅ Configuration migrated to new simplified format".green());
     
     Ok(config)
 }
@@ -259,7 +320,7 @@ async fn test_api_access_with_auth(config: &AuthConfig) -> Result<()> {
     let url = format!("{}/xrpc/com.atproto.repo.listRecords?repo={}&collection={}&limit=1",
                      config.admin.pds,
                      urlencoding::encode(&config.admin.did),
-                     urlencoding::encode(&config.collections.comment));
+                     urlencoding::encode(&config.collections.comment()));
     
     let response = client
         .get(&url)
@@ -311,23 +372,14 @@ fn save_config(config: &AuthConfig) -> Result<()> {
     Ok(())
 }
 
-// Generate collection names from admin DID or environment
+// Generate collection config from environment
 fn generate_collection_config() -> CollectionConfig {
-    // Check environment variables first
-    if let (Ok(comment), Ok(user)) = (
-        std::env::var("AILOG_COLLECTION_COMMENT"),
-        std::env::var("AILOG_COLLECTION_USER")
-    ) {
-        return CollectionConfig {
-            comment,
-            user,
-        };
-    }
+    // Use VITE_OAUTH_COLLECTION for unified configuration
+    let base = std::env::var("VITE_OAUTH_COLLECTION")
+        .unwrap_or_else(|_| "ai.syui.log".to_string());
     
-    // Default collections
     CollectionConfig {
-        comment: "ai.syui.log".to_string(),
-        user: "ai.syui.log.user".to_string(),
+        base,
     }
 }
 
@@ -335,5 +387,5 @@ fn generate_collection_config() -> CollectionConfig {
 pub fn update_config_collections(config: &mut AuthConfig) {
     config.collections = generate_collection_config();
     // Also update jetstream collections to monitor the comment collection
-    config.jetstream.collections = vec![config.collections.comment.clone()];
+    config.jetstream.collections = vec![config.collections.comment()];
 }

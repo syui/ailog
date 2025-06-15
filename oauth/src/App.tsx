@@ -3,7 +3,7 @@ import { OAuthCallback } from './components/OAuthCallback';
 import { AIChat } from './components/AIChat';
 import { authService, User } from './services/auth';
 import { atprotoOAuthService } from './services/atproto-oauth';
-import { appConfig } from './config/app';
+import { appConfig, getCollectionNames } from './config/app';
 import './App.css';
 
 function App() {
@@ -46,8 +46,10 @@ function App() {
   const [isPostingUserList, setIsPostingUserList] = useState(false);
   const [userListRecords, setUserListRecords] = useState<any[]>([]);
   const [showJsonFor, setShowJsonFor] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'comments' | 'ai-chat'>('comments');
+  const [activeTab, setActiveTab] = useState<'comments' | 'ai-chat' | 'lang-en' | 'ai-comment'>('comments');
   const [aiChatHistory, setAiChatHistory] = useState<any[]>([]);
+  const [langEnRecords, setLangEnRecords] = useState<any[]>([]);
+  const [aiCommentRecords, setAiCommentRecords] = useState<any[]>([]);
 
   useEffect(() => {
     // Setup Jetstream WebSocket for real-time comments (optional)
@@ -55,17 +57,18 @@ function App() {
       try {
         const ws = new WebSocket('wss://jetstream2.us-east.bsky.network/subscribe');
         
+        const collections = getCollectionNames(appConfig.collections.base);
         ws.onopen = () => {
           console.log('Jetstream connected');
           ws.send(JSON.stringify({
-            wantedCollections: [appConfig.collections.comment]
+            wantedCollections: [collections.comment]
           }));
         };
         
         ws.onmessage = (event) => {
           try {
             const data = JSON.parse(event.data);
-            if (data.collection === appConfig.collections.comment && data.commit?.operation === 'create') {
+            if (data.collection === collections.comment && data.commit?.operation === 'create') {
               console.log('New comment detected via Jetstream:', data);
               // Optionally reload comments
               // loadAllComments(window.location.href);
@@ -190,6 +193,9 @@ function App() {
     };
 
     checkAuth();
+    
+    // Load AI generated content (public)
+    loadAIGeneratedContent();
 
     return () => {
       window.removeEventListener('popstate', handlePopState);
@@ -271,6 +277,45 @@ function App() {
     } catch (err) {
       console.error('Failed to load AI chat history:', err);
       setAiChatHistory([]);
+    }
+  };
+
+  // Load AI generated content from admin DID
+  const loadAIGeneratedContent = async () => {
+    try {
+      const adminDid = appConfig.adminDid;
+      const bskyApi = appConfig.bskyPublicApi || 'https://public.api.bsky.app';
+      const collections = getCollectionNames(appConfig.collections.base);
+      
+      // Load lang:en records
+      const langResponse = await fetch(`${bskyApi}/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(adminDid)}&collection=${encodeURIComponent(collections.chatLang)}&limit=100`);
+      if (langResponse.ok) {
+        const langData = await langResponse.json();
+        const langRecords = langData.records || [];
+        
+        // Filter by current page URL if on post page
+        const filteredLangRecords = appConfig.rkey 
+          ? langRecords.filter(record => record.value.url === window.location.href)
+          : langRecords.slice(0, 3); // Top page: latest 3
+          
+        setLangEnRecords(filteredLangRecords);
+      }
+      
+      // Load AI comment records
+      const commentResponse = await fetch(`${bskyApi}/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(adminDid)}&collection=${encodeURIComponent(collections.chatComment)}&limit=100`);
+      if (commentResponse.ok) {
+        const commentData = await commentResponse.json();
+        const commentRecords = commentData.records || [];
+        
+        // Filter by current page URL if on post page
+        const filteredCommentRecords = appConfig.rkey 
+          ? commentRecords.filter(record => record.value.url === window.location.href)
+          : commentRecords.slice(0, 3); // Top page: latest 3
+          
+        setAiCommentRecords(filteredCommentRecords);
+      }
+    } catch (err) {
+      console.error('Failed to load AI generated content:', err);
     }
   };
 
@@ -454,7 +499,8 @@ function App() {
           console.log(`Fetching comments from user: ${user.handle} (${user.did}) at ${user.pds}`);
           
           // Public API使用（認証不要）
-          const response = await fetch(`${user.pds}/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(user.did)}&collection=${encodeURIComponent(appConfig.collections.comment)}&limit=100`);
+          const collections = getCollectionNames(appConfig.collections.base);
+          const response = await fetch(`${user.pds}/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(user.did)}&collection=${encodeURIComponent(collections.comment)}&limit=100`);
           
           if (!response.ok) {
             console.warn(`Failed to fetch from ${user.handle} (${response.status}): ${response.statusText}`);
@@ -1043,6 +1089,18 @@ function App() {
                 AI Chat History ({aiChatHistory.length})
               </button>
             )}
+            <button 
+              className={`tab-button ${activeTab === 'lang-en' ? 'active' : ''}`}
+              onClick={() => setActiveTab('lang-en')}
+            >
+              Lang: EN ({langEnRecords.length})
+            </button>
+            <button 
+              className={`tab-button ${activeTab === 'ai-comment' ? 'active' : ''}`}
+              onClick={() => setActiveTab('ai-comment')}
+            >
+              AI Comment ({aiCommentRecords.length})
+            </button>
           </div>
 
           {/* Comments List */}
@@ -1118,7 +1176,7 @@ function App() {
                   </div>
                   <div className="comment-meta">
                     {record.value.url && (
-                      <small><a href={record.value.url} target="_blank" rel="noopener noreferrer">{record.value.url}</a></small>
+                      <small><a href={record.value.url}>{record.value.url}</a></small>
                     )}
                   </div>
                   
@@ -1204,7 +1262,7 @@ function App() {
                     </div>
                     <div className="comment-meta">
                       {record.value.url && (
-                        <small><a href={record.value.url} target="_blank" rel="noopener noreferrer">{record.value.url}</a></small>
+                        <small><a href={record.value.url}>{record.value.url}</a></small>
                       )}
                     </div>
                     
@@ -1217,6 +1275,88 @@ function App() {
                         </pre>
                       </div>
                     )}
+                  </div>
+                ))
+              )}
+            </div>
+          )}
+
+          {/* Lang: EN List */}
+          {activeTab === 'lang-en' && (
+            <div className="lang-en-list">
+              {langEnRecords.length === 0 ? (
+                <p className="no-content">No English translations yet</p>
+              ) : (
+                langEnRecords.map((record, index) => (
+                  <div key={index} className="lang-item">
+                    <div className="lang-header">
+                      <img 
+                        src={record.value.author?.avatar || generatePlaceholderAvatar(record.value.author?.handle || 'AI')} 
+                        alt="AI Avatar" 
+                        className="comment-avatar"
+                      />
+                      <div className="comment-author-info">
+                        <span className="comment-author">
+                          {record.value.author?.displayName || 'AI Translator'}
+                        </span>
+                        <span className="comment-handle">
+                          @{record.value.author?.handle || 'ai'}
+                        </span>
+                      </div>
+                      <span className="comment-date">
+                        {new Date(record.value.createdAt).toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="lang-content">
+                      <div className="lang-type">Type: {record.value.type || 'en'}</div>
+                      <div className="lang-body">{record.value.body}</div>
+                    </div>
+                    <div className="comment-meta">
+                      {record.value.url && (
+                        <small><a href={record.value.url}>{record.value.url}</a></small>
+                      )}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          )}
+
+          {/* AI Comment List */}
+          {activeTab === 'ai-comment' && (
+            <div className="ai-comment-list">
+              {aiCommentRecords.length === 0 ? (
+                <p className="no-content">No AI comments yet</p>
+              ) : (
+                aiCommentRecords.map((record, index) => (
+                  <div key={index} className="ai-comment-item">
+                    <div className="ai-comment-header">
+                      <img 
+                        src={record.value.author?.avatar || generatePlaceholderAvatar(record.value.author?.handle || 'AI')} 
+                        alt="AI Avatar" 
+                        className="comment-avatar"
+                      />
+                      <div className="comment-author-info">
+                        <span className="comment-author">
+                          {record.value.author?.displayName || 'AI Commenter'}
+                        </span>
+                        <span className="comment-handle">
+                          @{record.value.author?.handle || 'ai'}
+                        </span>
+                      </div>
+                      <span className="comment-date">
+                        {new Date(record.value.createdAt).toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="ai-comment-content">
+                      <div className="ai-comment-type">Type: {record.value.type || 'comment'}</div>
+                      <div className="ai-comment-body">{record.value.body}</div>
+                    </div>
+                    <div className="comment-meta">
+                      {record.value.url && (
+                        <small><a href={record.value.url}>{record.value.url}</a></small>
+                      )}
+                    </div>
                   </div>
                 ))
               )}

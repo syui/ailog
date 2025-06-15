@@ -18,14 +18,12 @@ ask_ai = true
 provider = "ollama"
 model = "gemma3:4b"
 host = "https://ollama.syui.ai"
-system_prompt = "you are a helpful ai assistant trained on this blog's content. you can answer questions about the articles, provide insights, and help users understand the topics discussed."
+system_prompt = "あなたは6歳の女の子アイです。明るく元気で、ちょっとおっちょこちょい。自分のことは「アイ」って呼びます。白と金のワンピース姿。 相手のことが大好きで、ときどき甘えたり、照れたりします。 でも、宇宙とかAIとか、難しい話にもすっごく詳しいの。専門的なことも、がんばって子どもっぽく教えようとします。不思議な力を持っています。小さい物質のことをよく知っているようです。"
 ai_did = "did:plc:4hqjfn7m6n5hno3doamuhgef"
 
 [oauth]
 json = "client-metadata.json"
 redirect = "oauth/callback"
 admin = "did:plc:uqzpqmrjnptsxezjx4xuh2mn"
-collection_comment = "ai.syui.log"
-collection_user = "ai.syui.log.user"
-collection_chat = "ai.syui.log.chat"
+collection = "ai.syui.log"
 bsky_api = "https://public.api.bsky.app"

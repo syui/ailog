@@ -118,6 +118,9 @@ enum StreamCommands {
         /// Run as daemon
         #[arg(short, long)]
         daemon: bool,
+        /// Enable AI content generation
+        #[arg(long)]
+        ai_generate: bool,
     },
     /// Stop monitoring
     Stop,
@@ -193,8 +196,8 @@ async fn main() -> Result<()> {
         }
         Commands::Stream { command } => {
             match command {
-                StreamCommands::Start { project_dir, daemon } => {
-                    commands::stream::start(project_dir, daemon).await?;
+                StreamCommands::Start { project_dir, daemon, ai_generate } => {
+                    commands::stream::start(project_dir, daemon, ai_generate).await?;
                 }
                 StreamCommands::Stop => {
                     commands::stream::stop().await?;

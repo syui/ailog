@@ -45,17 +45,9 @@ pub async fn build(project_dir: PathBuf) -> Result<()> {
         .and_then(|v| v.as_str())
         .ok_or_else(|| anyhow::anyhow!("No admin DID found in [oauth] section"))?;
 
-    let collection_comment = oauth_config.get("collection_comment")
+    let collection_base = oauth_config.get("collection")
         .and_then(|v| v.as_str())
         .unwrap_or("ai.syui.log");
-
-    let collection_user = oauth_config.get("collection_user")
-        .and_then(|v| v.as_str())
-        .unwrap_or("ai.syui.log.user");
-
-    let collection_chat = oauth_config.get("collection_chat")
-        .and_then(|v| v.as_str())
-        .unwrap_or("ai.syui.log.chat");
 
     // Extract AI config if present
     let ai_config = config.get("ai")
@@ -109,15 +101,8 @@ VITE_OAUTH_CLIENT_ID={}/{}
 VITE_OAUTH_REDIRECT_URI={}/{}
 VITE_ADMIN_DID={}
 
-# Collection names for OAuth app
-VITE_COLLECTION_COMMENT={}
-VITE_COLLECTION_USER={}
-VITE_COLLECTION_CHAT={}
-
-# Collection names for ailog (backward compatibility)
-AILOG_COLLECTION_COMMENT={}
-AILOG_COLLECTION_USER={}
-AILOG_COLLECTION_CHAT={}
+# Base collection for OAuth app and ailog (all others are derived)
+VITE_OAUTH_COLLECTION={}
 
 # AI Configuration
 VITE_AI_ENABLED={}
@@ -135,12 +120,7 @@ VITE_BSKY_PUBLIC_API={}
         base_url, client_id_path,
         base_url, redirect_path,
         admin_did,
-        collection_comment,
-        collection_user,
-        collection_chat,
-        collection_comment,
-        collection_user,
-        collection_chat,
+        collection_base,
         ai_enabled,
         ai_ask_ai,
         ai_provider,

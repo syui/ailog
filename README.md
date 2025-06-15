@@ -2,12 +2,367 @@
 
 AI-powered static blog generator with ATProto integration, part of the ai.ai ecosystem.
 
-## 🎯 Gitea Action Usage
+## 🚀 Quick Start
 
-Use ailog in your Gitea Actions workflow:
+### Installation & Setup
+
+```bash
+# 1. Clone repository
+git clone https://git.syui.ai/ai/log
+cd log
+
+# 2. Build ailog
+cargo build --release
+
+# 3. Initialize blog
+./target/release/ailog init my-blog
+
+# 4. Create your first post
+./target/release/ailog new "My First Post"
+
+# 5. Build static site
+./target/release/ailog build
+
+# 6. Serve locally
+./target/release/ailog serve
+```
+
+### Install via Cargo
+
+```bash
+cargo install --path .
+# Now you can use `ailog` command globally
+```
+
+## 📖 Core Commands
+
+### Blog Management
+
+```bash
+# Project setup
+ailog init <project-name>           # Initialize new blog project
+ailog new <title>                   # Create new blog post
+ailog build                         # Generate static site with JSON index
+ailog serve                         # Start development server
+ailog clean                         # Clean build artifacts
+
+# ATProto authentication  
+ailog auth init                     # Setup ATProto credentials
+ailog auth status                   # Check authentication status
+ailog auth logout                   # Clear credentials
+
+# OAuth app build
+ailog oauth build <project-dir>     # Build OAuth comment system
+```
+
+### Stream & AI Features
+
+```bash
+# Start monitoring & AI generation
+ailog stream start --ai-generate    # Monitor blog + auto-generate AI content
+ailog stream start --daemon         # Run as background daemon
+ailog stream status                 # Check stream status
+ailog stream stop                   # Stop monitoring
+ailog stream test                   # Test ATProto API access
+```
+
+### Documentation & Translation
+
+```bash
+# Generate documentation
+ailog doc readme --with-ai          # Generate enhanced README
+ailog doc api --output ./docs       # Generate API documentation
+ailog doc structure --include-deps  # Analyze project structure
+
+# AI-powered translation
+ailog doc translate --input README.md --target-lang en
+ailog doc translate --input docs/guide.ja.md --target-lang en --model qwen2.5:latest
+```
+
+## 🏗️ Architecture
+
+### Project Structure
+
+```
+ai.log/
+├── src/                    # Rust static blog generator
+│   ├── commands/          # CLI command implementations
+│   ├── generator.rs       # Core blog generation + JSON index
+│   ├── mcp/              # MCP server integration
+│   └── main.rs           # CLI entry point
+├── my-blog/              # Your blog content
+│   ├── content/posts/    # Markdown blog posts
+│   ├── templates/        # Tera templates
+│   ├── static/          # Static assets
+│   └── public/          # Generated site output
+├── oauth/               # ATProto comment system
+│   ├── src/            # TypeScript OAuth app
+│   ├── dist/           # Built OAuth assets
+│   └── package.json    # Node.js dependencies
+└── target/             # Rust build output
+```
+
+### Data Flow
+
+```
+Blog Posts (Markdown) → ailog build → public/
+                                   ├── Static HTML pages
+                                   └── index.json (API)
+                                         ↓
+ailog stream start --ai-generate → Monitor index.json
+                                         ↓
+New posts detected → Ollama AI → ATProto records
+                               ├── ai.syui.log.chat.lang (translations)
+                               └── ai.syui.log.chat.comment (AI comments)
+                                         ↓
+OAuth app → Display AI-generated content
+```
+
+## 🤖 AI Integration
+
+### AI Content Generation
+
+The `--ai-generate` flag enables automatic AI content generation:
+
+1. **Blog Monitoring**: Monitors `index.json` every 5 minutes
+2. **Duplicate Prevention**: Checks existing ATProto collections
+3. **AI Generation**: Uses Ollama (gemma3:4b) for translations & comments
+4. **ATProto Storage**: Saves to derived collections (`base.chat.lang`, `base.chat.comment`)
+
+```bash
+# Start AI generation monitor
+ailog stream start --ai-generate
+
+# Output:
+# 🤖 Starting AI content generation monitor...
+# 📡 Blog host: https://syui.ai
+# 🧠 Ollama host: https://ollama.syui.ai
+# 🔍 Checking for new blog posts...
+# ✅ Generated translation for: 静的サイトジェネレータを作った
+# ✅ Generated comment for: 静的サイトジェネレータを作った
+```
+
+### Collection Management
+
+ailog uses a **simplified collection structure** based on a single base collection name:
+
+```bash
+# Single environment variable controls all collections (unified naming)
+export VITE_OAUTH_COLLECTION="ai.syui.log"
+
+# Automatically derives:
+# - ai.syui.log (comments)
+# - ai.syui.log.user (user management)  
+# - ai.syui.log.chat.lang (AI translations)
+# - ai.syui.log.chat.comment (AI comments)
+```
+
+**Benefits:**
+- ✅ **Simple**: One variable instead of 5+
+- ✅ **Consistent**: All collections follow the same pattern
+- ✅ **Manageable**: Easy systemd/production configuration
+
+### Ask AI Feature
+
+Interactive AI chat integrated into blog pages:
+
+```bash
+# 1. Setup Ollama
+brew install ollama
+ollama pull gemma2:2b
+
+# 2. Start with CORS support
+OLLAMA_ORIGINS="https://example.com" ollama serve
+
+# 3. Configure AI DID in templates/base.html
+const aiConfig = {
+    systemPrompt: 'You are a helpful AI assistant.',
+    aiDid: 'did:plc:your-ai-bot-did'
+};
+```
+
+## 🌐 ATProto Integration
+
+### OAuth Comment System
+
+The OAuth app provides ATProto-authenticated commenting:
+
+```bash
+# 1. Build OAuth app
+cd oauth
+npm install
+npm run build
+
+# 2. Configure for production
+ailog oauth build my-blog  # Auto-generates .env.production
+
+# 3. Deploy OAuth assets
+# Assets are automatically copied to public/ during ailog build
+```
+
+### Authentication Setup
+
+```bash
+# Initialize ATProto authentication
+ailog auth init
+
+# Input required:
+# - Handle (e.g., your.handle.bsky.social)
+# - Access JWT
+# - Refresh JWT
+
+# Check status
+ailog auth status
+```
+
+### Collection Structure
+
+All ATProto collections are **automatically derived** from a single base name:
+
+```
+Base Collection: "ai.syui.log"
+├── ai.syui.log (user comments)
+├── ai.syui.log.user (registered commenters)
+└── ai.syui.log.chat/
+    ├── ai.syui.log.chat.lang (AI translations)
+    └── ai.syui.log.chat.comment (AI comments)
+```
+
+**Configuration Priority:**
+1. Environment variable: `VITE_OAUTH_COLLECTION` (unified)
+2. config.toml: `[oauth] collection = "..."`
+3. Auto-generated from domain (e.g., `log.syui.ai` → `ai.syui.log`)
+4. Default: `ai.syui.log`
+
+### Stream Monitoring
+
+```bash
+# Monitor ATProto streams for comments
+ailog stream start
+
+# Enable AI generation alongside monitoring
+ailog stream start --ai-generate --daemon
+```
+
+## 📱 OAuth App Features
+
+The OAuth TypeScript app provides:
+
+### Comment System
+- **Real-time Comments**: ATProto-authenticated commenting
+- **User Management**: Automatic user registration
+- **Mobile Responsive**: Optimized for all devices
+- **JSON View**: Technical record inspection
+
+### AI Content Display
+- **Lang: EN Tab**: AI-generated English translations
+- **AI Comment Tab**: AI-generated blog insights
+- **Admin Records**: Fetches from admin DID collections
+- **Real-time Updates**: Live content refresh
+
+### Setup & Configuration
+
+```bash
+cd oauth
+
+# Development
+npm run dev
+
+# Production build
+npm run build
+
+# Preview production
+npm run preview
+```
+
+**Environment Variables:**
+```bash
+# Production (.env.production - auto-generated by ailog oauth build)
+VITE_APP_HOST=https://syui.ai
+VITE_OAUTH_CLIENT_ID=https://syui.ai/client-metadata.json
+VITE_OAUTH_REDIRECT_URI=https://syui.ai/oauth/callback
+VITE_ADMIN_DID=did:plc:uqzpqmrjnptsxezjx4xuh2mn
+
+# Simplified collection configuration (single base collection)
+VITE_OAUTH_COLLECTION=ai.syui.log
+
+# AI Configuration
+VITE_AI_ENABLED=true
+VITE_AI_ASK_AI=true
+VITE_AI_PROVIDER=ollama
+# ... (other AI settings)
+```
+
+## 🔧 Advanced Features
+
+### JSON Index Generation
+
+Every `ailog build` generates `/public/index.json`:
+
+```json
+[
+  {
+    "title": "静的サイトジェネレータを作った",
+    "href": "https://syui.ai/posts/2025-06-06-ailog.html",
+    "formated_time": "Thu Jun 12, 2025",
+    "utc_time": "2025-06-12T00:00:00Z",
+    "tags": ["blog", "rust", "mcp", "atp"],
+    "contents": "Plain text content...",
+    "description": "Excerpt...",
+    "categories": []
+  }
+]
+```
+
+This enables:
+- **API Access**: Programmatic blog content access
+- **Stream Monitoring**: AI generation triggers
+- **Search Integration**: Full-text search capabilities
+
+### Translation System
+
+AI-powered document translation with Ollama:
+
+```bash
+# Basic translation
+ailog doc translate --input README.md --target-lang en
+
+# Advanced options
+ailog doc translate \
+  --input docs/guide.ja.md \
+  --target-lang en \
+  --source-lang ja \
+  --model qwen2.5:latest \
+  --output docs/guide.en.md
+```
+
+**Features:**
+- **Markdown-aware**: Preserves code blocks, links, tables
+- **Multiple models**: qwen2.5, gemma3, etc.
+- **Auto-detection**: Detects Japanese content automatically
+- **Structure preservation**: Maintains document formatting
+
+### MCP Server Integration
+
+```bash
+# Start MCP server for ai.gpt integration
+ailog mcp --port 8002
+
+# Available tools:
+# - create_blog_post
+# - list_blog_posts  
+# - build_blog
+# - get_post_content
+# - translate_document
+# - generate_documentation
+```
+
+## 🚀 Deployment
+
+### GitHub Actions
 
 ```yaml
-name: Deploy Blog
+name: Deploy ai.log Blog
 on:
   push:
     branches: [main]
@@ -17,664 +372,185 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - uses: ai/log@v1
+    
+    - name: Setup Rust
+      uses: actions-rs/toolchain@v1
       with:
-        content-dir: 'content'
-        output-dir: 'public'
-        ai-integration: true
-        atproto-integration: true
-    - uses: cloudflare/pages-action@v1
+        toolchain: stable
+        
+    - name: Build ailog
+      run: cargo build --release
+      
+    - name: Build blog
+      run: |
+        cd my-blog
+        ../target/release/ailog build
+        
+    - name: Deploy to Cloudflare Pages
+      uses: cloudflare/pages-action@v1
       with:
         apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         projectName: my-blog
-        directory: public
+        directory: my-blog/public
 ```
 
-## 🚀 Quick Start
-
-### Development Setup
+### Production Setup
 
 ```bash
-# 1. Clone and setup
-git clone https://git.syui.ai/ai/log
-cd log
+# 1. Build for production
+cargo build --release
 
-# 2. Start development services
-./run.zsh serve    # Blog development server
-./run.zsh c        # Cloudflare tunnel (example.com)
-./run.zsh o        # OAuth web server  
-./run.zsh co       # Comment system monitor
+# 2. Setup systemd services
+sudo cp systemd/system/ailog-stream.service /etc/systemd/system/
+sudo systemctl enable ailog-stream.service
+sudo systemctl start ailog-stream.service
 
-# 3. Start Ollama (for Ask AI)
-brew install ollama
-ollama pull gemma2:2b
-OLLAMA_ORIGINS="https://example.com" ollama serve
+# 3. Configure Ollama with CORS
+sudo vim /usr/lib/systemd/system/ollama.service
+# Add: Environment="OLLAMA_ORIGINS=https://yourdomain.com"
+
+# 4. Monitor services
+journalctl -u ailog-stream.service -f
 ```
 
-### Production Deployment
-
-```bash
-# 1. Build static site
-hugo
-
-# 2. Deploy to GitHub Pages
-git add .
-git commit -m "Update blog"
-git push origin main
-
-# 3. Automatic deployment via GitHub Actions
-# Site available at: https://yourusername.github.io/repo-name
-```
-
-### ATProto Integration
-
-```bash
-# 1. OAuth Client Setup (oauth/client-metadata.json)
-{
-  "client_id": "https://example.com/client-metadata.json",
-  "client_name": "ai.log Blog System",
-  "redirect_uris": ["https://example.com/oauth/callback"],
-  "scope": "atproto",
-  "grant_types": ["authorization_code", "refresh_token"],
-  "response_types": ["code"],
-  "application_type": "web",
-  "dpop_bound_access_tokens": true
-}
-
-# 2. Comment System Configuration
-# Collection: ai.syui.log (comments)
-# User Management: ai.syui.log.user (registered users)
-
-# 3. Services
-./run.zsh o     # OAuth authentication server
-./run.zsh co    # ATProto Jetstream comment monitor
-```
-
-### Development with run.zsh
-
-```bash
-# Development
-./run.zsh serve
-
-# Production (with Cloudflare Tunnel)  
-./run.zsh tunnel
-
-# OAuth app development
-./run.zsh o
-
-# Comment system monitoring
-./run.zsh co
-```
-
-## 📋 Commands
-
-| Command | Description |
-|---------|-------------|
-| `./run.zsh c` | Enable Cloudflare tunnel (example.com) for OAuth |
-| `./run.zsh o` | Start OAuth web server (port:4173 = example.com) |
-| `./run.zsh co` | Start comment system (ATProto stream monitor) |
-
-## 🏗️ Architecture (Pure Rust + HTML + JS)
-
-```
-ai.log/
-├── oauth/                  # 🎯 OAuth files (protected)
-│   ├── oauth-widget-simple.js  # Self-contained OAuth widget
-│   ├── oauth-simple.html       # OAuth authentication page
-│   ├── client-metadata.json    # ATProto configuration
-│   └── README.md               # Usage guide
-├── my-blog/                # Blog content and templates
-│   ├── content/posts/      # Markdown blog posts
-│   ├── templates/          # Tera templates
-│   ├── static/             # Static assets (OAuth copied here)
-│   └── public/             # Generated site (build output)
-├── src/                    # Rust blog generator
-├── scripts/                # Build and deployment scripts
-└── run.zsh                 # 🎯 Main build script
-```
-
-### ✅ Node.js Dependencies Eliminated
-- ❌ `package.json` - Removed
-- ❌ `node_modules/` - Removed  
-- ❌ `npm run build` - Not needed
-- ✅ Pure JavaScript OAuth implementation
-- ✅ CDN-free, self-contained code
-- ✅ Rust-only build process
-
----
-
-## 📖 Original Features
-
-[![Rust](https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white)](https://www.rust-lang.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
-## 概要
-
-ai.logは、[Anthropic Docs](https://docs.anthropic.com/)にインスパイアされたモダンなインターフェースを持つ、次世代静的ブログジェネレーターです。ai.gptとの深い統合、ローカルAI機能、atproto OAuth連携により、従来のブログシステムを超えた体験を提供します。
-
-## 主な特徴
-
-### 🎨 モダンインターフェース
-- **Anthropic Docs風デザイン**: プロフェッショナルで読みやすい
-- **Timeline形式**: BlueskyライクなタイムラインUI  
-- **自動TOC**: 右サイドバーに目次を自動生成
-- **レスポンシブ**: モバイル・デスクトップ対応
-
-### 🤖 Ask AI機能 ✅
-- **ローカルAI**: Ollama(gemma2:2b)による質問応答
-- **認証必須**: ATProto OAuth認証でアクセス制御
-- **トップページ限定**: ブログコンテンツに特化した回答
-- **CORS解決済み**: OLLAMA_ORIGINS設定でクロスオリジン問題解消
-- **プロフィール連携**: AIアバターとしてATProtoプロフィール画像表示
-- **レスポンス最適化**: 80文字制限+高いtemperatureで多様な回答
-- **ローディング表示**: Font Awesomeアイコンによる一行ローディング
-
-### 🔧 Ask AI設定方法
-```bash
-# 1. Ollama設定
-brew install ollama
-ollama pull gemma2:2b
-
-# 2. CORS設定で起動
-OLLAMA_ORIGINS="https://example.com" ollama serve
-
-# 3. AI DID設定 (my-blog/templates/base.html)
-const aiConfig = {
-    systemPrompt: 'You are a helpful AI assistant.',
-    aiDid: 'did:plc:your-ai-bot-did'
-};
-```
-
-### 🌐 分散SNS連携
-- **atproto OAuth**: Blueskyアカウントでログイン
-- **コメントシステム**: 分散SNSコメント
-- **データ主権**: ユーザーがデータを所有
-
-### 🔗 エコシステム統合
-- **ai.gpt**: ドキュメント同期・AI機能連携
-- **MCP Server**: ai.gptからの操作をサポート
-- **ai.wiki**: 自動ドキュメント同期
-
-## Architecture
-
-### Dual MCP Integration
-
-**ai.log MCP Server (API Layer)**
-- **Role**: Independent blog API
-- **Port**: 8002
-- **Location**: `./src/mcp/`
-- **Function**: Core blog generation and management
-
-**ai.gpt Integration (Server Layer)**
-- **Role**: AI integration gateway
-- **Port**: 8001 (within ai.gpt)
-- **Location**: `../src/aigpt/mcp_server.py`
-- **Function**: AI memory system + HTTP proxy to ai.log
-
-### Data Flow
-```
-Claude Code → ai.gpt (Server/AI) → ai.log (API/Blog) → Static Site
-              ↑                      ↑
-              Memory System          File Operations
-              Relationship AI        Markdown Processing
-              Context Analysis       Template Rendering
-```
-
-## Features
-
-- **Static Blog Generation**: Inspired by Zola, built with Rust
-- **AI-Powered Content**: Memory-driven article generation via ai.gpt
-- **🌍 Ollama Translation**: Multi-language markdown translation with structure preservation
-- **atproto Integration**: OAuth authentication and comment system (planned)
-- **MCP Integration**: Seamless Claude Code workflow
-
-## Installation
-
-```bash
-cargo install ailog
-```
-
-## Usage
-
-### Standalone Mode
-
-```bash
-# Initialize a new blog
-ailog init myblog
-
-# Create a new post
-ailog new "My First Post"
-
-# Build the blog
-ailog build
-
-# Serve locally
-ailog serve
-
-# Start MCP server
-ailog mcp --port 8002
-
-# Generate documentation
-ailog doc readme --with-ai
-ailog doc api --output ./docs
-ailog doc structure --include-deps
-
-# Translate documents (requires Ollama)
-ailog doc translate --input README.md --target-lang en
-ailog doc translate --input docs/api.md --target-lang ja --model qwen2.5:latest
-
-# Clean build files
-ailog clean
-```
-
-### AI Ecosystem Integration
-
-When integrated with ai.gpt, use natural language:
-- "ブログ記事を書いて" → Triggers `log_ai_content`
-- "記事一覧を見せて" → Triggers `log_list_posts`
-- "ブログをビルドして" → Triggers `log_build_blog`
-
-### Documentation & Translation
-
-Generate comprehensive documentation and translate content:
-- "READMEを生成して" → Triggers `log_generate_docs`
-- "APIドキュメントを作成して" → Generates API documentation
-- "プロジェクト構造を解析して" → Creates structure documentation
-- "このファイルを英語に翻訳して" → Triggers `log_translate_document`
-- "マークダウンを日本語に変換して" → Uses Ollama for translation
-
-## MCP Tools
-
-### ai.log Server (Port 8002)
-- `create_blog_post` - Create new blog post
-- `list_blog_posts` - List existing posts
-- `build_blog` - Build static site
-- `get_post_content` - Get post by slug
-- `translate_document` ⭐ - Ollama-powered markdown translation
-- `generate_documentation` ⭐ - Code analysis and documentation generation
-
-### ai.gpt Integration (Port 8001)
-- `log_create_post` - Proxy to ai.log + error handling
-- `log_list_posts` - Proxy to ai.log + formatting
-- `log_build_blog` - Proxy to ai.log + AI features
-- `log_get_post` - Proxy to ai.log + context
-- `log_system_status` - Health check for ai.log
-- `log_ai_content` ⭐ - AI memory → blog content generation
-- `log_translate_document` 🌍 - Document translation via Ollama
-- `log_generate_docs` 📚 - Documentation generation
-
-### Documentation Generation Tools
-- `doc readme` - Generate README.md from project analysis
-- `doc api` - Generate API documentation
-- `doc structure` - Analyze and document project structure
-- `doc changelog` - Generate changelog from git history
-- `doc translate` 🌍 - Multi-language document translation
-
-### Translation Features
-- **Language Support**: English, Japanese, Chinese, Korean, Spanish
-- **Markdown Preservation**: Code blocks, links, images, tables maintained
-- **Auto-Detection**: Automatically detects Japanese content
-- **Ollama Integration**: Uses local AI models for privacy and cost-efficiency
-- **Smart Processing**: Section-by-section translation with structure awareness
-
-## Configuration
-
-### ai.log Configuration
-- Location: `~/.config/syui/ai/log/`
-- Format: TOML configuration
-
-### ai.gpt Integration
-- Configuration: `../config.json`
-- Auto-detection: ai.log tools enabled when `./log/` directory exists
-- System prompt: Automatically triggers blog tools for related queries
-
-## AI Integration Features
-
-### Memory-Driven Content Generation
-- **Source**: ai.gpt memory system
-- **Process**: Contextual memories → AI analysis → Blog content
-- **Output**: Structured markdown with personal insights
-
-### Automatic Workflows
-- Daily blog posts from accumulated memories
-- Content enhancement and suggestions
-- Related article recommendations
-- Multi-language content generation
-
-## atproto Integration (Planned)
-
-### OAuth 2.0 Authentication
-- Client metadata: `public/client-metadata.json`
-- Comment system integration
-- Data sovereignty: Users own their comments
-- Collection storage in atproto
-
-### Comment System
-- **ATProto Stream Monitoring**: Real-time Jetstream connection monitoring
-- **Collection Tracking**: Monitors `ai.syui.log` collection for new comments
-- **User Management**: Automatically adds commenting users to `ai.syui.log.user` collection
-- **Comment Display**: Fetches and displays comments from registered users
-- **OAuth Integration**: atproto account login via Cloudflare tunnel
-- **Distributed Storage**: Comments stored in user-owned atproto collections
-
-## Build & Deploy
-
-### GitHub Actions
-```yaml
-# .github/workflows/gh-pages.yml
-- name: Build ai.log
-  run: |
-    cd log
-    cargo build --release
-    ./target/release/ailog build
-```
-
-### Cloudflare Pages
-- Static output: `./public/`
-- Automatic deployment on main branch push
-- AI content generation during build process
-
-## Development Status
-
-### ✅ Completed Features
-- Project structure and Cargo.toml setup
-- CLI interface (init, new, build, serve, clean, mcp, doc)
-- Configuration system with TOML support
-- Markdown parsing with frontmatter support
-- Template system with Handlebars
-- Static site generation with posts and pages
-- Development server with hot reload
-- **MCP server integration (both layers)**
-- **ai.gpt integration with 6 tools**
-- **AI memory system connection**
-- **📚 Documentation generation from code**
-- **🔍 Rust project analysis and API extraction**
-- **📝 README, API docs, and structure analysis**
-- **🌍 Ollama-powered translation system**
-- **🚀 Complete MCP integration with ai.gpt**
-- **📄 Markdown-aware translation preserving structure**
-- **💬 ATProto comment system with Jetstream monitoring**
-- **🔄 Real-time comment collection and user management**
-- **🔐 OAuth 2.1 integration with Cloudflare tunnel**
-- **🤖 Ask AI feature with Ollama integration**
-- **⚡ CORS resolution via OLLAMA_ORIGINS**
-- **🔒 Authentication-gated AI chat**
-- **📱 Top-page-only AI access pattern**
-- Test blog with sample content and styling
-
-### 🚧 In Progress
-- AI-powered content enhancement pipeline
-- Advanced comment moderation system
-
-### 📋 Planned Features
-- Advanced template customization
-- Plugin system for extensibility
-- Real-time comment system
-- Multi-blog management
-- VTuber integration (ai.verse connection)
-
-## Integration with ai Ecosystem
-
-### System Dependencies
-- **ai.gpt**: Memory system, relationship tracking, AI provider
-- **ai.card**: Future cross-system content sharing
-- **ai.bot**: atproto posting and mention handling
-- **ai.verse**: 3D world blog representation (future)
-
-### yui System Compliance
-- **Uniqueness**: Each blog post tied to individual identity
-- **Reality Reflection**: Personal memories → digital content
-- **Irreversibility**: Published content maintains historical integrity
-
-## Getting Started
-
-### 1. Standalone Usage
-```bash
-git clone [repository]
-cd log
-cargo run -- init my-blog
-cargo run -- new "First Post"
-cargo run -- build
-cargo run -- serve
-```
-
-### 2. AI Ecosystem Integration
-```bash
-# Start ai.log MCP server
-cargo run -- mcp --port 8002
-
-# In another terminal, start ai.gpt
-cd ../
-# ai.gpt startup commands
-
-# Use Claude Code with natural language blog commands
-```
-
-## Documentation Generation Features
-
-### 📚 Automatic README Generation
-```bash
-# Generate README from project analysis
-ailog doc readme --source ./src --with-ai
-
-# Output: Enhanced README.md with:
-# - Project overview and metrics
-# - Dependency analysis
-# - Module structure
-# - AI-generated insights
-```
-
-### 📖 API Documentation
-```bash
-# Generate comprehensive API docs
-ailog doc api --source ./src --format markdown --output ./docs
-
-# Creates:
-# - docs/api.md (main API overview)
-# - docs/module_name.md (per-module documentation)
-# - Function signatures and documentation
-# - Struct/enum definitions
-```
-
-### 🏗️ Project Structure Analysis
-```bash
-# Analyze and document project structure
-ailog doc structure --source . --include-deps
-
-# Generates:
-# - Directory tree visualization
-# - File distribution by language
-# - Dependency graph analysis
-# - Code metrics and statistics
-```
-
-### 📝 Git Changelog Generation
-```bash
-# Generate changelog from git history
-ailog doc changelog --from v1.0.0 --explain-changes
-
-# Creates:
-# - Structured changelog
-# - Commit categorization
-# - AI-enhanced change explanations
-```
-
-### 🤖 AI-Enhanced Documentation
-When `--with-ai` is enabled:
-- **Content Enhancement**: AI improves readability and adds insights
-- **Context Awareness**: Leverages ai.gpt memory system
-- **Smart Categorization**: Automatic organization of content
-- **Technical Writing**: Professional documentation style
-
-## 🌍 Translation System
-
-### Ollama-Powered Translation
-
-ai.log includes a comprehensive translation system powered by Ollama AI models:
-
-```bash
-# Basic translation
-ailog doc translate --input README.md --target-lang en
-
-# Advanced translation with custom settings
-ailog doc translate \
-  --input docs/technical-guide.ja.md \
-  --target-lang en \
-  --source-lang ja \
-  --output docs/technical-guide.en.md \
-  --model qwen2.5:latest \
-  --ollama-endpoint http://localhost:11434
-```
-
-### Translation Features
-
-#### 📄 Markdown-Aware Processing
-- **Code Block Preservation**: All code snippets remain untranslated
-- **Link Maintenance**: URLs and link structures preserved
-- **Image Handling**: Alt text can be translated while preserving image paths
-- **Table Translation**: Table content translated while maintaining structure
-- **Header Preservation**: Markdown headers translated with level maintenance
-
-#### 🎯 Smart Language Detection
-- **Auto-Detection**: Automatically detects Japanese content using Unicode ranges
-- **Manual Override**: Specify source language for precise control
-- **Mixed Content**: Handles documents with multiple languages
-
-#### 🔧 Flexible Configuration
-- **Model Selection**: Choose from available Ollama models
-- **Custom Endpoints**: Use different Ollama instances
-- **Output Control**: Auto-generate or specify output paths
-- **Batch Processing**: Process multiple files efficiently
+## 🌍 Translation Support
 
 ### Supported Languages
 
-| Language | Code | Direction | Model Optimized |
-|----------|------|-----------|-----------------|
-| English  | `en` | ↔️        | ✅ qwen2.5      |
-| Japanese | `ja` | ↔️        | ✅ qwen2.5      |
-| Chinese  | `zh` | ↔️        | ✅ qwen2.5      |
-| Korean   | `ko` | ↔️        | ⚠️ Basic       |
-| Spanish  | `es` | ↔️        | ⚠️ Basic       |
+| Language | Code | Status | Model |
+|----------|------|--------|-------|
+| English  | `en` | ✅ Full | qwen2.5 |
+| Japanese | `ja` | ✅ Full | qwen2.5 |
+| Chinese  | `zh` | ✅ Full | qwen2.5 |
+| Korean   | `ko` | ⚠️ Basic | qwen2.5 |
+| Spanish  | `es` | ⚠️ Basic | qwen2.5 |
 
 ### Translation Workflow
 
-1. **Parse Document**: Analyze markdown structure and identify sections
-2. **Preserve Code**: Isolate code blocks and technical content
-3. **Translate Content**: Process text sections with Ollama AI
-4. **Reconstruct**: Rebuild document maintaining original formatting
-5. **Validate**: Ensure structural integrity and completeness
+1. **Parse**: Analyze markdown structure
+2. **Preserve**: Isolate code blocks and technical content  
+3. **Translate**: Process with Ollama AI
+4. **Reconstruct**: Rebuild with original formatting
+5. **Validate**: Ensure structural integrity
 
-### Integration with ai.gpt
+## 🎯 Use Cases
 
-```python
-# Via ai.gpt MCP tools
-await log_translate_document(
-    input_file="README.ja.md",
-    target_lang="en",
-    model="qwen2.5:latest"
-)
+### Personal Blog
+- **AI-Enhanced**: Automatic translations and AI insights
+- **Distributed Comments**: ATProto-based social interaction
+- **Mobile-First**: Responsive OAuth comment system
+
+### Technical Documentation
+- **Code Analysis**: Automatic API documentation
+- **Multi-language**: AI-powered translation
+- **Structure Analysis**: Project overview generation
+
+### AI Ecosystem Integration
+- **ai.gpt Connection**: Memory-driven content generation
+- **MCP Integration**: Claude Code workflow support
+- **Distributed Identity**: ATProto authentication
+
+## 🔍 Troubleshooting
+
+### Build Issues
+```bash
+# Check Rust version
+rustc --version
+
+# Update dependencies
+cargo update
+
+# Clean build
+cargo clean && cargo build --release
 ```
 
-### Requirements
+### Authentication Problems
+```bash
+# Reset authentication
+ailog auth logout
+ailog auth init
 
-- **Ollama**: Install and run Ollama locally
-- **Models**: Download supported models (qwen2.5:latest recommended)
-- **Memory**: Sufficient RAM for model inference
-- **Network**: For initial model download only
+# Test API access
+ailog stream test
+```
 
-## Configuration Examples
+### AI Generation Issues
+```bash
+# Check Ollama status
+curl http://localhost:11434/api/tags
 
-### Basic Blog Config
+# Test with manual request
+curl -X POST http://localhost:11434/api/generate \
+  -d '{"model":"gemma3:4b","prompt":"Test","stream":false}'
+
+# Check CORS settings
+# Ensure OLLAMA_ORIGINS includes your domain
+```
+
+### OAuth App Issues
+```bash
+# Rebuild OAuth assets
+cd oauth
+rm -rf dist/
+npm run build
+
+# Check environment variables
+cat .env.production
+
+# Verify client-metadata.json
+curl https://yourdomain.com/client-metadata.json
+```
+
+## 📚 Documentation
+
+### Core Concepts
+- **Static Generation**: Rust-powered site building
+- **JSON Index**: API-compatible blog data
+- **ATProto Integration**: Distributed social features
+- **AI Enhancement**: Automatic content generation
+
+### File Structure
+- `config.toml`: Blog configuration (simplified collection setup)
+- `content/posts/*.md`: Blog post sources
+- `templates/*.html`: Tera template files
+- `public/`: Generated static site + API (index.json)
+- `oauth/dist/`: Built OAuth assets
+
+### Example config.toml
 ```toml
-[blog]
-title = "My AI Blog"
-description = "Personal thoughts and AI insights"
-base_url = "https://myblog.example.com"
+[site]
+title = "My Blog"
+base_url = "https://myblog.com"
+
+[oauth]
+admin = "did:plc:your-admin-did"
+collection = "ai.myblog.log"  # Single base collection
 
 [ai]
-provider = "openai"
-model = "gpt-4"
-translation = true
+enabled = true
+auto_translate = true
+comment_moderation = true
+model = "gemma3:4b"
+host = "https://ollama.syui.ai"
 ```
 
-### Advanced Integration
-```json
-// ../config.json (ai.gpt)
-{
-  "mcp": {
-    "servers": {
-      "ai_gpt": {
-        "endpoints": {
-          "log_ai_content": "/log_ai_content",
-          "log_create_post": "/log_create_post"
-        }
-      }
-    }
-  }
-}
-```
+## 🔗 ai.ai Ecosystem
 
-## Troubleshooting
+ai.log is part of the broader ai.ai ecosystem:
 
-### MCP Connection Issues
-- Ensure ai.log server is running: `cargo run -- mcp --port 8002`
-- Check ai.gpt config includes log endpoints
-- Verify `./log/` directory exists relative to ai.gpt
+- **ai.gpt**: Memory system and AI integration
+- **ai.card**: ATProto-based card game system  
+- **ai.bot**: Social media automation
+- **ai.verse**: 3D virtual world integration
+- **ai.shell**: AI-powered shell interface
 
-### Build Failures
-- Check Rust version: `rustc --version`
-- Update dependencies: `cargo update`
-- Clear cache: `cargo clean`
+### yui System Compliance
+- **Uniqueness**: Each blog tied to individual identity
+- **Reality Reflection**: Personal memories → digital content
+- **Irreversibility**: Published content maintains integrity
 
-### AI Integration Problems
-- Verify ai.gpt memory system is initialized
-- Check AI provider configuration
-- Ensure sufficient context in memory system
-
-## systemd
-
-```sh
-$ sudo vim /usr/lib/systemd/system/ollama.service
-[Service]
-Environment="OLLAMA_ORIGINS=https://example.com"
-```
-
-```sh
-# ファイルをsystemdディレクトリにコピー
-sudo cp ./systemd/system/ailog-stream.service /etc/systemd/system/
-sudo cp ./systemd/system/cloudflared-log.service /etc/systemd/system/
-
-# 権限設定
-sudo chmod 644 /etc/systemd/system/ailog-stream.service
-sudo chmod 644 /etc/systemd/system/cloudflared-log.service
-
-# systemd設定reload
-sudo systemctl daemon-reload
-
-# サービス有効化・開始
-sudo systemctl enable ailog-stream.service
-sudo systemctl enable cloudflared-log.service
-
-sudo systemctl start ailog-stream.service
-sudo systemctl start cloudflared-log.service
-
-# 状態確認
-sudo systemctl status ailog-stream.service
-sudo systemctl status cloudflared-log.service
-
-# ログ確認
-journalctl -u ailog-stream.service -f
-journalctl -u cloudflared-log.service -f
-
-設定のポイント：
-- User=syui でユーザー権限で実行
-- Restart=always で異常終了時自動再起動
-- After=network.target でネットワーク起動後に実行
-- StandardOutput=journal でログをjournalctlで確認可能
-```
-
-## License
+## 📝 License
 
 © syui
 

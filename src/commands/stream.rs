@@ -10,18 +10,58 @@ use std::process::{Command, Stdio};
 use tokio::time::{sleep, Duration, interval};
 use tokio_tungstenite::{connect_async, tungstenite::Message};
 use toml;
+use reqwest;
 
 use super::auth::{load_config, load_config_with_refresh, AuthConfig};
+
+#[derive(Debug, Deserialize)]
+#[allow(dead_code)]
+struct BlogPost {
+    title: String,
+    href: String,
+    #[serde(rename = "formated_time")]
+    #[allow(dead_code)]
+    date: String,
+    #[allow(dead_code)]
+    tags: Vec<String>,
+    #[allow(dead_code)]
+    contents: String,
+}
+
+#[derive(Debug, Deserialize)]
+#[allow(dead_code)]
+struct BlogIndex {
+    #[allow(dead_code)]
+    posts: Vec<BlogPost>,
+}
+
+#[derive(Debug, Serialize)]
+struct OllamaRequest {
+    model: String,
+    prompt: String,
+    stream: bool,
+    options: OllamaOptions,
+}
+
+#[derive(Debug, Serialize)]
+struct OllamaOptions {
+    temperature: f32,
+    top_p: f32,
+    num_predict: i32,
+}
+
+#[derive(Debug, Deserialize)]
+struct OllamaResponse {
+    response: String,
+}
 
 // Load collection config with priority: env vars > project config.toml > defaults
 fn load_collection_config(project_dir: Option<&Path>) -> Result<(String, String)> {
     // 1. Check environment variables first (highest priority)
-    if let (Ok(comment), Ok(user)) = (
-        std::env::var("AILOG_COLLECTION_COMMENT"),
-        std::env::var("AILOG_COLLECTION_USER")
-    ) {
+    if let Ok(base_collection) = std::env::var("VITE_OAUTH_COLLECTION") {
         println!("{}", "📂 Using collection config from environment variables".cyan());
-        return Ok((comment, user));
+        let collection_user = format!("{}.user", base_collection);
+        return Ok((base_collection, collection_user));
     }
 
     // 2. Try to load from project config.toml (second priority)
@@ -60,17 +100,16 @@ fn load_collection_config_from_project(project_dir: &Path) -> Result<(String, St
         .and_then(|v| v.as_table())
         .ok_or_else(|| anyhow::anyhow!("No [oauth] section found in config.toml"))?;
 
-    let collection_comment = oauth_config.get("collection_comment")
+    // Use new simplified collection structure (base collection)
+    let collection_base = oauth_config.get("collection")
         .and_then(|v| v.as_str())
         .unwrap_or("ai.syui.log")
         .to_string();
 
-    let collection_user = oauth_config.get("collection_user")
-        .and_then(|v| v.as_str())
-        .unwrap_or("ai.syui.log.user")
-        .to_string();
+    // Derive user collection from base
+    let collection_user = format!("{}.user", collection_base);
 
-    Ok((collection_comment, collection_user))
+    Ok((collection_base, collection_user))
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -118,15 +157,14 @@ fn get_pid_file() -> Result<PathBuf> {
     Ok(pid_dir.join("stream.pid"))
 }
 
-pub async fn start(project_dir: Option<PathBuf>, daemon: bool) -> Result<()> {
+pub async fn start(project_dir: Option<PathBuf>, daemon: bool, ai_generate: bool) -> Result<()> {
     let mut config = load_config_with_refresh().await?;
     
     // Load collection config with priority: env vars > project config > defaults
-    let (collection_comment, collection_user) = load_collection_config(project_dir.as_deref())?;
+    let (collection_comment, _collection_user) = load_collection_config(project_dir.as_deref())?;
     
     // Update config with loaded collections
-    config.collections.comment = collection_comment.clone();
-    config.collections.user = collection_user;
+    config.collections.base = collection_comment.clone();
     config.jetstream.collections = vec![collection_comment];
     
     let pid_file = get_pid_file()?;
@@ -149,6 +187,11 @@ pub async fn start(project_dir: Option<PathBuf>, daemon: bool) -> Result<()> {
         // Add project_dir argument if provided
         if let Some(project_path) = &project_dir {
             args.push(project_path.to_string_lossy().to_string());
+        }
+        
+        // Add ai_generate flag if enabled
+        if ai_generate {
+            args.push("--ai-generate".to_string());
         }
         
         let child = Command::new(current_exe)
@@ -191,6 +234,19 @@ pub async fn start(project_dir: Option<PathBuf>, daemon: bool) -> Result<()> {
     let mut reconnect_attempts = 0;
     let max_reconnect_attempts = 10;
     let mut config = config; // Make config mutable for token refresh
+    
+    // Start AI generation monitor if enabled
+    if ai_generate {
+        let ai_config = config.clone();
+        tokio::spawn(async move {
+            loop {
+                if let Err(e) = run_ai_generation_monitor(&ai_config).await {
+                    println!("{}", format!("❌ AI generation monitor error: {}", e).red());
+                    sleep(Duration::from_secs(60)).await; // Wait 1 minute before retry
+                }
+            }
+        });
+    }
     
     loop {
         match run_monitor(&mut config).await {
@@ -344,7 +400,7 @@ async fn handle_message(text: &str, config: &mut AuthConfig) -> Result<()> {
     if let (Some(collection), Some(commit), Some(did)) = 
         (&message.collection, &message.commit, &message.did) {
         
-        if collection == &config.collections.comment && commit.operation.as_deref() == Some("create") {
+        if collection == &config.collections.comment() && commit.operation.as_deref() == Some("create") {
             let unknown_uri = "unknown".to_string();
             let uri = commit.uri.as_ref().unwrap_or(&unknown_uri);
             
@@ -438,7 +494,7 @@ async fn get_current_user_list(config: &mut AuthConfig) -> Result<Vec<UserRecord
     let url = format!("{}/xrpc/com.atproto.repo.listRecords?repo={}&collection={}&limit=10",
                      config.admin.pds,
                      urlencoding::encode(&config.admin.did),
-                     urlencoding::encode(&config.collections.user));
+                     urlencoding::encode(&config.collections.user()));
     
     let response = client
         .get(&url)
@@ -501,7 +557,7 @@ async fn post_user_list(config: &mut AuthConfig, users: &[UserRecord], metadata:
     let rkey = format!("{}-{}", short_did, now.format("%Y-%m-%dT%H-%M-%S-%3fZ").to_string().replace(".", "-"));
     
     let record = UserListRecord {
-        record_type: config.collections.user.clone(),
+        record_type: config.collections.user(),
         users: users.to_vec(),
         created_at: now.to_rfc3339(),
         updated_by: UserInfo {
@@ -515,7 +571,7 @@ async fn post_user_list(config: &mut AuthConfig, users: &[UserRecord], metadata:
     
     let request_body = json!({
         "repo": config.admin.did,
-        "collection": config.collections.user,
+        "collection": config.collections.user(),
         "rkey": rkey,
         "record": record
     });
@@ -759,7 +815,7 @@ async fn get_recent_comments(config: &mut AuthConfig) -> Result<Vec<Value>> {
     let url = format!("{}/xrpc/com.atproto.repo.listRecords?repo={}&collection={}&limit=20",
                      config.admin.pds,
                      urlencoding::encode(&config.admin.did),
-                     urlencoding::encode(&config.collections.comment));
+                     urlencoding::encode(&config.collections.comment()));
     
     if std::env::var("AILOG_DEBUG").is_ok() {
         println!("{}", format!("🌐 API Request URL: {}", url).yellow());
@@ -840,7 +896,7 @@ pub async fn test_api() -> Result<()> {
             println!("{}", format!("✅ Successfully retrieved {} comments", comments.len()).green());
             
             if comments.is_empty() {
-                println!("{}", format!("ℹ️  No comments found in {} collection", config.collections.comment).blue());
+                println!("{}", format!("ℹ️  No comments found in {} collection", config.collections.comment()).blue());
                 println!("💡 Try posting a comment first using the web interface");
             } else {
                 println!("{}", "📝 Comment details:".cyan());
@@ -869,6 +925,274 @@ pub async fn test_api() -> Result<()> {
             println!("{}", format!("❌ API test failed: {}", e).red());
             return Err(e);
         }
+    }
+    
+    Ok(())
+}
+
+// AI content generation functions
+async fn generate_ai_content(content: &str, prompt_type: &str, ollama_host: &str) -> Result<String> {
+    let model = "gemma3:4b";
+    
+    let prompt = match prompt_type {
+        "translate" => format!("Translate the following Japanese blog post to English. Keep the technical terms and code blocks intact:\n\n{}", content),
+        "comment" => format!("Read this blog post and provide an insightful comment about it. Focus on the key points and add your perspective:\n\n{}", content),
+        _ => return Err(anyhow::anyhow!("Unknown prompt type: {}", prompt_type)),
+    };
+
+    let request = OllamaRequest {
+        model: model.to_string(),
+        prompt,
+        stream: false,
+        options: OllamaOptions {
+            temperature: 0.9,
+            top_p: 0.9,
+            num_predict: 500,
+        },
+    };
+
+    let client = reqwest::Client::new();
+    
+    // Try localhost first (for same-server deployment)
+    let localhost_url = "http://localhost:11434/api/generate";
+    match client.post(localhost_url).json(&request).send().await {
+        Ok(response) if response.status().is_success() => {
+            let ollama_response: OllamaResponse = response.json().await?;
+            println!("{}", "✅ Used localhost Ollama".green());
+            return Ok(ollama_response.response);
+        }
+        _ => {
+            println!("{}", "⚠️ Localhost Ollama not available, trying remote...".yellow());
+        }
+    }
+    
+    // Fallback to remote host
+    let remote_url = format!("{}/api/generate", ollama_host);
+    let response = client.post(&remote_url).json(&request).send().await?;
+    
+    if !response.status().is_success() {
+        return Err(anyhow::anyhow!("Ollama API request failed: {}", response.status()));
+    }
+    
+    let ollama_response: OllamaResponse = response.json().await?;
+    println!("{}", "✅ Used remote Ollama".green());
+    Ok(ollama_response.response)
+}
+
+async fn run_ai_generation_monitor(config: &AuthConfig) -> Result<()> {
+    let blog_host = "https://syui.ai"; // TODO: Load from config
+    let ollama_host = "https://ollama.syui.ai"; // TODO: Load from config  
+    let ai_did = "did:plc:4hqjfn7m6n5hno3doamuhgef"; // TODO: Load from config
+    
+    println!("{}", "🤖 Starting AI content generation monitor...".cyan());
+    println!("📡 Blog host: {}", blog_host);
+    println!("🧠 Ollama host: {}", ollama_host);
+    println!("🤖 AI DID: {}", ai_did);
+    println!();
+    
+    let mut interval = interval(Duration::from_secs(300)); // Check every 5 minutes
+    let client = reqwest::Client::new();
+    
+    loop {
+        interval.tick().await;
+        
+        println!("{}", "🔍 Checking for new blog posts...".blue());
+        
+        match check_and_process_new_posts(&client, config, blog_host, ollama_host, ai_did).await {
+            Ok(count) => {
+                if count > 0 {
+                    println!("{}", format!("✅ Processed {} new posts", count).green());
+                } else {
+                    println!("{}", "ℹ️ No new posts found".blue());
+                }
+            }
+            Err(e) => {
+                println!("{}", format!("❌ Error processing posts: {}", e).red());
+            }
+        }
+        
+        println!("{}", "⏰ Waiting for next check...".cyan());
+    }
+}
+
+async fn check_and_process_new_posts(
+    client: &reqwest::Client,
+    config: &AuthConfig,
+    blog_host: &str,
+    ollama_host: &str,
+    ai_did: &str,
+) -> Result<usize> {
+    // Fetch blog index
+    let index_url = format!("{}/index.json", blog_host);
+    let response = client.get(&index_url).send().await?;
+    
+    if !response.status().is_success() {
+        return Err(anyhow::anyhow!("Failed to fetch blog index: {}", response.status()));
+    }
+    
+    let blog_posts: Vec<BlogPost> = response.json().await?;
+    println!("{}", format!("📄 Found {} posts in blog index", blog_posts.len()).cyan());
+    
+    // Get existing AI generated content from collections
+    let existing_lang_records = get_existing_records(config, &config.collections.chat_lang()).await?;
+    let existing_comment_records = get_existing_records(config, &config.collections.chat_comment()).await?;
+    
+    let mut processed_count = 0;
+    
+    for post in blog_posts {
+        let post_slug = extract_slug_from_url(&post.href);
+        
+        // Check if translation already exists
+        let translation_exists = existing_lang_records.iter().any(|record| {
+            record.get("value")
+                .and_then(|v| v.get("post_slug"))
+                .and_then(|s| s.as_str())
+                == Some(&post_slug)
+        });
+        
+        // Check if comment already exists  
+        let comment_exists = existing_comment_records.iter().any(|record| {
+            record.get("value")
+                .and_then(|v| v.get("post_slug"))
+                .and_then(|s| s.as_str())
+                == Some(&post_slug)
+        });
+        
+        // Generate translation if not exists
+        if !translation_exists {
+            match generate_and_store_translation(client, config, &post, ollama_host, ai_did).await {
+                Ok(_) => {
+                    println!("{}", format!("✅ Generated translation for: {}", post.title).green());
+                    processed_count += 1;
+                }
+                Err(e) => {
+                    println!("{}", format!("❌ Failed to generate translation for {}: {}", post.title, e).red());
+                }
+            }
+        }
+        
+        // Generate comment if not exists
+        if !comment_exists {
+            match generate_and_store_comment(client, config, &post, ollama_host, ai_did).await {
+                Ok(_) => {
+                    println!("{}", format!("✅ Generated comment for: {}", post.title).green());
+                    processed_count += 1;
+                }
+                Err(e) => {
+                    println!("{}", format!("❌ Failed to generate comment for {}: {}", post.title, e).red());
+                }
+            }
+        }
+    }
+    
+    Ok(processed_count)
+}
+
+async fn get_existing_records(config: &AuthConfig, collection: &str) -> Result<Vec<serde_json::Value>> {
+    let client = reqwest::Client::new();
+    let url = format!("{}/xrpc/com.atproto.repo.listRecords?repo={}&collection={}&limit=100",
+                     config.admin.pds,
+                     urlencoding::encode(&config.admin.did),
+                     urlencoding::encode(collection));
+    
+    let response = client
+        .get(&url)
+        .header("Authorization", format!("Bearer {}", config.admin.access_jwt))
+        .send()
+        .await?;
+    
+    if !response.status().is_success() {
+        return Ok(Vec::new()); // Return empty if collection doesn't exist yet
+    }
+    
+    let list_response: serde_json::Value = response.json().await?;
+    let records = list_response["records"].as_array().unwrap_or(&Vec::new()).clone();
+    
+    Ok(records)
+}
+
+fn extract_slug_from_url(url: &str) -> String {
+    // Extract slug from URL like "/posts/2025-06-06-ailog.html"
+    url.split('/')
+        .last()
+        .unwrap_or("")
+        .trim_end_matches(".html")
+        .to_string()
+}
+
+async fn generate_and_store_translation(
+    client: &reqwest::Client,
+    config: &AuthConfig,
+    post: &BlogPost,
+    ollama_host: &str,
+    ai_did: &str,
+) -> Result<()> {
+    // Generate translation
+    let translation = generate_ai_content(&post.title, "translate", ollama_host).await?;
+    
+    // Store in ai.syui.log.chat.lang collection
+    let record_data = serde_json::json!({
+        "post_slug": extract_slug_from_url(&post.href),
+        "post_title": post.title,
+        "post_url": post.href,
+        "lang": "en",
+        "content": translation,
+        "generated_at": chrono::Utc::now().to_rfc3339(),
+        "ai_did": ai_did
+    });
+    
+    store_atproto_record(client, config, &config.collections.chat_lang(), &record_data).await
+}
+
+async fn generate_and_store_comment(
+    client: &reqwest::Client,
+    config: &AuthConfig,
+    post: &BlogPost,
+    ollama_host: &str,
+    ai_did: &str,
+) -> Result<()> {
+    // Generate comment
+    let comment = generate_ai_content(&post.title, "comment", ollama_host).await?;
+    
+    // Store in ai.syui.log.chat.comment collection
+    let record_data = serde_json::json!({
+        "post_slug": extract_slug_from_url(&post.href),
+        "post_title": post.title,
+        "post_url": post.href,
+        "content": comment,
+        "generated_at": chrono::Utc::now().to_rfc3339(),
+        "ai_did": ai_did
+    });
+    
+    store_atproto_record(client, config, &config.collections.chat_comment(), &record_data).await
+}
+
+async fn store_atproto_record(
+    client: &reqwest::Client,
+    config: &AuthConfig,
+    collection: &str,
+    record_data: &serde_json::Value,
+) -> Result<()> {
+    let url = format!("{}/xrpc/com.atproto.repo.putRecord", config.admin.pds);
+    
+    let put_request = serde_json::json!({
+        "repo": config.admin.did,
+        "collection": collection,
+        "rkey": uuid::Uuid::new_v4().to_string(),
+        "record": record_data
+    });
+    
+    let response = client
+        .post(&url)
+        .header("Authorization", format!("Bearer {}", config.admin.access_jwt))
+        .header("Content-Type", "application/json")
+        .json(&put_request)
+        .send()
+        .await?;
+    
+    if !response.status().is_success() {
+        let error_text = response.text().await?;
+        return Err(anyhow::anyhow!("Failed to store record: {}", error_text));
     }
     
     Ok(())

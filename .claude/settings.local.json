@@ -46,7 +46,8 @@
       "Bash(git commit:*)",
       "Bash(git push:*)",
       "Bash(git tag:*)",
-      "Bash(../bin/ailog:*)"
+      "Bash(../bin/ailog:*)",
+      "Bash(../target/release/ailog oauth build:*)"
     ],
     "deny": []
   }

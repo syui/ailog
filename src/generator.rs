@@ -71,6 +71,9 @@ impl Generator {
         // Generate index page
         self.generate_index(&posts).await?;
 
+        // Generate JSON index for API access
+        self.generate_json_index(&posts).await?;
+
         // Generate post pages
         for post in &posts {
             self.generate_post_page(post).await?;
@@ -446,6 +449,63 @@ impl Generator {
         
         Ok(())
     }
+
+    async fn generate_json_index(&self, posts: &[Post]) -> Result<()> {
+        let index_data: Vec<serde_json::Value> = posts.iter().map(|post| {
+            // Parse date for proper formatting
+            let parsed_date = chrono::NaiveDate::parse_from_str(&post.date, "%Y-%m-%d")
+                .unwrap_or_else(|_| chrono::Utc::now().naive_utc().date());
+            
+            // Format to Hugo-style date format (Mon Jan 2, 2006)
+            let formatted_date = parsed_date.format("%a %b %-d, %Y").to_string();
+            
+            // Create UTC datetime for utc_time field  
+            let utc_datetime = parsed_date.and_hms_opt(0, 0, 0)
+                .unwrap_or_else(|| chrono::Utc::now().naive_utc());
+            let utc_time = format!("{}Z", utc_datetime.format("%Y-%m-%dT%H:%M:%S"));
+            
+            // Extract plain text content from HTML
+            let contents = self.extract_plain_text(&post.content);
+            
+            serde_json::json!({
+                "title": post.title,
+                "tags": post.tags,
+                "description": self.extract_excerpt(&post.content),
+                "categories": [],
+                "contents": contents,
+                "href": format!("{}{}", self.config.site.base_url.trim_end_matches('/'), post.url),
+                "utc_time": utc_time,
+                "formated_time": formatted_date
+            })
+        }).collect();
+        
+        // Write JSON index to public directory
+        let output_path = self.base_path.join("public/index.json");
+        let json_content = serde_json::to_string_pretty(&index_data)?;
+        fs::write(output_path, json_content)?;
+        
+        println!("{} JSON index with {} posts", "Generated".cyan(), posts.len());
+        
+        Ok(())
+    }
+    
+    fn extract_plain_text(&self, html_content: &str) -> String {
+        // Remove HTML tags and extract plain text
+        let mut text = String::new();
+        let mut in_tag = false;
+        
+        for ch in html_content.chars() {
+            match ch {
+                '<' => in_tag = true,
+                '>' => in_tag = false,
+                _ if !in_tag => text.push(ch),
+                _ => {}
+            }
+        }
+        
+        // Clean up whitespace
+        text.split_whitespace().collect::<Vec<_>>().join(" ")
+    }
 }
 
 #[derive(Debug, Clone, serde::Serialize)]
@@ -480,3 +540,18 @@ pub struct Translation {
     pub content: String,
     pub url: String,
 }
+
+#[derive(Debug, Clone, serde::Serialize)]
+#[allow(dead_code)]
+struct BlogPost {
+    title: String,
+    url: String,
+    date: String,
+}
+
+#[derive(Debug, Clone, serde::Serialize)]
+#[allow(dead_code)]
+struct BlogIndex {
+    posts: Vec<BlogPost>,
+}
+
