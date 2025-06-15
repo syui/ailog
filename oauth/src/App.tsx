@@ -1534,13 +1534,6 @@ function App() {
             </div>
           )}
 
-          {/* Show authentication status on non-post pages */}
-          {user && !appConfig.rkey && (
-            <div className="auth-status">
-              <p>✅ Authenticated as @{user.handle}</p>
-              <p><small>Visit a post page to comment</small></p>
-            </div>
-          )}
         </section>
       </main>
 
