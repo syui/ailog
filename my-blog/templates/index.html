@@ -20,19 +20,6 @@
                     <a href="{{ post.url }}">{{ post.title }}</a>
                 </h3>
                 
-                {% if post.excerpt %}
-                <p class="post-excerpt">{{ post.excerpt }}</p>
-                {% endif %}
-                
-                <div class="post-actions">
-                    <a href="{{ post.url }}" class="read-more">Read more</a>
-                    {% if post.markdown_url %}
-                    <a href="{{ post.markdown_url }}" class="view-markdown" title="View Markdown">.md</a>
-                    {% endif %}
-                    {% if post.translation_url %}
-                    <a href="{{ post.translation_url }}" class="view-translation" title="View Translation">🌐</a>
-                    {% endif %}
-                </div>
             </div>
         </article>
         {% endfor %}

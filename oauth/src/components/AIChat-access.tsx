@@ -14,7 +14,7 @@ const response = await fetch(`${aiConfig.host}/api/generate`, {
     options: {
       temperature: 0.9,
       top_p: 0.9,
-      num_predict: 80,
+      num_predict: 200,
       repeat_penalty: 1.1,
     }
   }),

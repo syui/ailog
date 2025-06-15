@@ -199,7 +199,7 @@ Answer:`;
             options: {
               temperature: 0.9,
               top_p: 0.9,
-              num_predict: 80, // Shorter responses for faster generation
+              num_predict: 200, // Longer responses for better answers
               repeat_penalty: 1.1,
             }
           }),

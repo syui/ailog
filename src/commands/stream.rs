@@ -1050,7 +1050,7 @@ async fn generate_ai_content(content: &str, prompt_type: &str, ai_config: &AiCon
             };
             
             format!(
-                "{}\n\n# 指示\nこのブログ記事を読んで、アイらしい感想を一言でください。\n- 30文字以内の短い感想\n- 技術的な内容への素朴な驚きや発見\n- 「わー！」「すごい！」など、アイらしい感嘆詞で始める\n- 簡潔で分かりやすく\n\n# ブログ記事（要約）\n{}\n\n# 出力形式\n一言の感想のみ（説明や詳細は不要）:",
+                "{}\n\n# 指示\nこのブログ記事を読んで、アイらしい感想をください。\n- 100文字以内の感想\n- 技術的な内容への素朴な驚きや発見\n- 「わー！」「すごい！」など、アイらしい感嘆詞で始める\n- 簡潔で分かりやすく\n\n# ブログ記事（要約）\n{}\n\n# 出力形式\n感想のみ（説明や詳細は不要）:",
                 system_prompt, limited_content
             )
         },
@@ -1058,7 +1058,7 @@ async fn generate_ai_content(content: &str, prompt_type: &str, ai_config: &AiCon
     };
 
     let num_predict = match prompt_type {
-        "comment" => 50,  // Very short for comments (about 30-40 characters)
+        "comment" => 150,  // Longer for comments (about 100 characters)
         "translate" => 3000, // Much longer for translations
         _ => 300,
     };
