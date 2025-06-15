@@ -1,5 +1,19 @@
 # エコシステム統合設計書
 
+## 注意事項
+
+`console.log`は絶対に書かないようにしてください。
+
+ハードコードしないようにしてください。必ず、`./my-blog/config.toml`や`./oauth/.env.production`を使用するように。または`~/.config/syui/ai/log/config.json`を使用するように。
+
+重複する名前のenvを作らないようにしてください。新しい環境変数を作る際は必ず検討してください。
+
+```sh
+# ダメな例
+VITE_OAUTH_COLLECTION_USER=ai.syui.log.user
+VITE_OAUTH_COLLECTION_CHAT=ai.syui.log.chat
+```
+
 ## 中核思想
 - **存在子理論**: この世界で最も小さいもの（存在子/ai）の探求
 - **唯一性原則**: 現実の個人の唯一性をすべてのシステムで担保

@@ -7,32 +7,10 @@ import { appConfig, getCollectionNames } from './config/app';
 import './App.css';
 
 function App() {
-  console.log('APP COMPONENT LOADED - Console working!');
-  console.log('Current timestamp:', new Date().toISOString());
-  
-  // Immediately log URL information on every page load
-  console.log('IMMEDIATE URL CHECK:');
-  console.log('- href:', window.location.href);
-  console.log('- pathname:', window.location.pathname); 
-  console.log('- search:', window.location.search);
-  console.log('- hash:', window.location.hash);
-  
-  // Also show URL info via alert if it contains OAuth parameters
+  // Handle OAuth callback detection
   if (window.location.search.includes('code=') || window.location.search.includes('state=')) {
     const urlInfo = `OAuth callback detected!\n\nURL: ${window.location.href}\nSearch: ${window.location.search}`;
     alert(urlInfo);
-    console.log('OAuth callback URL detected!');
-  } else {
-    // Check if we have stored OAuth info from previous steps
-    const preOAuthUrl = sessionStorage.getItem('pre_oauth_url');
-    const storedState = sessionStorage.getItem('oauth_state');
-    const storedCodeVerifier = sessionStorage.getItem('oauth_code_verifier');
-    
-    console.log('=== OAUTH SESSION STORAGE CHECK ===');
-    console.log('Pre-OAuth URL:', preOAuthUrl);
-    console.log('Stored state:', storedState);
-    console.log('Stored code verifier:', storedCodeVerifier ? 'Present' : 'Missing');
-    console.log('=== END SESSION STORAGE CHECK ===');
   }
   
   const [user, setUser] = useState<User | null>(null);
@@ -59,7 +37,6 @@ function App() {
         
         const collections = getCollectionNames(appConfig.collections.base);
         ws.onopen = () => {
-          console.log('Jetstream connected');
           ws.send(JSON.stringify({
             wantedCollections: [collections.comment]
           }));
@@ -69,22 +46,20 @@ function App() {
           try {
             const data = JSON.parse(event.data);
             if (data.collection === collections.comment && data.commit?.operation === 'create') {
-              console.log('New comment detected via Jetstream:', data);
               // Optionally reload comments
               // loadAllComments(window.location.href);
             }
           } catch (err) {
-            console.warn('Failed to parse Jetstream message:', err);
+            // Ignore parsing errors
           }
         };
         
         ws.onerror = (err) => {
-          console.warn('Jetstream error:', err);
+          // Ignore Jetstream errors
         };
         
         return ws;
       } catch (err) {
-        console.warn('Failed to setup Jetstream:', err);
         return null;
       }
     };
@@ -108,11 +83,11 @@ function App() {
     
     // キャッシュがなければ、ATProtoから取得（認証状態に関係なく）
     if (!loadCachedComments()) {
-      console.log('No cached comments found, loading from ATProto...');
       loadAllComments(); // URLフィルタリングを無効にして全コメント表示
-    } else {
-      console.log('Cached comments loaded successfully');
     }
+    
+    // Load AI chat history (認証状態に関係なく、全ユーザーのチャット履歴を表示)
+    loadAiChatHistory();
 
     // Handle popstate events for mock OAuth flow
     const handlePopState = () => {
@@ -138,12 +113,9 @@ function App() {
     // Check existing sessions
     const checkAuth = async () => {
       // First check OAuth session using official BrowserOAuthClient
-      console.log('Checking OAuth session...');
       const oauthResult = await atprotoOAuthService.checkSession();
-      console.log('OAuth checkSession result:', oauthResult);
       
       if (oauthResult) {
-        console.log('OAuth session found:', oauthResult);
         // Ensure handle is not DID
         const handle = oauthResult.handle !== oauthResult.did ? oauthResult.handle : oauthResult.handle;
         
@@ -153,11 +125,10 @@ function App() {
         
         // Load all comments for display (this will be the default view)
         // Temporarily disable URL filtering to see all comments
-        console.log('OAuth session found, loading all comments...');
         loadAllComments();
         
         // Load AI chat history
-        loadAiChatHistory(userProfile.did);
+        loadAiChatHistory();
         
         // Load user list records if admin
         if (userProfile.did === appConfig.adminDid) {
@@ -166,8 +137,6 @@ function App() {
         
         setIsLoading(false);
         return;
-      } else {
-        console.log('No OAuth session found');
       }
 
       // Fallback to legacy auth
@@ -177,7 +146,6 @@ function App() {
         
         // Load all comments for display (this will be the default view)
         // Temporarily disable URL filtering to see all comments
-        console.log('Legacy auth session found, loading all comments...');
         loadAllComments();
         
         // Load user list records if admin
@@ -188,7 +156,6 @@ function App() {
       setIsLoading(false);
       
       // 認証状態に関係なく、コメントを読み込む
-      console.log('No auth session found, loading all comments anyway...');
       loadAllComments();
     };
 
@@ -215,7 +182,7 @@ function App() {
         };
       }
     } catch (error) {
-      console.error('Failed to get user profile:', error);
+      // Failed to get user profile
     }
     
     // Fallback to basic user info
@@ -236,28 +203,73 @@ function App() {
     return `data:image/svg+xml;base64,${btoa(svg)}`;
   };
 
-  const loadAiChatHistory = async (did: string) => {
+  const loadAiChatHistory = async () => {
     try {
-      console.log('Loading AI chat history for DID:', did);
-      const agent = atprotoOAuthService.getAgent();
-      if (!agent) {
-        console.log('No agent available');
+      // Load all chat records from users in admin's user list
+      const adminDid = appConfig.adminDid;
+      const atprotoApi = appConfig.atprotoApi || 'https://bsky.social';
+      const collections = getCollectionNames(appConfig.collections.base);
+      
+      // First, get user list from admin
+      const userListResponse = await fetch(`${atprotoApi}/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(adminDid)}&collection=${encodeURIComponent(collections.user)}&limit=100`);
+      
+      if (!userListResponse.ok) {
+        setAiChatHistory([]);
         return;
       }
-
-      // Get AI chat records from current user
-      const response = await agent.api.com.atproto.repo.listRecords({
-        repo: did,
-        collection: appConfig.collections.chat,
-        limit: 100,
+      
+      const userListData = await userListResponse.json();
+      const userRecords = userListData.records || [];
+      
+      // Extract unique DIDs from user records (including admin DID for their own chats)
+      const allUserDids = [];
+      userRecords.forEach(record => {
+        if (record.value.users && Array.isArray(record.value.users)) {
+          record.value.users.forEach(user => {
+            if (user.did) {
+              allUserDids.push(user.did);
+            }
+          });
+        }
       });
-
-      console.log('AI chat history loaded:', response.data);
-      const chatRecords = response.data.records || [];
+      
+      // Always include admin DID to check admin's own chats
+      allUserDids.push(adminDid);
+      
+      const userDids = [...new Set(allUserDids)];
+      
+      // Load chat records from all registered users (including admin)
+      const allChatRecords = [];
+      for (const userDid of userDids) {
+        try {
+          const chatResponse = await fetch(`${atprotoApi}/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(userDid)}&collection=${encodeURIComponent(collections.chat)}&limit=100`);
+          
+          if (chatResponse.ok) {
+            const chatData = await chatResponse.json();
+            const records = chatData.records || [];
+            allChatRecords.push(...records);
+          }
+        } catch (err) {
+          continue;
+        }
+      }
+      
+      // Filter for page-specific content if on a post page
+      let filteredRecords = allChatRecords;
+      if (appConfig.rkey) {
+        // On post page: show only chats for this specific post
+        filteredRecords = allChatRecords.filter(record => {
+          const recordPath = record.value.post?.url ? new URL(record.value.post.url).pathname : '';
+          return recordPath === window.location.pathname;
+        });
+      } else {
+        // On top page: show latest 3 records from all pages
+        filteredRecords = allChatRecords.slice(0, 3);
+      }
       
       // Filter out old records with invalid AI profile data (temporary fix for migration)
-      const validRecords = chatRecords.filter(record => {
-        if (record.value.answer) {
+      const validRecords = filteredRecords.filter(record => {
+        if (record.value.type === 'answer') {
           // This is an AI answer - check if it has valid AI profile
           return record.value.author?.handle && 
                  record.value.author?.handle !== 'ai-assistant' &&
@@ -266,16 +278,13 @@ function App() {
         return true; // Keep all questions
       });
       
-      console.log(`Filtered ${chatRecords.length} records to ${validRecords.length} valid records`);
-      
-      // Sort by creation time and group question-answer pairs
+      // Sort by creation time
       const sortedRecords = validRecords.sort((a, b) => 
-        new Date(a.value.createdAt).getTime() - new Date(b.value.createdAt).getTime()
+        new Date(b.value.createdAt).getTime() - new Date(a.value.createdAt).getTime()
       );
       
       setAiChatHistory(sortedRecords);
     } catch (err) {
-      console.error('Failed to load AI chat history:', err);
       setAiChatHistory([]);
     }
   };
@@ -284,58 +293,64 @@ function App() {
   const loadAIGeneratedContent = async () => {
     try {
       const adminDid = appConfig.adminDid;
-      const bskyApi = appConfig.bskyPublicApi || 'https://public.api.bsky.app';
+      const atprotoApi = appConfig.atprotoApi || 'https://bsky.social';
       const collections = getCollectionNames(appConfig.collections.base);
       
       // Load lang:en records
-      const langResponse = await fetch(`${bskyApi}/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(adminDid)}&collection=${encodeURIComponent(collections.chatLang)}&limit=100`);
+      const langResponse = await fetch(`${atprotoApi}/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(adminDid)}&collection=${encodeURIComponent(collections.chatLang)}&limit=100`);
       if (langResponse.ok) {
         const langData = await langResponse.json();
         const langRecords = langData.records || [];
         
-        // Filter by current page URL if on post page
+        // Filter by current page path if on post page
         const filteredLangRecords = appConfig.rkey 
-          ? langRecords.filter(record => record.value.url === window.location.href)
+          ? langRecords.filter(record => {
+              // Compare path only, not full URL to support localhost vs production
+              const recordPath = record.value.post?.url ? new URL(record.value.post.url).pathname : 
+                                 record.value.url ? new URL(record.value.url).pathname : '';
+              return recordPath === window.location.pathname;
+            })
           : langRecords.slice(0, 3); // Top page: latest 3
           
         setLangEnRecords(filteredLangRecords);
       }
       
       // Load AI comment records
-      const commentResponse = await fetch(`${bskyApi}/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(adminDid)}&collection=${encodeURIComponent(collections.chatComment)}&limit=100`);
+      const commentResponse = await fetch(`${atprotoApi}/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(adminDid)}&collection=${encodeURIComponent(collections.chatComment)}&limit=100`);
       if (commentResponse.ok) {
         const commentData = await commentResponse.json();
         const commentRecords = commentData.records || [];
         
-        // Filter by current page URL if on post page
+        // Filter by current page path if on post page
         const filteredCommentRecords = appConfig.rkey 
-          ? commentRecords.filter(record => record.value.url === window.location.href)
+          ? commentRecords.filter(record => {
+              // Compare path only, not full URL to support localhost vs production
+              const recordPath = record.value.post?.url ? new URL(record.value.post.url).pathname : 
+                                 record.value.url ? new URL(record.value.url).pathname : '';
+              return recordPath === window.location.pathname;
+            })
           : commentRecords.slice(0, 3); // Top page: latest 3
           
         setAiCommentRecords(filteredCommentRecords);
       }
     } catch (err) {
-      console.error('Failed to load AI generated content:', err);
+      // Ignore errors
     }
   };
 
   const loadUserComments = async (did: string) => {
     try {
-      console.log('Loading comments for DID:', did);
       const agent = atprotoOAuthService.getAgent();
       if (!agent) {
-        console.log('No agent available');
         return;
       }
 
       // Get comments from current user
       const response = await agent.api.com.atproto.repo.listRecords({
         repo: did,
-        collection: appConfig.collections.comment,
+        collection: getCollectionNames(appConfig.collections.base).comment,
         limit: 100,
       });
-
-      console.log('User comments loaded:', response.data);
       const userComments = response.data.records || [];
       
       // Enhance comments with profile information if missing
@@ -356,7 +371,7 @@ function App() {
                 }
               };
             } catch (err) {
-              console.warn('Failed to enhance comment with profile:', err);
+              // Ignore enhancement errors
               return record;
             }
           }
@@ -366,7 +381,7 @@ function App() {
       
       setComments(enhancedComments);
     } catch (err) {
-      console.error('Failed to load comments:', err);
+      // Ignore load errors
       setComments([]);
     }
   };
@@ -376,20 +391,20 @@ function App() {
     try {
       // 管理者のユーザーリストを取得
       const adminDid = appConfig.adminDid;
-      console.log('Fetching user list from admin DID:', adminDid);
-      const response = await fetch(`https://bsky.social/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(adminDid)}&collection=${encodeURIComponent(appConfig.collections.user)}&limit=100`);
+      // Fetching user list from admin DID
+      const response = await fetch(`https://bsky.social/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(adminDid)}&collection=${encodeURIComponent(getCollectionNames(appConfig.collections.base).user)}&limit=100`);
       
       if (!response.ok) {
-        console.warn('Failed to fetch user list from admin, using default users. Status:', response.status);
+        // Failed to fetch user list from admin, using default users
         return getDefaultUsers();
       }
       
       const data = await response.json();
       const userRecords = data.records || [];
-      console.log('User records found:', userRecords.length);
+      // User records found
       
       if (userRecords.length === 0) {
-        console.log('No user records found, using default users');
+        // No user records found, using default users
         return getDefaultUsers();
       }
       
@@ -401,13 +416,13 @@ function App() {
           const resolvedUsers = await Promise.all(
             record.value.users.map(async (user) => {
               if (user.did && user.did.includes('-placeholder')) {
-                console.log(`Resolving placeholder DID for ${user.handle}`);
+                // Resolving placeholder DID
                 try {
                   const profileResponse = await fetch(`${appConfig.bskyPublicApi}/xrpc/app.bsky.actor.getProfile?actor=${encodeURIComponent(user.handle)}`);
                   if (profileResponse.ok) {
                     const profileData = await profileResponse.json();
                     if (profileData.did) {
-                      console.log(`Resolved ${user.handle}: ${user.did} -> ${profileData.did}`);
+                      // Resolved DID
                       return {
                         ...user,
                         did: profileData.did
@@ -415,7 +430,7 @@ function App() {
                     }
                   }
                 } catch (err) {
-                  console.warn(`Failed to resolve DID for ${user.handle}:`, err);
+                  // Failed to resolve DID
                 }
               }
               return user;
@@ -425,10 +440,10 @@ function App() {
         }
       }
       
-      console.log('Loaded and resolved users from admin records:', allUsers);
+      // Loaded and resolved users from admin records
       return allUsers;
     } catch (err) {
-      console.warn('Failed to load users from records, using defaults:', err);
+      // Failed to load users from records, using defaults
       return getDefaultUsers();
     }
   };
@@ -436,12 +451,12 @@ function App() {
   // ユーザーリスト一覧を読み込み
   const loadUserListRecords = async () => {
     try {
-      console.log('Loading user list records...');
+      // Loading user list records
       const adminDid = appConfig.adminDid;
-      const response = await fetch(`https://bsky.social/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(adminDid)}&collection=${encodeURIComponent(appConfig.collections.user)}&limit=100`);
+      const response = await fetch(`https://bsky.social/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(adminDid)}&collection=${encodeURIComponent(getCollectionNames(appConfig.collections.base).user)}&limit=100`);
       
       if (!response.ok) {
-        console.warn('Failed to fetch user list records');
+        // Failed to fetch user list records
         setUserListRecords([]);
         return;
       }
@@ -454,10 +469,10 @@ function App() {
         new Date(b.value.createdAt).getTime() - new Date(a.value.createdAt).getTime()
       );
       
-      console.log(`Loaded ${sortedRecords.length} user list records`);
+      // Loaded user list records
       setUserListRecords(sortedRecords);
     } catch (err) {
-      console.error('Failed to load user list records:', err);
+      // Failed to load user list records
       setUserListRecords([]);
     }
   };
@@ -477,39 +492,33 @@ function App() {
       });
     }
     
-    console.log('Default users list (including current user):', defaultUsers);
+    // Default users list (including current user)
     return defaultUsers;
   };
 
   // 新しい関数: 全ユーザーからコメントを収集
   const loadAllComments = async (pageUrl?: string) => {
     try {
-      console.log('Loading comments from all users...');
-      console.log('Page URL filter:', pageUrl);
       
       // ユーザーリストを動的に取得
       const knownUsers = await loadUsersFromRecord();
-      console.log('Known users for comment fetching:', knownUsers);
 
       const allComments = [];
 
       // 各ユーザーからコメントを収集
       for (const user of knownUsers) {
         try {
-          console.log(`Fetching comments from user: ${user.handle} (${user.did}) at ${user.pds}`);
           
           // Public API使用（認証不要）
           const collections = getCollectionNames(appConfig.collections.base);
           const response = await fetch(`${user.pds}/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(user.did)}&collection=${encodeURIComponent(collections.comment)}&limit=100`);
           
           if (!response.ok) {
-            console.warn(`Failed to fetch from ${user.handle} (${response.status}): ${response.statusText}`);
             continue;
           }
           
           const data = await response.json();
           const userRecords = data.records || [];
-          console.log(`Found ${userRecords.length} comment records from ${user.handle}`);
           
           // Flatten comments from new array format
           const userComments = [];
@@ -529,18 +538,24 @@ function App() {
             }
           }
           
-          console.log(`Flattened to ${userComments.length} individual comments from ${user.handle}`);
           
-          // ページURLでフィルタリング（指定された場合）
+          // ページpathでフィルタリング（指定された場合）
           const filteredComments = pageUrl 
-            ? userComments.filter(record => record.value.url === pageUrl)
+            ? userComments.filter(record => {
+                try {
+                  // Compare path only, not full URL to support localhost vs production
+                  const recordPath = record.value.url ? new URL(record.value.url).pathname : '';
+                  const currentPath = new URL(pageUrl).pathname;
+                  return recordPath === currentPath;
+                } catch (err) {
+                  // Fallback to exact match if URL parsing fails
+                  return record.value.url === pageUrl;
+                }
+              })
             : userComments;
 
-          console.log(`After URL filtering (${pageUrl}): ${filteredComments.length} comments from ${user.handle}`);
-          console.log('All comments from this user:', userComments.map(r => ({ url: r.value.url, text: r.value.text })));
           allComments.push(...filteredComments);
         } catch (err) {
-          console.warn(`Failed to load comments from ${user.handle}:`, err);
         }
       }
 
@@ -572,21 +587,17 @@ function App() {
                 };
               }
             } catch (err) {
-              console.warn('Failed to enhance comment with profile:', err);
+              // Ignore enhancement errors
             }
           }
           return record;
         })
       );
 
-      console.log(`Loaded ${enhancedComments.length} comments from all users`);
       
       // デバッグ情報を追加
-      console.log('Final enhanced comments:', enhancedComments);
-      console.log('Known users used:', knownUsers);
       
       setComments(enhancedComments);
-      console.log('Comments state updated with', enhancedComments.length, 'comments');
       
       // キャッシュに保存（5分間有効）
       if (pageUrl) {
@@ -598,7 +609,6 @@ function App() {
         localStorage.setItem(cacheKey, JSON.stringify(cacheData));
       }
     } catch (err) {
-      console.error('Failed to load all comments:', err);
       setComments([]);
     }
   };
@@ -640,7 +650,7 @@ function App() {
       try {
         const existingResponse = await agent.api.com.atproto.repo.getRecord({
           repo: user.did,
-          collection: appConfig.collections.comment,
+          collection: getCollectionNames(appConfig.collections.base).comment,
           rkey: rkey,
         });
         
@@ -659,7 +669,6 @@ function App() {
         }
       } catch (err) {
         // Record doesn't exist yet, that's fine
-        console.log('No existing record found, creating new one');
       }
 
       // Add new comment to the array
@@ -667,7 +676,7 @@ function App() {
 
       // Create the record with comments array
       const record = {
-        $type: appConfig.collections.comment,
+        $type: getCollectionNames(appConfig.collections.base).comment,
         comments: existingComments,
         url: window.location.href,
         createdAt: now.toISOString(), // Latest update time
@@ -676,18 +685,16 @@ function App() {
       // Post to ATProto with rkey
       const response = await agent.api.com.atproto.repo.putRecord({
         repo: user.did,
-        collection: appConfig.collections.comment,
+        collection: getCollectionNames(appConfig.collections.base).comment,
         rkey: rkey,
         record: record,
       });
 
-      console.log('Comment posted:', response);
 
       // Clear form and reload all comments
       setCommentText('');
       await loadAllComments(window.location.href);
     } catch (err: any) {
-      console.error('Failed to post comment:', err);
       setError('コメントの投稿に失敗しました: ' + err.message);
     } finally {
       setIsPosting(false);
@@ -714,22 +721,19 @@ function App() {
       const uriParts = uri.split('/');
       const rkey = uriParts[uriParts.length - 1];
       
-      console.log('Deleting comment with rkey:', rkey);
 
       // Delete the record
       await agent.api.com.atproto.repo.deleteRecord({
         repo: user.did,
-        collection: appConfig.collections.comment,
+        collection: getCollectionNames(appConfig.collections.base).comment,
         rkey: rkey,
       });
 
-      console.log('Comment deleted successfully');
 
       // Reload all comments to reflect the deletion
       await loadAllComments(window.location.href);
 
     } catch (err: any) {
-      console.error('Failed to delete comment:', err);
       alert('コメントの削除に失敗しました: ' + err.message);
     }
   };
@@ -787,11 +791,9 @@ function App() {
             const profileData = await profileResponse.json();
             if (profileData.did) {
               resolvedDid = profileData.did;
-              console.log(`Resolved ${handle} -> ${resolvedDid}`);
             }
           }
         } catch (err) {
-          console.warn(`Failed to resolve DID for ${handle}:`, err);
         }
         
         return {
@@ -806,7 +808,7 @@ function App() {
       const rkey = now.toISOString().replace(/[:.]/g, '-');
       
       const record = {
-        $type: appConfig.collections.user,
+        $type: getCollectionNames(appConfig.collections.base).user,
         users: users,
         createdAt: now.toISOString(),
         updatedBy: {
@@ -818,19 +820,17 @@ function App() {
       // Post to ATProto with rkey
       const response = await agent.api.com.atproto.repo.putRecord({
         repo: user.did,
-        collection: appConfig.collections.user,
+        collection: getCollectionNames(appConfig.collections.base).user,
         rkey: rkey,
         record: record,
       });
 
-      console.log('User list posted:', response);
 
       // Clear form and reload user list records
       setUserListInput('');
       loadUserListRecords();
       alert('ユーザーリストが更新されました');
     } catch (err: any) {
-      console.error('Failed to post user list:', err);
       setError('ユーザーリストの投稿に失敗しました: ' + err.message);
     } finally {
       setIsPostingUserList(false);
@@ -858,21 +858,18 @@ function App() {
       const uriParts = uri.split('/');
       const rkey = uriParts[uriParts.length - 1];
       
-      console.log('Deleting user list with rkey:', rkey);
 
       // Delete the record
       await agent.api.com.atproto.repo.deleteRecord({
         repo: user.did,
-        collection: appConfig.collections.user,
+        collection: getCollectionNames(appConfig.collections.base).user,
         rkey: rkey,
       });
 
-      console.log('User list deleted successfully');
       loadUserListRecords();
       alert('ユーザーリストが削除されました');
 
     } catch (err: any) {
-      console.error('Failed to delete user list:', err);
       alert('ユーザーリストの削除に失敗しました: ' + err.message);
     }
   };
@@ -895,7 +892,6 @@ function App() {
     try {
       await atprotoOAuthService.initiateOAuthFlow(handleInput);
     } catch (err) {
-      console.error('OAuth failed:', err);
       alert('認証の開始に失敗しました。再度お試しください。');
     }
   };
@@ -918,7 +914,13 @@ function App() {
     }
     
     // Extract rkey from comment URI: at://did:plc:xxx/collection/rkey
-    const uriParts = record.uri.split('/');
+    // Handle both original records and flattened records from new array format
+    const uri = record.uri || record.originalRecord?.uri;
+    if (!uri) {
+      return false;
+    }
+    
+    const uriParts = uri.split('/');
     const commentRkey = uriParts[uriParts.length - 1];
     
     // Show comment only if rkey matches current post
@@ -926,12 +928,113 @@ function App() {
   };
 
   // OAuth callback is now handled by React Router in main.tsx
-  console.log('=== APP.TSX URL CHECK ===');
-  console.log('Full URL:', window.location.href);
-  console.log('Pathname:', window.location.pathname);
-  console.log('Search params:', window.location.search);
-  console.log('=== END URL CHECK ===');
 
+  // Unified rendering function for AI content
+  const renderAIContent = (record: any, index: number, className: string) => {
+    // Handle both new format (record.value.$type) and old format compatibility
+    const value = record.value;
+    const isNewFormat = value.$type && value.post && value.author;
+    
+    // Extract content based on format
+    const contentText = isNewFormat ? value.text : (value.content || value.body || '');
+    const authorInfo = isNewFormat ? value.author : null;
+    const postInfo = isNewFormat ? value.post : null;
+    const contentType = value.type || 'unknown';
+    const createdAt = value.createdAt || value.generated_at || '';
+    
+    return (
+      <div key={index} className={className}>
+        <div className="comment-header">
+          <img 
+            src={authorInfo?.avatar || generatePlaceholderAvatar('AI')} 
+            alt="AI Avatar" 
+            className="comment-avatar"
+            ref={(img) => {
+              // For old format, try to fetch from ai_did
+              if (img && !isNewFormat && value.ai_did) {
+                fetch(`${appConfig.bskyPublicApi}/xrpc/app.bsky.actor.getProfile?actor=${encodeURIComponent(value.ai_did)}`)
+                  .then(res => res.json())
+                  .then(data => {
+                    if (data.avatar && img) {
+                      img.src = data.avatar;
+                    }
+                  })
+                  .catch(err => {
+                    // Keep placeholder on error
+                  });
+              }
+            }}
+          />
+          <div className="comment-author-info">
+            <span className="comment-author">
+              {authorInfo?.displayName || 'AI'}
+            </span>
+            <span className="comment-handle">
+              @{authorInfo?.handle || 'ai'}
+            </span>
+          </div>
+          <span className="comment-date">
+            {new Date(createdAt).toLocaleString()}
+          </span>
+          <div className="comment-actions">
+            <button 
+              onClick={() => toggleJsonDisplay(record.uri)}
+              className="json-button"
+              title="Show/Hide JSON"
+            >
+              {showJsonFor === record.uri ? 'Hide' : 'JSON'}
+            </button>
+          </div>
+        </div>
+        
+        <div className="comment-meta">
+          {(postInfo?.url || value.post_url) && (
+            <small>
+              <a href={postInfo?.url || value.post_url}>
+                {postInfo?.url || value.post_url}
+              </a>
+            </small>
+          )}
+        </div>
+        
+        {/* JSON Display */}
+        {showJsonFor === record.uri && (
+          <div className="json-display">
+            <h5>JSON Record:</h5>
+            <pre className="json-content">
+              {JSON.stringify(record, null, 2)}
+            </pre>
+          </div>
+        )}
+        
+        <div className="comment-content">
+          {contentText?.split('\n').map((line: string, index: number) => (
+            <React.Fragment key={index}>
+              {line}
+              {index < contentText.split('\n').length - 1 && <br />}
+            </React.Fragment>
+          ))}
+        </div>
+      </div>
+    );
+  };
+  
+  const getTypeLabel = (collectionType: string, contentType: string) => {
+    if (!collectionType) return contentType;
+    
+    const collections = getCollectionNames(appConfig.collections.base);
+    
+    if (collectionType === collections.chat) {
+      return contentType === 'question' ? '質問' : '回答';
+    }
+    if (collectionType === collections.chatLang) {
+      return `翻訳: ${contentType.toUpperCase()}`;
+    }
+    if (collectionType === collections.chatComment) {
+      return `AI ${contentType}`;
+    }
+    return contentType;
+  };
 
   return (
     <div className="app">
@@ -1081,14 +1184,12 @@ function App() {
             >
               Comments ({comments.filter(shouldShowComment).length})
             </button>
-            {user && (
-              <button 
-                className={`tab-button ${activeTab === 'ai-chat' ? 'active' : ''}`}
-                onClick={() => setActiveTab('ai-chat')}
-              >
-                AI Chat History ({aiChatHistory.length})
-              </button>
-            )}
+            <button 
+              className={`tab-button ${activeTab === 'ai-chat' ? 'active' : ''}`}
+              onClick={() => setActiveTab('ai-chat')}
+            >
+              AI Chat History ({aiChatHistory.length})
+            </button>
             <button 
               className={`tab-button ${activeTab === 'lang-en' ? 'active' : ''}`}
               onClick={() => setActiveTab('lang-en')}
@@ -1129,7 +1230,6 @@ function App() {
                               }
                             })
                             .catch(err => {
-                              console.warn('Failed to fetch fresh avatar:', err);
                               // Keep placeholder on error
                             });
                         }
@@ -1171,9 +1271,7 @@ function App() {
                       )}
                     </div>
                   </div>
-                  <div className="comment-content">
-                    {record.value.text}
-                  </div>
+                  
                   <div className="comment-meta">
                     {record.value.url && (
                       <small><a href={record.value.url}>{record.value.url}</a></small>
@@ -1189,6 +1287,15 @@ function App() {
                       </pre>
                     </div>
                   )}
+                  
+                  <div className="comment-content">
+                    {record.value.text?.split('\n').map((line: string, index: number) => (
+                      <React.Fragment key={index}>
+                        {line}
+                        {index < record.value.text.split('\n').length - 1 && <br />}
+                      </React.Fragment>
+                    ))}
+                  </div>
                 </div>
               ))
             )}
@@ -1196,7 +1303,7 @@ function App() {
           )}
 
           {/* AI Chat History List */}
-          {activeTab === 'ai-chat' && user && (
+          {activeTab === 'ai-chat' && (
             <div className="ai-chat-list">
               <div className="chat-header">
                 <h3>AI Chat History</h3>
@@ -1204,43 +1311,49 @@ function App() {
               {aiChatHistory.length === 0 ? (
                 <p className="no-chat">No AI conversations yet. Start chatting with Ask AI!</p>
               ) : (
-                aiChatHistory.map((record, index) => (
-                  <div key={index} className="chat-item">
-                    <div className="chat-header">
-                      <img 
-                        src={generatePlaceholderAvatar(record.value.author?.handle || 'unknown')} 
-                        alt="User Avatar" 
-                        className="comment-avatar"
-                        ref={(img) => {
-                          // Fetch fresh avatar from API when component mounts
-                          if (img && record.value.author?.did) {
-                            fetch(`${appConfig.bskyPublicApi}/xrpc/app.bsky.actor.getProfile?actor=${encodeURIComponent(record.value.author.did)}`)
-                              .then(res => res.json())
-                              .then(data => {
-                                if (data.avatar && img) {
-                                  img.src = data.avatar;
-                                }
-                              })
-                              .catch(err => {
-                                console.warn('Failed to fetch fresh avatar:', err);
-                                // Keep placeholder on error
-                              });
-                          }
-                        }}
-                      />
-                      <div className="comment-author-info">
-                        <span className="comment-author">
-                          {record.value.author?.displayName || record.value.author?.handle || 'unknown'}
-                        </span>
-                        <a 
-                          href={generateProfileUrl(record.value.author?.handle || '', record.value.author?.did || '')}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="comment-handle"
-                        >
-                          @{record.value.author?.handle || 'unknown'}
-                        </a>
-                      </div>
+                aiChatHistory.map((record, index) => {
+                  // For AI responses, use AI DID; for user questions, use the actual author
+                  const isAiResponse = record.value.type === 'answer';
+                  const displayDid = isAiResponse ? appConfig.aiDid : record.value.author?.did;
+                  const displayHandle = isAiResponse ? 'ai.syui' : record.value.author?.handle;
+                  const displayName = isAiResponse ? 'AI' : (record.value.author?.displayName || record.value.author?.handle);
+                  
+                  return (
+                    <div key={index} className="chat-item">
+                      <div className="chat-header">
+                        <img 
+                          src={generatePlaceholderAvatar(displayHandle || 'unknown')} 
+                          alt={isAiResponse ? "AI Avatar" : "User Avatar"} 
+                          className="comment-avatar"
+                          ref={(img) => {
+                            // Fetch fresh avatar from API when component mounts
+                            if (img && displayDid) {
+                              fetch(`${appConfig.bskyPublicApi}/xrpc/app.bsky.actor.getProfile?actor=${encodeURIComponent(displayDid)}`)
+                                .then(res => res.json())
+                                .then(data => {
+                                  if (data.avatar && img) {
+                                    img.src = data.avatar;
+                                  }
+                                })
+                                .catch(err => {
+                                  // Keep placeholder on error
+                                });
+                            }
+                          }}
+                        />
+                        <div className="comment-author-info">
+                          <span className="comment-author">
+                            {displayName || 'unknown'}
+                          </span>
+                          <a 
+                            href={generateProfileUrl(displayHandle || '', displayDid || '')}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="comment-handle"
+                          >
+                            @{displayHandle || 'unknown'}
+                          </a>
+                        </div>
                       <span className="comment-date">
                         {new Date(record.value.createdAt).toLocaleString()}
                       </span>
@@ -1253,16 +1366,14 @@ function App() {
                           {showJsonFor === record.uri ? 'Hide' : 'JSON'}
                         </button>
                         <button className="chat-type-button">
-                          {record.value.question ? 'Question' : 'Answer'}
+                          {record.value.type === 'question' ? 'Question' : 'Answer'}
                         </button>
                       </div>
                     </div>
-                    <div className="comment-content">
-                      {record.value.question || record.value.answer}
-                    </div>
+                    
                     <div className="comment-meta">
-                      {record.value.url && (
-                        <small><a href={record.value.url}>{record.value.url}</a></small>
+                      {record.value.post?.url && (
+                        <small><a href={record.value.post.url}>{record.value.post.url}</a></small>
                       )}
                     </div>
                     
@@ -1275,8 +1386,18 @@ function App() {
                         </pre>
                       </div>
                     )}
+                    
+                    <div className="comment-content">
+                      {record.value.text?.split('\n').map((line: string, index: number) => (
+                        <React.Fragment key={index}>
+                          {line}
+                          {index < record.value.text.split('\n').length - 1 && <br />}
+                        </React.Fragment>
+                      ))}
+                    </div>
                   </div>
-                ))
+                  );
+                })
               )}
             </div>
           )}
@@ -1287,75 +1408,87 @@ function App() {
               {langEnRecords.length === 0 ? (
                 <p className="no-content">No English translations yet</p>
               ) : (
-                langEnRecords.map((record, index) => (
-                  <div key={index} className="lang-item">
-                    <div className="lang-header">
-                      <img 
-                        src={record.value.author?.avatar || generatePlaceholderAvatar(record.value.author?.handle || 'AI')} 
-                        alt="AI Avatar" 
-                        className="comment-avatar"
-                      />
-                      <div className="comment-author-info">
-                        <span className="comment-author">
-                          {record.value.author?.displayName || 'AI Translator'}
-                        </span>
-                        <span className="comment-handle">
-                          @{record.value.author?.handle || 'ai'}
-                        </span>
-                      </div>
-                      <span className="comment-date">
-                        {new Date(record.value.createdAt).toLocaleString()}
-                      </span>
-                    </div>
-                    <div className="lang-content">
-                      <div className="lang-type">Type: {record.value.type || 'en'}</div>
-                      <div className="lang-body">{record.value.body}</div>
-                    </div>
-                    <div className="comment-meta">
-                      {record.value.url && (
-                        <small><a href={record.value.url}>{record.value.url}</a></small>
-                      )}
-                    </div>
-                  </div>
-                ))
+                langEnRecords.map((record, index) => 
+                  renderAIContent(record, index, 'lang-item')
+                )
               )}
             </div>
           )}
 
           {/* AI Comment List */}
           {activeTab === 'ai-comment' && (
-            <div className="ai-comment-list">
+            <div className="comments-list">
               {aiCommentRecords.length === 0 ? (
                 <p className="no-content">No AI comments yet</p>
               ) : (
                 aiCommentRecords.map((record, index) => (
-                  <div key={index} className="ai-comment-item">
-                    <div className="ai-comment-header">
+                  <div key={index} className="comment-item">
+                    <div className="comment-header">
                       <img 
-                        src={record.value.author?.avatar || generatePlaceholderAvatar(record.value.author?.handle || 'AI')} 
+                        src={generatePlaceholderAvatar('ai')} 
                         alt="AI Avatar" 
                         className="comment-avatar"
+                        ref={(img) => {
+                          // Fetch AI avatar
+                          if (img && appConfig.aiDid) {
+                            fetch(`${appConfig.bskyPublicApi}/xrpc/app.bsky.actor.getProfile?actor=${encodeURIComponent(appConfig.aiDid)}`)
+                              .then(res => res.json())
+                              .then(data => {
+                                if (data.avatar && img) {
+                                  img.src = data.avatar;
+                                }
+                              })
+                              .catch(err => {
+                                // Keep placeholder on error
+                              });
+                          }
+                        }}
                       />
                       <div className="comment-author-info">
                         <span className="comment-author">
-                          {record.value.author?.displayName || 'AI Commenter'}
+                          AI
                         </span>
                         <span className="comment-handle">
-                          @{record.value.author?.handle || 'ai'}
+                          @ai
                         </span>
                       </div>
                       <span className="comment-date">
-                        {new Date(record.value.createdAt).toLocaleString()}
+                        {new Date(record.value.createdAt || record.value.generated_at).toLocaleString()}
                       </span>
+                      <div className="comment-actions">
+                        <button 
+                          onClick={() => toggleJsonDisplay(record.uri)}
+                          className="json-button"
+                          title="Show/Hide JSON"
+                        >
+                          {showJsonFor === record.uri ? 'Hide' : 'JSON'}
+                        </button>
+                      </div>
                     </div>
-                    <div className="ai-comment-content">
-                      <div className="ai-comment-type">Type: {record.value.type || 'comment'}</div>
-                      <div className="ai-comment-body">{record.value.body}</div>
-                    </div>
+                    
                     <div className="comment-meta">
-                      {record.value.url && (
-                        <small><a href={record.value.url}>{record.value.url}</a></small>
+                      {(record.value.post?.url || record.value.post_url) && (
+                        <small><a href={record.value.post?.url || record.value.post_url}>{record.value.post?.url || record.value.post_url}</a></small>
                       )}
+                    </div>
+                    
+                    {/* JSON Display */}
+                    {showJsonFor === record.uri && (
+                      <div className="json-display">
+                        <h5>JSON Record:</h5>
+                        <pre className="json-content">
+                          {JSON.stringify(record, null, 2)}
+                        </pre>
+                      </div>
+                    )}
+                    
+                    <div className="comment-content">
+                      {(record.value.text || record.value.comment)?.split('\n').map((line: string, index: number) => (
+                        <React.Fragment key={index}>
+                          {line}
+                          {index < (record.value.text || record.value.comment)?.split('\n').length - 1 && <br />}
+                        </React.Fragment>
+                      ))}
                     </div>
                   </div>
                 ))

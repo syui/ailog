@@ -73,7 +73,6 @@ export const aiCardApi = {
       });
       return response.data.data;
     } catch (error) {
-      console.warn('ai.gpt AI分析機能が利用できません:', error);
       throw new Error('AI分析機能を利用するにはai.gptサーバーが必要です');
     }
   },
@@ -86,7 +85,6 @@ export const aiCardApi = {
       const response = await aiGptApi.get('/card_get_gacha_stats');
       return response.data.data;
     } catch (error) {
-      console.warn('ai.gpt AI統計機能が利用できません:', error);
       throw new Error('AI統計機能を利用するにはai.gptサーバーが必要です');
     }
   },

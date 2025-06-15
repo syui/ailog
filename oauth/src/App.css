@@ -194,6 +194,7 @@
     padding: 10px !important;
     word-wrap: break-word !important;
     overflow-wrap: break-word !important;
+    white-space: pre-wrap !important;
   }
   
   .comment-header {
@@ -322,6 +323,7 @@
   margin: 0 auto;
   /* padding: 20px; - removed to avoid double padding */
 }
+
 
 .auth-section {
   background: #f8f9fa;
@@ -610,6 +612,8 @@
   line-height: 1.5;
   color: #333;
   margin-bottom: 10px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 .comment-meta {

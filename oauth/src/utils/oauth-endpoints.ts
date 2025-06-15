@@ -53,7 +53,6 @@ export class OAuthEndpointHandler {
               }
             });
           } catch (error) {
-            console.error('Failed to generate JWKS:', error);
             return new Response(JSON.stringify({ error: 'Failed to generate JWKS' }), {
               status: 500,
               headers: { 'Content-Type': 'application/json' }
@@ -62,7 +61,6 @@ export class OAuthEndpointHandler {
         }
       } catch (e) {
         // If URL parsing fails, pass through to original fetch
-        console.debug('URL parsing failed, passing through:', e);
       }
       
       // Pass through all other requests
@@ -136,6 +134,5 @@ export function registerOAuthServiceWorker() {
     const blob = new Blob([swCode], { type: 'application/javascript' });
     const swUrl = URL.createObjectURL(blob);
     
-    navigator.serviceWorker.register(swUrl).catch(console.error);
   }
 }

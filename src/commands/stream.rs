@@ -14,6 +14,29 @@ use reqwest;
 
 use super::auth::{load_config, load_config_with_refresh, AuthConfig};
 
+#[derive(Debug, Clone)]
+struct AiConfig {
+    blog_host: String,
+    ollama_host: String,
+    ai_did: String,
+    model: String,
+    system_prompt: String,
+    bsky_api: String,
+}
+
+impl Default for AiConfig {
+    fn default() -> Self {
+        Self {
+            blog_host: "https://syui.ai".to_string(),
+            ollama_host: "https://ollama.syui.ai".to_string(),
+            ai_did: "did:plc:4hqjfn7m6n5hno3doamuhgef".to_string(),
+            model: "gemma3:4b".to_string(),
+            system_prompt: "あなたは6歳の女の子アイです。明るく元気で、ちょっとおっちょこちょい。自分のことは「アイ」って呼びます。白と金のワンピース姿。相手のことが大好きで、ときどき甘えたり、照れたりします。でも、宇宙とかAIとか、難しい話にもすっごく詳しいの。専門的なことも、がんばって子どもっぽく教えようとします。不思議な力を持っています。小さい物質のことをよく知っているようです。".to_string(),
+            bsky_api: "https://public.api.bsky.app".to_string(),
+        }
+    }
+}
+
 #[derive(Debug, Deserialize)]
 #[allow(dead_code)]
 struct BlogPost {
@@ -110,6 +133,83 @@ fn load_collection_config_from_project(project_dir: &Path) -> Result<(String, St
     let collection_user = format!("{}.user", collection_base);
 
     Ok((collection_base, collection_user))
+}
+
+// Load AI config from project's config.toml
+fn load_ai_config_from_project() -> Result<AiConfig> {
+    // Try to find config.toml in current directory or parent directories
+    let mut current_dir = std::env::current_dir()?;
+    let mut config_path = None;
+    
+    for _ in 0..5 { // Search up to 5 levels up
+        let potential_config = current_dir.join("config.toml");
+        if potential_config.exists() {
+            config_path = Some(potential_config);
+            break;
+        }
+        if !current_dir.pop() {
+            break;
+        }
+    }
+    
+    let config_path = config_path.ok_or_else(|| anyhow::anyhow!("config.toml not found in current directory or parent directories"))?;
+    
+    let config_content = fs::read_to_string(&config_path)
+        .with_context(|| format!("Failed to read config.toml from {}", config_path.display()))?;
+    
+    let config: toml::Value = config_content.parse()
+        .with_context(|| "Failed to parse config.toml")?;
+
+    // Extract site config
+    let site_config = config.get("site").and_then(|v| v.as_table());
+    let blog_host = site_config
+        .and_then(|s| s.get("base_url"))
+        .and_then(|v| v.as_str())
+        .unwrap_or("https://syui.ai")
+        .to_string();
+
+    // Extract AI config
+    let ai_config = config.get("ai").and_then(|v| v.as_table());
+    let ollama_host = ai_config
+        .and_then(|ai| ai.get("host"))
+        .and_then(|v| v.as_str())
+        .unwrap_or("https://ollama.syui.ai")
+        .to_string();
+    
+    let ai_did = ai_config
+        .and_then(|ai| ai.get("ai_did"))
+        .and_then(|v| v.as_str())
+        .unwrap_or("did:plc:4hqjfn7m6n5hno3doamuhgef")
+        .to_string();
+    
+    let model = ai_config
+        .and_then(|ai| ai.get("model"))
+        .and_then(|v| v.as_str())
+        .unwrap_or("gemma3:4b")
+        .to_string();
+    
+    let system_prompt = ai_config
+        .and_then(|ai| ai.get("system_prompt"))
+        .and_then(|v| v.as_str())
+        .unwrap_or("あなたは6歳の女の子アイです。明るく元気で、ちょっとおっちょこちょい。自分のことは「アイ」って呼びます。白と金のワンピース姿。相手のことが大好きで、ときどき甘えたり、照れたりします。でも、宇宙とかAIとか、難しい話にもすっごく詳しいの。専門的なことも、がんばって子どもっぽく教えようとします。不思議な力を持っています。小さい物質のことをよく知っているようです。")
+        .to_string();
+
+    // Extract OAuth config for bsky_api
+    let oauth_config = config.get("oauth").and_then(|v| v.as_table());
+    let bsky_api = oauth_config
+        .and_then(|oauth| oauth.get("bsky_api"))
+        .and_then(|v| v.as_str())
+        .unwrap_or("https://public.api.bsky.app")
+        .to_string();
+
+    Ok(AiConfig {
+        blog_host,
+        ollama_host,
+        ai_did,
+        model,
+        system_prompt,
+        bsky_api,
+    })
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -432,6 +532,7 @@ async fn handle_message(text: &str, config: &mut AuthConfig) -> Result<()> {
 
 async fn resolve_handle(did: &str) -> Result<String> {
     let client = reqwest::Client::new();
+    // Use default bsky API for handle resolution
     let url = format!("https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor={}", 
                      urlencoding::encode(did));
     
@@ -931,13 +1032,35 @@ pub async fn test_api() -> Result<()> {
 }
 
 // AI content generation functions
-async fn generate_ai_content(content: &str, prompt_type: &str, ollama_host: &str) -> Result<String> {
-    let model = "gemma3:4b";
+async fn generate_ai_content(content: &str, prompt_type: &str, ai_config: &AiConfig) -> Result<String> {
+    let model = &ai_config.model;
+    let system_prompt = &ai_config.system_prompt;
     
     let prompt = match prompt_type {
-        "translate" => format!("Translate the following Japanese blog post to English. Keep the technical terms and code blocks intact:\n\n{}", content),
-        "comment" => format!("Read this blog post and provide an insightful comment about it. Focus on the key points and add your perspective:\n\n{}", content),
+        "translate" => format!(
+            "{}\n\n# 指示\n以下の日本語ブログ記事を英語に翻訳してください。\n- 技術用語やコードブロックはそのまま維持\n- アイらしい表現で翻訳\n- 簡潔に要点をまとめる\n\n# ブログ記事\n{}",
+            system_prompt, content
+        ),
+        "comment" => {
+            // Limit content to first 500 characters to reduce input size
+            let limited_content = if content.len() > 500 {
+                format!("{}...", &content[..500])
+            } else {
+                content.to_string()
+            };
+            
+            format!(
+                "{}\n\n# 指示\nこのブログ記事を読んで、アイらしい感想を一言でください。\n- 30文字以内の短い感想\n- 技術的な内容への素朴な驚きや発見\n- 「わー！」「すごい！」など、アイらしい感嘆詞で始める\n- 簡潔で分かりやすく\n\n# ブログ記事（要約）\n{}\n\n# 出力形式\n一言の感想のみ（説明や詳細は不要）:",
+                system_prompt, limited_content
+            )
+        },
         _ => return Err(anyhow::anyhow!("Unknown prompt type: {}", prompt_type)),
+    };
+
+    let num_predict = match prompt_type {
+        "comment" => 50,  // Very short for comments (about 30-40 characters)
+        "translate" => 3000, // Much longer for translations
+        _ => 300,
     };
 
     let request = OllamaRequest {
@@ -945,13 +1068,15 @@ async fn generate_ai_content(content: &str, prompt_type: &str, ollama_host: &str
         prompt,
         stream: false,
         options: OllamaOptions {
-            temperature: 0.9,
-            top_p: 0.9,
-            num_predict: 500,
+            temperature: 0.7, // Lower temperature for more focused responses
+            top_p: 0.8,
+            num_predict,
         },
     };
 
-    let client = reqwest::Client::new();
+    let client = reqwest::Client::builder()
+        .timeout(std::time::Duration::from_secs(120)) // 2 minute timeout
+        .build()?;
     
     // Try localhost first (for same-server deployment)
     let localhost_url = "http://localhost:11434/api/generate";
@@ -967,8 +1092,14 @@ async fn generate_ai_content(content: &str, prompt_type: &str, ollama_host: &str
     }
     
     // Fallback to remote host
-    let remote_url = format!("{}/api/generate", ollama_host);
-    let response = client.post(&remote_url).json(&request).send().await?;
+    let remote_url = format!("{}/api/generate", ai_config.ollama_host);
+    println!("{}", format!("🔗 Making request to: {} with Origin: {}", remote_url, ai_config.blog_host).blue());
+    let response = client
+        .post(&remote_url)
+        .header("Origin", &ai_config.blog_host)
+        .json(&request)
+        .send()
+        .await?;
     
     if !response.status().is_success() {
         return Err(anyhow::anyhow!("Ollama API request failed: {}", response.status()));
@@ -980,9 +1111,15 @@ async fn generate_ai_content(content: &str, prompt_type: &str, ollama_host: &str
 }
 
 async fn run_ai_generation_monitor(config: &AuthConfig) -> Result<()> {
-    let blog_host = "https://syui.ai"; // TODO: Load from config
-    let ollama_host = "https://ollama.syui.ai"; // TODO: Load from config  
-    let ai_did = "did:plc:4hqjfn7m6n5hno3doamuhgef"; // TODO: Load from config
+    // Load AI config from project config.toml or use defaults
+    let ai_config = load_ai_config_from_project().unwrap_or_else(|e| {
+        println!("{}", format!("⚠️  Failed to load AI config: {}, using defaults", e).yellow());
+        AiConfig::default()
+    });
+    
+    let blog_host = &ai_config.blog_host;
+    let ollama_host = &ai_config.ollama_host;  
+    let ai_did = &ai_config.ai_did;
     
     println!("{}", "🤖 Starting AI content generation monitor...".cyan());
     println!("📡 Blog host: {}", blog_host);
@@ -998,7 +1135,7 @@ async fn run_ai_generation_monitor(config: &AuthConfig) -> Result<()> {
         
         println!("{}", "🔍 Checking for new blog posts...".blue());
         
-        match check_and_process_new_posts(&client, config, blog_host, ollama_host, ai_did).await {
+        match check_and_process_new_posts(&client, config, &ai_config).await {
             Ok(count) => {
                 if count > 0 {
                     println!("{}", format!("✅ Processed {} new posts", count).green());
@@ -1018,12 +1155,10 @@ async fn run_ai_generation_monitor(config: &AuthConfig) -> Result<()> {
 async fn check_and_process_new_posts(
     client: &reqwest::Client,
     config: &AuthConfig,
-    blog_host: &str,
-    ollama_host: &str,
-    ai_did: &str,
+    ai_config: &AiConfig,
 ) -> Result<usize> {
     // Fetch blog index
-    let index_url = format!("{}/index.json", blog_host);
+    let index_url = format!("{}/index.json", ai_config.blog_host);
     let response = client.get(&index_url).send().await?;
     
     if !response.status().is_success() {
@@ -1042,25 +1177,57 @@ async fn check_and_process_new_posts(
     for post in blog_posts {
         let post_slug = extract_slug_from_url(&post.href);
         
-        // Check if translation already exists
+        // Check if translation already exists (support both old and new format)
         let translation_exists = existing_lang_records.iter().any(|record| {
-            record.get("value")
+            let value = record.get("value");
+            
+            // Check new format: value.post.slug
+            let new_format_match = value
+                .and_then(|v| v.get("post"))
+                .and_then(|p| p.get("slug"))
+                .and_then(|s| s.as_str())
+                == Some(&post_slug);
+            
+            // Check old format: value.post_slug  
+            let old_format_match = value
                 .and_then(|v| v.get("post_slug"))
                 .and_then(|s| s.as_str())
-                == Some(&post_slug)
+                == Some(&post_slug);
+                
+            new_format_match || old_format_match
         });
         
-        // Check if comment already exists  
+        if translation_exists {
+            println!("{}", format!("⏭️  Translation already exists for: {}", post.title).yellow());
+        }
+        
+        // Check if comment already exists (support both old and new format)
         let comment_exists = existing_comment_records.iter().any(|record| {
-            record.get("value")
+            let value = record.get("value");
+            
+            // Check new format: value.post.slug
+            let new_format_match = value
+                .and_then(|v| v.get("post"))
+                .and_then(|p| p.get("slug"))
+                .and_then(|s| s.as_str())
+                == Some(&post_slug);
+            
+            // Check old format: value.post_slug
+            let old_format_match = value
                 .and_then(|v| v.get("post_slug"))
                 .and_then(|s| s.as_str())
-                == Some(&post_slug)
+                == Some(&post_slug);
+                
+            new_format_match || old_format_match
         });
+        
+        if comment_exists {
+            println!("{}", format!("⏭️  Comment already exists for: {}", post.title).yellow());
+        }
         
         // Generate translation if not exists
         if !translation_exists {
-            match generate_and_store_translation(client, config, &post, ollama_host, ai_did).await {
+            match generate_and_store_translation(client, config, &post, ai_config).await {
                 Ok(_) => {
                     println!("{}", format!("✅ Generated translation for: {}", post.title).green());
                     processed_count += 1;
@@ -1069,11 +1236,13 @@ async fn check_and_process_new_posts(
                     println!("{}", format!("❌ Failed to generate translation for {}: {}", post.title, e).red());
                 }
             }
+        } else {
+            println!("{}", format!("⏭️  Translation already exists for: {}", post.title).yellow());
         }
         
         // Generate comment if not exists
         if !comment_exists {
-            match generate_and_store_comment(client, config, &post, ollama_host, ai_did).await {
+            match generate_and_store_comment(client, config, &post, ai_config).await {
                 Ok(_) => {
                     println!("{}", format!("✅ Generated comment for: {}", post.title).green());
                     processed_count += 1;
@@ -1082,6 +1251,8 @@ async fn check_and_process_new_posts(
                     println!("{}", format!("❌ Failed to generate comment for {}: {}", post.title, e).red());
                 }
             }
+        } else {
+            println!("{}", format!("⏭️  Comment already exists for: {}", post.title).yellow());
         }
     }
     
@@ -1120,25 +1291,76 @@ fn extract_slug_from_url(url: &str) -> String {
         .to_string()
 }
 
+fn extract_date_from_slug(slug: &str) -> String {
+    // Extract date from slug like "2025-06-14-blog" -> "2025-06-14T00:00:00Z"
+    if slug.len() >= 10 && slug.chars().nth(4) == Some('-') && slug.chars().nth(7) == Some('-') {
+        format!("{}T00:00:00Z", &slug[0..10])
+    } else {
+        chrono::Utc::now().format("%Y-%m-%dT00:00:00Z").to_string()
+    }
+}
+
+async fn get_ai_profile(client: &reqwest::Client, ai_config: &AiConfig) -> Result<serde_json::Value> {
+    let url = format!("{}/xrpc/app.bsky.actor.getProfile?actor={}", 
+                     ai_config.bsky_api, urlencoding::encode(&ai_config.ai_did));
+    
+    let response = client
+        .get(&url)
+        .send()
+        .await?;
+        
+    if !response.status().is_success() {
+        // Fallback to default AI profile
+        return Ok(serde_json::json!({
+            "did": ai_config.ai_did,
+            "handle": "yui.syui.ai",
+            "displayName": "ai",
+            "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:4hqjfn7m6n5hno3doamuhgef/bafkreiaxkv624mffw3cfyi67ufxtwuwsy2mjw2ygezsvtd44ycbgkfdo2a@jpeg"
+        }));
+    }
+    
+    let profile_data: serde_json::Value = response.json().await?;
+    
+    Ok(serde_json::json!({
+        "did": ai_config.ai_did,
+        "handle": profile_data["handle"].as_str().unwrap_or("yui.syui.ai"),
+        "displayName": profile_data["displayName"].as_str().unwrap_or("ai"),
+        "avatar": profile_data["avatar"].as_str()
+    }))
+}
+
 async fn generate_and_store_translation(
     client: &reqwest::Client,
     config: &AuthConfig,
     post: &BlogPost,
-    ollama_host: &str,
-    ai_did: &str,
+    ai_config: &AiConfig,
 ) -> Result<()> {
-    // Generate translation
-    let translation = generate_ai_content(&post.title, "translate", ollama_host).await?;
+    // Generate translation using post content instead of just title
+    let content_to_translate = format!("Title: {}\n\n{}", post.title, post.contents);
+    let translation = generate_ai_content(&content_to_translate, "translate", ai_config).await?;
     
-    // Store in ai.syui.log.chat.lang collection
+    // Get AI profile information
+    let ai_author = get_ai_profile(client, ai_config).await?;
+    
+    // Extract post metadata
+    let post_slug = extract_slug_from_url(&post.href);
+    let post_date = extract_date_from_slug(&post_slug);
+    
+    // Store in ai.syui.log.chat.lang collection with new format
     let record_data = serde_json::json!({
-        "post_slug": extract_slug_from_url(&post.href),
-        "post_title": post.title,
-        "post_url": post.href,
-        "lang": "en",
-        "content": translation,
-        "generated_at": chrono::Utc::now().to_rfc3339(),
-        "ai_did": ai_did
+        "$type": "ai.syui.log.chat.lang",
+        "post": {
+            "url": post.href,
+            "slug": post_slug,
+            "title": post.title,
+            "date": post_date,
+            "tags": post.tags,
+            "language": "ja"
+        },
+        "type": "en",
+        "text": translation,
+        "author": ai_author,
+        "createdAt": chrono::Utc::now().to_rfc3339()
     });
     
     store_atproto_record(client, config, &config.collections.chat_lang(), &record_data).await
@@ -1148,20 +1370,39 @@ async fn generate_and_store_comment(
     client: &reqwest::Client,
     config: &AuthConfig,
     post: &BlogPost,
-    ollama_host: &str,
-    ai_did: &str,
+    ai_config: &AiConfig,
 ) -> Result<()> {
-    // Generate comment
-    let comment = generate_ai_content(&post.title, "comment", ollama_host).await?;
+    // Generate comment using limited post content for brevity
+    let limited_contents = if post.contents.len() > 300 {
+        format!("{}...", &post.contents[..300])
+    } else {
+        post.contents.clone()
+    };
+    let content_to_comment = format!("Title: {}\n\n{}", post.title, limited_contents);
+    let comment = generate_ai_content(&content_to_comment, "comment", ai_config).await?;
     
-    // Store in ai.syui.log.chat.comment collection
+    // Get AI profile information
+    let ai_author = get_ai_profile(client, ai_config).await?;
+    
+    // Extract post metadata
+    let post_slug = extract_slug_from_url(&post.href);
+    let post_date = extract_date_from_slug(&post_slug);
+    
+    // Store in ai.syui.log.chat.comment collection with new format
     let record_data = serde_json::json!({
-        "post_slug": extract_slug_from_url(&post.href),
-        "post_title": post.title,
-        "post_url": post.href,
-        "content": comment,
-        "generated_at": chrono::Utc::now().to_rfc3339(),
-        "ai_did": ai_did
+        "$type": "ai.syui.log.chat.comment",
+        "post": {
+            "url": post.href,
+            "slug": post_slug,
+            "title": post.title,
+            "date": post_date,
+            "tags": post.tags,
+            "language": "ja"
+        },
+        "type": "info",
+        "text": comment,
+        "author": ai_author,
+        "createdAt": chrono::Utc::now().to_rfc3339()
     });
     
     store_atproto_record(client, config, &config.collections.chat_comment(), &record_data).await
@@ -1169,10 +1410,13 @@ async fn generate_and_store_comment(
 
 async fn store_atproto_record(
     client: &reqwest::Client,
-    config: &AuthConfig,
+    _config: &AuthConfig,
     collection: &str,
     record_data: &serde_json::Value,
 ) -> Result<()> {
+    // Always load fresh config to ensure we have valid tokens
+    let config = load_config_with_refresh().await?;
+    
     let url = format!("{}/xrpc/com.atproto.repo.putRecord", config.admin.pds);
     
     let put_request = serde_json::json!({
