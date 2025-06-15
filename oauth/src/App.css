@@ -499,9 +499,8 @@
 }
 
 .comments-list {
-  border: 1px solid #ddd;
   border-radius: 8px;
-  padding: 20px;
+  padding: 0px;
 }
 
 .comments-header {
@@ -860,28 +859,6 @@
   background: #f6f8fa;
 }
 
-/* AI Chat History */
-.ai-chat-list {
-  max-width: 100%;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 20px;
-}
-
-.chat-item {
-  border: 1px solid #d1d9e0;
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 16px;
-  background: #ffffff;
-}
-
-.chat-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
 
 .chat-actions {
   display: flex;

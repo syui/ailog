@@ -259,8 +259,8 @@ function App() {
       if (appConfig.rkey) {
         // On post page: show only chats for this specific post
         filteredRecords = allChatRecords.filter(record => {
-          const recordPath = record.value.post?.url ? new URL(record.value.post.url).pathname : '';
-          return recordPath === window.location.pathname;
+          const recordRkey = record.value.post?.url ? new URL(record.value.post.url).pathname.split('/').pop()?.replace(/\.html$/, '') : '';
+          return recordRkey === appConfig.rkey;
         });
       } else {
         // On top page: show latest 3 records from all pages
@@ -302,13 +302,12 @@ function App() {
         const langData = await langResponse.json();
         const langRecords = langData.records || [];
         
-        // Filter by current page path if on post page
+        // Filter by current page rkey if on post page
         const filteredLangRecords = appConfig.rkey 
           ? langRecords.filter(record => {
-              // Compare path only, not full URL to support localhost vs production
-              const recordPath = record.value.post?.url ? new URL(record.value.post.url).pathname : 
-                                 record.value.url ? new URL(record.value.url).pathname : '';
-              return recordPath === window.location.pathname;
+              // Compare rkey only (last part of path)
+              const recordRkey = record.value.post?.url ? new URL(record.value.post.url).pathname.split('/').pop()?.replace(/\.html$/, '') : '';
+              return recordRkey === appConfig.rkey;
             })
           : langRecords.slice(0, 3); // Top page: latest 3
           
@@ -321,13 +320,12 @@ function App() {
         const commentData = await commentResponse.json();
         const commentRecords = commentData.records || [];
         
-        // Filter by current page path if on post page
+        // Filter by current page rkey if on post page
         const filteredCommentRecords = appConfig.rkey 
           ? commentRecords.filter(record => {
-              // Compare path only, not full URL to support localhost vs production
-              const recordPath = record.value.post?.url ? new URL(record.value.post.url).pathname : 
-                                 record.value.url ? new URL(record.value.url).pathname : '';
-              return recordPath === window.location.pathname;
+              // Compare rkey only (last part of path)
+              const recordRkey = record.value.post?.url ? new URL(record.value.post.url).pathname.split('/').pop()?.replace(/\.html$/, '') : '';
+              return recordRkey === appConfig.rkey;
             })
           : commentRecords.slice(0, 3); // Top page: latest 3
           
@@ -540,16 +538,14 @@ function App() {
           
           
           // ページpathでフィルタリング（指定された場合）
-          const filteredComments = pageUrl 
+          const filteredComments = pageUrl && appConfig.rkey
             ? userComments.filter(record => {
                 try {
-                  // Compare path only, not full URL to support localhost vs production
-                  const recordPath = record.value.url ? new URL(record.value.url).pathname : '';
-                  const currentPath = new URL(pageUrl).pathname;
-                  return recordPath === currentPath;
+                  // Compare rkey only (last part of path)
+                  const recordRkey = record.value.url ? new URL(record.value.url).pathname.split('/').pop() : '';
+                  return recordRkey === appConfig.rkey;
                 } catch (err) {
-                  // Fallback to exact match if URL parsing fails
-                  return record.value.url === pageUrl;
+                  return false;
                 }
               })
             : userComments;
@@ -1053,6 +1049,8 @@ function App() {
               <div className="username-input-section">
                 <input 
                   type="text" 
+                  id="handle-input"
+                  name="handle"
                   placeholder="user.bsky.social" 
                   className="handle-input"
                   value={handleInput}
@@ -1094,6 +1092,8 @@ function App() {
                   {/* User List Form */}
                   <div className="user-list-form">
                     <textarea
+                      id="user-list-input"
+                      name="userList"
                       value={userListInput}
                       onChange={(e) => setUserListInput(e.target.value)}
                       placeholder="ユーザーハンドルをカンマ区切りで入力&#10;例: syui.ai, yui.syui.ai, user.bsky.social"
@@ -1188,13 +1188,13 @@ function App() {
               className={`tab-button ${activeTab === 'ai-chat' ? 'active' : ''}`}
               onClick={() => setActiveTab('ai-chat')}
             >
-              AI Chat History ({aiChatHistory.length})
+              AI Chat ({aiChatHistory.length})
             </button>
             <button 
               className={`tab-button ${activeTab === 'lang-en' ? 'active' : ''}`}
               onClick={() => setActiveTab('lang-en')}
             >
-              Lang: EN ({langEnRecords.length})
+              AI Lang:en ({langEnRecords.length})
             </button>
             <button 
               className={`tab-button ${activeTab === 'ai-comment' ? 'active' : ''}`}
@@ -1304,10 +1304,7 @@ function App() {
 
           {/* AI Chat History List */}
           {activeTab === 'ai-chat' && (
-            <div className="ai-chat-list">
-              <div className="chat-header">
-                <h3>AI Chat History</h3>
-              </div>
+            <div className="comments-list">
               {aiChatHistory.length === 0 ? (
                 <p className="no-chat">No AI conversations yet. Start chatting with Ask AI!</p>
               ) : (
@@ -1319,8 +1316,8 @@ function App() {
                   const displayName = isAiResponse ? 'AI' : (record.value.author?.displayName || record.value.author?.handle);
                   
                   return (
-                    <div key={index} className="chat-item">
-                      <div className="chat-header">
+                    <div key={index} className="comment-item">
+                      <div className="comment-header">
                         <img 
                           src={generatePlaceholderAvatar(displayHandle || 'unknown')} 
                           alt={isAiResponse ? "AI Avatar" : "User Avatar"} 
@@ -1404,7 +1401,7 @@ function App() {
 
           {/* Lang: EN List */}
           {activeTab === 'lang-en' && (
-            <div className="lang-en-list">
+            <div className="comments-list">
               {langEnRecords.length === 0 ? (
                 <p className="no-content">No English translations yet</p>
               ) : (
@@ -1501,6 +1498,8 @@ function App() {
             <div className="comment-form">
               <h3>Post a Comment</h3>
               <textarea
+                id="comment-text"
+                name="commentText"
                 value={commentText}
                 onChange={(e) => setCommentText(e.target.value)}
                 placeholder="Write your comment..."

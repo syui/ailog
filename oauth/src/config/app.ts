@@ -62,11 +62,15 @@ function generateBaseCollectionFromHost(host: string): string {
 }
 
 // Extract rkey from current URL
-// /posts/xxx -> xxx
+// /posts/xxx -> xxx (remove .html if present)
 function extractRkeyFromUrl(): string | undefined {
   const pathname = window.location.pathname;
   const match = pathname.match(/\/posts\/([^/]+)\/?$/);
-  return match ? match[1] : undefined;
+  if (match) {
+    // Remove .html extension if present
+    return match[1].replace(/\.html$/, '');
+  }
+  return undefined;
 }
 
 // Get application configuration from environment variables
