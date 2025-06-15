@@ -1,0 +1,31 @@
+[
+  {
+    "categories": [],
+    "contents": "ブログを移行しました。過去のブログはsyui.github.ioにありあます。 gh-pagesからcf-pagesへの移行になります。 自作のailogでbuildしています。 特徴としては、atproto, AIとの連携です。 name: Deploy to Cloudflare Pages on: push: branches: - main workflow_dispatch: jobs: deploy: runs-on: ubuntu-latest permissions: contents: read deployments: write steps: - name: Checkout uses: actions/checkout@v4 - name: Setup Rust uses: actions-rs/toolchain@v1 with: toolchain: stable - name: Build ailog run: cargo build --release - name: Build site with ailog run: | cd my-blog ../target/release/ailog build - name: List public directory run: | ls -la my-blog/public/ - name: Deploy to Cloudflare Pages uses: cloudflare/pages-action@v1 with: apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }} accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }} projectName: ${{ secrets.CLOUDFLARE_PROJECT_NAME }} directory: my-blog/public gitHubToken: ${{ secrets.GITHUB_TOKEN }} wranglerVersion: &#39;3&#39; url https://syui.pages.dev https://syui.github.io",
+    "description": "ブログを移行しました。過去のブログはsyui.github.ioにありあます。 \n\ngh-pagesからcf-pagesへの移行になります。\n自作のailogでbuildしています。\n特徴としては、atproto, AIとの連携です。\n\nname: Deploy to Cloudflare Pages\n\non:\n  push:\n    branches:\n      - main\n  workfl...",
+    "formated_time": "Sat Jun 14, 2025",
+    "href": "https://syui.ai/posts/2025-06-14-blog.html",
+    "tags": [
+      "blog",
+      "cloudflare",
+      "github"
+    ],
+    "title": "ブログを移行した",
+    "utc_time": "2025-06-14T00:00:00Z"
+  },
+  {
+    "categories": [],
+    "contents": "rustで静的サイトジェネレータを作りました。ailogといいます。hugoからの移行になります。 ailogは、最初にatproto-comment-system(oauth)とask-AIという機能をつけました。 quick start $ git clone https://git.syui.ai/ai/log $ cd log $ cargo build $ ./target/debug/ailog init my-blog $ ./target/debug/ailog serve my-blog install $ cargo install --path . --- $ export CARGO_HOME=&quot;$HOME/.cargo&quot; $ export RUSTUP_HOME=&quot;$HOME/.rustup&quot; $ export PATH=&quot;$HOME/.cargo/bin:$PATH&quot; --- $ which ailog $ ailog -h build deploy $ cd my-blog $ vim config.toml $ ailog new test $ vim content/posts/`date +&quot;%Y-%m-%d&quot;`.md $ ailog build # publicの中身をweb-serverにdeploy $ cp -rf ./public/* ./web-server/root/ atproto-comment-system example $ cd ./oauth $ npm i $ npm run build $ npm run preview # Production environment variables VITE_APP_HOST=https://example.com VITE_OAUTH_CLIENT_ID=https://example.com/client-metadata.json VITE_OAUTH_REDIRECT_URI=https://example.com/oauth/callback VITE_ADMIN_DID=did:plc:uqzpqmrjnptsxezjx4xuh2mn # Collection names for OAuth app VITE_COLLECTION_COMMENT=ai.syui.log VITE_COLLECTION_USER=ai.syui.log.user VITE_COLLECTION_CHAT=ai.syui.log.chat # Collection names for ailog (backward compatibility) AILOG_COLLECTION_COMMENT=ai.syui.log AILOG_COLLECTION_USER=ai.syui.log.user # API Configuration VITE_BSKY_PUBLIC_API=https://public.api.bsky.app これはailog oauth build my-blogで./my-blog/config.tomlから./oauth/.env.productionが生成されます。 $ ailog oauth build my-blog use 簡単に説明すると、./oauthで生成するのがatproto-comment-systemです。 &lt;script type=&quot;module&quot; crossorigin src=&quot;/assets/comment-atproto-${hash}}.js&quot;&gt;&lt;/script&gt; &lt;link rel=&quot;stylesheet&quot; crossorigin href=&quot;/assets/comment-atproto-${hash}.css&quot;&gt; &lt;section class=&quot;comment-section&quot;&gt; &lt;div id=&quot;comment-atproto&quot;&gt;&lt;/div&gt; &lt;/section&gt; ただし、oauthであるため、色々と大変です。本番環境(もしくは近い形)でテストを行いましょう。cf, tailscale, ngrokなど。 tunnel: ${hash} credentials-file: ${path}.json ingress: - hostname: example.com service: http://localhost:4173 originRequest: noHappyEyeballs: true - service: http_status:404 # tunnel list, dnsに登録が必要です $ cloudflared tunnel list $ cloudflared tunnel --config cloudflared-config.yml run $ cloudflared tunnel route dns ${uuid} example.com 以下の2つのcollection recordを生成します。ユーザーにはai.syui.logが生成され、ここにコメントが記録されます。それを取得して表示しています。ai.syui.log.userは管理者であるVITE_ADMIN_DID用です。 VITE_COLLECTION_COMMENT=ai.syui.log VITE_COLLECTION_USER=ai.syui.log.user $ ailog auth login $ ailog stream server このコマンドでai.syui.logをjetstreamから監視して、書き込みがあれば、管理者のai.syui.log.userに記録され、そのuser-listに基づいて、コメント一覧を取得します。 つまり、コメント表示のアカウントを手動で設定するか、自動化するか。自動化するならserverでailog stream serverを動かさなければいけません。 ask-AI ask-AIの仕組みは割愛します。後に変更される可能性が高いと思います。 local llm, mcp, atprotoと組み合わせです。 code syntax # comment d=${0:a:h} // This is a comment fn main() { println!(&quot;Hello, world!&quot;); } // This is a comment console.log(&quot;Hello, world!&quot;);",
+    "description": "rustで静的サイトジェネレータを作りました。ailogといいます。hugoからの移行になります。 \nailogは、最初にatproto-comment-system(oauth)とask-AIという機能をつけました。 \nquick start\n$ git clone https://git.syui.ai/ai/log\n$ cd log\n$ cargo build\n$ ./target/debu...",
+    "formated_time": "Thu Jun 12, 2025",
+    "href": "https://syui.ai/posts/2025-06-06-ailog.html",
+    "tags": [
+      "blog",
+      "rust",
+      "mcp",
+      "atp"
+    ],
+    "title": "静的サイトジェネレータを作った",
+    "utc_time": "2025-06-12T00:00:00Z"
+  }
+]
