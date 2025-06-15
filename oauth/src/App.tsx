@@ -1493,10 +1493,9 @@ function App() {
             </div>
           )}
 
-          {/* Comment Form - Only show on post pages */}
-          {user && appConfig.rkey && (
+          {/* Comment Form - Only show on post pages when Comments tab is active */}
+          {user && appConfig.rkey && activeTab === 'comments' && (
             <div className="comment-form">
-              <h3>Post a Comment</h3>
               <textarea
                 id="comment-text"
                 name="commentText"

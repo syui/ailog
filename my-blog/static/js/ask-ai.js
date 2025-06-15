@@ -262,8 +262,8 @@ function setupAskAIEventListeners() {
             }
         }
         
-        // Enter key to send message
-        if (e.key === 'Enter' && e.target.id === 'aiQuestion' && !e.shiftKey) {
+        // Enter key to send message (only when not composing Japanese input)
+        if (e.key === 'Enter' && e.target.id === 'aiQuestion' && !e.shiftKey && !e.isComposing) {
             e.preventDefault();
             askQuestion();
         }
