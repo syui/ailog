@@ -13,3 +13,5 @@ package-lock.json
 my-blog/static/assets/comment-atproto-*
 bin/ailog
 docs
+my-blog/static/index.html
+my-blog/templates/oauth-assets.html
