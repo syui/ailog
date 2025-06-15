@@ -1,7 +1,7 @@
 #!/bin/zsh
 
 function _env() {
-	d=${0:a:h}
+	d=${0:a:h:h}
 	ailog=$d/target/release/ailog
 	oauth=$d/oauth
 	myblog=$d/my-blog
