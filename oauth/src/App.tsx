@@ -28,6 +28,7 @@ function App() {
   const [aiChatHistory, setAiChatHistory] = useState<any[]>([]);
   const [langEnRecords, setLangEnRecords] = useState<any[]>([]);
   const [aiCommentRecords, setAiCommentRecords] = useState<any[]>([]);
+  const [aiProfile, setAiProfile] = useState<any>(null);
 
   useEffect(() => {
     // Setup Jetstream WebSocket for real-time comments (optional)
@@ -88,6 +89,20 @@ function App() {
     
     // Load AI chat history (認証状態に関係なく、全ユーザーのチャット履歴を表示)
     loadAiChatHistory();
+    
+    // Load AI profile
+    const fetchAiProfile = async () => {
+      try {
+        const response = await fetch(`${appConfig.bskyPublicApi}/xrpc/app.bsky.actor.getProfile?actor=${encodeURIComponent(appConfig.aiDid)}`);
+        if (response.ok) {
+          const data = await response.json();
+          setAiProfile(data);
+        }
+      } catch (err) {
+        // Use default values if fetch fails
+      }
+    };
+    fetchAiProfile();
 
     // Handle popstate events for mock OAuth flow
     const handlePopState = () => {
@@ -966,7 +981,7 @@ function App() {
               {authorInfo?.displayName || 'AI'}
             </span>
             <span className="comment-handle">
-              @{authorInfo?.handle || 'ai'}
+              @{authorInfo?.handle || aiProfile?.handle || 'yui.syui.ai'}
             </span>
           </div>
           <span className="comment-date">
@@ -1312,7 +1327,7 @@ function App() {
                   // For AI responses, use AI DID; for user questions, use the actual author
                   const isAiResponse = record.value.type === 'answer';
                   const displayDid = isAiResponse ? appConfig.aiDid : record.value.author?.did;
-                  const displayHandle = isAiResponse ? 'ai.syui' : record.value.author?.handle;
+                  const displayHandle = isAiResponse ? (aiProfile?.handle || 'yui.syui.ai') : record.value.author?.handle;
                   const displayName = isAiResponse ? 'AI' : (record.value.author?.displayName || record.value.author?.handle);
                   
                   return (
@@ -1446,7 +1461,7 @@ function App() {
                           AI
                         </span>
                         <span className="comment-handle">
-                          @ai
+                          @{aiProfile?.handle || 'yui.syui.ai'}
                         </span>
                       </div>
                       <span className="comment-date">
