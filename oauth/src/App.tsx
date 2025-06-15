@@ -1117,7 +1117,9 @@ function App() {
                     {record.value.text}
                   </div>
                   <div className="comment-meta">
-                    <small>{record.uri}</small>
+                    {record.value.url && (
+                      <small><a href={record.value.url} target="_blank" rel="noopener noreferrer">{record.value.url}</a></small>
+                    )}
                   </div>
                   
                   {/* JSON Display */}
@@ -1201,7 +1203,9 @@ function App() {
                       {record.value.question || record.value.answer}
                     </div>
                     <div className="comment-meta">
-                      <small>{record.uri}</small>
+                      {record.value.url && (
+                        <small><a href={record.value.url} target="_blank" rel="noopener noreferrer">{record.value.url}</a></small>
+                      )}
                     </div>
                     
                     {/* JSON Display */}
