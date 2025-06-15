@@ -253,6 +253,20 @@ function setupAskAIEventListeners() {
         handleAIResponse(event.detail);
     });
     
+    // Track IME composition state
+    let isComposing = false;
+    const aiQuestionInput = document.getElementById('aiQuestion');
+    
+    if (aiQuestionInput) {
+        aiQuestionInput.addEventListener('compositionstart', function() {
+            isComposing = true;
+        });
+        
+        aiQuestionInput.addEventListener('compositionend', function() {
+            isComposing = false;
+        });
+    }
+    
     // Keyboard shortcuts
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
@@ -263,7 +277,7 @@ function setupAskAIEventListeners() {
         }
         
         // Enter key to send message (only when not composing Japanese input)
-        if (e.key === 'Enter' && e.target.id === 'aiQuestion' && !e.shiftKey && !e.isComposing) {
+        if (e.key === 'Enter' && e.target.id === 'aiQuestion' && !e.shiftKey && !isComposing) {
             e.preventDefault();
             askQuestion();
         }
