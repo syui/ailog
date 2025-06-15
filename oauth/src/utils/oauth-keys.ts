@@ -37,7 +37,6 @@ export class OAuthKeyManager {
         this.keyPair = await this.importKeyPair(keyData);
         return this.keyPair;
       } catch (error) {
-        console.warn('Failed to load stored key, generating new one:', error);
         localStorage.removeItem('oauth_private_key');
       }
     }
@@ -115,7 +114,6 @@ export class OAuthKeyManager {
       const privateKey = await window.crypto.subtle.exportKey('jwk', keyPair.privateKey);
       localStorage.setItem('oauth_private_key', JSON.stringify(privateKey));
     } catch (error) {
-      console.error('Failed to store private key:', error);
     }
   }
 

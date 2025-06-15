@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { User } from '../services/auth';
 import { atprotoOAuthService } from '../services/atproto-oauth';
-import { appConfig } from '../config/app';
+import { appConfig, getCollectionNames } from '../config/app';
 
 interface AIChatProps {
   user: User | null;
@@ -14,26 +14,22 @@ export const AIChat: React.FC<AIChatProps> = ({ user, isEnabled }) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [aiProfile, setAiProfile] = useState<any>(null);
   
-  // Get AI settings from environment variables
+  // Get AI settings from appConfig (unified configuration)
   const aiConfig = {
-    enabled: import.meta.env.VITE_AI_ENABLED === 'true',
-    askAi: import.meta.env.VITE_AI_ASK_AI === 'true',
-    provider: import.meta.env.VITE_AI_PROVIDER || 'ollama',
-    model: import.meta.env.VITE_AI_MODEL || 'gemma3:4b',
-    host: import.meta.env.VITE_AI_HOST || 'https://ollama.syui.ai',
-    systemPrompt: import.meta.env.VITE_AI_SYSTEM_PROMPT || 'You are a helpful AI assistant trained on this blog\'s content.',
-    aiDid: import.meta.env.VITE_AI_DID || 'did:plc:uqzpqmrjnptsxezjx4xuh2mn',
-    bskyPublicApi: import.meta.env.VITE_BSKY_PUBLIC_API || 'https://public.api.bsky.app',
+    enabled: appConfig.aiEnabled,
+    askAi: appConfig.aiAskAi,
+    provider: appConfig.aiProvider,
+    model: appConfig.aiModel,
+    host: appConfig.aiHost,
+    systemPrompt: appConfig.aiSystemPrompt,
+    aiDid: appConfig.aiDid,
+    bskyPublicApi: appConfig.bskyPublicApi,
   };
 
   // Fetch AI profile on load
   useEffect(() => {
     const fetchAIProfile = async () => {
-      console.log('=== AI PROFILE FETCH START ===');
-      console.log('AI DID:', aiConfig.aiDid);
-      
       if (!aiConfig.aiDid) {
-        console.log('No AI DID configured');
         return;
       }
       
@@ -41,9 +37,7 @@ export const AIChat: React.FC<AIChatProps> = ({ user, isEnabled }) => {
         // Try with agent first
         const agent = atprotoOAuthService.getAgent();
         if (agent) {
-          console.log('Fetching AI profile with agent for DID:', aiConfig.aiDid);
           const profile = await agent.getProfile({ actor: aiConfig.aiDid });
-          console.log('AI profile fetched successfully:', profile.data);
           const profileData = {
             did: aiConfig.aiDid,
             handle: profile.data.handle,
@@ -51,21 +45,17 @@ export const AIChat: React.FC<AIChatProps> = ({ user, isEnabled }) => {
             avatar: profile.data.avatar,
             description: profile.data.description
           };
-          console.log('Setting aiProfile to:', profileData);
           setAiProfile(profileData);
           
           // Dispatch event to update Ask AI button
           window.dispatchEvent(new CustomEvent('aiProfileLoaded', { detail: profileData }));
-          console.log('=== AI PROFILE FETCH SUCCESS (AGENT) ===');
           return;
         }
         
         // Fallback to public API
-        console.log('No agent available, trying public API for AI profile');
         const response = await fetch(`${aiConfig.bskyPublicApi}/xrpc/app.bsky.actor.getProfile?actor=${encodeURIComponent(aiConfig.aiDid)}`);
         if (response.ok) {
           const profileData = await response.json();
-          console.log('AI profile fetched via public API:', profileData);
           const profile = {
             did: aiConfig.aiDid,
             handle: profileData.handle,
@@ -73,21 +63,15 @@ export const AIChat: React.FC<AIChatProps> = ({ user, isEnabled }) => {
             avatar: profileData.avatar,
             description: profileData.description
           };
-          console.log('Setting aiProfile to:', profile);
           setAiProfile(profile);
           
           // Dispatch event to update Ask AI button
           window.dispatchEvent(new CustomEvent('aiProfileLoaded', { detail: profile }));
-          console.log('=== AI PROFILE FETCH SUCCESS (PUBLIC API) ===');
           return;
-        } else {
-          console.error('Public API failed with status:', response.status);
         }
       } catch (error) {
-        console.error('Failed to fetch AI profile:', error);
         setAiProfile(null);
       }
-      console.log('=== AI PROFILE FETCH FAILED ===');
     };
 
     fetchAIProfile();
@@ -100,9 +84,6 @@ export const AIChat: React.FC<AIChatProps> = ({ user, isEnabled }) => {
     const handleAIQuestion = async (event: any) => {
       if (!user || !event.detail || !event.detail.question || isProcessing || !aiProfile) return;
       
-      console.log('AIChat received question:', event.detail.question);
-      console.log('Current aiProfile state:', aiProfile);
-      
       setIsProcessing(true);
       try {
         await postQuestionAndGenerateResponse(event.detail.question);
@@ -114,7 +95,6 @@ export const AIChat: React.FC<AIChatProps> = ({ user, isEnabled }) => {
     // Add listener with a small delay to ensure it's ready
     setTimeout(() => {
       window.addEventListener('postAIQuestion', handleAIQuestion);
-      console.log('AIChat event listener registered');
       
       // Notify that AI is ready
       window.dispatchEvent(new CustomEvent('aiChatReady'));
@@ -134,40 +114,50 @@ export const AIChat: React.FC<AIChatProps> = ({ user, isEnabled }) => {
       const agent = atprotoOAuthService.getAgent();
       if (!agent) throw new Error('No agent available');
 
+      // Get collection names
+      const collections = getCollectionNames(appConfig.collections.base);
+
       // 1. Post question to ATProto
       const now = new Date();
       const rkey = now.toISOString().replace(/[:.]/g, '-');
       
+      // Extract post metadata from current page
+      const currentUrl = window.location.href;
+      const postSlug = currentUrl.match(/\/posts\/([^/]+)/)?.[1] || '';
+      const postTitle = document.title.replace(' - syui.ai', '') || '';
+      
       const questionRecord = {
-        $type: appConfig.collections.chat,
-        question: question,
-        url: window.location.href,
-        createdAt: now.toISOString(),
+        $type: collections.chat,
+        post: {
+          url: currentUrl,
+          slug: postSlug,
+          title: postTitle,
+          date: new Date().toISOString(),
+          tags: [],
+          language: "ja"
+        },
+        type: "question",
+        text: question,
         author: {
           did: user.did,
           handle: user.handle,
           avatar: user.avatar,
           displayName: user.displayName || user.handle,
         },
-        context: {
-          page_title: document.title,
-          page_url: window.location.href,
-        },
+        createdAt: now.toISOString(),
       };
 
       await agent.api.com.atproto.repo.putRecord({
         repo: user.did,
-        collection: appConfig.collections.chat,
+        collection: collections.chat,
         rkey: rkey,
         record: questionRecord,
       });
 
-      console.log('Question posted to ATProto');
-
       // 2. Get chat history
       const chatRecords = await agent.api.com.atproto.repo.listRecords({
         repo: user.did,
-        collection: appConfig.collections.chat,
+        collection: collections.chat,
         limit: 10,
       });
 
@@ -175,10 +165,10 @@ export const AIChat: React.FC<AIChatProps> = ({ user, isEnabled }) => {
       if (chatRecords.data.records) {
         chatHistoryText = chatRecords.data.records
           .map((r: any) => {
-            if (r.value.question) {
-              return `User: ${r.value.question}`;
-            } else if (r.value.answer) {
-              return `AI: ${r.value.answer}`;
+            if (r.value.type === 'question') {
+              return `User: ${r.value.text}`;
+            } else if (r.value.type === 'answer') {
+              return `AI: ${r.value.text}`;
             }
             return '';
           })
@@ -235,37 +225,38 @@ Answer:`;
       // 5. Save AI response in background
       const answerRkey = now.toISOString().replace(/[:.]/g, '-') + '-answer';
       
-      console.log('=== SAVING AI ANSWER ===');
-      console.log('Current aiProfile:', aiProfile);
-      
       const answerRecord = {
-        $type: appConfig.collections.chat,
-        answer: aiAnswer,
-        question_rkey: rkey,
-        url: window.location.href,
-        createdAt: now.toISOString(),
+        $type: collections.chat,
+        post: {
+          url: currentUrl,
+          slug: postSlug,
+          title: postTitle,
+          date: new Date().toISOString(),
+          tags: [],
+          language: "ja"
+        },
+        type: "answer",
+        text: aiAnswer,
         author: {
           did: aiProfile.did,
           handle: aiProfile.handle,
           displayName: aiProfile.displayName,
           avatar: aiProfile.avatar,
         },
+        createdAt: now.toISOString(),
       };
-      
-      console.log('Answer record to save:', answerRecord);
 
       // Save to ATProto asynchronously (don't wait for it)
       agent.api.com.atproto.repo.putRecord({
         repo: user.did,
-        collection: appConfig.collections.chat,
+        collection: collections.chat,
         rkey: answerRkey,
         record: answerRecord,
       }).catch(err => {
-        console.error('Failed to save AI response to ATProto:', err);
+        // Silent fail for AI response saving
       });
 
     } catch (error) {
-      console.error('Failed to generate AI response:', error);
       window.dispatchEvent(new CustomEvent('aiResponseError', {
         detail: { error: 'AI応答の生成に失敗しました' }
       }));

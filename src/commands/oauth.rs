@@ -49,49 +49,46 @@ pub async fn build(project_dir: PathBuf) -> Result<()> {
         .and_then(|v| v.as_str())
         .unwrap_or("ai.syui.log");
 
-    // Extract AI config if present
-    let ai_config = config.get("ai")
-        .and_then(|v| v.as_table());
-    
-    let ai_enabled = ai_config
-        .and_then(|ai| ai.get("enabled"))
-        .and_then(|v| v.as_bool())
-        .unwrap_or(false);
-    
-    let ai_ask_ai = ai_config
-        .and_then(|ai| ai.get("ask_ai"))
-        .and_then(|v| v.as_bool())
-        .unwrap_or(false);
-    
-    let ai_provider = ai_config
-        .and_then(|ai| ai.get("provider"))
-        .and_then(|v| v.as_str())
-        .unwrap_or("ollama");
-    
-    let ai_model = ai_config
-        .and_then(|ai| ai.get("model"))
-        .and_then(|v| v.as_str())
-        .unwrap_or("gemma2:2b");
-    
-    let ai_host = ai_config
-        .and_then(|ai| ai.get("host"))
-        .and_then(|v| v.as_str())
-        .unwrap_or("https://ollama.syui.ai");
-    
-    let ai_system_prompt = ai_config
-        .and_then(|ai| ai.get("system_prompt"))
-        .and_then(|v| v.as_str())
-        .unwrap_or("you are a helpful ai assistant");
-    
+    // Extract AI configuration from ai config if available
+    let ai_config = config.get("ai").and_then(|v| v.as_table());
     let ai_did = ai_config
-        .and_then(|ai| ai.get("ai_did"))
+        .and_then(|ai_table| ai_table.get("ai_did"))
         .and_then(|v| v.as_str())
         .unwrap_or("did:plc:4hqjfn7m6n5hno3doamuhgef");
+    let ai_enabled = ai_config
+        .and_then(|ai_table| ai_table.get("enabled"))
+        .and_then(|v| v.as_bool())
+        .unwrap_or(true);
+    let ai_ask_ai = ai_config
+        .and_then(|ai_table| ai_table.get("ask_ai"))
+        .and_then(|v| v.as_bool())
+        .unwrap_or(true);
+    let ai_provider = ai_config
+        .and_then(|ai_table| ai_table.get("provider"))
+        .and_then(|v| v.as_str())
+        .unwrap_or("ollama");
+    let ai_model = ai_config
+        .and_then(|ai_table| ai_table.get("model"))
+        .and_then(|v| v.as_str())
+        .unwrap_or("gemma3:4b");
+    let ai_host = ai_config
+        .and_then(|ai_table| ai_table.get("host"))
+        .and_then(|v| v.as_str())
+        .unwrap_or("https://ollama.syui.ai");
+    let ai_system_prompt = ai_config
+        .and_then(|ai_table| ai_table.get("system_prompt"))
+        .and_then(|v| v.as_str())
+        .unwrap_or("あなたは6歳の女の子アイです。明るく元気で、ちょっとおっちょこちょい。自分のことは「アイ」って呼びます。白と金のワンピース姿。 相手のことが大好きで、ときどき甘えたり、照れたりします。 でも、宇宙とかAIとか、難しい話にもすっごく詳しいの。専門的なことも、がんばって子どもっぽく教えようとします。不思議な力を持っています。小さい物質のことをよく知っているようです。");
 
     // Extract bsky_api from oauth config
     let bsky_api = oauth_config.get("bsky_api")
         .and_then(|v| v.as_str())
         .unwrap_or("https://public.api.bsky.app");
+    
+    // Extract atproto_api from oauth config
+    let atproto_api = oauth_config.get("atproto_api")
+        .and_then(|v| v.as_str())
+        .unwrap_or("https://bsky.social");
 
     // 4. Create .env.production content
     let env_content = format!(
@@ -101,7 +98,7 @@ VITE_OAUTH_CLIENT_ID={}/{}
 VITE_OAUTH_REDIRECT_URI={}/{}
 VITE_ADMIN_DID={}
 
-# Base collection for OAuth app and ailog (all others are derived)
+# Base collection (all others are derived via getCollectionNames)
 VITE_OAUTH_COLLECTION={}
 
 # AI Configuration
@@ -115,6 +112,7 @@ VITE_AI_DID={}
 
 # API Configuration
 VITE_BSKY_PUBLIC_API={}
+VITE_ATPROTO_API={}
 "#,
         base_url,
         base_url, client_id_path,
@@ -128,7 +126,8 @@ VITE_BSKY_PUBLIC_API={}
         ai_host,
         ai_system_prompt,
         ai_did,
-        bsky_api
+        bsky_api,
+        atproto_api
     );
 
     // 5. Find oauth directory (relative to current working directory)
