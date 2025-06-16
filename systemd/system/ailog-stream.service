@@ -6,9 +6,9 @@ Wants=network.target
 [Service]
 Type=simple
 User=syui
-Group=syui
 WorkingDirectory=/home/syui/git/log
 ExecStart=/home/syui/.cargo/bin/ailog stream start my-blog --ai-generate
+ExecStop=/home/syui/.cargo/bin/ailog stream stop
 Restart=always
 RestartSec=5
 StandardOutput=journal
