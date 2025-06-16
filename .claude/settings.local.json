@@ -51,7 +51,8 @@
       "Bash(ailog:*)",
       "WebFetch(domain:plc.directory)",
       "WebFetch(domain:atproto.com)",
-      "WebFetch(domain:syu.is)"
+      "WebFetch(domain:syu.is)",
+      "Bash(sed:*)"
     ],
     "deny": []
   }

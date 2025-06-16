@@ -1441,13 +1441,36 @@ async fn generate_ai_content(content: &str, prompt_type: &str, ai_config: &AiCon
     
     // Fallback to remote host
     let remote_url = format!("{}/api/generate", ai_config.ollama_host);
-    println!("{}", format!("🔗 Making request to: {} with Origin: {}", remote_url, ai_config.blog_host).blue());
-    let response = client
-        .post(&remote_url)
-        .header("Origin", &ai_config.blog_host)
-        .json(&request)
-        .send()
-        .await?;
+    
+    // Check if this is a local/private network connection (no CORS needed)
+    // RFC 1918 private networks + localhost
+    let is_local = ai_config.ollama_host.contains("localhost") || 
+                   ai_config.ollama_host.contains("127.0.0.1") ||
+                   ai_config.ollama_host.contains("::1") ||
+                   ai_config.ollama_host.contains("192.168.") ||  // 192.168.0.0/16
+                   ai_config.ollama_host.contains("10.") ||       // 10.0.0.0/8 
+                   (ai_config.ollama_host.contains("172.") && {   // 172.16.0.0/12
+                       // Extract 172.x and check if x is 16-31
+                       if let Some(start) = ai_config.ollama_host.find("172.") {
+                           let after_172 = &ai_config.ollama_host[start + 4..];
+                           if let Some(dot_pos) = after_172.find('.') {
+                               if let Ok(second_octet) = after_172[..dot_pos].parse::<u8>() {
+                                   second_octet >= 16 && second_octet <= 31
+                               } else { false }
+                           } else { false }
+                       } else { false }
+                   });
+    
+    let mut request_builder = client.post(&remote_url).json(&request);
+    
+    if !is_local {
+        println!("{}", format!("🔗 Making request to: {} with Origin: {}", remote_url, ai_config.blog_host).blue());
+        request_builder = request_builder.header("Origin", &ai_config.blog_host);
+    } else {
+        println!("{}", format!("🔗 Making request to local network: {}", remote_url).blue());
+    }
+    
+    let response = request_builder.send().await?;
     
     if !response.status().is_success() {
         return Err(anyhow::anyhow!("Ollama API request failed: {}", response.status()));

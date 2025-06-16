@@ -14,6 +14,214 @@ VITE_OAUTH_COLLECTION_USER=ai.syui.log.user
 VITE_OAUTH_COLLECTION_CHAT=ai.syui.log.chat
 ```
 
+## oauth appの設計
+
+> ./oauth/.env.production
+
+```sh
+VITE_ATPROTO_PDS=syu.is
+VITE_ADMIN_HANDLE=ai.syui.ai
+VITE_AI_HANDLE=ai.syui.ai
+VITE_OAUTH_COLLECTION=ai.syui.log
+```
+
+これらは非常にシンプルな流れになっており、すべての項目は、共通します。短縮できる場合があります。handleは変わる可能性があるので、できる限りdidを使いましょう。
+
+1. handleからpds, didを取得できる ... com.atproto.repo.describeRepo
+2. pdsが分かれば、pdsApi, bskyApi, plcApiを割り当てられる
+3. bskyApiが分かれば、getProfileでavatar-uriを取得できる ... app.bsky.actor.getProfile
+4. pdsAPiからアカウントにあるcollectionのrecordの情報を取得できる ... com.atproto.repo.listRecords
+
+### コメントを表示する
+
+1. VITE_ADMIN_HANDLEから管理者のhandleを取得する。
+2. VITE_ATPROTO_PDSから管理者のアカウントのpdsを取得する。
+3. pdsからpdsApi, bskApi, plcApiを割り当てる。
+
+```rust
+    match pds {
+        "bsky.social" | "bsky.app" => NetworkConfig {
+            pds_api: format!("https://{}", pds),
+            plc_api: "https://plc.directory".to_string(),
+            bsky_api: "https://public.api.bsky.app".to_string(),
+            web_url: "https://bsky.app".to_string(),
+        },
+        "syu.is" => NetworkConfig {
+            pds_api: "https://syu.is".to_string(),
+            plc_api: "https://plc.syu.is".to_string(),
+            bsky_api: "https://bsky.syu.is".to_string(),
+            web_url: "https://web.syu.is".to_string(),
+        },
+        _ => {
+            // Default to Bluesky network for unknown PDS
+            NetworkConfig {
+                pds_api: format!("https://{}", pds),
+                plc_api: "https://plc.directory".to_string(),
+                bsky_api: "https://public.api.bsky.app".to_string(),
+                web_url: "https://bsky.app".to_string(),
+            }
+        }
+    }
+```
+
+4. 管理者アカウントであるVITE_ADMIN_HANDLEとVITE_ATPROTO_PDSから`ai.syui.log.user`というuserlistを取得する。
+
+```sh
+curl -sL "https://${VITE_ATPROTO_PDS}/xrpc/com.atproto.repo.listRecords?repo=${VITE_ADMIN_HANDLE}&collection=ai.syui.log.user" 
+---
+syui.ai
+```
+
+5. ユーザーがわかったら、そのユーザーのpdsを判定する。
+
+```sh
+curl -sL "https://bsky.social/xrpc/com.atproto.repo.describeRepo?repo=syui.ai" |jq -r ".didDoc.service.[].serviceEndpoint"
+---
+https://shiitake.us-east.host.bsky.network
+
+curl -sL "https://bsky.social/xrpc/com.atproto.repo.describeRepo?repo=syui.ai" |jq -r ".did"
+---
+did:plc:uqzpqmrjnptsxezjx4xuh2mn
+```
+
+6. pdsからpdsApi, bskApi, plcApiを割り当てる。
+
+```rust
+    match pds {
+        "bsky.social" | "bsky.app" => NetworkConfig {
+            pds_api: format!("https://{}", pds),
+            plc_api: "https://plc.directory".to_string(),
+            bsky_api: "https://public.api.bsky.app".to_string(),
+            web_url: "https://bsky.app".to_string(),
+        },
+        "syu.is" => NetworkConfig {
+            pds_api: "https://syu.is".to_string(),
+            plc_api: "https://plc.syu.is".to_string(),
+            bsky_api: "https://bsky.syu.is".to_string(),
+            web_url: "https://web.syu.is".to_string(),
+        },
+        _ => {
+            // Default to Bluesky network for unknown PDS
+            NetworkConfig {
+                pds_api: format!("https://{}", pds),
+                plc_api: "https://plc.directory".to_string(),
+                bsky_api: "https://public.api.bsky.app".to_string(),
+                web_url: "https://bsky.app".to_string(),
+            }
+        }
+    }
+```
+
+7. ユーザーの情報を取得、表示する
+
+```sh
+bsky_api=https://public.api.bsky.app
+user_did=did:plc:uqzpqmrjnptsxezjx4xuh2mn
+curl -sL "$bsky_api/xrpc/app.bsky.actor.getProfile?actor=$user_did"|jq -r .avatar
+---
+https://cdn.bsky.app/img/avatar/plain/did:plc:uqzpqmrjnptsxezjx4xuh2mn/bafkreid6kcc5pnn4b3ar7mj6vi3eiawhxgkcrw3edgbqeacyrlnlcoetea@jpeg
+```
+
+### AIの情報を表示する
+
+AIが持つ`ai.syui.log.chat.lang`, `ai.syui.log.chat.comment`を表示します。
+
+なお、これは通常、`VITE_ADMIN_HANDLE`にputRecordされます。そこから情報を読み込みます。`VITE_AI_HANDLE`はそのrecordの`author`のところに入ります。
+
+```json
+"author": {
+  "did": "did:plc:4hqjfn7m6n5hno3doamuhgef",
+  "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:4hqjfn7m6n5hno3doamuhgef/bafkreiaxkv624mffw3cfyi67ufxtwuwsy2mjw2ygezsvtd44ycbgkfdo2a@jpeg",
+  "handle": "yui.syui.ai",
+  "displayName": "ai"
+}
+```
+
+1. VITE_ADMIN_HANDLEから管理者のhandleを取得する。
+2. VITE_ATPROTO_PDSから管理者のアカウントのpdsを取得する。
+3. pdsからpdsApi, bskApi, plcApiを割り当てる。
+
+```rust
+    match pds {
+        "bsky.social" | "bsky.app" => NetworkConfig {
+            pds_api: format!("https://{}", pds),
+            plc_api: "https://plc.directory".to_string(),
+            bsky_api: "https://public.api.bsky.app".to_string(),
+            web_url: "https://bsky.app".to_string(),
+        },
+        "syu.is" => NetworkConfig {
+            pds_api: "https://syu.is".to_string(),
+            plc_api: "https://plc.syu.is".to_string(),
+            bsky_api: "https://bsky.syu.is".to_string(),
+            web_url: "https://web.syu.is".to_string(),
+        },
+        _ => {
+            // Default to Bluesky network for unknown PDS
+            NetworkConfig {
+                pds_api: format!("https://{}", pds),
+                plc_api: "https://plc.directory".to_string(),
+                bsky_api: "https://public.api.bsky.app".to_string(),
+                web_url: "https://bsky.app".to_string(),
+            }
+        }
+    }
+```
+
+4. 管理者アカウントであるVITE_ADMIN_HANDLEとVITE_ATPROTO_PDSから`ai.syui.log.chat.lang`, `ai.syui.log.chat.comment`を取得する。
+
+```sh
+curl -sL "https://${VITE_ATPROTO_PDS}/xrpc/com.atproto.repo.listRecords?repo=${VITE_ADMIN_HANDLE}&collection=ai.syui.log.chat.comment" 
+```
+
+5. AIのprofileを取得する。
+
+```sh
+curl -sL "https://${VITE_ATPROTO_PDS}/xrpc/com.atproto.repo.describeRepo?repo=$VITE_AI_HANDLE" |jq -r ".didDoc.service.[].serviceEndpoint"
+---
+https://syu.is
+
+curl -sL "https://${VITE_ATPROTO_PDS}/xrpc/com.atproto.repo.describeRepo?repo=$VITE_AI_HANDLE" |jq -r ".did"
+did:plc:6qyecktefllvenje24fcxnie
+```
+
+6. pdsからpdsApi, bskApi, plcApiを割り当てる。
+
+```rust
+    match pds {
+        "bsky.social" | "bsky.app" => NetworkConfig {
+            pds_api: format!("https://{}", pds),
+            plc_api: "https://plc.directory".to_string(),
+            bsky_api: "https://public.api.bsky.app".to_string(),
+            web_url: "https://bsky.app".to_string(),
+        },
+        "syu.is" => NetworkConfig {
+            pds_api: "https://syu.is".to_string(),
+            plc_api: "https://plc.syu.is".to_string(),
+            bsky_api: "https://bsky.syu.is".to_string(),
+            web_url: "https://web.syu.is".to_string(),
+        },
+        _ => {
+            // Default to Bluesky network for unknown PDS
+            NetworkConfig {
+                pds_api: format!("https://{}", pds),
+                plc_api: "https://plc.directory".to_string(),
+                bsky_api: "https://public.api.bsky.app".to_string(),
+                web_url: "https://bsky.app".to_string(),
+            }
+        }
+    }
+```
+
+7. AIの情報を取得、表示する
+
+```sh
+bsky_api=https://bsky.syu.is
+user_did=did:plc:6qyecktefllvenje24fcxnie
+curl -sL "$bsky_api/xrpc/app.bsky.actor.getProfile?actor=$user_did"|jq -r .avatar
+---
+https://bsky.syu.is/img/avatar/plain/did:plc:6qyecktefllvenje24fcxnie/bafkreiet4pwlnshk7igra5flf2fuxpg2bhvf2apts4rqwcr56hzhgycii4@jpeg
+```
+
 ## 中核思想
 - **存在子理論**: この世界で最も小さいもの（存在子/ai）の探求
 - **唯一性原則**: 現実の個人の唯一性をすべてのシステムで担保
