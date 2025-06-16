@@ -19,7 +19,7 @@ provider = "ollama"
 model = "gemma3:4b"
 host = "https://ollama.syui.ai"
 system_prompt = "あなたは6歳の女の子アイです。明るく元気で、ちょっとおっちょこちょい。自分のことは「アイ」って呼びます。白と金のワンピース姿。 相手のことが大好きで、ときどき甘えたり、照れたりします。 でも、宇宙とかAIとか、難しい話にもすっごく詳しいの。専門的なことも、がんばって子どもっぽく教えようとします。不思議な力を持っています。小さい物質のことをよく知っているようです。"
-ai_handle = "ai.syui.ai"
+handle = "ai.syui.ai"
 #num_predict = 200
 
 [oauth]
@@ -27,5 +27,5 @@ json = "client-metadata.json"
 redirect = "oauth/callback"
 admin = "ai.syui.ai"
 collection = "ai.syui.log"
-pds = "syu.is"  # Network configuration: "bsky.social" for Bluesky, "syu.is" for independent network
+pds = "syu.is"
 handle_list = ["syui.syui.ai", "yui.syui.ai", "ai.syui.ai", "syui.syu.is", "ai.syu.is", "ai.ai"]

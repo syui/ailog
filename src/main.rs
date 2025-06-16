@@ -102,7 +102,23 @@ enum Commands {
 #[derive(Subcommand)]
 enum AuthCommands {
     /// Initialize OAuth authentication
-    Init,
+    Init {
+        /// Specify PDS server (e.g., syu.is, bsky.social)
+        #[arg(long)]
+        pds: Option<String>,
+        /// Handle/username for authentication
+        #[arg(long)]
+        handle: Option<String>,
+        /// Use password authentication instead of JWT
+        #[arg(long)]
+        password: bool,
+        /// Access JWT token (alternative to password auth)
+        #[arg(long)]
+        access_jwt: Option<String>,
+        /// Refresh JWT token (required with access-jwt)
+        #[arg(long)]
+        refresh_jwt: Option<String>,
+    },
     /// Show current authentication status
     Status,
     /// Logout and clear credentials
@@ -121,6 +137,14 @@ enum StreamCommands {
         /// Enable AI content generation
         #[arg(long)]
         ai_generate: bool,
+    },
+    /// Initialize user list for admin account
+    Init {
+        /// Path to the blog project directory
+        project_dir: Option<PathBuf>,
+        /// Handles to add to initial user list (comma-separated)
+        #[arg(long)]
+        handles: Option<String>,
     },
     /// Stop monitoring
     Stop,
@@ -183,8 +207,8 @@ async fn main() -> Result<()> {
         }
         Commands::Auth { command } => {
             match command {
-                AuthCommands::Init => {
-                    commands::auth::init().await?;
+                AuthCommands::Init { pds, handle, password, access_jwt, refresh_jwt } => {
+                    commands::auth::init_with_options(pds, handle, password, access_jwt, refresh_jwt).await?;
                 }
                 AuthCommands::Status => {
                     commands::auth::status().await?;
@@ -198,6 +222,9 @@ async fn main() -> Result<()> {
             match command {
                 StreamCommands::Start { project_dir, daemon, ai_generate } => {
                     commands::stream::start(project_dir, daemon, ai_generate).await?;
+                }
+                StreamCommands::Init { project_dir, handles } => {
+                    commands::stream::init_user_list(project_dir, handles).await?;
                 }
                 StreamCommands::Stop => {
                     commands::stream::stop().await?;

@@ -223,7 +223,7 @@ fn load_ai_config_from_project() -> Result<AiConfig> {
     
     // Read AI handle (preferred) or fallback to AI DID
     let ai_handle = ai_config
-        .and_then(|ai| ai.get("ai_handle"))
+        .and_then(|ai| ai.get("handle"))
         .and_then(|v| v.as_str())
         .unwrap_or("yui.syui.ai")
         .to_string();
@@ -338,6 +338,104 @@ fn get_pid_file() -> Result<PathBuf> {
     let pid_dir = PathBuf::from(home).join(".config").join("syui").join("ai").join("log");
     fs::create_dir_all(&pid_dir)?;
     Ok(pid_dir.join("stream.pid"))
+}
+
+pub async fn init_user_list(project_dir: Option<PathBuf>, handles: Option<String>) -> Result<()> {
+    println!("{}", "🔧 Initializing user list...".cyan());
+    
+    // Load auth config
+    let mut config = match load_config_with_refresh().await {
+        Ok(config) => config,
+        Err(e) => {
+            println!("{}", format!("❌ Not authenticated: {}. Run 'ailog auth init --pds <PDS>' first.", e).red());
+            return Ok(());
+        }
+    };
+    
+    println!("{}", format!("📋 Admin: {} ({})", config.admin.handle, config.admin.did).cyan());
+    println!("{}", format!("🌐 PDS: {}", config.admin.pds).cyan());
+    
+    let mut users = Vec::new();
+    
+    // Parse handles if provided
+    if let Some(handles_str) = handles {
+        println!("{}", "🔍 Resolving provided handles...".cyan());
+        let handle_list: Vec<&str> = handles_str.split(',').map(|s| s.trim()).collect();
+        
+        for handle in handle_list {
+            if handle.is_empty() {
+                continue;
+            }
+            
+            println!("   🏷️  Resolving handle: {}", handle);
+            
+            // Get AI config to determine network settings
+            let ai_config = if let Some(ref proj_dir) = project_dir {
+                let current_dir = std::env::current_dir()?;
+                std::env::set_current_dir(proj_dir)?;
+                let config = load_ai_config_from_project().unwrap_or_default();
+                std::env::set_current_dir(current_dir)?;
+                config
+            } else {
+                load_ai_config_from_project().unwrap_or_default()
+            };
+            
+            // Try to resolve handle to DID
+            match resolve_handle_to_did(handle, &ai_config.network).await {
+                Ok(did) => {
+                    println!("      ✅ DID: {}", did.cyan());
+                    
+                    // Detect PDS for this user using proper detection
+                    let detected_pds = detect_user_pds(&did, &ai_config.network).await
+                        .unwrap_or_else(|_| {
+                            // Fallback to handle-based detection
+                            if handle.ends_with(".syu.is") {
+                                "https://syu.is".to_string()
+                            } else {
+                                "https://bsky.social".to_string()
+                            }
+                        });
+                    
+                    users.push(UserRecord {
+                        did,
+                        handle: handle.to_string(),
+                        pds: detected_pds,
+                    });
+                }
+                Err(e) => {
+                    println!("      ❌ Failed to resolve {}: {}", handle, e);
+                }
+            }
+        }
+    } else {
+        println!("{}", "ℹ️  No handles provided, creating empty user list".blue());
+    }
+    
+    // Create the initial user list
+    println!("{}", format!("📝 Creating user list with {} users...", users.len()).cyan());
+    
+    match post_user_list(&mut config, &users, json!({
+        "reason": "initial_setup",
+        "created_by": "ailog_stream_init"
+    })).await {
+        Ok(_) => println!("{}", "✅ User list created successfully!".green()),
+        Err(e) => {
+            println!("{}", format!("❌ Failed to create user list: {}", e).red());
+            return Err(e);
+        }
+    }
+    
+    // Show summary
+    if users.is_empty() {
+        println!("{}", "📋 Empty user list created. Use 'ailog stream start --ai-generate' to auto-add commenters.".blue());
+    } else {
+        println!("{}", "📋 User list contents:".cyan());
+        for user in &users {
+            println!("   👤 {} ({})", user.handle, user.did);
+        }
+    }
+    
+    Ok(())
 }
 
 pub async fn start(project_dir: Option<PathBuf>, daemon: bool, ai_generate: bool) -> Result<()> {
@@ -677,6 +775,33 @@ fn get_network_config_from_pds(pds_endpoint: &str) -> NetworkConfig {
             web_url: "https://bsky.app".to_string(),
         }
     }
+}
+
+async fn detect_user_pds(did: &str, _network_config: &NetworkConfig) -> Result<String> {
+    let client = reqwest::Client::new();
+    let pds_endpoints = ["https://bsky.social", "https://syu.is"];
+    
+    for pds in &pds_endpoints {
+        let describe_url = format!("{}/xrpc/com.atproto.repo.describeRepo?repo={}", pds, urlencoding::encode(did));
+        if let Ok(response) = client.get(&describe_url).send().await {
+            if response.status().is_success() {
+                if let Ok(data) = response.json::<Value>().await {
+                    if let Some(services) = data["didDoc"]["service"].as_array() {
+                        if let Some(pds_service) = services.iter().find(|s| 
+                            s["id"] == "#atproto_pds" || s["type"] == "AtprotoPersonalDataServer"
+                        ) {
+                            if let Some(endpoint) = pds_service["serviceEndpoint"].as_str() {
+                                return Ok(endpoint.to_string());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    // Fallback to default
+    Ok("https://bsky.social".to_string())
 }
 
 async fn update_user_list(config: &mut AuthConfig, did: &str, handle: &str) -> Result<()> {
@@ -1130,6 +1255,68 @@ fn extract_did_from_uri(uri: &str) -> Option<String> {
     None
 }
 
+// OAuth config structure for loading admin settings
+#[derive(Debug)]
+struct OAuthConfig {
+    admin: String,
+    pds: Option<String>,
+}
+
+// Load OAuth config from project's config.toml
+fn load_oauth_config_from_project() -> Option<OAuthConfig> {
+    // Try to find config.toml in current directory or parent directories
+    let mut current_dir = std::env::current_dir().ok()?;
+    let mut config_path = None;
+    
+    for _ in 0..5 { // Search up to 5 levels up
+        let potential_config = current_dir.join("config.toml");
+        if potential_config.exists() {
+            config_path = Some(potential_config);
+            break;
+        }
+        if !current_dir.pop() {
+            break;
+        }
+    }
+    
+    let config_path = config_path?;
+    let config_content = std::fs::read_to_string(&config_path).ok()?;
+    let config: toml::Value = config_content.parse().ok()?;
+
+    let oauth_config = config.get("oauth").and_then(|v| v.as_table())?;
+    
+    let admin = oauth_config
+        .get("admin")
+        .and_then(|v| v.as_str())?
+        .to_string();
+    
+    let pds = oauth_config
+        .get("pds")
+        .and_then(|v| v.as_str())
+        .map(|s| s.to_string());
+
+    Some(OAuthConfig { admin, pds })
+}
+
+// Resolve handle to DID using PLC directory
+async fn resolve_handle_to_did(handle: &str, network_config: &NetworkConfig) -> Result<String> {
+    let client = reqwest::Client::new();
+    let url = format!("{}/xrpc/com.atproto.identity.resolveHandle?handle={}", 
+                     network_config.bsky_api, urlencoding::encode(handle));
+    
+    let response = client.get(&url).send().await?;
+    
+    if !response.status().is_success() {
+        return Err(anyhow::anyhow!("Failed to resolve handle: {}", response.status()));
+    }
+    
+    let data: Value = response.json().await?;
+    let did = data["did"].as_str()
+        .ok_or_else(|| anyhow::anyhow!("DID not found in response"))?;
+    
+    Ok(did.to_string())
+}
+
 pub async fn test_api() -> Result<()> {
     println!("{}", "🧪 Testing API access to comments collection...".cyan().bold());
     
@@ -1452,32 +1639,23 @@ fn extract_date_from_slug(slug: &str) -> String {
 }
 
 async fn get_ai_profile(client: &reqwest::Client, ai_config: &AiConfig) -> Result<serde_json::Value> {
-    // Resolve AI's actual PDS first
-    let pds_endpoints = ["https://bsky.social", "https://syu.is"];
-    let mut network_config = get_network_config("bsky.social"); // Default fallback
+    let handle = &ai_config.ai_handle;
     
-    for pds in &pds_endpoints {
-        let describe_url = format!("{}/xrpc/com.atproto.repo.describeRepo?repo={}", pds, urlencoding::encode(&ai_config.ai_did));
-        if let Ok(response) = client.get(&describe_url).send().await {
-            if response.status().is_success() {
-                if let Ok(data) = response.json::<Value>().await {
-                    if let Some(services) = data["didDoc"]["service"].as_array() {
-                        if let Some(pds_service) = services.iter().find(|s| 
-                            s["id"] == "#atproto_pds" || s["type"] == "AtprotoPersonalDataServer"
-                        ) {
-                            if let Some(endpoint) = pds_service["serviceEndpoint"].as_str() {
-                                network_config = get_network_config_from_pds(endpoint);
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
+    // First, try to resolve PDS from handle using the admin's configured PDS
+    let mut network_config = ai_config.network.clone();
+    
+    // For admin/ai handles matching configured PDS, use the configured network
+    if let Some(oauth_config) = load_oauth_config_from_project() {
+        if handle == &oauth_config.admin {
+            // Use configured PDS for admin handle
+            let pds = oauth_config.pds.unwrap_or_else(|| "syu.is".to_string());
+            network_config = get_network_config(&pds);
         }
     }
     
+    // Get profile from appropriate bsky API
     let url = format!("{}/xrpc/app.bsky.actor.getProfile?actor={}", 
-                     network_config.bsky_api, urlencoding::encode(&ai_config.ai_did));
+                     network_config.bsky_api, urlencoding::encode(handle));
     
     let response = client
         .get(&url)
@@ -1485,20 +1663,41 @@ async fn get_ai_profile(client: &reqwest::Client, ai_config: &AiConfig) -> Resul
         .await?;
         
     if !response.status().is_success() {
-        // Fallback to default AI profile
+        // Try to resolve DID first, then retry with DID
+        match resolve_handle_to_did(handle, &network_config).await {
+            Ok(resolved_did) => {
+                // Retry with resolved DID
+                let did_url = format!("{}/xrpc/app.bsky.actor.getProfile?actor={}", 
+                                     network_config.bsky_api, urlencoding::encode(&resolved_did));
+                let did_response = client.get(&did_url).send().await?;
+                
+                if did_response.status().is_success() {
+                    let profile_data: serde_json::Value = did_response.json().await?;
+                    return Ok(serde_json::json!({
+                        "did": resolved_did,
+                        "handle": profile_data["handle"].as_str().unwrap_or(handle),
+                        "displayName": profile_data["displayName"].as_str().unwrap_or("ai"),
+                        "avatar": profile_data["avatar"].as_str()
+                    }));
+                }
+            }
+            Err(_) => {}
+        }
+        
+        // Final fallback to default AI profile
         return Ok(serde_json::json!({
             "did": ai_config.ai_did,
-            "handle": "yui.syui.ai",
+            "handle": handle,
             "displayName": "ai",
-            "avatar": "https://cdn.bsky.app/img/avatar/plain/did:plc:4hqjfn7m6n5hno3doamuhgef/bafkreiaxkv624mffw3cfyi67ufxtwuwsy2mjw2ygezsvtd44ycbgkfdo2a@jpeg"
+            "avatar": format!("https://api.dicebear.com/7.x/bottts-neutral/svg?seed={}", handle)
         }));
     }
     
     let profile_data: serde_json::Value = response.json().await?;
     
     Ok(serde_json::json!({
-        "did": ai_config.ai_did,
-        "handle": profile_data["handle"].as_str().unwrap_or("yui.syui.ai"),
+        "did": profile_data["did"].as_str().unwrap_or(&ai_config.ai_did),
+        "handle": profile_data["handle"].as_str().unwrap_or(handle),
         "displayName": profile_data["displayName"].as_str().unwrap_or("ai"),
         "avatar": profile_data["avatar"].as_str()
     }))

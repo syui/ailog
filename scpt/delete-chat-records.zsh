@@ -3,16 +3,16 @@
 set -e
 
 cb=ai.syui.log
-cl=( $cb.chat $cb.chat.comment $cb.chat.lang )
-f=~/.config/syui/ai/bot/token.json
+cl=( $cb.user )
+f=~/.config/syui/ai/log/config.json
 
 default_collection="ai.syui.log.chat.comment"
-default_pds="bsky.social"
-default_did=`cat $f|jq -r .did`
-default_token=`cat $f|jq -r .accessJwt`
-default_refresh=`cat $f|jq -r .refreshJwt`
-curl -sL -X POST -H "Content-Type: application/json" -H "Authorization: Bearer $default_refresh" https://$default_pds/xrpc/com.atproto.server.refreshSession >! $f
-default_token=`cat $f|jq -r .accessJwt`
+default_pds="syu.is"
+default_did=`cat $f|jq -r .admin.did`
+default_token=`cat $f|jq -r .admin.access_jwt`
+default_refresh=`cat $f|jq -r .admin.refresh_jwt`
+#curl -sL -X POST -H "Content-Type: application/json" -H "Authorization: Bearer $default_refresh" https://$default_pds/xrpc/com.atproto.server.refreshSession >! $f
+#default_token=`cat $f|jq -r .admin.access_jwt`
 collection=${1:-$default_collection}
 pds=${2:-$default_pds}
 did=${3:-$default_did}

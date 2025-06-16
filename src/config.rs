@@ -9,6 +9,7 @@ pub struct Config {
     pub site: SiteConfig,
     pub build: BuildConfig,
     pub ai: Option<AiConfig>,
+    pub oauth: Option<OAuthConfig>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -37,11 +38,22 @@ pub struct AiConfig {
     pub model: Option<String>,
     pub host: Option<String>,
     pub system_prompt: Option<String>,
+    pub handle: Option<String>,
     pub ai_did: Option<String>,
     pub api_key: Option<String>,
     pub gpt_endpoint: Option<String>,
     pub atproto_config: Option<AtprotoConfig>,
     pub num_predict: Option<i32>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct OAuthConfig {
+    pub json: Option<String>,
+    pub redirect: Option<String>,
+    pub admin: Option<String>,
+    pub collection: Option<String>,
+    pub pds: Option<String>,
+    pub handle_list: Option<Vec<String>>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -160,12 +172,14 @@ impl Default for Config {
                 model: Some("gemma3:4b".to_string()),
                 host: None,
                 system_prompt: Some("You are a helpful AI assistant trained on this blog's content.".to_string()),
+                handle: None,
                 ai_did: None,
                 api_key: None,
                 gpt_endpoint: None,
                 atproto_config: None,
                 num_predict: None,
             }),
+            oauth: None,
         }
     }
 }

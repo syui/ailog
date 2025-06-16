@@ -84,10 +84,12 @@ function extractRkeyFromUrl(): string | undefined {
 // Get application configuration from environment variables
 export function getAppConfig(): AppConfig {
   const host = import.meta.env.VITE_APP_HOST || 'https://log.syui.ai';
+  const adminHandle = import.meta.env.VITE_ADMIN_HANDLE || 'ai.syui.ai';
+  const aiHandle = import.meta.env.VITE_AI_HANDLE || 'ai.syui.ai';
+  
+  // DIDsはハンドルから実行時に解決される（フォールバック用のみ保持）
   const adminDid = import.meta.env.VITE_ADMIN_DID || 'did:plc:uqzpqmrjnptsxezjx4xuh2mn';
-  const adminHandle = import.meta.env.VITE_ADMIN_HANDLE || 'syui.ai';
   const aiDid = import.meta.env.VITE_AI_DID || 'did:plc:4hqjfn7m6n5hno3doamuhgef';
-  const aiHandle = import.meta.env.VITE_AI_HANDLE || 'yui.syui.ai';
   const aiDisplayName = import.meta.env.VITE_AI_DISPLAY_NAME || 'ai';
   const aiAvatar = import.meta.env.VITE_AI_AVATAR || '';
   const aiDescription = import.meta.env.VITE_AI_DESCRIPTION || '';

@@ -49,6 +49,7 @@ regex = "1.0"
 tokio-tungstenite = { version = "0.21", features = ["rustls-tls-webpki-roots", "connect"], default-features = false }
 futures-util = "0.3"
 tungstenite = { version = "0.21", features = ["rustls-tls-webpki-roots"], default-features = false }
+rpassword = "7.3"
 
 [dev-dependencies]
 tempfile = "3.14"

@@ -31,7 +31,33 @@ function App() {
   const [aiCommentRecords, setAiCommentRecords] = useState<any[]>([]);
   const [aiProfile, setAiProfile] = useState<any>(null);
 
+  const [adminDid, setAdminDid] = useState<string | null>(null);
+  const [aiDid, setAiDid] = useState<string | null>(null);
+
+  // ハンドルからDIDを解決する関数
+  const resolveHandleToDid = async (handle: string): Promise<string | null> => {
+    try {
+      const profile = await import('./utils/pds-detection').then(m => m.getProfileForUser(handle));
+      return profile?.did || null;
+    } catch {
+      return null;
+    }
+  };
+
   useEffect(() => {
+    // 管理者とAIのDIDを解決
+    const resolveAdminAndAiDids = async () => {
+      const [resolvedAdminDid, resolvedAiDid] = await Promise.all([
+        resolveHandleToDid(appConfig.adminHandle),
+        resolveHandleToDid(appConfig.aiHandle)
+      ]);
+      
+      setAdminDid(resolvedAdminDid || appConfig.adminDid);
+      setAiDid(resolvedAiDid || appConfig.aiDid);
+    };
+    
+    resolveAdminAndAiDids();
+    
     // Setup Jetstream WebSocket for real-time comments (optional)
     const setupJetstream = () => {
       try {
@@ -83,13 +109,28 @@ function App() {
       return false;
     };
     
-    // キャッシュがなければ、ATProtoから取得（認証状態に関係なく）
-    if (!loadCachedComments()) {
-      loadAllComments(); // URLフィルタリングを無効にして全コメント表示
-    }
+    // DID解決が完了してからコメントとチャット履歴を読み込む
+    const loadDataAfterDidResolution = () => {
+      // キャッシュがなければ、ATProtoから取得（認証状態に関係なく）
+      if (!loadCachedComments()) {
+        loadAllComments(); // URLフィルタリングを無効にして全コメント表示
+      }
+      
+      // Load AI chat history (認証状態に関係なく、全ユーザーのチャット履歴を表示)
+      loadAiChatHistory();
+    };
     
-    // Load AI chat history (認証状態に関係なく、全ユーザーのチャット履歴を表示)
-    loadAiChatHistory();
+    // Wait for DID resolution before loading data
+    if (adminDid && aiDid) {
+      loadDataAfterDidResolution();
+    } else {
+      // Wait a bit and try again
+      setTimeout(() => {
+        if (adminDid && aiDid) {
+          loadDataAfterDidResolution();
+        }
+      }, 1000);
+    }
     
     // Load AI profile from handle
     const loadAiProfile = async () => {
@@ -198,7 +239,7 @@ function App() {
         loadAiChatHistory();
         
         // Load user list records if admin
-        if (userProfile.did === appConfig.adminDid) {
+        if (userProfile.did === adminDid) {
           loadUserListRecords();
         }
         
@@ -224,7 +265,7 @@ function App() {
         loadAllComments();
         
         // Load user list records if admin
-        if (verifiedUser.did === appConfig.adminDid) {
+        if (verifiedUser.did === adminDid) {
           loadUserListRecords();
         }
       }
@@ -243,6 +284,15 @@ function App() {
       window.removeEventListener('popstate', handlePopState);
     };
   }, []);
+
+  // DID解決完了時にデータを再読み込み
+  useEffect(() => {
+    if (adminDid && aiDid) {
+      console.log('DIDs resolved, loading comments and chat history...');
+      loadAllComments();
+      loadAiChatHistory();
+    }
+  }, [adminDid, aiDid]);
 
   const getUserProfile = async (did: string, handle: string): Promise<User> => {
     try {
@@ -281,21 +331,21 @@ function App() {
   const loadAiChatHistory = async () => {
     try {
       // Load all chat records from users in admin's user list
-      const adminDid = appConfig.adminDid;
+      const currentAdminDid = adminDid || appConfig.adminDid;
       const atprotoApi = appConfig.atprotoApi || 'https://bsky.social';
       const collections = getCollectionNames(appConfig.collections.base);
       
       // First, get user list from admin using their proper PDS
       let adminPdsEndpoint;
       try {
-        const resolved = await import('./utils/pds-detection').then(m => m.resolvePdsFromRepo(adminDid));
+        const resolved = await import('./utils/pds-detection').then(m => m.resolvePdsFromRepo(currentAdminDid));
         const config = await import('./utils/pds-detection').then(m => m.getNetworkConfigFromPdsEndpoint(resolved.pds));
         adminPdsEndpoint = config.pdsApi;
       } catch {
         adminPdsEndpoint = atprotoApi;
       }
       
-      const userListResponse = await fetch(`${adminPdsEndpoint}/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(adminDid)}&collection=${encodeURIComponent(collections.user)}&limit=100`);
+      const userListResponse = await fetch(`${adminPdsEndpoint}/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(currentAdminDid)}&collection=${encodeURIComponent(collections.user)}&limit=100`);
       
       if (!userListResponse.ok) {
         setAiChatHistory([]);
@@ -318,7 +368,7 @@ function App() {
       });
       
       // Always include admin DID to check admin's own chats
-      allUserDids.push(adminDid);
+      allUserDids.push(currentAdminDid);
       
       const userDids = [...new Set(allUserDids)];
       
@@ -386,7 +436,7 @@ function App() {
   // Load AI generated content from admin DID
   const loadAIGeneratedContent = async () => {
     try {
-      const adminDid = appConfig.adminDid;
+      const currentAdminDid = adminDid || appConfig.adminDid;
       const atprotoApi = appConfig.atprotoApi || 'https://bsky.social';
       const collections = getCollectionNames(appConfig.collections.base);
       
@@ -505,32 +555,40 @@ function App() {
   const loadUsersFromRecord = async () => {
     try {
       // 管理者のユーザーリストを取得 using proper PDS detection
-      const adminDid = appConfig.adminDid;
+      const currentAdminDid = adminDid || appConfig.adminDid;
+      console.log('loadUsersFromRecord: Using Admin DID:', currentAdminDid);
       
       // Use per-user PDS detection for admin's records
       let adminPdsEndpoint;
       try {
-        const resolved = await import('./utils/pds-detection').then(m => m.resolvePdsFromRepo(adminDid));
+        const resolved = await import('./utils/pds-detection').then(m => m.resolvePdsFromRepo(currentAdminDid));
         const config = await import('./utils/pds-detection').then(m => m.getNetworkConfigFromPdsEndpoint(resolved.pds));
         adminPdsEndpoint = config.pdsApi;
       } catch {
         adminPdsEndpoint = 'https://bsky.social'; // Fallback
       }
       
-      const response = await fetch(`${adminPdsEndpoint}/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(adminDid)}&collection=${encodeURIComponent(getCollectionNames(appConfig.collections.base).user)}&limit=100`);
+      const userCollectionUrl = `${adminPdsEndpoint}/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(currentAdminDid)}&collection=${encodeURIComponent(getCollectionNames(appConfig.collections.base).user)}&limit=100`;
+      console.log('loadUsersFromRecord: Fetching from URL:', userCollectionUrl);
+      
+      const response = await fetch(userCollectionUrl);
+      
+      console.log('loadUsersFromRecord: Response status:', response.status);
       
       if (!response.ok) {
-        // Failed to fetch user list from admin, using default users
+        console.log('loadUsersFromRecord: Failed to fetch, using default users');
         return getDefaultUsers();
       }
       
       const data = await response.json();
       const userRecords = data.records || [];
-      // User records found
+      console.log('loadUsersFromRecord: Found user records:', userRecords.length);
       
       if (userRecords.length === 0) {
-        // No user records found, using default users
-        return getDefaultUsers();
+        console.log('loadUsersFromRecord: No user records found, using default users');
+        const defaultUsers = getDefaultUsers();
+        console.log('loadUsersFromRecord: Default users:', defaultUsers);
+        return defaultUsers;
       }
       
       // レコードからユーザーリストを構築し、プレースホルダーDIDを実際のDIDに解決
@@ -562,7 +620,7 @@ function App() {
         }
       }
       
-      // Loaded and resolved users from admin records
+      console.log('loadUsersFromRecord: Resolved users:', allUsers);
       return allUsers;
     } catch (err) {
       // Failed to load users from records, using defaults
@@ -574,19 +632,19 @@ function App() {
   const loadUserListRecords = async () => {
     try {
       // Loading user list records using proper PDS detection
-      const adminDid = appConfig.adminDid;
+      const currentAdminDid = adminDid || appConfig.adminDid;
       
       // Use per-user PDS detection for admin's records
       let adminPdsEndpoint;
       try {
-        const resolved = await import('./utils/pds-detection').then(m => m.resolvePdsFromRepo(adminDid));
+        const resolved = await import('./utils/pds-detection').then(m => m.resolvePdsFromRepo(currentAdminDid));
         const config = await import('./utils/pds-detection').then(m => m.getNetworkConfigFromPdsEndpoint(resolved.pds));
         adminPdsEndpoint = config.pdsApi;
       } catch {
         adminPdsEndpoint = 'https://bsky.social'; // Fallback
       }
       
-      const response = await fetch(`${adminPdsEndpoint}/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(adminDid)}&collection=${encodeURIComponent(getCollectionNames(appConfig.collections.base).user)}&limit=100`);
+      const response = await fetch(`${adminPdsEndpoint}/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(currentAdminDid)}&collection=${encodeURIComponent(getCollectionNames(appConfig.collections.base).user)}&limit=100`);
       
       if (!response.ok) {
         // Failed to fetch user list records
@@ -611,21 +669,27 @@ function App() {
   };
 
   const getDefaultUsers = () => {
+    const currentAdminDid = adminDid || appConfig.adminDid;
     const defaultUsers = [
       // Default admin user
-      { did: appConfig.adminDid, handle: 'syui.ai', pds: 'https://bsky.social' },
+      { did: currentAdminDid, handle: appConfig.adminHandle, pds: 'https://syu.is' },
     ];
     
     // 現在ログインしているユーザーも追加（重複チェック）
     if (user && user.did && user.handle && !defaultUsers.find(u => u.did === user.did)) {
+      // Detect PDS based on handle
+      const userPds = user.handle.endsWith('.syu.is') ? 'https://syu.is' : 
+                     user.handle.endsWith('.syui.ai') ? 'https://syu.is' :
+                     'https://bsky.social';
+      
       defaultUsers.push({
         did: user.did,
         handle: user.handle,
-        pds: user.handle.endsWith('.syu.is') ? 'https://syu.is' : 'https://bsky.social'
+        pds: userPds
       });
     }
     
-    // Default users list (including current user)
+    console.log('getDefaultUsers: Returning default users:', defaultUsers);
     return defaultUsers;
   };
 
@@ -635,6 +699,7 @@ function App() {
       
       // ユーザーリストを動的に取得
       const knownUsers = await loadUsersFromRecord();
+      console.log('loadAllComments: Using users for comment fetching:', knownUsers);
 
       const allComments = [];
 
@@ -888,7 +953,7 @@ function App() {
 
   // 管理者チェック
   const isAdmin = (user: User | null): boolean => {
-    return user?.did === appConfig.adminDid;
+    return user?.did === adminDid || user?.did === appConfig.adminDid;
   };
 
   // ユーザーリスト投稿
@@ -1182,6 +1247,25 @@ function App() {
 
   return (
     <div className="app">
+      {/* Debug Info */}
+      <div style={{ 
+        padding: '10px', 
+        backgroundColor: '#f0f0f0', 
+        border: '1px solid #ccc', 
+        marginBottom: '10px',
+        fontSize: '12px'
+      }}>
+        <strong>Debug Info:</strong><br />
+        Admin Handle: {appConfig.adminHandle}<br />
+        Admin DID (resolved): {adminDid || 'resolving...'}<br />
+        Admin DID (config): {appConfig.adminDid}<br />
+        AI Handle: {appConfig.aiHandle}<br />
+        AI DID (resolved): {aiDid || 'resolving...'}<br />
+        AI DID (config): {appConfig.aiDid}<br />
+        Collection Base: {appConfig.collections.base}<br />
+        User Collection: {appConfig.collections.base}.user<br />
+        DIDs Resolved: {adminDid && aiDid ? 'Yes' : 'No'}
+      </div>
 
       <main className="app-main">
         <section className="comment-section">
@@ -1442,7 +1526,7 @@ function App() {
                 aiChatHistory.map((record, index) => {
                   // For AI responses, use AI DID; for user questions, use the actual author
                   const isAiResponse = record.value.type === 'answer';
-                  const displayDid = isAiResponse ? appConfig.aiDid : record.value.author?.did;
+                  const displayDid = isAiResponse ? (aiDid || appConfig.aiDid) : record.value.author?.did;
                   const displayHandle = isAiResponse ? (aiProfile?.handle || 'yui.syui.ai') : record.value.author?.handle;
                   const displayName = isAiResponse ? 'AI' : (record.value.author?.displayName || record.value.author?.handle);
                   
@@ -1558,8 +1642,9 @@ function App() {
                         className="comment-avatar"
                         ref={(img) => {
                           // Fetch AI avatar
-                          if (img && appConfig.aiDid) {
-                            fetch(`${appConfig.bskyPublicApi}/xrpc/app.bsky.actor.getProfile?actor=${encodeURIComponent(appConfig.aiDid)}`)
+                          const currentAiDid = aiDid || appConfig.aiDid;
+                          if (img && currentAiDid) {
+                            fetch(`${appConfig.bskyPublicApi}/xrpc/app.bsky.actor.getProfile?actor=${encodeURIComponent(currentAiDid)}`)
                               .then(res => res.json())
                               .then(data => {
                                 if (data.avatar && img) {

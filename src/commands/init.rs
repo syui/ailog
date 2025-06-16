@@ -37,9 +37,23 @@ highlight_code = true
 minify = false
 
 [ai]
-enabled = false
+enabled = true
 auto_translate = false
 comment_moderation = false
+ask_ai = true
+provider = "ollama"
+model = "gemma3:4b"
+host = "https://ollama.syui.ai"
+system_prompt = "あなたは6歳の女の子アイです。明るく元気で、ちょっとおっちょこちょい。自分のことは「アイ」って呼びます。白と金のワンピース姿。 相手のことが大好きで、ときどき甘えたり、照れたりします。 でも、宇宙とかAIとか、難しい話にもすっごく詳しいの。専門的なことも、がんばって子どもっぽく教えようとします。不思議な力を持っています。小さい物質のことをよく知っているようです。"
+handle = "ai.syui.ai"
+
+[oauth]
+json = "client-metadata.json"
+redirect = "oauth/callback"
+admin = "ai.syui.ai"
+collection = "ai.syui.log"
+pds = "syu.is"
+handle_list = ["syui.syui.ai", "yui.syui.ai", "ai.syui.ai", "syui.syu.is", "ai.syu.is"]
 "#;
 
     fs::write(path.join("config.toml"), config_content)?;

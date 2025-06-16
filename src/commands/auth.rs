@@ -87,6 +87,122 @@ fn get_config_path() -> Result<PathBuf> {
 }
 
 pub async fn init() -> Result<()> {
+    init_with_pds(None).await
+}
+
+pub async fn init_with_options(
+    pds_override: Option<String>,
+    handle_override: Option<String>, 
+    use_password: bool,
+    access_jwt_override: Option<String>,
+    refresh_jwt_override: Option<String>
+) -> Result<()> {
+    println!("{}", "🔐 Initializing ATProto authentication...".cyan());
+    
+    let config_path = get_config_path()?;
+    
+    if config_path.exists() {
+        println!("{}", "⚠️  Configuration already exists. Use 'ailog auth logout' to reset.".yellow());
+        return Ok(());
+    }
+    
+    // Validate options
+    if let (Some(_), Some(_)) = (&access_jwt_override, &refresh_jwt_override) {
+        if use_password {
+            println!("{}", "⚠️  Cannot use both --password and JWT tokens. Choose one method.".yellow());
+            return Ok(());
+        }
+    } else if access_jwt_override.is_some() || refresh_jwt_override.is_some() {
+        println!("{}", "❌ Both --access-jwt and --refresh-jwt must be provided together.".red());
+        return Ok(());
+    }
+    
+    println!("{}", "📋 Please provide your ATProto credentials:".cyan());
+    
+    // Get handle
+    let handle = if let Some(h) = handle_override {
+        h
+    } else {
+        print!("Handle (e.g., your.handle.bsky.social): ");
+        std::io::Write::flush(&mut std::io::stdout())?;
+        let mut input = String::new();
+        std::io::stdin().read_line(&mut input)?;
+        input.trim().to_string()
+    };
+    
+    // Determine PDS URL
+    let pds_url = if let Some(override_pds) = pds_override {
+        if override_pds.starts_with("http") {
+            override_pds
+        } else {
+            format!("https://{}", override_pds)
+        }
+    } else {
+        if handle.ends_with(".syu.is") {
+            "https://syu.is".to_string()
+        } else {
+            "https://bsky.social".to_string()
+        }
+    };
+    
+    println!("{}", format!("🌐 Using PDS: {}", pds_url).cyan());
+    
+    // Get credentials
+    let (access_jwt, refresh_jwt) = if let (Some(access), Some(refresh)) = (access_jwt_override, refresh_jwt_override) {
+        println!("{}", "🔑 Using provided JWT tokens".cyan());
+        (access, refresh)
+    } else if use_password {
+        println!("{}", "🔒 Using password authentication".cyan());
+        authenticate_with_password(&handle, &pds_url).await?
+    } else {
+        // Interactive JWT input (legacy behavior)
+        print!("Access JWT: ");
+        std::io::Write::flush(&mut std::io::stdout())?;
+        let mut access_jwt = String::new();
+        std::io::stdin().read_line(&mut access_jwt)?;
+        let access_jwt = access_jwt.trim().to_string();
+        
+        print!("Refresh JWT: ");
+        std::io::Write::flush(&mut std::io::stdout())?;
+        let mut refresh_jwt = String::new();
+        std::io::stdin().read_line(&mut refresh_jwt)?;
+        let refresh_jwt = refresh_jwt.trim().to_string();
+        
+        (access_jwt, refresh_jwt)
+    };
+    
+    // Resolve DID from handle
+    println!("{}", "🔍 Resolving DID from handle...".cyan());
+    let did = resolve_did_with_pds(&handle, &pds_url).await?;
+    
+    // Create config
+    let config = AuthConfig {
+        admin: AdminConfig {
+            did: did.clone(),
+            handle: handle.clone(),
+            access_jwt,
+            refresh_jwt,
+            pds: pds_url,
+        },
+        jetstream: JetstreamConfig {
+            url: "wss://jetstream2.us-east.bsky.network/subscribe".to_string(),
+            collections: vec!["ai.syui.log".to_string()],
+        },
+        collections: generate_collection_config(),
+    };
+    
+    // Save config
+    let config_json = serde_json::to_string_pretty(&config)?;
+    fs::write(&config_path, config_json)?;
+    
+    println!("{}", "✅ Authentication configured successfully!".green());
+    println!("📁 Config saved to: {}", config_path.display());
+    println!("👤 Authenticated as: {} ({})", handle, did);
+    
+    Ok(())
+}
+
+pub async fn init_with_pds(pds_override: Option<String>) -> Result<()> {
     println!("{}", "🔐 Initializing ATProto authentication...".cyan());
     
     let config_path = get_config_path()?;
@@ -117,9 +233,28 @@ pub async fn init() -> Result<()> {
     std::io::stdin().read_line(&mut refresh_jwt)?;
     let refresh_jwt = refresh_jwt.trim().to_string();
     
+    // Determine PDS URL
+    let pds_url = if let Some(override_pds) = pds_override {
+        // Use provided PDS override
+        if override_pds.starts_with("http") {
+            override_pds
+        } else {
+            format!("https://{}", override_pds)
+        }
+    } else {
+        // Auto-detect from handle suffix
+        if handle.ends_with(".syu.is") {
+            "https://syu.is".to_string()
+        } else {
+            "https://bsky.social".to_string()
+        }
+    };
+    
+    println!("{}", format!("🌐 Using PDS: {}", pds_url).cyan());
+    
     // Resolve DID from handle
     println!("{}", "🔍 Resolving DID from handle...".cyan());
-    let did = resolve_did(&handle).await?;
+    let did = resolve_did_with_pds(&handle, &pds_url).await?;
     
     // Create config
     let config = AuthConfig {
@@ -128,11 +263,7 @@ pub async fn init() -> Result<()> {
             handle: handle.clone(),
             access_jwt,
             refresh_jwt,
-            pds: if handle.ends_with(".syu.is") {
-                "https://syu.is".to_string()
-            } else {
-                "https://bsky.social".to_string()
-            },
+            pds: pds_url,
         },
         jetstream: JetstreamConfig {
             url: "wss://jetstream2.us-east.bsky.network/subscribe".to_string(),
@@ -178,6 +309,93 @@ async fn resolve_did(handle: &str) -> Result<String> {
     Ok(did.to_string())
 }
 
+async fn resolve_did_with_pds(handle: &str, pds_url: &str) -> Result<String> {
+    let client = reqwest::Client::new();
+    
+    // Try to use the PDS API first
+    let api_base = if pds_url.contains("syu.is") {
+        "https://bsky.syu.is"
+    } else if pds_url.contains("bsky.social") {
+        "https://public.api.bsky.app"
+    } else {
+        // For custom PDS, try to construct API URL
+        pds_url
+    };
+    
+    let url = format!("{}/xrpc/app.bsky.actor.getProfile?actor={}", 
+                     api_base, urlencoding::encode(handle));
+    
+    let response = client.get(&url).send().await?;
+    
+    if !response.status().is_success() {
+        return Err(anyhow::anyhow!("Failed to resolve handle using PDS {}: {}", pds_url, response.status()));
+    }
+    
+    let profile: serde_json::Value = response.json().await?;
+    let did = profile["did"].as_str()
+        .ok_or_else(|| anyhow::anyhow!("DID not found in profile response"))?;
+    
+    Ok(did.to_string())
+}
+
+async fn authenticate_with_password(handle: &str, pds_url: &str) -> Result<(String, String)> {
+    use std::io::{self, Write};
+    
+    // Get password securely
+    print!("Password: ");
+    io::stdout().flush()?;
+    let password = rpassword::read_password()
+        .context("Failed to read password")?;
+    
+    if password.is_empty() {
+        return Err(anyhow::anyhow!("Password cannot be empty"));
+    }
+    
+    println!("{}", "🔐 Authenticating with ATProto server...".cyan());
+    
+    let client = reqwest::Client::new();
+    let auth_url = format!("{}/xrpc/com.atproto.server.createSession", pds_url);
+    
+    let auth_request = serde_json::json!({
+        "identifier": handle,
+        "password": password
+    });
+    
+    let response = client
+        .post(&auth_url)
+        .header("Content-Type", "application/json")
+        .json(&auth_request)
+        .send()
+        .await?;
+    
+    if !response.status().is_success() {
+        let status = response.status();
+        let error_text = response.text().await.unwrap_or_default();
+        
+        if status.as_u16() == 401 {
+            return Err(anyhow::anyhow!("Authentication failed: Invalid handle or password"));
+        } else if status.as_u16() == 400 {
+            return Err(anyhow::anyhow!("Authentication failed: Bad request (check handle format)"));
+        } else {
+            return Err(anyhow::anyhow!("Authentication failed: {} - {}", status, error_text));
+        }
+    }
+    
+    let auth_response: serde_json::Value = response.json().await?;
+    
+    let access_jwt = auth_response["accessJwt"].as_str()
+        .ok_or_else(|| anyhow::anyhow!("No access JWT in response"))?
+        .to_string();
+        
+    let refresh_jwt = auth_response["refreshJwt"].as_str()
+        .ok_or_else(|| anyhow::anyhow!("No refresh JWT in response"))?
+        .to_string();
+    
+    println!("{}", "✅ Password authentication successful".green());
+    
+    Ok((access_jwt, refresh_jwt))
+}
+
 pub async fn status() -> Result<()> {
     let config_path = get_config_path()?;
     
@@ -200,9 +418,17 @@ pub async fn status() -> Result<()> {
     
     // Test API access
     println!("\n{}", "🧪 Testing API access...".cyan());
-    match test_api_access(&config).await {
+    match test_api_access_with_auth(&config).await {
         Ok(_) => println!("{}", "✅ API access successful".green()),
-        Err(e) => println!("{}", format!("❌ API access failed: {}", e).red()),
+        Err(e) => {
+            println!("{}", format!("❌ Authenticated API access failed: {}", e).red());
+            // Fallback to public API test
+            println!("{}", "🔄 Trying public API access...".cyan());
+            match test_api_access(&config).await {
+                Ok(_) => println!("{}", "✅ Public API access successful".green()),
+                Err(e2) => println!("{}", format!("❌ Public API access also failed: {}", e2).red()),
+            }
+        }
     }
     
     Ok(())
