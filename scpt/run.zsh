@@ -2,7 +2,7 @@
 
 function _env() {
 	d=${0:a:h}
-	ailog=$d/target/release/ailog
+	ailog=$d/target/debug/ailog
 	oauth=$d/oauth
 	myblog=$d/my-blog
 	port=4173
@@ -16,10 +16,14 @@ function _env() {
 	esac
 }
 
+function _deploy_ailog() {
+}
+
 function _server() {
 	lsof -ti:$port | xargs kill -9 2>/dev/null || true
 	cd $d/my-blog
-	cargo build --release
+	cargo build
+	cp -rf $ailog $CARGO_HOME/bin/
 	$ailog build
 	$ailog serve --port $port
 }
@@ -40,7 +44,8 @@ function _oauth_build() {
 }
 
 function _server_comment() {
-	cargo build --release
+	cargo build
+	cp -rf $ailog $CARGO_HOME/bin/
 	AILOG_DEBUG_ALL=1 $ailog stream start my-blog
 }
 

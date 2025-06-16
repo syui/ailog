@@ -86,6 +86,7 @@ fn get_config_path() -> Result<PathBuf> {
     Ok(config_dir.join("config.json"))
 }
 
+#[allow(dead_code)]
 pub async fn init() -> Result<()> {
     init_with_pds(None).await
 }
@@ -202,6 +203,7 @@ pub async fn init_with_options(
     Ok(())
 }
 
+#[allow(dead_code)]
 pub async fn init_with_pds(pds_override: Option<String>) -> Result<()> {
     println!("{}", "🔐 Initializing ATProto authentication...".cyan());
     
@@ -283,6 +285,7 @@ pub async fn init_with_pds(pds_override: Option<String>) -> Result<()> {
     Ok(())
 }
 
+#[allow(dead_code)]
 async fn resolve_did(handle: &str) -> Result<String> {
     let client = reqwest::Client::new();
     

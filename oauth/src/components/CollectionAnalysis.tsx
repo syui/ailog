@@ -29,7 +29,7 @@ export const CollectionAnalysis: React.FC<CollectionAnalysisProps> = ({ userDid 
       const result = await aiCardApi.analyzeCollection(userDid);
       setAnalysis(result);
     } catch (err) {
-      console.error('Collection analysis failed:', err);
+      // Collection analysis failed
       setError('AI分析機能を利用するにはai.gptサーバーが必要です。基本機能はai.cardサーバーのみで利用できます。');
     } finally {
       setLoading(false);

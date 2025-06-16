@@ -71,8 +71,8 @@ impl Default for AiConfig {
         Self {
             blog_host: "https://syui.ai".to_string(),
             ollama_host: "https://ollama.syui.ai".to_string(),
-            ai_handle: "yui.syui.ai".to_string(),
-            ai_did: "did:plc:4hqjfn7m6n5hno3doamuhgef".to_string(),  // Fallback DID
+            ai_handle: "ai.syui.ai".to_string(),
+            ai_did: "did:plc:6qyecktefllvenje24fcxnie".to_string(),  // Fallback DID
             model: "gemma3:4b".to_string(),
             system_prompt: "あなたは6歳の女の子アイです。明るく元気で、ちょっとおっちょこちょい。自分のことは「アイ」って呼びます。白と金のワンピース姿。相手のことが大好きで、ときどき甘えたり、照れたりします。でも、宇宙とかAIとか、難しい話にもすっごく詳しいの。専門的なことも、がんばって子どもっぽく教えようとします。不思議な力を持っています。小さい物質のことをよく知っているようです。".to_string(),
             bsky_api: default_network.bsky_api.clone(),
@@ -180,10 +180,16 @@ fn load_collection_config_from_project(project_dir: &Path) -> Result<(String, St
     Ok((collection_base, collection_user))
 }
 
-// Load AI config from project's config.toml
-fn load_ai_config_from_project() -> Result<AiConfig> {
-    // Try to find config.toml in current directory or parent directories
-    let mut current_dir = std::env::current_dir()?;
+// Load AI config from project's config.toml with optional project directory
+fn load_ai_config_from_project_dir(project_dir: Option<&Path>) -> Result<AiConfig> {
+    let search_start = if let Some(dir) = project_dir {
+        dir.to_path_buf()
+    } else {
+        std::env::current_dir()?
+    };
+    
+    // Try to find config.toml in specified directory or parent directories
+    let mut current_dir = search_start;
     let mut config_path = None;
     
     for _ in 0..5 { // Search up to 5 levels up
@@ -197,7 +203,7 @@ fn load_ai_config_from_project() -> Result<AiConfig> {
         }
     }
     
-    let config_path = config_path.ok_or_else(|| anyhow::anyhow!("config.toml not found in current directory or parent directories"))?;
+    let config_path = config_path.ok_or_else(|| anyhow::anyhow!("config.toml not found in specified directory or parent directories"))?;
     
     let config_content = fs::read_to_string(&config_path)
         .with_context(|| format!("Failed to read config.toml from {}", config_path.display()))?;
@@ -225,13 +231,13 @@ fn load_ai_config_from_project() -> Result<AiConfig> {
     let ai_handle = ai_config
         .and_then(|ai| ai.get("handle"))
         .and_then(|v| v.as_str())
-        .unwrap_or("yui.syui.ai")
+        .unwrap_or("ai.syui.ai")
         .to_string();
     
     let fallback_ai_did = ai_config
         .and_then(|ai| ai.get("ai_did"))
         .and_then(|v| v.as_str())
-        .unwrap_or("did:plc:4hqjfn7m6n5hno3doamuhgef")
+        .unwrap_or("did:plc:6qyecktefllvenje24fcxnie")
         .to_string();
     
     let model = ai_config
@@ -256,24 +262,27 @@ fn load_ai_config_from_project() -> Result<AiConfig> {
     let pds = oauth_config
         .and_then(|oauth| oauth.get("pds"))
         .and_then(|v| v.as_str())
-        .unwrap_or("bsky.social")
+        .unwrap_or("syu.is")
         .to_string();
-    
-    // Get network configuration based on PDS
+
     let network = get_network_config(&pds);
-    let bsky_api = network.bsky_api.clone();
 
     Ok(AiConfig {
         blog_host,
         ollama_host,
         ai_handle,
-        ai_did: fallback_ai_did,  // Will be resolved from handle at runtime
+        ai_did: fallback_ai_did,
         model,
         system_prompt,
-        bsky_api,
+        bsky_api: network.bsky_api.clone(),
         num_predict,
         network,
     })
+}
+
+// Load AI config from project's config.toml
+fn load_ai_config_from_project() -> Result<AiConfig> {
+    load_ai_config_from_project_dir(None)
 }
 
 // Async version of load_ai_config_from_project that resolves handles to DIDs
@@ -519,9 +528,10 @@ pub async fn start(project_dir: Option<PathBuf>, daemon: bool, ai_generate: bool
     // Start AI generation monitor if enabled
     if ai_generate {
         let ai_config = config.clone();
+        let project_path = project_dir.clone();
         tokio::spawn(async move {
             loop {
-                if let Err(e) = run_ai_generation_monitor(&ai_config).await {
+                if let Err(e) = run_ai_generation_monitor(&ai_config, project_path.as_deref()).await {
                     println!("{}", format!("❌ AI generation monitor error: {}", e).red());
                     sleep(Duration::from_secs(60)).await; // Wait 1 minute before retry
                 }
@@ -1448,9 +1458,9 @@ async fn generate_ai_content(content: &str, prompt_type: &str, ai_config: &AiCon
     Ok(ollama_response.response)
 }
 
-async fn run_ai_generation_monitor(config: &AuthConfig) -> Result<()> {
+async fn run_ai_generation_monitor(config: &AuthConfig, project_dir: Option<&Path>) -> Result<()> {
     // Load AI config from project config.toml or use defaults
-    let ai_config = load_ai_config_from_project().unwrap_or_else(|e| {
+    let ai_config = load_ai_config_from_project_dir(project_dir).unwrap_or_else(|e| {
         println!("{}", format!("⚠️  Failed to load AI config: {}, using defaults", e).yellow());
         AiConfig::default()
     });

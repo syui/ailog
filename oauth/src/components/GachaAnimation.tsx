@@ -48,7 +48,7 @@ export const GachaAnimation: React.FC<GachaAnimationProps> = ({
       await atprotoOAuthService.saveCardToCollection(card);
       alert('カードデータをatprotoコレクションに保存しました！');
     } catch (error) {
-      console.error('保存エラー:', error);
+      // Failed to save card
       alert('保存に失敗しました。認証が必要かもしれません。');
     } finally {
       setIsSharing(false);

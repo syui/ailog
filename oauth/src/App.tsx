@@ -176,7 +176,7 @@ function App() {
           });
         }
       } catch (err) {
-        console.error('Failed to load AI profile:', err);
+        // Failed to load AI profile
         // Fallback to config values
         setAiProfile({
           did: appConfig.aiDid,
@@ -221,7 +221,7 @@ function App() {
         
         // Check if handle is allowed
         if (appConfig.allowedHandles.length > 0 && !appConfig.allowedHandles.includes(handle)) {
-          console.warn(`Handle ${handle} is not in allowed list:`, appConfig.allowedHandles);
+          // Handle not in allowed list
           setError(`Access denied: ${handle} is not authorized for this application.`);
           setIsLoading(false);
           return;
@@ -252,7 +252,7 @@ function App() {
       if (verifiedUser) {
         // Check if handle is allowed
         if (appConfig.allowedHandles.length > 0 && !appConfig.allowedHandles.includes(verifiedUser.handle)) {
-          console.warn(`Handle ${verifiedUser.handle} is not in allowed list:`, appConfig.allowedHandles);
+          // Handle not in allowed list
           setError(`Access denied: ${verifiedUser.handle} is not authorized for this application.`);
           setIsLoading(false);
           return;
@@ -288,7 +288,6 @@ function App() {
   // DID解決完了時にデータを再読み込み
   useEffect(() => {
     if (adminDid && aiDid) {
-      console.log('DIDs resolved, loading comments and chat history...');
       loadAllComments();
       loadAiChatHistory();
     }
@@ -556,7 +555,6 @@ function App() {
     try {
       // 管理者のユーザーリストを取得 using proper PDS detection
       const currentAdminDid = adminDid || appConfig.adminDid;
-      console.log('loadUsersFromRecord: Using Admin DID:', currentAdminDid);
       
       // Use per-user PDS detection for admin's records
       let adminPdsEndpoint;
@@ -569,25 +567,19 @@ function App() {
       }
       
       const userCollectionUrl = `${adminPdsEndpoint}/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(currentAdminDid)}&collection=${encodeURIComponent(getCollectionNames(appConfig.collections.base).user)}&limit=100`;
-      console.log('loadUsersFromRecord: Fetching from URL:', userCollectionUrl);
       
       const response = await fetch(userCollectionUrl);
       
-      console.log('loadUsersFromRecord: Response status:', response.status);
       
       if (!response.ok) {
-        console.log('loadUsersFromRecord: Failed to fetch, using default users');
         return getDefaultUsers();
       }
       
       const data = await response.json();
       const userRecords = data.records || [];
-      console.log('loadUsersFromRecord: Found user records:', userRecords.length);
       
       if (userRecords.length === 0) {
-        console.log('loadUsersFromRecord: No user records found, using default users');
         const defaultUsers = getDefaultUsers();
-        console.log('loadUsersFromRecord: Default users:', defaultUsers);
         return defaultUsers;
       }
       
@@ -620,7 +612,6 @@ function App() {
         }
       }
       
-      console.log('loadUsersFromRecord: Resolved users:', allUsers);
       return allUsers;
     } catch (err) {
       // Failed to load users from records, using defaults
@@ -689,7 +680,6 @@ function App() {
       });
     }
     
-    console.log('getDefaultUsers: Returning default users:', defaultUsers);
     return defaultUsers;
   };
 
@@ -699,7 +689,6 @@ function App() {
       
       // ユーザーリストを動的に取得
       const knownUsers = await loadUsersFromRecord();
-      console.log('loadAllComments: Using users for comment fetching:', knownUsers);
 
       const allComments = [];
 
@@ -1247,25 +1236,6 @@ function App() {
 
   return (
     <div className="app">
-      {/* Debug Info */}
-      <div style={{ 
-        padding: '10px', 
-        backgroundColor: '#f0f0f0', 
-        border: '1px solid #ccc', 
-        marginBottom: '10px',
-        fontSize: '12px'
-      }}>
-        <strong>Debug Info:</strong><br />
-        Admin Handle: {appConfig.adminHandle}<br />
-        Admin DID (resolved): {adminDid || 'resolving...'}<br />
-        Admin DID (config): {appConfig.adminDid}<br />
-        AI Handle: {appConfig.aiHandle}<br />
-        AI DID (resolved): {aiDid || 'resolving...'}<br />
-        AI DID (config): {appConfig.aiDid}<br />
-        Collection Base: {appConfig.collections.base}<br />
-        User Collection: {appConfig.collections.base}.user<br />
-        DIDs Resolved: {adminDid && aiDid ? 'Yes' : 'No'}
-      </div>
 
       <main className="app-main">
         <section className="comment-section">

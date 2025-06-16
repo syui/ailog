@@ -32,7 +32,7 @@ export const AIProfile: React.FC<AIProfileProps> = ({ aiDid }) => {
           description: response.data.description,
         });
       } catch (error) {
-        console.error('Failed to fetch AI profile:', error);
+        // Failed to fetch AI profile
         // Fallback to basic info
         setProfile({
           did: aiDid,

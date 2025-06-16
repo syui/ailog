@@ -32,7 +32,7 @@ export const CardList: React.FC = () => {
       const data = await response.json();
       setMasterData(data);
     } catch (err) {
-      console.error('Error loading card master data:', err);
+      // Failed to load card master data
       setError(err instanceof Error ? err.message : 'Failed to load card data');
     } finally {
       setLoading(false);

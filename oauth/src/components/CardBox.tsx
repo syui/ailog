@@ -26,7 +26,7 @@ export const CardBox: React.FC<CardBoxProps> = ({ userDid }) => {
       const data = await atprotoOAuthService.getCardsFromBox();
       setBoxData(data);
     } catch (err) {
-      console.error('カードボックス読み込みエラー:', err);
+      // Failed to load card box
       setError(err instanceof Error ? err.message : 'カードボックスの読み込みに失敗しました');
     } finally {
       setLoading(false);
@@ -52,7 +52,7 @@ export const CardBox: React.FC<CardBoxProps> = ({ userDid }) => {
       setBoxData({ records: [] });
       alert('カードボックスを削除しました');
     } catch (err) {
-      console.error('カードボックス削除エラー:', err);
+      // Failed to delete card box
       setError(err instanceof Error ? err.message : 'カードボックスの削除に失敗しました');
     } finally {
       setIsDeleting(false);

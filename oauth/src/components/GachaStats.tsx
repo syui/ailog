@@ -30,7 +30,7 @@ export const GachaStats: React.FC = () => {
         try {
           result = await aiCardApi.getEnhancedStats();
         } catch (aiError) {
-          console.warn('AI統計が利用できません、基本統計に切り替えます:', aiError);
+          // AI stats unavailable, using basic stats
           setUseAI(false);
           result = await cardApi.getGachaStats();
         }
@@ -39,7 +39,7 @@ export const GachaStats: React.FC = () => {
       }
       setStats(result);
     } catch (err) {
-      console.error('Gacha stats failed:', err);
+      // Gacha stats failed
       setError('統計データの取得に失敗しました。ai.cardサーバーが起動していることを確認してください。');
     } finally {
       setLoading(false);

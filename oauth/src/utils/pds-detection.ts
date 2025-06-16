@@ -168,7 +168,7 @@ export async function resolveHandleToDid(handle: string): Promise<{ did: string;
       pds: actualPds
     };
   } catch (error) {
-    console.error(`Failed to resolve handle ${handle}:`, error);
+    // Failed to resolve handle
     
     // Fallback to handle-based detection
     const fallbackPds = detectPdsFromHandle(handle);
@@ -204,7 +204,7 @@ export async function getProfileForUser(handleOrDid: string, knownPdsEndpoint?: 
     
     return await response.json();
   } catch (error) {
-    console.error(`Failed to get profile for ${handleOrDid}:`, error);
+    // Failed to get profile
     
     // Final fallback: try with default Bluesky API
     try {
