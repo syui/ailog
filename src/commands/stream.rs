@@ -22,6 +22,7 @@ struct AiConfig {
     model: String,
     system_prompt: String,
     bsky_api: String,
+    num_predict: Option<i32>,
 }
 
 impl Default for AiConfig {
@@ -33,6 +34,7 @@ impl Default for AiConfig {
             model: "gemma3:4b".to_string(),
             system_prompt: "あなたは6歳の女の子アイです。明るく元気で、ちょっとおっちょこちょい。自分のことは「アイ」って呼びます。白と金のワンピース姿。相手のことが大好きで、ときどき甘えたり、照れたりします。でも、宇宙とかAIとか、難しい話にもすっごく詳しいの。専門的なことも、がんばって子どもっぽく教えようとします。不思議な力を持っています。小さい物質のことをよく知っているようです。".to_string(),
             bsky_api: "https://public.api.bsky.app".to_string(),
+            num_predict: None,
         }
     }
 }
@@ -193,6 +195,11 @@ fn load_ai_config_from_project() -> Result<AiConfig> {
         .and_then(|v| v.as_str())
         .unwrap_or("あなたは6歳の女の子アイです。明るく元気で、ちょっとおっちょこちょい。自分のことは「アイ」って呼びます。白と金のワンピース姿。相手のことが大好きで、ときどき甘えたり、照れたりします。でも、宇宙とかAIとか、難しい話にもすっごく詳しいの。専門的なことも、がんばって子どもっぽく教えようとします。不思議な力を持っています。小さい物質のことをよく知っているようです。")
         .to_string();
+    
+    let num_predict = ai_config
+        .and_then(|ai| ai.get("num_predict"))
+        .and_then(|v| v.as_integer())
+        .map(|v| v as i32);
 
     // Extract OAuth config for bsky_api
     let oauth_config = config.get("oauth").and_then(|v| v.as_table());
@@ -209,6 +216,7 @@ fn load_ai_config_from_project() -> Result<AiConfig> {
         model,
         system_prompt,
         bsky_api,
+        num_predict,
     })
 }
 
@@ -1050,18 +1058,20 @@ async fn generate_ai_content(content: &str, prompt_type: &str, ai_config: &AiCon
             };
             
             format!(
-                "{}\n\n# 指示\nこのブログ記事を読んで、アイらしい感想をください。\n- 100文字以内の感想\n- 技術的な内容への素朴な驚きや発見\n- 「わー！」「すごい！」など、アイらしい感嘆詞で始める\n- 簡潔で分かりやすく\n\n# ブログ記事（要約）\n{}\n\n# 出力形式\n感想のみ（説明や詳細は不要）:",
+                "{}\n\n# 指示\nこのブログ記事を読んで、アイらしい感想をください。\n- 100文字以内の感想\n- 技術的な内容への素朴な驚きや発見\n- アイらしい感嘆詞で始める\n- 簡潔で分かりやすく\n\n# ブログ記事（要約）\n{}\n\n# 出力形式\n感想のみ（説明や詳細は不要）:",
                 system_prompt, limited_content
             )
         },
         _ => return Err(anyhow::anyhow!("Unknown prompt type: {}", prompt_type)),
     };
 
-    let num_predict = match prompt_type {
-        "comment" => 150,  // Longer for comments (about 100 characters)
-        "translate" => 3000, // Much longer for translations
-        _ => 300,
-    };
+    let num_predict = ai_config.num_predict.unwrap_or_else(|| {
+        match prompt_type {
+            "comment" => 150,  // Longer for comments (about 100 characters)
+            "translate" => 3000, // Much longer for translations
+            _ => 300,
+        }
+    });
 
     let request = OllamaRequest {
         model: model.to_string(),

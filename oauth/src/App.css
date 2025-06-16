@@ -193,8 +193,8 @@
   }
   
   .comment-section {
-    padding: 0px !important;
-    margin: 0px !important;
+				padding: 30px 0 !important;
+				margin: 0px !important;
   }
   
   .comment-content {
@@ -350,6 +350,38 @@
   text-align: center;
 }
 
+.auth-section.search-bar-layout {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  gap: 10px;
+}
+
+.auth-section.search-bar-layout .handle-input {
+  flex: 1;
+  margin: 0;
+  padding: 10px 15px;
+  font-size: 16px;
+  border: 1px solid #dee2e6;
+  border-radius: 6px 0 0 6px;
+  background: white;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.auth-section.search-bar-layout .handle-input:focus {
+  border-color: var(--theme-color);
+}
+
+.auth-section.search-bar-layout .atproto-button {
+  margin: 0;
+  padding: 10px 20px;
+  border-radius: 0 6px 6px 0;
+  min-width: 50px;
+  font-weight: bold;
+  height: auto;
+}
+
 .atproto-button {
   background: var(--theme-color);
   color: var(--white);
@@ -381,6 +413,30 @@
   border-radius: 6px;
   font-size: 14px;
   text-align: center;
+}
+
+/* Override for search bar layout */
+.search-bar-layout .handle-input {
+  width: auto;
+  text-align: left;
+}
+
+/* Mobile responsive for search bar */
+@media (max-width: 480px) {
+  .auth-section.search-bar-layout {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .auth-section.search-bar-layout .handle-input {
+    width: 100%;
+    border-radius: 6px;
+  }
+  
+  .auth-section.search-bar-layout .atproto-button {
+    width: 100%;
+    border-radius: 6px;
+  }
 }
 
 .auth-hint {

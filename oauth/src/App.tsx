@@ -1054,30 +1054,28 @@ function App() {
         <section className="comment-section">
           {/* Authentication Section */}
           {!user ? (
-            <div className="auth-section">
+            <div className="auth-section search-bar-layout">
+              <input 
+                type="text" 
+                id="handle-input"
+                name="handle"
+                placeholder="user.bsky.social" 
+                className="handle-input"
+                value={handleInput}
+                onChange={(e) => setHandleInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    executeOAuth();
+                  }
+                }}
+              />
               <button 
                 onClick={executeOAuth}
                 className="atproto-button"
               >
-                atproto
+                <i class="fab fa-bluesky"></i>
               </button>
-              <div className="username-input-section">
-                <input 
-                  type="text" 
-                  id="handle-input"
-                  name="handle"
-                  placeholder="user.bsky.social" 
-                  className="handle-input"
-                  value={handleInput}
-                  onChange={(e) => setHandleInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      executeOAuth();
-                    }
-                  }}
-                />
-              </div>
             </div>
           ) : (
             <div className="user-section">

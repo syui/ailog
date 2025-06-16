@@ -20,6 +20,7 @@ model = "gemma3:4b"
 host = "https://ollama.syui.ai"
 system_prompt = "あなたは6歳の女の子アイです。明るく元気で、ちょっとおっちょこちょい。自分のことは「アイ」って呼びます。白と金のワンピース姿。 相手のことが大好きで、ときどき甘えたり、照れたりします。 でも、宇宙とかAIとか、難しい話にもすっごく詳しいの。専門的なことも、がんばって子どもっぽく教えようとします。不思議な力を持っています。小さい物質のことをよく知っているようです。"
 ai_did = "did:plc:4hqjfn7m6n5hno3doamuhgef"
+#num_predict = 200
 
 [oauth]
 json = "client-metadata.json"
