@@ -3,6 +3,8 @@ use std::path::{Path, PathBuf};
 use std::fs;
 use std::process::Command;
 use toml::Value;
+use serde_json;
+use reqwest;
 
 pub async fn build(project_dir: PathBuf) -> Result<()> {
     println!("Building OAuth app for project: {}", project_dir.display());
@@ -41,20 +43,28 @@ pub async fn build(project_dir: PathBuf) -> Result<()> {
         .and_then(|v| v.as_str())
         .unwrap_or("oauth/callback");
 
-    let admin_did = oauth_config.get("admin")
+    // Get admin handle instead of DID
+    let admin_handle = oauth_config.get("admin")
         .and_then(|v| v.as_str())
-        .ok_or_else(|| anyhow::anyhow!("No admin DID found in [oauth] section"))?;
+        .ok_or_else(|| anyhow::anyhow!("No admin handle found in [oauth] section"))?;
 
     let collection_base = oauth_config.get("collection")
         .and_then(|v| v.as_str())
         .unwrap_or("ai.syui.log");
 
+    // Get handle list for authentication restriction
+    let handle_list = oauth_config.get("handle_list")
+        .and_then(|v| v.as_array())
+        .map(|arr| arr.iter().filter_map(|v| v.as_str()).collect::<Vec<&str>>())
+        .unwrap_or_else(|| vec![]);
+
     // Extract AI configuration from ai config if available
     let ai_config = config.get("ai").and_then(|v| v.as_table());
-    let ai_did = ai_config
-        .and_then(|ai_table| ai_table.get("ai_did"))
+    // Get AI handle from config
+    let ai_handle = ai_config
+        .and_then(|ai_table| ai_table.get("ai_handle"))
         .and_then(|v| v.as_str())
-        .unwrap_or("did:plc:4hqjfn7m6n5hno3doamuhgef");
+        .unwrap_or("yui.syui.ai");
     let ai_enabled = ai_config
         .and_then(|ai_table| ai_table.get("enabled"))
         .and_then(|v| v.as_bool())
@@ -80,26 +90,55 @@ pub async fn build(project_dir: PathBuf) -> Result<()> {
         .and_then(|v| v.as_str())
         .unwrap_or("あなたは6歳の女の子アイです。明るく元気で、ちょっとおっちょこちょい。自分のことは「アイ」って呼びます。白と金のワンピース姿。 相手のことが大好きで、ときどき甘えたり、照れたりします。 でも、宇宙とかAIとか、難しい話にもすっごく詳しいの。専門的なことも、がんばって子どもっぽく教えようとします。不思議な力を持っています。小さい物質のことをよく知っているようです。");
 
-    // Extract bsky_api from oauth config
-    let bsky_api = oauth_config.get("bsky_api")
+    // Determine network configuration based on PDS
+    let pds = oauth_config.get("pds")
         .and_then(|v| v.as_str())
-        .unwrap_or("https://public.api.bsky.app");
+        .unwrap_or("bsky.social");
     
-    // Extract atproto_api from oauth config
-    let atproto_api = oauth_config.get("atproto_api")
-        .and_then(|v| v.as_str())
-        .unwrap_or("https://bsky.social");
+    let (bsky_api, _atproto_api, web_url) = match pds {
+        "syu.is" => (
+            "https://bsky.syu.is",
+            "https://syu.is",
+            "https://web.syu.is"
+        ),
+        "bsky.social" | "bsky.app" => (
+            "https://public.api.bsky.app",
+            "https://bsky.social",
+            "https://bsky.app"
+        ),
+        _ => (
+            "https://public.api.bsky.app",
+            "https://bsky.social",
+            "https://bsky.app"
+        )
+    };
 
-    // 4. Create .env.production content
+    // Resolve handles to DIDs using appropriate API
+    println!("🔍 Resolving admin handle: {}", admin_handle);
+    let admin_did = resolve_handle_to_did(admin_handle, &bsky_api).await
+        .with_context(|| format!("Failed to resolve admin handle: {}", admin_handle))?;
+    
+    println!("🔍 Resolving AI handle: {}", ai_handle);
+    let ai_did = resolve_handle_to_did(ai_handle, &bsky_api).await
+        .with_context(|| format!("Failed to resolve AI handle: {}", ai_handle))?;
+    
+    println!("✅ Admin DID: {}", admin_did);
+    println!("✅ AI DID: {}", ai_did);
+
+    // 4. Create .env.production content with handle-based configuration
     let env_content = format!(
         r#"# Production environment variables
 VITE_APP_HOST={}
 VITE_OAUTH_CLIENT_ID={}/{}
 VITE_OAUTH_REDIRECT_URI={}/{}
-VITE_ADMIN_DID={}
 
-# Base collection (all others are derived via getCollectionNames)
+# Handle-based Configuration (DIDs resolved at runtime)
+VITE_ATPROTO_PDS={}
+VITE_ADMIN_HANDLE={}
+VITE_AI_HANDLE={}
 VITE_OAUTH_COLLECTION={}
+VITE_ATPROTO_WEB_URL={}
+VITE_ATPROTO_HANDLE_LIST={}
 
 # AI Configuration
 VITE_AI_ENABLED={}
@@ -108,26 +147,28 @@ VITE_AI_PROVIDER={}
 VITE_AI_MODEL={}
 VITE_AI_HOST={}
 VITE_AI_SYSTEM_PROMPT="{}"
-VITE_AI_DID={}
 
-# API Configuration
-VITE_BSKY_PUBLIC_API={}
-VITE_ATPROTO_API={}
+# DIDs (resolved from handles - for backward compatibility)
+#VITE_ADMIN_DID={}
+#VITE_AI_DID={}
 "#,
         base_url,
         base_url, client_id_path,
         base_url, redirect_path,
-        admin_did,
+        pds,
+        admin_handle,
+        ai_handle,
         collection_base,
+        web_url,
+        format!("[{}]", handle_list.iter().map(|h| format!("\"{}\"", h)).collect::<Vec<_>>().join(",")),
         ai_enabled,
         ai_ask_ai,
         ai_provider,
         ai_model,
         ai_host,
         ai_system_prompt,
-        ai_did,
-        bsky_api,
-        atproto_api
+        admin_did,
+        ai_did
     );
 
     // 5. Find oauth directory (relative to current working directory)
@@ -238,4 +279,60 @@ fn copy_dir_recursive(src: &Path, dst: &Path) -> Result<()> {
     }
 
     Ok(())
+}
+
+// Handle-to-DID resolution with proper PDS detection
+async fn resolve_handle_to_did(handle: &str, _api_base: &str) -> Result<String> {
+    let client = reqwest::Client::new();
+    
+    // First, try to resolve handle to DID using multiple endpoints
+    let bsky_endpoints = ["https://public.api.bsky.app", "https://bsky.syu.is"];
+    let mut resolved_did = None;
+    
+    for endpoint in &bsky_endpoints {
+        let url = format!("{}/xrpc/app.bsky.actor.getProfile?actor={}", 
+                         endpoint, urlencoding::encode(handle));
+        
+        if let Ok(response) = client.get(&url).send().await {
+            if response.status().is_success() {
+                if let Ok(profile) = response.json::<serde_json::Value>().await {
+                    if let Some(did) = profile["did"].as_str() {
+                        resolved_did = Some(did.to_string());
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    
+    let did = resolved_did
+        .ok_or_else(|| anyhow::anyhow!("Failed to resolve handle '{}' from any endpoint", handle))?;
+    
+    // Now verify the DID and get actual PDS using com.atproto.repo.describeRepo
+    let pds_endpoints = ["https://bsky.social", "https://syu.is"];
+    
+    for pds in &pds_endpoints {
+        let describe_url = format!("{}/xrpc/com.atproto.repo.describeRepo?repo={}", 
+                                 pds, urlencoding::encode(&did));
+        
+        if let Ok(response) = client.get(&describe_url).send().await {
+            if response.status().is_success() {
+                if let Ok(data) = response.json::<serde_json::Value>().await {
+                    if let Some(services) = data["didDoc"]["service"].as_array() {
+                        if services.iter().any(|s| 
+                            s["id"] == "#atproto_pds" || s["type"] == "AtprotoPersonalDataServer"
+                        ) {
+                            // DID is valid and has PDS service
+                            println!("✅ Verified DID {} has PDS via {}", did, pds);
+                            return Ok(did);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    // If PDS verification fails, still return the DID but warn
+    println!("⚠️  Could not verify PDS for DID {}, but proceeding...", did);
+    Ok(did)
 }

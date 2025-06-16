@@ -7,8 +7,6 @@ interface OAuthCallbackProps {
 }
 
 export const OAuthCallback: React.FC<OAuthCallbackProps> = ({ onSuccess, onError }) => {
-  console.log('=== OAUTH CALLBACK COMPONENT MOUNTED ===');
-  console.log('Current URL:', window.location.href);
   
   const [isProcessing, setIsProcessing] = useState(true);
   const [needsHandle, setNeedsHandle] = useState(false);
@@ -18,12 +16,10 @@ export const OAuthCallback: React.FC<OAuthCallbackProps> = ({ onSuccess, onError
   useEffect(() => {
     // Add timeout to prevent infinite loading
     const timeoutId = setTimeout(() => {
-      console.error('OAuth callback timeout');
       onError('OAuth認証がタイムアウトしました');
     }, 10000); // 10 second timeout
 
     const handleCallback = async () => {
-      console.log('=== HANDLE CALLBACK STARTED ===');
       try {
         // Handle both query params (?) and hash params (#)
         const hashParams = new URLSearchParams(window.location.hash.substring(1));
@@ -35,14 +31,6 @@ export const OAuthCallback: React.FC<OAuthCallbackProps> = ({ onSuccess, onError
         const error = hashParams.get('error') || queryParams.get('error');
         const iss = hashParams.get('iss') || queryParams.get('iss');
         
-        console.log('OAuth callback parameters:', {
-          code: code ? code.substring(0, 20) + '...' : null,
-          state: state,
-          error: error,
-          iss: iss,
-          hash: window.location.hash,
-          search: window.location.search
-        });
 
         if (error) {
           throw new Error(`OAuth error: ${error}`);
@@ -52,12 +40,10 @@ export const OAuthCallback: React.FC<OAuthCallbackProps> = ({ onSuccess, onError
           throw new Error('Missing OAuth parameters');
         }
 
-        console.log('Processing OAuth callback with params:', { code: code?.substring(0, 10) + '...', state, iss });
         
         // Use the official BrowserOAuthClient to handle the callback
         const result = await atprotoOAuthService.handleOAuthCallback();
         if (result) {
-          console.log('OAuth callback completed successfully:', result);
           
           // Success - notify parent component
           onSuccess(result.did, result.handle);
@@ -66,11 +52,7 @@ export const OAuthCallback: React.FC<OAuthCallbackProps> = ({ onSuccess, onError
         }
         
       } catch (error) {
-        console.error('OAuth callback error:', error);
-        
         // Even if OAuth fails, try to continue with a fallback approach
-        console.warn('OAuth callback failed, attempting fallback...');
-        
         try {
           // Create a minimal session to allow the user to proceed
           const fallbackSession = {
@@ -82,7 +64,6 @@ export const OAuthCallback: React.FC<OAuthCallbackProps> = ({ onSuccess, onError
           onSuccess(fallbackSession.did, fallbackSession.handle);
           
         } catch (fallbackError) {
-          console.error('Fallback also failed:', fallbackError);
           onError(error instanceof Error ? error.message : 'OAuth認証に失敗しました');
         }
       } finally {
@@ -104,17 +85,13 @@ export const OAuthCallback: React.FC<OAuthCallbackProps> = ({ onSuccess, onError
     
     const trimmedHandle = handle.trim();
     if (!trimmedHandle) {
-      console.log('Handle is empty');
       return;
     }
-    
-    console.log('Submitting handle:', trimmedHandle);
     setIsProcessing(true);
     
     try {
       // Resolve DID from handle
       const did = await atprotoOAuthService.resolveDIDFromHandle(trimmedHandle);
-      console.log('Resolved DID:', did);
       
       // Update session with resolved DID and handle
       const updatedSession = {
@@ -129,7 +106,6 @@ export const OAuthCallback: React.FC<OAuthCallbackProps> = ({ onSuccess, onError
       // Success - notify parent component
       onSuccess(did, trimmedHandle);
     } catch (error) {
-      console.error('Failed to resolve DID:', error);
       setIsProcessing(false);
       onError(error instanceof Error ? error.message : 'ハンドルからDIDの解決に失敗しました');
     }
@@ -149,7 +125,6 @@ export const OAuthCallback: React.FC<OAuthCallbackProps> = ({ onSuccess, onError
               type="text"
               value={handle}
               onChange={(e) => {
-                console.log('Input changed:', e.target.value);
                 setHandle(e.target.value);
               }}
               placeholder="例: syui.ai または user.bsky.social"

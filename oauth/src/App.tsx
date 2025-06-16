@@ -4,6 +4,7 @@ import { AIChat } from './components/AIChat';
 import { authService, User } from './services/auth';
 import { atprotoOAuthService } from './services/atproto-oauth';
 import { appConfig, getCollectionNames } from './config/app';
+import { getProfileForUser, detectPdsFromHandle, getApiUrlForUser, verifyPdsDetection, getNetworkConfigFromPdsEndpoint, getNetworkConfig } from './utils/pds-detection';
 import './App.css';
 
 function App() {
@@ -90,19 +91,62 @@ function App() {
     // Load AI chat history (認証状態に関係なく、全ユーザーのチャット履歴を表示)
     loadAiChatHistory();
     
-    // Load AI profile
-    const fetchAiProfile = async () => {
+    // Load AI profile from handle
+    const loadAiProfile = async () => {
       try {
-        const response = await fetch(`${appConfig.bskyPublicApi}/xrpc/app.bsky.actor.getProfile?actor=${encodeURIComponent(appConfig.aiDid)}`);
-        if (response.ok) {
-          const data = await response.json();
-          setAiProfile(data);
+        // Use VITE_AI_HANDLE to detect PDS and get profile
+        const handle = appConfig.aiHandle;
+        if (!handle) {
+          throw new Error('No AI handle configured');
+        }
+
+        // Detect PDS: Use VITE_ATPROTO_PDS if handle matches admin/ai handles
+        let pds;
+        if (handle === appConfig.adminHandle || handle === appConfig.aiHandle) {
+          // Use configured PDS for admin/ai handles
+          pds = appConfig.atprotoPds || 'syu.is';
+        } else {
+          // Use handle-based detection for other handles
+          pds = detectPdsFromHandle(handle);
+        }
+        
+        const config = getNetworkConfigFromPdsEndpoint(`https://${pds}`);
+        const apiEndpoint = config.bskyApi;
+
+        // Get profile from appropriate bsky API
+        const profileResponse = await fetch(`${apiEndpoint}/xrpc/app.bsky.actor.getProfile?actor=${encodeURIComponent(handle)}`);
+        if (profileResponse.ok) {
+          const profileData = await profileResponse.json();
+          setAiProfile({
+            did: profileData.did || appConfig.aiDid,
+            handle: profileData.handle || handle,
+            displayName: profileData.displayName || appConfig.aiDisplayName || 'ai',
+            avatar: profileData.avatar || generatePlaceholderAvatar(handle),
+            description: profileData.description || appConfig.aiDescription || ''
+          });
+        } else {
+          // Fallback to config values
+          setAiProfile({
+            did: appConfig.aiDid,
+            handle: handle,
+            displayName: appConfig.aiDisplayName || 'ai',
+            avatar: generatePlaceholderAvatar(handle),
+            description: appConfig.aiDescription || ''
+          });
         }
       } catch (err) {
-        // Use default values if fetch fails
+        console.error('Failed to load AI profile:', err);
+        // Fallback to config values
+        setAiProfile({
+          did: appConfig.aiDid,
+          handle: appConfig.aiHandle,
+          displayName: appConfig.aiDisplayName || 'ai',
+          avatar: generatePlaceholderAvatar(appConfig.aiHandle || 'ai'),
+          description: appConfig.aiDescription || ''
+        });
       }
     };
-    fetchAiProfile();
+    loadAiProfile();
 
     // Handle popstate events for mock OAuth flow
     const handlePopState = () => {
@@ -134,6 +178,14 @@ function App() {
         // Ensure handle is not DID
         const handle = oauthResult.handle !== oauthResult.did ? oauthResult.handle : oauthResult.handle;
         
+        // Check if handle is allowed
+        if (appConfig.allowedHandles.length > 0 && !appConfig.allowedHandles.includes(handle)) {
+          console.warn(`Handle ${handle} is not in allowed list:`, appConfig.allowedHandles);
+          setError(`Access denied: ${handle} is not authorized for this application.`);
+          setIsLoading(false);
+          return;
+        }
+        
         // Get user profile including avatar
         const userProfile = await getUserProfile(oauthResult.did, handle);
         setUser(userProfile);
@@ -157,6 +209,14 @@ function App() {
       // Fallback to legacy auth
       const verifiedUser = await authService.verify();
       if (verifiedUser) {
+        // Check if handle is allowed
+        if (appConfig.allowedHandles.length > 0 && !appConfig.allowedHandles.includes(verifiedUser.handle)) {
+          console.warn(`Handle ${verifiedUser.handle} is not in allowed list:`, appConfig.allowedHandles);
+          setError(`Access denied: ${verifiedUser.handle} is not authorized for this application.`);
+          setIsLoading(false);
+          return;
+        }
+        
         setUser(verifiedUser);
         
         // Load all comments for display (this will be the default view)
@@ -225,8 +285,17 @@ function App() {
       const atprotoApi = appConfig.atprotoApi || 'https://bsky.social';
       const collections = getCollectionNames(appConfig.collections.base);
       
-      // First, get user list from admin
-      const userListResponse = await fetch(`${atprotoApi}/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(adminDid)}&collection=${encodeURIComponent(collections.user)}&limit=100`);
+      // First, get user list from admin using their proper PDS
+      let adminPdsEndpoint;
+      try {
+        const resolved = await import('./utils/pds-detection').then(m => m.resolvePdsFromRepo(adminDid));
+        const config = await import('./utils/pds-detection').then(m => m.getNetworkConfigFromPdsEndpoint(resolved.pds));
+        adminPdsEndpoint = config.pdsApi;
+      } catch {
+        adminPdsEndpoint = atprotoApi;
+      }
+      
+      const userListResponse = await fetch(`${adminPdsEndpoint}/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(adminDid)}&collection=${encodeURIComponent(collections.user)}&limit=100`);
       
       if (!userListResponse.ok) {
         setAiChatHistory([]);
@@ -253,11 +322,21 @@ function App() {
       
       const userDids = [...new Set(allUserDids)];
       
-      // Load chat records from all registered users (including admin)
+      // Load chat records from all registered users (including admin) using per-user PDS detection
       const allChatRecords = [];
       for (const userDid of userDids) {
         try {
-          const chatResponse = await fetch(`${atprotoApi}/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(userDid)}&collection=${encodeURIComponent(collections.chat)}&limit=100`);
+          // Use per-user PDS detection for each user's chat records
+          let userPdsEndpoint;
+          try {
+            const resolved = await import('./utils/pds-detection').then(m => m.resolvePdsFromRepo(userDid));
+            const config = await import('./utils/pds-detection').then(m => m.getNetworkConfigFromPdsEndpoint(resolved.pds));
+            userPdsEndpoint = config.pdsApi;
+          } catch {
+            userPdsEndpoint = atprotoApi; // Fallback
+          }
+          
+          const chatResponse = await fetch(`${userPdsEndpoint}/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(userDid)}&collection=${encodeURIComponent(collections.chat)}&limit=100`);
           
           if (chatResponse.ok) {
             const chatData = await chatResponse.json();
@@ -366,26 +445,49 @@ function App() {
       });
       const userComments = response.data.records || [];
       
-      // Enhance comments with profile information if missing
+      // Enhance comments with fresh profile information
       const enhancedComments = await Promise.all(
         userComments.map(async (record) => {
-          if (!record.value.author?.avatar && record.value.author?.handle) {
+          if (record.value.author?.handle) {
             try {
-              const profile = await agent.getProfile({ actor: record.value.author.handle });
-              return {
-                ...record,
-                value: {
-                  ...record.value,
-                  author: {
-                    ...record.value.author,
-                    avatar: profile.data.avatar,
-                    displayName: profile.data.displayName || record.value.author.handle,
+              // Use existing PDS detection logic
+              const handle = record.value.author.handle;
+              const pds = detectPdsFromHandle(handle);
+              const config = getNetworkConfigFromPdsEndpoint(`https://${pds}`);
+              const apiEndpoint = config.bskyApi;
+              
+              const profileResponse = await fetch(`${apiEndpoint}/xrpc/app.bsky.actor.getProfile?actor=${encodeURIComponent(handle)}`);
+              if (profileResponse.ok) {
+                const profileData = await profileResponse.json();
+                return {
+                  ...record,
+                  value: {
+                    ...record.value,
+                    author: {
+                      ...record.value.author,
+                      avatar: profileData.avatar,
+                      displayName: profileData.displayName || handle,
+                      _pdsEndpoint: `https://${pds}`, // Store PDS info for later use
+                      _webUrl: config.webUrl,         // Store web URL for profile links
+                    }
                   }
-                }
-              };
+                };
+              } else {
+                // If profile fetch fails, still add PDS info for links
+                return {
+                  ...record,
+                  value: {
+                    ...record.value,
+                    author: {
+                      ...record.value.author,
+                      _pdsEndpoint: `https://${pds}`,
+                      _webUrl: config.webUrl,
+                    }
+                  }
+                };
+              }
             } catch (err) {
-              // Ignore enhancement errors
-              return record;
+              // Ignore enhancement errors, use existing data
             }
           }
           return record;
@@ -402,10 +504,20 @@ function App() {
   // JSONからユーザーリストを取得
   const loadUsersFromRecord = async () => {
     try {
-      // 管理者のユーザーリストを取得
+      // 管理者のユーザーリストを取得 using proper PDS detection
       const adminDid = appConfig.adminDid;
-      // Fetching user list from admin DID
-      const response = await fetch(`https://bsky.social/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(adminDid)}&collection=${encodeURIComponent(getCollectionNames(appConfig.collections.base).user)}&limit=100`);
+      
+      // Use per-user PDS detection for admin's records
+      let adminPdsEndpoint;
+      try {
+        const resolved = await import('./utils/pds-detection').then(m => m.resolvePdsFromRepo(adminDid));
+        const config = await import('./utils/pds-detection').then(m => m.getNetworkConfigFromPdsEndpoint(resolved.pds));
+        adminPdsEndpoint = config.pdsApi;
+      } catch {
+        adminPdsEndpoint = 'https://bsky.social'; // Fallback
+      }
+      
+      const response = await fetch(`${adminPdsEndpoint}/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(adminDid)}&collection=${encodeURIComponent(getCollectionNames(appConfig.collections.base).user)}&limit=100`);
       
       if (!response.ok) {
         // Failed to fetch user list from admin, using default users
@@ -429,18 +541,15 @@ function App() {
           const resolvedUsers = await Promise.all(
             record.value.users.map(async (user) => {
               if (user.did && user.did.includes('-placeholder')) {
-                // Resolving placeholder DID
+                // Resolving placeholder DID using proper PDS detection
                 try {
-                  const profileResponse = await fetch(`${appConfig.bskyPublicApi}/xrpc/app.bsky.actor.getProfile?actor=${encodeURIComponent(user.handle)}`);
-                  if (profileResponse.ok) {
-                    const profileData = await profileResponse.json();
-                    if (profileData.did) {
-                      // Resolved DID
-                      return {
-                        ...user,
-                        did: profileData.did
-                      };
-                    }
+                  const profile = await import('./utils/pds-detection').then(m => m.getProfileForUser(user.handle));
+                  if (profile && profile.did) {
+                    // Resolved DID
+                    return {
+                      ...user,
+                      did: profile.did
+                    };
                   }
                 } catch (err) {
                   // Failed to resolve DID
@@ -464,9 +573,20 @@ function App() {
   // ユーザーリスト一覧を読み込み
   const loadUserListRecords = async () => {
     try {
-      // Loading user list records
+      // Loading user list records using proper PDS detection
       const adminDid = appConfig.adminDid;
-      const response = await fetch(`https://bsky.social/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(adminDid)}&collection=${encodeURIComponent(getCollectionNames(appConfig.collections.base).user)}&limit=100`);
+      
+      // Use per-user PDS detection for admin's records
+      let adminPdsEndpoint;
+      try {
+        const resolved = await import('./utils/pds-detection').then(m => m.resolvePdsFromRepo(adminDid));
+        const config = await import('./utils/pds-detection').then(m => m.getNetworkConfigFromPdsEndpoint(resolved.pds));
+        adminPdsEndpoint = config.pdsApi;
+      } catch {
+        adminPdsEndpoint = 'https://bsky.social'; // Fallback
+      }
+      
+      const response = await fetch(`${adminPdsEndpoint}/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(adminDid)}&collection=${encodeURIComponent(getCollectionNames(appConfig.collections.base).user)}&limit=100`);
       
       if (!response.ok) {
         // Failed to fetch user list records
@@ -522,9 +642,19 @@ function App() {
       for (const user of knownUsers) {
         try {
           
-          // Public API使用（認証不要）
+          // Use per-user PDS detection for repo operations
+          let pdsEndpoint;
+          try {
+            const resolved = await import('./utils/pds-detection').then(m => m.resolvePdsFromRepo(user.did));
+            const config = await import('./utils/pds-detection').then(m => m.getNetworkConfigFromPdsEndpoint(resolved.pds));
+            pdsEndpoint = config.pdsApi;
+          } catch {
+            // Fallback to user.pds if PDS detection fails
+            pdsEndpoint = user.pds;
+          }
+          
           const collections = getCollectionNames(appConfig.collections.base);
-          const response = await fetch(`${user.pds}/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(user.did)}&collection=${encodeURIComponent(collections.comment)}&limit=100`);
+          const response = await fetch(`${pdsEndpoint}/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(user.did)}&collection=${encodeURIComponent(collections.comment)}&limit=100`);
           
           if (!response.ok) {
             continue;
@@ -580,19 +710,18 @@ function App() {
         sortedComments.map(async (record) => {
           if (!record.value.author?.avatar && record.value.author?.handle) {
             try {
-              // Public API でプロフィール取得
-              const profileResponse = await fetch(`${appConfig.bskyPublicApi}/xrpc/app.bsky.actor.getProfile?actor=${encodeURIComponent(record.value.author.handle)}`);
+              // Use per-user PDS detection for profile fetching
+              const profile = await import('./utils/pds-detection').then(m => m.getProfileForUser(record.value.author.handle));
               
-              if (profileResponse.ok) {
-                const profileData = await profileResponse.json();
+              if (profile) {
                 return {
                   ...record,
                   value: {
                     ...record.value,
                     author: {
                       ...record.value.author,
-                      avatar: profileData.avatar,
-                      displayName: profileData.displayName || record.value.author.handle,
+                      avatar: profile.avatar,
+                      displayName: profile.displayName || record.value.author.handle,
                     }
                   }
                 };
@@ -908,12 +1037,16 @@ function App() {
   };
 
   // ユーザーハンドルからプロフィールURLを生成
-  const generateProfileUrl = (handle: string, did: string): string => {
-    if (handle.endsWith('.syu.is')) {
-      return `https://web.syu.is/profile/${did}`;
-    } else {
-      return `https://bsky.app/profile/${did}`;
+  const generateProfileUrl = (author: any): string => {
+    // Use stored PDS info if available (from comment enhancement)
+    if (author._webUrl) {
+      return `${author._webUrl}/profile/${author.did}`;
     }
+    
+    // Fallback to handle-based detection
+    const pds = detectPdsFromHandle(author.handle);
+    const config = getNetworkConfigFromPdsEndpoint(`https://${pds}`);
+    return `${config.webUrl}/profile/${author.did}`;
   };
 
   // Rkey-based comment filtering
@@ -1229,31 +1362,16 @@ function App() {
                 <div key={index} className="comment-item">
                   <div className="comment-header">
                     <img 
-                      src={generatePlaceholderAvatar(record.value.author?.handle || 'unknown')} 
+                      src={record.value.author?.avatar || generatePlaceholderAvatar(record.value.author?.handle || 'unknown')} 
                       alt="User Avatar" 
                       className="comment-avatar"
-                      ref={(img) => {
-                        // Fetch fresh avatar from API when component mounts
-                        if (img && record.value.author?.did) {
-                          fetch(`${appConfig.bskyPublicApi}/xrpc/app.bsky.actor.getProfile?actor=${encodeURIComponent(record.value.author.did)}`)
-                            .then(res => res.json())
-                            .then(data => {
-                              if (data.avatar && img) {
-                                img.src = data.avatar;
-                              }
-                            })
-                            .catch(err => {
-                              // Keep placeholder on error
-                            });
-                        }
-                      }}
                     />
                     <div className="comment-author-info">
                       <span className="comment-author">
                         {record.value.author?.displayName || record.value.author?.handle || 'unknown'}
                       </span>
                       <a 
-                        href={generateProfileUrl(record.value.author?.handle || '', record.value.author?.did || '')}
+                        href={generateProfileUrl(record.value.author)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="comment-handle"
@@ -1356,7 +1474,7 @@ function App() {
                             {displayName || 'unknown'}
                           </span>
                           <a 
-                            href={generateProfileUrl(displayHandle || '', displayDid || '')}
+                            href={generateProfileUrl({ handle: displayHandle, did: displayDid })}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="comment-handle"

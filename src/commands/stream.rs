@@ -14,27 +14,70 @@ use reqwest;
 
 use super::auth::{load_config, load_config_with_refresh, AuthConfig};
 
+// PDS-based network configuration mapping
+fn get_network_config(pds: &str) -> NetworkConfig {
+    match pds {
+        "bsky.social" | "bsky.app" => NetworkConfig {
+            pds_api: format!("https://{}", pds),
+            plc_api: "https://plc.directory".to_string(),
+            bsky_api: "https://public.api.bsky.app".to_string(),
+            web_url: "https://bsky.app".to_string(),
+        },
+        "syu.is" => NetworkConfig {
+            pds_api: "https://syu.is".to_string(),
+            plc_api: "https://plc.syu.is".to_string(),
+            bsky_api: "https://bsky.syu.is".to_string(),
+            web_url: "https://web.syu.is".to_string(),
+        },
+        _ => {
+            // Default to Bluesky network for unknown PDS
+            NetworkConfig {
+                pds_api: format!("https://{}", pds),
+                plc_api: "https://plc.directory".to_string(),
+                bsky_api: "https://public.api.bsky.app".to_string(),
+                web_url: "https://bsky.app".to_string(),
+            }
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+#[allow(dead_code)]
+struct NetworkConfig {
+    pds_api: String,
+    plc_api: String,
+    bsky_api: String,
+    web_url: String,
+}
+
 #[derive(Debug, Clone)]
 struct AiConfig {
     blog_host: String,
     ollama_host: String,
-    ai_did: String,
+    #[allow(dead_code)]
+    ai_handle: String,
+    ai_did: String,  // Resolved from ai_handle at runtime
     model: String,
     system_prompt: String,
+    #[allow(dead_code)]
     bsky_api: String,
     num_predict: Option<i32>,
+    network: NetworkConfig,
 }
 
 impl Default for AiConfig {
     fn default() -> Self {
+        let default_network = get_network_config("bsky.social");
         Self {
             blog_host: "https://syui.ai".to_string(),
             ollama_host: "https://ollama.syui.ai".to_string(),
-            ai_did: "did:plc:4hqjfn7m6n5hno3doamuhgef".to_string(),
+            ai_handle: "yui.syui.ai".to_string(),
+            ai_did: "did:plc:4hqjfn7m6n5hno3doamuhgef".to_string(),  // Fallback DID
             model: "gemma3:4b".to_string(),
             system_prompt: "あなたは6歳の女の子アイです。明るく元気で、ちょっとおっちょこちょい。自分のことは「アイ」って呼びます。白と金のワンピース姿。相手のことが大好きで、ときどき甘えたり、照れたりします。でも、宇宙とかAIとか、難しい話にもすっごく詳しいの。専門的なことも、がんばって子どもっぽく教えようとします。不思議な力を持っています。小さい物質のことをよく知っているようです。".to_string(),
-            bsky_api: "https://public.api.bsky.app".to_string(),
+            bsky_api: default_network.bsky_api.clone(),
             num_predict: None,
+            network: default_network,
         }
     }
 }
@@ -178,7 +221,14 @@ fn load_ai_config_from_project() -> Result<AiConfig> {
         .unwrap_or("https://ollama.syui.ai")
         .to_string();
     
-    let ai_did = ai_config
+    // Read AI handle (preferred) or fallback to AI DID
+    let ai_handle = ai_config
+        .and_then(|ai| ai.get("ai_handle"))
+        .and_then(|v| v.as_str())
+        .unwrap_or("yui.syui.ai")
+        .to_string();
+    
+    let fallback_ai_did = ai_config
         .and_then(|ai| ai.get("ai_did"))
         .and_then(|v| v.as_str())
         .unwrap_or("did:plc:4hqjfn7m6n5hno3doamuhgef")
@@ -201,23 +251,48 @@ fn load_ai_config_from_project() -> Result<AiConfig> {
         .and_then(|v| v.as_integer())
         .map(|v| v as i32);
 
-    // Extract OAuth config for bsky_api
+    // Extract OAuth config to determine network
     let oauth_config = config.get("oauth").and_then(|v| v.as_table());
-    let bsky_api = oauth_config
-        .and_then(|oauth| oauth.get("bsky_api"))
+    let pds = oauth_config
+        .and_then(|oauth| oauth.get("pds"))
         .and_then(|v| v.as_str())
-        .unwrap_or("https://public.api.bsky.app")
+        .unwrap_or("bsky.social")
         .to_string();
+    
+    // Get network configuration based on PDS
+    let network = get_network_config(&pds);
+    let bsky_api = network.bsky_api.clone();
 
     Ok(AiConfig {
         blog_host,
         ollama_host,
-        ai_did,
+        ai_handle,
+        ai_did: fallback_ai_did,  // Will be resolved from handle at runtime
         model,
         system_prompt,
         bsky_api,
         num_predict,
+        network,
     })
+}
+
+// Async version of load_ai_config_from_project that resolves handles to DIDs
+#[allow(dead_code)]
+async fn load_ai_config_with_did_resolution() -> Result<AiConfig> {
+    let mut ai_config = load_ai_config_from_project()?;
+    
+    // Resolve AI handle to DID
+    match resolve_handle(&ai_config.ai_handle, &ai_config.network).await {
+        Ok(resolved_did) => {
+            ai_config.ai_did = resolved_did;
+            println!("🔍 Resolved AI handle '{}' to DID: {}", ai_config.ai_handle, ai_config.ai_did);
+        }
+        Err(e) => {
+            println!("⚠️  Failed to resolve AI handle '{}': {}. Using fallback DID.", ai_config.ai_handle, e);
+        }
+    }
+    
+    Ok(ai_config)
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -517,7 +592,8 @@ async fn handle_message(text: &str, config: &mut AuthConfig) -> Result<()> {
             println!("   👤 Author DID: {}", did);
             
             // Resolve handle
-            match resolve_handle(did).await {
+            let ai_config = load_ai_config_from_project().unwrap_or_default();
+            match resolve_handle(did, &ai_config.network).await {
                 Ok(handle) => {
                     println!("   🏷️  Handle: {}", handle.cyan());
                     
@@ -538,11 +614,37 @@ async fn handle_message(text: &str, config: &mut AuthConfig) -> Result<()> {
     Ok(())
 }
 
-async fn resolve_handle(did: &str) -> Result<String> {
+async fn resolve_handle(did: &str, _network: &NetworkConfig) -> Result<String> {
     let client = reqwest::Client::new();
-    // Use default bsky API for handle resolution
-    let url = format!("https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor={}", 
-                     urlencoding::encode(did));
+    
+    // First try to resolve PDS from DID using com.atproto.repo.describeRepo
+    let pds_endpoints = ["https://bsky.social", "https://syu.is"];
+    let mut resolved_pds = None;
+    
+    for pds in &pds_endpoints {
+        let describe_url = format!("{}/xrpc/com.atproto.repo.describeRepo?repo={}", pds, urlencoding::encode(did));
+        if let Ok(response) = client.get(&describe_url).send().await {
+            if response.status().is_success() {
+                if let Ok(data) = response.json::<Value>().await {
+                    if let Some(services) = data["didDoc"]["service"].as_array() {
+                        if let Some(pds_service) = services.iter().find(|s| 
+                            s["id"] == "#atproto_pds" || s["type"] == "AtprotoPersonalDataServer"
+                        ) {
+                            if let Some(endpoint) = pds_service["serviceEndpoint"].as_str() {
+                                resolved_pds = Some(get_network_config_from_pds(endpoint));
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    // Use resolved PDS or fallback to Bluesky
+    let network_config = resolved_pds.unwrap_or_else(|| get_network_config("bsky.social"));
+    let url = format!("{}/xrpc/app.bsky.actor.getProfile?actor={}", 
+                     network_config.bsky_api, urlencoding::encode(did));
     
     let response = client.get(&url).send().await?;
     
@@ -557,6 +659,26 @@ async fn resolve_handle(did: &str) -> Result<String> {
     Ok(handle.to_string())
 }
 
+// Helper function to get network config from PDS endpoint
+fn get_network_config_from_pds(pds_endpoint: &str) -> NetworkConfig {
+    if pds_endpoint.contains("syu.is") {
+        NetworkConfig {
+            pds_api: pds_endpoint.to_string(),
+            plc_api: "https://plc.syu.is".to_string(),
+            bsky_api: "https://bsky.syu.is".to_string(),
+            web_url: "https://web.syu.is".to_string(),
+        }
+    } else {
+        // Default to Bluesky infrastructure
+        NetworkConfig {
+            pds_api: pds_endpoint.to_string(),
+            plc_api: "https://plc.directory".to_string(),
+            bsky_api: "https://public.api.bsky.app".to_string(),
+            web_url: "https://bsky.app".to_string(),
+        }
+    }
+}
+
 async fn update_user_list(config: &mut AuthConfig, did: &str, handle: &str) -> Result<()> {
     // Get current user list
     let current_users = get_current_user_list(config).await?;
@@ -569,18 +691,36 @@ async fn update_user_list(config: &mut AuthConfig, did: &str, handle: &str) -> R
     
     println!("   ➕ Adding new user to list: {}", handle.green());
     
-    // Detect PDS
-    let pds = if handle.ends_with(".syu.is") {
-        "https://syu.is"
-    } else {
-        "https://bsky.social"
-    };
+    // Detect PDS using proper resolution from DID
+    let client = reqwest::Client::new();
+    let pds_endpoints = ["https://bsky.social", "https://syu.is"];
+    let mut detected_pds = "https://bsky.social".to_string(); // Default fallback
+    
+    for pds in &pds_endpoints {
+        let describe_url = format!("{}/xrpc/com.atproto.repo.describeRepo?repo={}", pds, urlencoding::encode(did));
+        if let Ok(response) = client.get(&describe_url).send().await {
+            if response.status().is_success() {
+                if let Ok(data) = response.json::<Value>().await {
+                    if let Some(services) = data["didDoc"]["service"].as_array() {
+                        if let Some(pds_service) = services.iter().find(|s| 
+                            s["id"] == "#atproto_pds" || s["type"] == "AtprotoPersonalDataServer"
+                        ) {
+                            if let Some(endpoint) = pds_service["serviceEndpoint"].as_str() {
+                                detected_pds = endpoint.to_string();
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
     
     // Add new user
     let new_user = UserRecord {
         did: did.to_string(),
         handle: handle.to_string(),
-        pds: pds.to_string(),
+        pds: detected_pds,
     };
     
     let mut updated_users = current_users;
@@ -891,7 +1031,8 @@ async fn poll_comments_periodically(mut config: AuthConfig) -> Result<()> {
                                         println!("   👤 Author DID: {}", did);
                                         
                                         // Resolve handle and update user list
-                                        match resolve_handle(&did).await {
+                                        let ai_config = load_ai_config_from_project().unwrap_or_default();
+                                        match resolve_handle(&did, &ai_config.network).await {
                                             Ok(handle) => {
                                                 println!("   🏷️  Handle: {}", handle.cyan());
                                                 
@@ -1311,8 +1452,32 @@ fn extract_date_from_slug(slug: &str) -> String {
 }
 
 async fn get_ai_profile(client: &reqwest::Client, ai_config: &AiConfig) -> Result<serde_json::Value> {
+    // Resolve AI's actual PDS first
+    let pds_endpoints = ["https://bsky.social", "https://syu.is"];
+    let mut network_config = get_network_config("bsky.social"); // Default fallback
+    
+    for pds in &pds_endpoints {
+        let describe_url = format!("{}/xrpc/com.atproto.repo.describeRepo?repo={}", pds, urlencoding::encode(&ai_config.ai_did));
+        if let Ok(response) = client.get(&describe_url).send().await {
+            if response.status().is_success() {
+                if let Ok(data) = response.json::<Value>().await {
+                    if let Some(services) = data["didDoc"]["service"].as_array() {
+                        if let Some(pds_service) = services.iter().find(|s| 
+                            s["id"] == "#atproto_pds" || s["type"] == "AtprotoPersonalDataServer"
+                        ) {
+                            if let Some(endpoint) = pds_service["serviceEndpoint"].as_str() {
+                                network_config = get_network_config_from_pds(endpoint);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
     let url = format!("{}/xrpc/app.bsky.actor.getProfile?actor={}", 
-                     ai_config.bsky_api, urlencoding::encode(&ai_config.ai_did));
+                     network_config.bsky_api, urlencoding::encode(&ai_config.ai_did));
     
     let response = client
         .get(&url)

@@ -154,8 +154,16 @@ pub async fn init() -> Result<()> {
 
 async fn resolve_did(handle: &str) -> Result<String> {
     let client = reqwest::Client::new();
-    let url = format!("https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor={}", 
-                     urlencoding::encode(handle));
+    
+    // Use appropriate API based on handle domain
+    let api_base = if handle.ends_with(".syu.is") {
+        "https://bsky.syu.is"
+    } else {
+        "https://public.api.bsky.app"
+    };
+    
+    let url = format!("{}/xrpc/app.bsky.actor.getProfile?actor={}", 
+                     api_base, urlencoding::encode(handle));
     
     let response = client.get(&url).send().await?;
     
@@ -202,8 +210,16 @@ pub async fn status() -> Result<()> {
 
 async fn test_api_access(config: &AuthConfig) -> Result<()> {
     let client = reqwest::Client::new();
-    let url = format!("https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor={}", 
-                     urlencoding::encode(&config.admin.handle));
+    
+    // Use appropriate API based on handle domain
+    let api_base = if config.admin.handle.ends_with(".syu.is") {
+        "https://bsky.syu.is"
+    } else {
+        "https://public.api.bsky.app"
+    };
+    
+    let url = format!("{}/xrpc/app.bsky.actor.getProfile?actor={}", 
+                     api_base, urlencoding::encode(&config.admin.handle));
     
     let response = client.get(&url).send().await?;
     

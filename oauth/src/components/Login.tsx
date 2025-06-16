@@ -160,7 +160,7 @@ export const Login: React.FC<LoginProps> = ({ onLogin, onClose, defaultHandle })
               />
               <small>
                 メインパスワードではなく、
-                <a href="https://bsky.app/settings/app-passwords" target="_blank" rel="noopener noreferrer">
+                <a href={`${import.meta.env.VITE_ATPROTO_WEB_URL || 'https://bsky.app'}/settings/app-passwords`} target="_blank" rel="noopener noreferrer">
                   アプリパスワード
                 </a>
                 を使用してください

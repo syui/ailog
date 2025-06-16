@@ -48,7 +48,10 @@
       "Bash(git tag:*)",
       "Bash(../bin/ailog:*)",
       "Bash(../target/release/ailog oauth build:*)",
-      "Bash(ailog:*)"
+      "Bash(ailog:*)",
+      "WebFetch(domain:plc.directory)",
+      "WebFetch(domain:atproto.com)",
+      "WebFetch(domain:syu.is)"
     ],
     "deny": []
   }

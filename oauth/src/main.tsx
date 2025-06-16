@@ -12,10 +12,8 @@ import { OAuthEndpointHandler } from './utils/oauth-endpoints'
 
 // Mount React app to all comment-atproto divs
 const mountPoints = document.querySelectorAll('#comment-atproto');
-console.log(`Found ${mountPoints.length} comment-atproto mount points`);
 
 mountPoints.forEach((mountPoint, index) => {
-  console.log(`Mounting React app to comment-atproto #${index + 1}`);
   ReactDOM.createRoot(mountPoint as HTMLElement).render(
     <React.StrictMode>
       <BrowserRouter>
