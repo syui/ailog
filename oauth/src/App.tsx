@@ -124,17 +124,8 @@ function App() {
       loadAIGeneratedContent();
     };
     
-    // Wait for DID resolution before loading data
-    if (adminDid && aiDid) {
-      loadDataAfterDidResolution();
-    } else {
-      // Wait a bit and try again
-      setTimeout(() => {
-        if (adminDid && aiDid) {
-          loadDataAfterDidResolution();
-        }
-      }, 1000);
-    }
+    // Load data immediately with fallback DIDs (skip DID resolution wait)
+    loadDataAfterDidResolution();
     
     // Load AI profile from handle
     const loadAiProfile = async () => {
@@ -332,8 +323,8 @@ function App() {
       // Load all chat records from users in admin's user list
       const currentAdminDid = adminDid || appConfig.adminDid;
       
-      // Don't proceed if we don't have a valid DID
-      if (!currentAdminDid || !isValidDid(currentAdminDid)) {
+      // Use fallback DID if resolution failed
+      if (!currentAdminDid) {
         return;
       }
       
@@ -451,8 +442,8 @@ function App() {
     try {
       const currentAdminDid = adminDid || appConfig.adminDid;
       
-      // Don't proceed if we don't have a valid DID
-      if (!currentAdminDid || !isValidDid(currentAdminDid)) {
+      // Use fallback DID if resolution failed
+      if (!currentAdminDid) {
         return;
       }
       
