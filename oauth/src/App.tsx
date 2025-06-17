@@ -550,6 +550,13 @@ function App() {
               const profileResponse = await fetch(`${apiEndpoint}/xrpc/app.bsky.actor.getProfile?actor=${encodeURIComponent(handle)}`);
               if (profileResponse.ok) {
                 const profileData = await profileResponse.json();
+                
+                // Determine correct web URL based on avatar source
+                let webUrl = config.webUrl; // Default from handle-based detection
+                if (profileData.avatar && profileData.avatar.includes('cdn.bsky.app')) {
+                  webUrl = 'https://bsky.app'; // Override to Bluesky if avatar is from Bluesky
+                }
+                
                 return {
                   ...record,
                   value: {
@@ -559,7 +566,7 @@ function App() {
                       avatar: profileData.avatar,
                       displayName: profileData.displayName || handle,
                       _pdsEndpoint: `https://${pds}`, // Store PDS info for later use
-                      _webUrl: config.webUrl,         // Store web URL for profile links
+                      _webUrl: webUrl,         // Store corrected web URL for profile links
                     }
                   }
                 };
@@ -810,6 +817,14 @@ function App() {
               const profile = await import('./utils/pds-detection').then(m => m.getProfileForUser(record.value.author.handle));
               
               if (profile) {
+                // Determine network config based on profile data
+                let webUrl = 'https://bsky.app'; // Default to Bluesky
+                if (profile.avatar && profile.avatar.includes('cdn.bsky.app')) {
+                  webUrl = 'https://bsky.app';
+                } else if (profile.avatar && profile.avatar.includes('bsky.syu.is')) {
+                  webUrl = 'https://web.syu.is';
+                }
+                
                 return {
                   ...record,
                   value: {
@@ -818,6 +833,7 @@ function App() {
                       ...record.value.author,
                       avatar: profile.avatar,
                       displayName: profile.displayName || record.value.author.handle,
+                      _webUrl: webUrl, // Store network config for profile URL generation
                     }
                   }
                 };
@@ -1146,7 +1162,18 @@ function App() {
       return `${config.webUrl}/profile/${author.did}`;
     }
     
-    // Get PDS from handle for other users
+    // For other users, detect network based on avatar URL or stored network info
+    if (author.avatar && author.avatar.includes('cdn.bsky.app')) {
+      // User has Bluesky avatar, use Bluesky web interface
+      return `https://bsky.app/profile/${author.did}`;
+    }
+    
+    // Check if we have stored network config from profile fetching
+    if (author._webUrl) {
+      return `${author._webUrl}/profile/${author.did}`;
+    }
+    
+    // Fallback: Get PDS from handle for other users
     const pds = detectPdsFromHandle(author.handle);
     const config = getNetworkConfig(pds);
     
