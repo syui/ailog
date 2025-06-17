@@ -12,6 +12,7 @@ interface AtprotoSession {
 
 class AtprotoOAuthService {
   private oauthClient: BrowserOAuthClient | null = null;
+  private oauthClientSyuIs: BrowserOAuthClient | null = null;
   private agent: Agent | null = null;
   private initializePromise: Promise<void> | null = null;
 
@@ -31,22 +32,27 @@ class AtprotoOAuthService {
 
   private async _doInitialize(): Promise<void> {
     try {
-
-      
       // Generate client ID based on current origin
       const clientId = this.getClientId();
 
-      
-      // Support multiple PDS hosts for OAuth
+      // Initialize both OAuth clients
       this.oauthClient = await BrowserOAuthClient.load({
         clientId: clientId,
-        handleResolver: 'https://bsky.social', // Default resolver
+        handleResolver: 'https://bsky.social',
+        plcDirectoryUrl: 'https://plc.directory',
+      });
+
+      this.oauthClientSyuIs = await BrowserOAuthClient.load({
+        clientId: clientId,
+        handleResolver: 'https://syu.is',
+        plcDirectoryUrl: 'https://plc.syu.is',
       });
       
-
-      
-      // Try to restore existing session
-      const result = await this.oauthClient.init();
+      // Try to restore existing session from either client
+      let result = await this.oauthClient.init();
+      if (!result?.session) {
+        result = await this.oauthClientSyuIs.init();
+      }
       if (result?.session) {
         
         // Create Agent instance with proper configuration
@@ -92,41 +98,13 @@ class AtprotoOAuthService {
   }
 
   private async processSession(session: any): Promise<{ did: string; handle: string }> {
-
-    
-    // Log full session structure
-
-
-
-
-
-
-    
-    // Check if agent has properties we can access
-    if (session.agent) {
-
-
-
-    }
-    
     const did = session.sub || session.did;
     let handle = session.handle || 'unknown';
     
     // Create Agent directly with session (per official docs)
     try {
       this.agent = new Agent(session);
-
-      
-      // Check if agent has session info after creation
-
-
-
-      if (this.agent.session) {
-
-
-      }
     } catch (err) {
-
       // Fallback to dpopFetch method
       this.agent = new Agent({
         service: session.server?.serviceEndpoint || 'https://bsky.social',
@@ -204,61 +182,15 @@ class AtprotoOAuthService {
     return `${origin}/client-metadata.json`;
   }
 
-  private async detectPDSFromHandle(handle: string): Promise<string> {
-    // Handle detection for OAuth PDS routing
-    
-    // Check if handle ends with known PDS domains first
-    const pdsMapping = {
-      'syu.is': 'https://syu.is',
-      'bsky.social': 'https://bsky.social',
-    };
-    
-    for (const [domain, pdsUrl] of Object.entries(pdsMapping)) {
-      if (handle.endsWith(`.${domain}`)) {
-        // Using PDS for domain match
-        return pdsUrl;
-      }
-    }
-    
-    // For handles that don't match domain patterns, resolve via API
-    try {
-      // Try to resolve handle to get the actual PDS
-      const endpoints = ['https://syu.is', 'https://bsky.social'];
-      
-      for (const endpoint of endpoints) {
-        try {
-          const response = await fetch(`${endpoint}/xrpc/com.atproto.identity.resolveHandle?handle=${encodeURIComponent(handle)}`);
-          if (response.ok) {
-            const data = await response.json();
-            if (data.did) {
-              console.log('[OAuth Debug] Resolved handle via', endpoint, '- using that PDS');
-              return endpoint;
-            }
-          }
-        } catch (e) {
-          continue;
-        }
-      }
-    } catch (e) {
-      console.log('[OAuth Debug] Handle resolution failed, using default');
-    }
-    
-    // Default to bsky.social
-    // Using default bsky.social
-    return 'https://bsky.social';
-  }
 
   async initiateOAuthFlow(handle?: string): Promise<void> {
     try {
-
-      
-      if (!this.oauthClient) {
-
+      if (!this.oauthClient || !this.oauthClientSyuIs) {
         await this.initialize();
       }
 
-      if (!this.oauthClient) {
-        throw new Error('Failed to initialize OAuth client');
+      if (!this.oauthClient || !this.oauthClientSyuIs) {
+        throw new Error('Failed to initialize OAuth clients');
       }
 
       // If handle is not provided, prompt user
@@ -269,61 +201,27 @@ class AtprotoOAuthService {
         }
       }
 
-
-      
-      // Detect PDS based on handle
-      const pdsUrl = await this.detectPDSFromHandle(handle);
-      // Starting OAuth flow
-
-      
-      // Always re-initialize OAuth client with detected PDS
-      // Re-initializing OAuth client
-      
-      // Clear existing client to force fresh initialization
-      this.oauthClient = null;
-      this.initializePromise = null;
-      
-      this.oauthClient = await BrowserOAuthClient.load({
-        clientId: this.getClientId(),
-        handleResolver: pdsUrl,
-      });
-      
-      // OAuth client initialized
-      
-      // Start OAuth authorization flow
-
-      
+      // Determine which OAuth client to use
+      const allowedHandlesStr = import.meta.env.VITE_ATPROTO_HANDLE_LIST || '[]';
+      let allowedHandles: string[] = [];
       try {
-        // Starting OAuth authorization
-        
-        // Try to authorize with DID instead of handle for syu.is PDS only
-        let authTarget = handle;
-        if (pdsUrl === 'https://syu.is') {
-          try {
-            const resolveResponse = await fetch(`${pdsUrl}/xrpc/com.atproto.identity.resolveHandle?handle=${encodeURIComponent(handle)}`);
-            if (resolveResponse.ok) {
-              const resolveData = await resolveResponse.json();
-              authTarget = resolveData.did;
-              // Using DID for syu.is OAuth workaround
-            }
-          } catch (e) {
-            // Could not resolve to DID, using handle
-          }
-        }
-        
-        const authUrl = await this.oauthClient.authorize(authTarget, {
-          scope: 'atproto transition:generic',
-        });
-        
-        // Redirect to authorization server
-        window.location.href = authUrl.toString();
-      } catch (authorizeError) {
-        // Authorization failed
-        throw authorizeError;
+        allowedHandles = JSON.parse(allowedHandlesStr);
+      } catch {
+        allowedHandles = [];
       }
       
-    } catch (error) {
+      const usesSyuIs = handle.endsWith('.syu.is') || allowedHandles.includes(handle);
+      const oauthClient = usesSyuIs ? this.oauthClientSyuIs : this.oauthClient;
 
+      // Start OAuth authorization flow
+      const authUrl = await oauthClient.authorize(handle, {
+        scope: 'atproto transition:generic',
+      });
+      
+      // Redirect to authorization server
+      window.location.href = authUrl.toString();
+      
+    } catch (error) {
       throw new Error(`OAuth認証の開始に失敗しました: ${error}`);
     }
   }
@@ -379,21 +277,15 @@ class AtprotoOAuthService {
 
   async checkSession(): Promise<{ did: string; handle: string } | null> {
     try {
-
-      
       if (!this.oauthClient) {
-
         await this.initialize();
       }
 
       if (!this.oauthClient) {
-
         return null;
       }
 
-
       const result = await this.oauthClient.init();
-
       
       if (result?.session) {
         // Use the common session processing method
@@ -458,28 +350,20 @@ class AtprotoOAuthService {
 
   async logout(): Promise<void> {
     try {
-
-      
       // Clear Agent
       this.agent = null;
-
       
       // Clear BrowserOAuthClient session
       if (this.oauthClient) {
-
         try {
           // BrowserOAuthClient may have a revoke or signOut method
           if (typeof (this.oauthClient as any).signOut === 'function') {
             await (this.oauthClient as any).signOut();
-
           } else if (typeof (this.oauthClient as any).revoke === 'function') {
             await (this.oauthClient as any).revoke();
-
-          } else {
-
           }
         } catch (oauthError) {
-
+          // Ignore logout errors
         }
         
         // Reset the OAuth client to force re-initialization
@@ -491,18 +375,16 @@ class AtprotoOAuthService {
       localStorage.removeItem('atproto_session');
       sessionStorage.clear();
       
-      // Clear all localStorage items that might be related to OAuth
-      const keysToRemove: string[] = [];
+      // Clear all OAuth-related storage
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
         if (key && (key.includes('oauth') || key.includes('atproto') || key.includes('session'))) {
-          keysToRemove.push(key);
+          localStorage.removeItem(key);
         }
       }
-      keysToRemove.forEach(key => {
-
-        localStorage.removeItem(key);
-      });
+      
+      // Clear internal session info
+      (this as any)._sessionInfo = null;
       
 
       

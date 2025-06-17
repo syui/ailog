@@ -113,7 +113,7 @@ export function getAppConfig(): AppConfig {
   const aiEnabled = import.meta.env.VITE_AI_ENABLED === 'true';
   const aiAskAi = import.meta.env.VITE_AI_ASK_AI === 'true';
   const aiProvider = import.meta.env.VITE_AI_PROVIDER || 'ollama';
-  const aiModel = import.meta.env.VITE_AI_MODEL || 'gemma2:2b';
+  const aiModel = import.meta.env.VITE_AI_MODEL || 'gemma3:4b';
   const aiHost = import.meta.env.VITE_AI_HOST || 'https://ollama.syui.ai';
   const aiSystemPrompt = import.meta.env.VITE_AI_SYSTEM_PROMPT || 'You are a helpful AI assistant trained on this blog\'s content.';
   const atprotoPds = import.meta.env.VITE_ATPROTO_PDS || 'syu.is';

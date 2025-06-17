@@ -224,13 +224,7 @@ function App() {
         // Ensure handle is not DID
         const handle = oauthResult.handle !== oauthResult.did ? oauthResult.handle : oauthResult.handle;
         
-        // Check if handle is allowed
-        if (appConfig.allowedHandles.length > 0 && !appConfig.allowedHandles.includes(handle)) {
-          // Handle not in allowed list
-          setError(`Access denied: ${handle} is not authorized for this application.`);
-          setIsLoading(false);
-          return;
-        }
+        // Note: appConfig.allowedHandles is used for PDS detection, not access control
         
         // Get user profile including avatar
         const userProfile = await getUserProfile(oauthResult.did, handle);
@@ -1213,8 +1207,9 @@ function App() {
     
     // Extract content based on format
     const contentText = isNewFormat ? value.text : (value.content || value.body || '');
-    // For AI comments, always use the loaded AI profile instead of record.value.author
-    const authorInfo = aiProfile;
+    // Use the author from the record if available, otherwise fall back to AI profile
+    const authorInfo = value.author || aiProfile;
+    
     const postInfo = isNewFormat ? value.post : null;
     const contentType = value.type || 'unknown';
     const createdAt = value.createdAt || value.generated_at || '';

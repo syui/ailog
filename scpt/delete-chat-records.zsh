@@ -3,10 +3,10 @@
 set -e
 
 cb=ai.syui.log
-cl=( $cb.user )
+cl=( $cb.chat.lang $cb.chat.comment)
 f=~/.config/syui/ai/log/config.json
 
-default_collection="ai.syui.log.chat.comment"
+default_collection="ai.syui.log.chat"
 default_pds="syu.is"
 default_did=`cat $f|jq -r .admin.did`
 default_token=`cat $f|jq -r .admin.access_jwt`

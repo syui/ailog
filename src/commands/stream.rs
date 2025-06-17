@@ -1426,21 +1426,8 @@ async fn generate_ai_content(content: &str, prompt_type: &str, ai_config: &AiCon
         .timeout(std::time::Duration::from_secs(120)) // 2 minute timeout
         .build()?;
     
-    // Try localhost first (for same-server deployment)
-    let localhost_url = "http://localhost:11434/api/generate";
-    match client.post(localhost_url).json(&request).send().await {
-        Ok(response) if response.status().is_success() => {
-            let ollama_response: OllamaResponse = response.json().await?;
-            println!("{}", "✅ Used localhost Ollama".green());
-            return Ok(ollama_response.response);
-        }
-        _ => {
-            println!("{}", "⚠️ Localhost Ollama not available, trying remote...".yellow());
-        }
-    }
-    
-    // Fallback to remote host
-    let remote_url = format!("{}/api/generate", ai_config.ollama_host);
+    // Use configured Ollama host
+    let ollama_url = format!("{}/api/generate", ai_config.ollama_host);
     
     // Check if this is a local/private network connection (no CORS needed)
     // RFC 1918 private networks + localhost
@@ -1461,13 +1448,13 @@ async fn generate_ai_content(content: &str, prompt_type: &str, ai_config: &AiCon
                        } else { false }
                    });
     
-    let mut request_builder = client.post(&remote_url).json(&request);
+    let mut request_builder = client.post(&ollama_url).json(&request);
     
     if !is_local {
-        println!("{}", format!("🔗 Making request to: {} with Origin: {}", remote_url, ai_config.blog_host).blue());
+        println!("{}", format!("🔗 Making request to: {} with Origin: {}", ollama_url, ai_config.blog_host).blue());
         request_builder = request_builder.header("Origin", &ai_config.blog_host);
     } else {
-        println!("{}", format!("🔗 Making request to local network: {}", remote_url).blue());
+        println!("{}", format!("🔗 Making request to local network: {}", ollama_url).blue());
     }
     
     let response = request_builder.send().await?;
@@ -1477,7 +1464,7 @@ async fn generate_ai_content(content: &str, prompt_type: &str, ai_config: &AiCon
     }
     
     let ollama_response: OllamaResponse = response.json().await?;
-    println!("{}", "✅ Used remote Ollama".green());
+    println!("{}", "✅ Ollama request successful".green());
     Ok(ollama_response.response)
 }
 

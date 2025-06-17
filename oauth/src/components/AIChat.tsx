@@ -191,6 +191,7 @@ Answer:`;
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Origin': 'https://syui.ai',
           },
           body: JSON.stringify({
             model: aiConfig.model,
