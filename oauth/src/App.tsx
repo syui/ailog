@@ -5,6 +5,7 @@ import { authService, User } from './services/auth';
 import { atprotoOAuthService } from './services/atproto-oauth';
 import { appConfig, getCollectionNames } from './config/app';
 import { getProfileForUser, detectPdsFromHandle, getApiUrlForUser, verifyPdsDetection, getNetworkConfigFromPdsEndpoint, getNetworkConfig } from './utils/pds-detection';
+import { isValidDid } from './utils/validation';
 import './App.css';
 
 function App() {
@@ -338,16 +339,23 @@ function App() {
       const currentAdminDid = adminDid || appConfig.adminDid;
       
       // Don't proceed if we don't have a valid DID
-      if (!currentAdminDid) {
+      if (!currentAdminDid || !isValidDid(currentAdminDid)) {
         return;
       }
       
-      // Use admin's PDS from config
-      const adminConfig = getNetworkConfig(appConfig.atprotoPds);
-      const collections = getCollectionNames(appConfig.collections.base);
+      // Resolve admin's actual PDS from their DID
+      let adminPdsEndpoint;
+      try {
+        const resolved = await import('./utils/pds-detection').then(m => m.resolvePdsFromRepo(currentAdminDid));
+        const config = await import('./utils/pds-detection').then(m => m.getNetworkConfigFromPdsEndpoint(resolved.pds));
+        adminPdsEndpoint = config.pdsApi;
+      } catch {
+        // Fallback to configured PDS
+        const adminConfig = getNetworkConfig(appConfig.atprotoPds);
+        adminPdsEndpoint = adminConfig.pdsApi;
+      }
       
-      // First, get user list from admin using their proper PDS
-      const adminPdsEndpoint = adminConfig.pdsApi;
+      const collections = getCollectionNames(appConfig.collections.base);
       
       const userListResponse = await fetch(`${adminPdsEndpoint}/xrpc/com.atproto.repo.listRecords?repo=${encodeURIComponent(currentAdminDid)}&collection=${encodeURIComponent(collections.user)}&limit=100`);
       
@@ -383,6 +391,10 @@ function App() {
           // Use per-user PDS detection for each user's chat records
           let userPdsEndpoint;
           try {
+            // Validate DID format before making API calls
+            if (!userDid || !userDid.startsWith('did:')) {
+              continue;
+            }
             const resolved = await import('./utils/pds-detection').then(m => m.resolvePdsFromRepo(userDid));
             const config = await import('./utils/pds-detection').then(m => m.getNetworkConfigFromPdsEndpoint(resolved.pds));
             userPdsEndpoint = config.pdsApi;
@@ -396,6 +408,9 @@ function App() {
             const chatData = await chatResponse.json();
             const records = chatData.records || [];
             allChatRecords.push(...records);
+          } else if (chatResponse.status === 400) {
+            // Skip 400 errors (repo not found, etc)
+            continue;
           }
         } catch (err) {
           continue;
@@ -443,13 +458,21 @@ function App() {
       const currentAdminDid = adminDid || appConfig.adminDid;
       
       // Don't proceed if we don't have a valid DID
-      if (!currentAdminDid) {
+      if (!currentAdminDid || !isValidDid(currentAdminDid)) {
         return;
       }
       
-      // Use admin's PDS for collection access (from config)
-      const adminConfig = getNetworkConfig(appConfig.atprotoPds);
-      const atprotoApi = adminConfig.pdsApi;
+      // Resolve admin's actual PDS from their DID
+      let atprotoApi;
+      try {
+        const resolved = await import('./utils/pds-detection').then(m => m.resolvePdsFromRepo(currentAdminDid));
+        const config = await import('./utils/pds-detection').then(m => m.getNetworkConfigFromPdsEndpoint(resolved.pds));
+        atprotoApi = config.pdsApi;
+      } catch {
+        // Fallback to configured PDS
+        const adminConfig = getNetworkConfig(appConfig.atprotoPds);
+        atprotoApi = adminConfig.pdsApi;
+      }
       const collections = getCollectionNames(appConfig.collections.base);
       
       // Load lang:en records

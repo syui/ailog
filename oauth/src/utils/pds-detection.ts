@@ -1,5 +1,7 @@
 // PDS Detection and API URL mapping utilities
 
+import { isValidDid, isValidHandle } from './validation';
+
 export interface NetworkConfig {
   pdsApi: string;
   plcApi: string;
@@ -9,12 +11,33 @@ export interface NetworkConfig {
 
 // Detect PDS from handle
 export function detectPdsFromHandle(handle: string): string {
-  if (handle.endsWith('.syu.is')) {
+  // Get allowed handles from environment
+  const allowedHandlesStr = import.meta.env.VITE_ATPROTO_HANDLE_LIST || '[]';
+  let allowedHandles: string[] = [];
+  try {
+    allowedHandles = JSON.parse(allowedHandlesStr);
+  } catch {
+    allowedHandles = [];
+  }
+  
+  // Get configured PDS from environment
+  const configuredPds = import.meta.env.VITE_ATPROTO_PDS || 'syu.is';
+  
+  // Check if handle is in allowed list
+  if (allowedHandles.includes(handle)) {
+    return configuredPds;
+  }
+  
+  // Check if handle ends with .syu.is or .syui.ai
+  if (handle.endsWith('.syu.is') || handle.endsWith('.syui.ai')) {
     return 'syu.is';
   }
+  
+  // Check if handle ends with .bsky.social or .bsky.app
   if (handle.endsWith('.bsky.social') || handle.endsWith('.bsky.app')) {
     return 'bsky.social';
   }
+  
   // Default to Bluesky for unknown domains
   return 'bsky.social';
 }
@@ -74,8 +97,13 @@ export function getApiUrlForUser(handle: string): string {
   return config.bskyApi;
 }
 
-// Resolve handle/DID to actual PDS endpoint using com.atproto.repo.describeRepo
+// Resolve handle/DID to actual PDS endpoint using PLC API first
 export async function resolvePdsFromRepo(handleOrDid: string): Promise<{ pds: string; did: string; handle: string }> {
+  // Validate input
+  if (!handleOrDid || (!isValidDid(handleOrDid) && !isValidHandle(handleOrDid))) {
+    throw new Error(`Invalid identifier: ${handleOrDid}`);
+  }
+  
   let targetDid = handleOrDid;
   let targetHandle = handleOrDid;
   
@@ -83,7 +111,7 @@ export async function resolvePdsFromRepo(handleOrDid: string): Promise<{ pds: st
   if (!handleOrDid.startsWith('did:')) {
     try {
       // Try multiple endpoints for handle resolution
-      const resolveEndpoints = ['https://public.api.bsky.app', 'https://bsky.syu.is'];
+      const resolveEndpoints = ['https://public.api.bsky.app', 'https://bsky.syu.is', 'https://syu.is'];
       let resolved = false;
       
       for (const endpoint of resolveEndpoints) {
@@ -108,7 +136,34 @@ export async function resolvePdsFromRepo(handleOrDid: string): Promise<{ pds: st
     }
   }
   
-  // Now use com.atproto.repo.describeRepo to get PDS from known PDS endpoints
+  // First, try PLC API to get the authoritative DID document
+  const plcApis = ['https://plc.directory', 'https://plc.syu.is'];
+  
+  for (const plcApi of plcApis) {
+    try {
+      const plcResponse = await fetch(`${plcApi}/${targetDid}`);
+      if (plcResponse.ok) {
+        const didDocument = await plcResponse.json();
+        
+        // Find PDS service in DID document
+        const pdsService = didDocument.service?.find((s: any) => 
+          s.id === '#atproto_pds' || s.type === 'AtprotoPersonalDataServer'
+        );
+        
+        if (pdsService && pdsService.serviceEndpoint) {
+          return {
+            pds: pdsService.serviceEndpoint,
+            did: targetDid,
+            handle: targetHandle
+          };
+        }
+      }
+    } catch (error) {
+      continue;
+    }
+  }
+  
+  // Fallback: use com.atproto.repo.describeRepo to get PDS from known PDS endpoints
   const pdsEndpoints = ['https://bsky.social', 'https://syu.is'];
   
   for (const pdsEndpoint of pdsEndpoints) {

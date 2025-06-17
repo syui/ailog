@@ -5,6 +5,7 @@ use std::time::Instant;
 use super::*;
 use crate::translator::markdown_parser::MarkdownParser;
 
+#[derive(Clone)]
 pub struct OllamaTranslator {
     client: Client,
     language_mapping: LanguageMapping,
@@ -129,86 +130,103 @@ Translation:"#,
 }
 
 impl Translator for OllamaTranslator {
-    async fn translate(&self, content: &str, config: &TranslationConfig) -> Result<String> {
-        let prompt = self.build_translation_prompt(content, config)?;
-        self.call_ollama(&prompt, config).await
+    fn translate(&self, content: &str, config: &TranslationConfig) -> impl std::future::Future<Output = Result<String>> + Send {
+        async move {
+            let prompt = self.build_translation_prompt(content, config)?;
+            self.call_ollama(&prompt, config).await
+        }
     }
     
-    async fn translate_markdown(&self, content: &str, config: &TranslationConfig) -> Result<String> {
-        println!("🔄 Parsing markdown content...");
-        let sections = self.parser.parse_markdown(content)?;
-        
-        println!("📝 Found {} sections to process", sections.len());
-        let translated_sections = self.translate_sections(sections, config).await?;
-        
-        println!("✅ Rebuilding markdown from translated sections...");
-        let result = self.parser.rebuild_markdown(translated_sections);
-        
-        Ok(result)
-    }
-    
-    async fn translate_sections(&self, sections: Vec<MarkdownSection>, config: &TranslationConfig) -> Result<Vec<MarkdownSection>> {
-        let mut translated_sections = Vec::new();
-        let start_time = Instant::now();
-        
-        for (index, section) in sections.into_iter().enumerate() {
-            println!("  🔤 Processing section {}", index + 1);
+    fn translate_markdown(&self, content: &str, config: &TranslationConfig) -> impl std::future::Future<Output = Result<String>> + Send {
+        async move {
+            println!("🔄 Parsing markdown content...");
+            let sections = self.parser.parse_markdown(content)?;
             
-            let translated_section = match &section {
-                MarkdownSection::Code(_content, _lang) => {
-                    if config.preserve_code {
-                        println!("    ⏭️  Preserving code block");
-                        section // Preserve code blocks
-                    } else {
-                        section // Still preserve for now
-                    }
-                }
-                MarkdownSection::Link(text, url) => {
-                    if config.preserve_links {
-                        println!("    ⏭️  Preserving link");
-                        section // Preserve links
-                    } else {
-                        // Translate link text only
-                        let prompt = self.build_section_translation_prompt(&MarkdownSection::Text(text.clone()), config)?;
-                        let translated_text = self.call_ollama(&prompt, config).await?;
-                        MarkdownSection::Link(translated_text.trim().to_string(), url.clone())
-                    }
-                }
-                MarkdownSection::Image(_alt, _url) => {
-                    println!("    🖼️  Preserving image");
-                    section // Preserve images
-                }
-                MarkdownSection::Table(content) => {
-                    println!("    📊 Translating table content");
-                    let prompt = self.build_section_translation_prompt(&MarkdownSection::Text(content.clone()), config)?;
-                    let translated_content = self.call_ollama(&prompt, config).await?;
-                    MarkdownSection::Table(translated_content.trim().to_string())
-                }
-                _ => {
-                    // Translate text sections
-                    println!("    🔤 Translating text");
-                    let prompt = self.build_section_translation_prompt(&section, config)?;
-                    let translated_text = self.call_ollama(&prompt, config).await?;
-                    
-                    match section {
-                        MarkdownSection::Text(_) => MarkdownSection::Text(translated_text.trim().to_string()),
-                        MarkdownSection::Header(_, level) => MarkdownSection::Header(translated_text.trim().to_string(), level),
-                        MarkdownSection::Quote(_) => MarkdownSection::Quote(translated_text.trim().to_string()),
-                        MarkdownSection::List(_) => MarkdownSection::List(translated_text.trim().to_string()),
-                        _ => section,
-                    }
-                }
+            println!("📝 Found {} sections to process", sections.len());
+            let translated_sections = self.translate_sections(sections, config).await?;
+            
+            println!("✅ Rebuilding markdown from translated sections...");
+            let result = self.parser.rebuild_markdown(translated_sections);
+            
+            Ok(result)
+        }
+    }
+    
+    fn translate_sections(&self, sections: Vec<MarkdownSection>, config: &TranslationConfig) -> impl std::future::Future<Output = Result<Vec<MarkdownSection>>> + Send {
+        let config = config.clone();
+        let client = self.client.clone();
+        let parser = self.parser.clone();
+        let language_mapping = self.language_mapping.clone();
+        
+        async move {
+            let translator = OllamaTranslator {
+                client,
+                language_mapping,
+                parser,
             };
             
-            translated_sections.push(translated_section);
-            
-            // Add small delay to avoid overwhelming Ollama
-            tokio::time::sleep(tokio::time::Duration::from_millis(100)).await;
+            let mut translated_sections = Vec::new();
+            let start_time = Instant::now();
+        
+            for (index, section) in sections.into_iter().enumerate() {
+                println!("  🔤 Processing section {}", index + 1);
+                
+                let translated_section = match &section {
+                    MarkdownSection::Code(_content, _lang) => {
+                        if config.preserve_code {
+                            println!("    ⏭️  Preserving code block");
+                            section // Preserve code blocks
+                        } else {
+                            section // Still preserve for now
+                        }
+                    }
+                    MarkdownSection::Link(text, url) => {
+                        if config.preserve_links {
+                            println!("    ⏭️  Preserving link");
+                            section // Preserve links
+                        } else {
+                            // Translate link text only
+                            let prompt = translator.build_section_translation_prompt(&MarkdownSection::Text(text.clone()), &config)?;
+                            let translated_text = translator.call_ollama(&prompt, &config).await?;
+                            MarkdownSection::Link(translated_text.trim().to_string(), url.clone())
+                        }
+                    }
+                    MarkdownSection::Image(_alt, _url) => {
+                        println!("    🖼️  Preserving image");
+                        section // Preserve images
+                    }
+                    MarkdownSection::Table(content) => {
+                        println!("    📊 Translating table content");
+                        let prompt = translator.build_section_translation_prompt(&MarkdownSection::Text(content.clone()), &config)?;
+                        let translated_content = translator.call_ollama(&prompt, &config).await?;
+                        MarkdownSection::Table(translated_content.trim().to_string())
+                    }
+                    _ => {
+                        // Translate text sections
+                        println!("    🔤 Translating text");
+                        let prompt = translator.build_section_translation_prompt(&section, &config)?;
+                        let translated_text = translator.call_ollama(&prompt, &config).await?;
+                        
+                        match section {
+                            MarkdownSection::Text(_) => MarkdownSection::Text(translated_text.trim().to_string()),
+                            MarkdownSection::Header(_, level) => MarkdownSection::Header(translated_text.trim().to_string(), level),
+                            MarkdownSection::Quote(_) => MarkdownSection::Quote(translated_text.trim().to_string()),
+                            MarkdownSection::List(_) => MarkdownSection::List(translated_text.trim().to_string()),
+                            _ => section,
+                        }
+                    }
+                };
+                
+                translated_sections.push(translated_section);
+                
+                // Add small delay to avoid overwhelming Ollama
+                tokio::time::sleep(tokio::time::Duration::from_millis(100)).await;
+            }
+        
+            let elapsed = start_time.elapsed();
+            println!("⏱️  Translation completed in {:.2}s", elapsed.as_secs_f64());
+        
+            Ok(translated_sections)
         }
-        
-        let elapsed = start_time.elapsed();
-        println!("⏱️  Translation completed in {:.2}s", elapsed.as_secs_f64());
-        
-        Ok(translated_sections)
     }
 }

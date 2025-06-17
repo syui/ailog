@@ -2,6 +2,7 @@ use anyhow::Result;
 use regex::Regex;
 use super::MarkdownSection;
 
+#[derive(Clone)]
 pub struct MarkdownParser {
     _code_block_regex: Regex,
     header_regex: Regex,

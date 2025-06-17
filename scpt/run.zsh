@@ -6,7 +6,7 @@ function _env() {
 	oauth=$d/oauth
 	myblog=$d/my-blog
 	port=4173
-	source $oauth/.env.production
+	#source $oauth/.env.production
 	case $OSTYPE in
 		darwin*)
 			export NVM_DIR="$HOME/.nvm"

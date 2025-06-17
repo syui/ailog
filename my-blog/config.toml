@@ -28,4 +28,4 @@ redirect = "oauth/callback"
 admin = "ai.syui.ai"
 collection = "ai.syui.log"
 pds = "syu.is"
-handle_list = ["syui.syui.ai", "yui.syui.ai", "ai.syui.ai", "syui.syu.is", "ai.syu.is", "ai.ai"]
+handle_list = ["syui.syui.ai", "ai.syui.ai", "ai.ai"]

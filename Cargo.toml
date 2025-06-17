@@ -10,6 +10,10 @@ license = "MIT"
 name = "ailog"
 path = "src/main.rs"
 
+[lib]
+name = "ailog"
+path = "src/lib.rs"
+
 [dependencies]
 clap = { version = "4.5", features = ["derive"] }
 pulldown-cmark = "0.11"

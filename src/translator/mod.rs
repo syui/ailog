@@ -42,9 +42,9 @@ pub enum MarkdownSection {
 
 pub trait Translator {
     #[allow(dead_code)]
-    async fn translate(&self, content: &str, config: &TranslationConfig) -> Result<String>;
-    async fn translate_markdown(&self, content: &str, config: &TranslationConfig) -> Result<String>;
-    async fn translate_sections(&self, sections: Vec<MarkdownSection>, config: &TranslationConfig) -> Result<Vec<MarkdownSection>>;
+    fn translate(&self, content: &str, config: &TranslationConfig) -> impl std::future::Future<Output = Result<String>> + Send;
+    fn translate_markdown(&self, content: &str, config: &TranslationConfig) -> impl std::future::Future<Output = Result<String>> + Send;
+    fn translate_sections(&self, sections: Vec<MarkdownSection>, config: &TranslationConfig) -> impl std::future::Future<Output = Result<Vec<MarkdownSection>>> + Send;
 }
 
 #[allow(dead_code)]
@@ -67,6 +67,7 @@ pub struct TranslationMetrics {
     pub sections_preserved: usize,
 }
 
+#[derive(Clone)]
 pub struct LanguageMapping {
     pub mappings: HashMap<String, LanguageInfo>,
 }

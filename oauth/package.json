@@ -7,7 +7,9 @@
     "build": "vite build --mode production",
     "build:dev": "vite build --mode development",
     "build:local": "VITE_APP_HOST=http://localhost:4173 vite build --mode development",
-    "preview": "vite preview"
+    "preview": "npm run test:console && vite preview",
+    "test": "vitest",
+    "test:console": "node -r esbuild-register src/tests/console-test.ts"
   },
   "dependencies": {
     "@atproto/api": "^0.15.12",
@@ -26,6 +28,9 @@
     "@types/react-dom": "^18.2.18",
     "@vitejs/plugin-react": "^4.2.1",
     "typescript": "^5.3.3",
-    "vite": "^5.0.10"
+    "vite": "^5.0.10",
+    "vitest": "^1.1.0",
+    "esbuild": "^0.19.10",
+    "esbuild-register": "^3.5.0"
   }
 }

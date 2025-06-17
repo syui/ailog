@@ -204,25 +204,47 @@ class AtprotoOAuthService {
     return `${origin}/client-metadata.json`;
   }
 
-  private detectPDSFromHandle(handle: string): string {
-
+  private async detectPDSFromHandle(handle: string): Promise<string> {
+    // Handle detection for OAuth PDS routing
     
-    // Supported PDS hosts and their corresponding handles
+    // Check if handle ends with known PDS domains first
     const pdsMapping = {
       'syu.is': 'https://syu.is',
       'bsky.social': 'https://bsky.social',
     };
     
-    // Check if handle ends with known PDS domains
     for (const [domain, pdsUrl] of Object.entries(pdsMapping)) {
       if (handle.endsWith(`.${domain}`)) {
-
+        // Using PDS for domain match
         return pdsUrl;
       }
     }
     
+    // For handles that don't match domain patterns, resolve via API
+    try {
+      // Try to resolve handle to get the actual PDS
+      const endpoints = ['https://syu.is', 'https://bsky.social'];
+      
+      for (const endpoint of endpoints) {
+        try {
+          const response = await fetch(`${endpoint}/xrpc/com.atproto.identity.resolveHandle?handle=${encodeURIComponent(handle)}`);
+          if (response.ok) {
+            const data = await response.json();
+            if (data.did) {
+              console.log('[OAuth Debug] Resolved handle via', endpoint, '- using that PDS');
+              return endpoint;
+            }
+          }
+        } catch (e) {
+          continue;
+        }
+      }
+    } catch (e) {
+      console.log('[OAuth Debug] Handle resolution failed, using default');
+    }
+    
     // Default to bsky.social
-
+    // Using default bsky.social
     return 'https://bsky.social';
   }
 
@@ -250,41 +272,53 @@ class AtprotoOAuthService {
 
       
       // Detect PDS based on handle
-      const pdsUrl = this.detectPDSFromHandle(handle);
+      const pdsUrl = await this.detectPDSFromHandle(handle);
+      // Starting OAuth flow
 
       
-      // Re-initialize OAuth client with correct PDS if needed
-      if (pdsUrl !== 'https://bsky.social') {
-
-        this.oauthClient = await BrowserOAuthClient.load({
-          clientId: this.getClientId(),
-          handleResolver: pdsUrl,
-        });
-      }
+      // Always re-initialize OAuth client with detected PDS
+      // Re-initializing OAuth client
+      
+      // Clear existing client to force fresh initialization
+      this.oauthClient = null;
+      this.initializePromise = null;
+      
+      this.oauthClient = await BrowserOAuthClient.load({
+        clientId: this.getClientId(),
+        handleResolver: pdsUrl,
+      });
+      
+      // OAuth client initialized
       
       // Start OAuth authorization flow
 
       
       try {
-        const authUrl = await this.oauthClient.authorize(handle, {
+        // Starting OAuth authorization
+        
+        // Try to authorize with DID instead of handle for syu.is PDS only
+        let authTarget = handle;
+        if (pdsUrl === 'https://syu.is') {
+          try {
+            const resolveResponse = await fetch(`${pdsUrl}/xrpc/com.atproto.identity.resolveHandle?handle=${encodeURIComponent(handle)}`);
+            if (resolveResponse.ok) {
+              const resolveData = await resolveResponse.json();
+              authTarget = resolveData.did;
+              // Using DID for syu.is OAuth workaround
+            }
+          } catch (e) {
+            // Could not resolve to DID, using handle
+          }
+        }
+        
+        const authUrl = await this.oauthClient.authorize(authTarget, {
           scope: 'atproto transition:generic',
         });
-
-
-        
-        // Store some debug info before redirect
-        sessionStorage.setItem('oauth_debug_pre_redirect', JSON.stringify({
-          timestamp: new Date().toISOString(),
-          handle: handle,
-          authUrl: authUrl.toString(),
-          currentUrl: window.location.href
-        }));
         
         // Redirect to authorization server
-
         window.location.href = authUrl.toString();
       } catch (authorizeError) {
-
+        // Authorization failed
         throw authorizeError;
       }
       
