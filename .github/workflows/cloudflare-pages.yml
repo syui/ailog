@@ -30,8 +30,7 @@ jobs:
       - name: Build OAuth app
         run: |
           cd oauth
-          npm run build
-          
+          NODE_ENV=production npm run build
       - name: Copy OAuth build to static
         run: |
           # Remove old assets (following run.zsh pattern)
