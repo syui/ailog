@@ -25,78 +25,53 @@ export default function AuthButton({ user, onLogin, onLogout, loading }) {
 
   if (user) {
     return (
-      <div className="auth-status">
-        <div>ログイン中: <strong>{user.handle}</strong></div>
-        <button onClick={onLogout} className="logout-btn">
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        {user.avatar && (
+          <img 
+            src={user.avatar} 
+            alt="Profile" 
+            className="avatar"
+            style={{ width: '24px', height: '24px' }}
+          />
+        )}
+        <div>
+          <div className="display-name" style={{ fontSize: '14px', fontWeight: '700' }}>
+            {user.displayName}
+          </div>
+          <div className="handle" style={{ fontSize: '12px' }}>
+            @{user.handle}
+          </div>
+        </div>
+        <button onClick={onLogout} className="btn btn-danger btn-sm">
           ログアウト
         </button>
-        <style jsx>{`
-          .auth-status {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background: #f9f9f9;
-          }
-          .logout-btn {
-            margin-top: 5px;
-            padding: 5px 10px;
-            background: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-          }
-        `}</style>
       </div>
     )
   }
 
   return (
-    <div className="auth-form">
-      <h3>OAuth認証</h3>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={handleInput}
-          onChange={(e) => setHandleInput(e.target.value)}
-          placeholder="Handle (e.g. your.handle.com)"
-          disabled={isLoading}
-          className="handle-input"
-        />
-        <button 
-          type="submit" 
-          disabled={isLoading || !handleInput.trim()}
-          className="login-btn"
-        >
-          {isLoading ? 'ログイン中...' : 'ログイン'}
-        </button>
-      </form>
-      <style jsx>{`
-        .auth-form {
-          padding: 10px;
-          border: 1px solid #ddd;
-          border-radius: 5px;
-        }
-        .handle-input {
-          width: 200px;
-          margin-right: 10px;
-          padding: 5px;
-          border: 1px solid #ccc;
-          border-radius: 3px;
-        }
-        .login-btn {
-          padding: 5px 10px;
-          background: #007bff;
-          color: white;
-          border: none;
-          border-radius: 3px;
-          cursor: pointer;
-        }
-        .login-btn:disabled {
-          background: #ccc;
-          cursor: not-allowed;
-        }
-      `}</style>
+    <div className="auth-section search-bar-layout">
+      <input
+        type="text"
+        value={handleInput}
+        onChange={(e) => setHandleInput(e.target.value)}
+        placeholder="your.handle.com"
+        disabled={isLoading}
+        className="handle-input"
+        onKeyPress={(e) => {
+          if (e.key === 'Enter') {
+            handleSubmit(e)
+          }
+        }}
+      />
+      <button 
+        type="button"
+        onClick={handleSubmit}
+        disabled={isLoading || !handleInput.trim()}
+        className="auth-button"
+      >
+        {isLoading ? '認証中...' : <i className="fab fa-bluesky"></i>}
+      </button>
     </div>
   )
 }

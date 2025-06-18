@@ -24,8 +24,13 @@ export function useUserData(adminData) {
           env.collection
         )
 
-        // 2. Get chat records (ai.syui.log.chat doesn't exist, so skip for now)
-        setChatRecords([])
+        // 2. Get chat records from ai.syui.log.chat
+        const chatRecords = await collections.getChat(
+          adminData.apiConfig.pds,
+          adminData.did,
+          env.collection
+        )
+        setChatRecords(chatRecords)
 
         // 3. Get base collection records which contain user comments
         const baseRecords = await collections.getBase(

@@ -1,4 +1,6 @@
 // ATProto API client
+import { ATProtoError, logError } from '../utils/errorHandler.js'
+
 const ENDPOINTS = {
   describeRepo: 'com.atproto.repo.describeRepo',
   getProfile: 'app.bsky.actor.getProfile',
@@ -7,11 +9,51 @@ const ENDPOINTS = {
 }
 
 async function request(url, options = {}) {
-  const response = await fetch(url, options)
-  if (!response.ok) {
-    throw new Error(`HTTP ${response.status}`)
+  try {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 15000) // 15秒タイムアウト
+    
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal
+    })
+    
+    clearTimeout(timeoutId)
+    
+    if (!response.ok) {
+      throw new ATProtoError(
+        `Request failed: ${response.statusText}`,
+        response.status,
+        { url, method: options.method || 'GET' }
+      )
+    }
+    
+    return await response.json()
+  } catch (error) {
+    if (error.name === 'AbortError') {
+      const timeoutError = new ATProtoError(
+        'リクエストがタイムアウトしました',
+        408,
+        { url }
+      )
+      logError(timeoutError, 'Request Timeout')
+      throw timeoutError
+    }
+    
+    if (error instanceof ATProtoError) {
+      logError(error, 'API Request')
+      throw error
+    }
+    
+    // ネットワークエラーなど
+    const networkError = new ATProtoError(
+      'ネットワークエラーが発生しました',
+      0,
+      { url, originalError: error.message }
+    )
+    logError(networkError, 'Network Error')
+    throw networkError
   }
-  return await response.json()
 }
 
 export const atproto = {
@@ -52,29 +94,72 @@ export const atproto = {
   }
 }
 
+import { dataCache } from '../utils/cache.js'
+
 // Collection specific methods
 export const collections = {
   async getBase(pds, repo, collection, limit = 10) {
-    return await atproto.getRecords(pds, repo, collection, limit)
+    const cacheKey = dataCache.generateKey('base', pds, repo, collection, limit)
+    const cached = dataCache.get(cacheKey)
+    if (cached) return cached
+    
+    const data = await atproto.getRecords(pds, repo, collection, limit)
+    dataCache.set(cacheKey, data)
+    return data
   },
 
   async getLang(pds, repo, collection, limit = 10) {
-    return await atproto.getRecords(pds, repo, `${collection}.chat.lang`, limit)
+    const cacheKey = dataCache.generateKey('lang', pds, repo, collection, limit)
+    const cached = dataCache.get(cacheKey)
+    if (cached) return cached
+    
+    const data = await atproto.getRecords(pds, repo, `${collection}.chat.lang`, limit)
+    dataCache.set(cacheKey, data)
+    return data
   },
 
   async getComment(pds, repo, collection, limit = 10) {
-    return await atproto.getRecords(pds, repo, `${collection}.chat.comment`, limit)
+    const cacheKey = dataCache.generateKey('comment', pds, repo, collection, limit)
+    const cached = dataCache.get(cacheKey)
+    if (cached) return cached
+    
+    const data = await atproto.getRecords(pds, repo, `${collection}.chat.comment`, limit)
+    dataCache.set(cacheKey, data)
+    return data
   },
 
   async getChat(pds, repo, collection, limit = 10) {
-    return await atproto.getRecords(pds, repo, `${collection}.chat`, limit)
+    const cacheKey = dataCache.generateKey('chat', pds, repo, collection, limit)
+    const cached = dataCache.get(cacheKey)
+    if (cached) return cached
+    
+    const data = await atproto.getRecords(pds, repo, `${collection}.chat`, limit)
+    dataCache.set(cacheKey, data)
+    return data
   },
 
   async getUserList(pds, repo, collection, limit = 100) {
-    return await atproto.getRecords(pds, repo, `${collection}.user`, limit)
+    const cacheKey = dataCache.generateKey('userlist', pds, repo, collection, limit)
+    const cached = dataCache.get(cacheKey)
+    if (cached) return cached
+    
+    const data = await atproto.getRecords(pds, repo, `${collection}.user`, limit)
+    dataCache.set(cacheKey, data)
+    return data
   },
 
   async getUserComments(pds, repo, collection, limit = 10) {
-    return await atproto.getRecords(pds, repo, collection, limit)
+    const cacheKey = dataCache.generateKey('usercomments', pds, repo, collection, limit)
+    const cached = dataCache.get(cacheKey)
+    if (cached) return cached
+    
+    const data = await atproto.getRecords(pds, repo, collection, limit)
+    dataCache.set(cacheKey, data)
+    return data
+  },
+
+  // 投稿後にキャッシュを無効化
+  invalidateCache(collection) {
+    dataCache.invalidatePattern(collection)
   }
 }
