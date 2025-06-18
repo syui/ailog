@@ -17,6 +17,10 @@ export default function App() {
   const pageContext = usePageContext()
   const [showAskAI, setShowAskAI] = useState(false)
   const [showTestUI, setShowTestUI] = useState(false)
+  
+  // Environment-based feature flags
+  const ENABLE_TEST_UI = import.meta.env.VITE_ENABLE_TEST_UI === 'true'
+  const ENABLE_DEBUG = import.meta.env.VITE_ENABLE_DEBUG === 'true'
 
   // Event listeners for blog communication
   useEffect(() => {
@@ -153,20 +157,22 @@ export default function App() {
             }}
           />
 
-          {showTestUI && (
+          {ENABLE_TEST_UI && showTestUI && (
             <div className="test-section">
               <TestUI />
             </div>
           )}
 
-          <div className="bottom-actions">
-            <button
-              onClick={() => setShowTestUI(!showTestUI)}
-              className={`btn ${showTestUI ? 'btn-danger' : 'btn-outline'} btn-sm`}
-            >
-              {showTestUI ? 'close test' : 'test'}
-            </button>
-          </div>
+          {ENABLE_TEST_UI && (
+            <div className="bottom-actions">
+              <button
+                onClick={() => setShowTestUI(!showTestUI)}
+                className={`btn ${showTestUI ? 'btn-danger' : 'btn-outline'} btn-sm`}
+              >
+                {showTestUI ? 'close test' : 'test'}
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

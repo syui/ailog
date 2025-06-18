@@ -2,7 +2,8 @@
 class Logger {
   constructor() {
     this.isDev = import.meta.env.DEV || false
-    this.isEnabled = this.isDev // Only enable in development
+    this.debugEnabled = import.meta.env.VITE_ENABLE_DEBUG === 'true'
+    this.isEnabled = this.isDev && this.debugEnabled // Enable only in dev AND when debug flag is true
   }
 
   log(...args) {
@@ -76,6 +77,6 @@ class Logger {
 export const logger = new Logger()
 
 // 開発環境でのみグローバルアクセス可能にする
-if (import.meta.env.DEV) {
+if (import.meta.env.DEV && import.meta.env.VITE_ENABLE_DEBUG === 'true') {
   window._logger = logger
 }
