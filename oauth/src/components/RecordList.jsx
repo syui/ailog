@@ -2,6 +2,24 @@ import React, { useState } from 'react'
 import AvatarImage from './AvatarImage.jsx'
 import Avatar from './Avatar.jsx'
 
+// Helper function to get correct web URL based on avatar URL
+function getCorrectWebUrl(avatarUrl) {
+  if (!avatarUrl) return 'https://bsky.app'
+  
+  // If avatar is from bsky.app (main Bluesky), use bsky.app
+  if (avatarUrl.includes('cdn.bsky.app') || avatarUrl.includes('bsky.app')) {
+    return 'https://bsky.app'
+  }
+  
+  // If avatar is from syu.is, use web.syu.is
+  if (avatarUrl.includes('bsky.syu.is') || avatarUrl.includes('syu.is')) {
+    return 'https://web.syu.is'
+  }
+  
+  // Default to bsky.app
+  return 'https://bsky.app'
+}
+
 export default function RecordList({ title, records, apiConfig, showTitle = true, user = null, agent = null, onRecordDeleted = null }) {
   const [expandedRecords, setExpandedRecords] = useState(new Set())
   const [deletingRecords, setDeletingRecords] = useState(new Set())
@@ -74,7 +92,7 @@ export default function RecordList({ title, records, apiConfig, showTitle = true
               <div className="display-name">{record.value.author?.displayName || record.value.author?.handle}</div>
               <div className="handle">
                 <a 
-                  href={`${apiConfig?.web || 'https://bsky.app'}/profile/${record.value.author?.did}`}
+                  href={`${getCorrectWebUrl(record.value.author?.avatar)}/profile/${record.value.author?.did}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="handle-link"

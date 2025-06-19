@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { atproto, collections } from '../api/atproto.js'
-import { getApiConfig, isSyuIsHandle } from '../utils/pds.js'
+import { getApiConfig, isSyuIsHandle, getPdsFromHandle } from '../utils/pds.js'
 import { env } from '../config/env.js'
 
 export function useUserData(adminData) {
@@ -88,14 +88,21 @@ export function useUserData(adminData) {
                   userPds = user.pds.replace('https://', '')
                   userApiConfig = getApiConfig(userPds)
                 } else {
-                  // Auto-detect PDS based on handle and get real DID
-                  if (isSyuIsHandle(userHandle)) {
+                  // Always get actual PDS from describeRepo first
+                  try {
+                    // Try bsky.social first for most handles
+                    const bskyPds = 'bsky.social'
+                    userDid = await atproto.getDid(bskyPds, userHandle)
+                    
+                    // Get the actual PDS endpoint from DID
+                    const realPds = await getPdsFromHandle(userHandle)
+                    userPds = realPds.replace('https://', '')
+                    userApiConfig = getApiConfig(realPds)
+                  } catch (error) {
+                    // Fallback to syu.is if bsky.social fails
+                    console.warn(`Failed to get PDS for ${userHandle} from bsky.social, trying syu.is:`, error)
                     userPds = env.pds
-                    userApiConfig = getApiConfig(userPds)
-                    userDid = await atproto.getDid(userPds, userHandle)
-                  } else {
-                    userPds = 'bsky.social'
-                    userApiConfig = getApiConfig(userPds)
+                    userApiConfig = getApiConfig(env.pds)
                     userDid = await atproto.getDid(userPds, userHandle)
                   }
                 }

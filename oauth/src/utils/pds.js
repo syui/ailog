@@ -1,8 +1,11 @@
 import { env } from '../config/env.js'
 
-// PDS判定からAPI設定を取得
+// PDS判定からAPI設定を取得 - 実際のPDSエンドポイントに基づいて設定
 export function getApiConfig(pds) {
-  if (pds.includes(env.pds)) {
+  // pdsからhttps://を除去してドメインのみ取得
+  const cleanPds = pds.replace(/^https?:\/\//, '')
+  
+  if (cleanPds.includes(env.pds)) {
     return {
       pds: `https://${env.pds}`,
       bsky: `https://bsky.${env.pds}`,

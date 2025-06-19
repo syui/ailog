@@ -65,7 +65,7 @@ export const atproto = {
   async getProfile(bsky, actor) {
     // Skip test DIDs
     if (actor && actor.includes('test-')) {
-      logger.log('Skipping profile fetch for test DID:', actor)
+      console.log('Skipping profile fetch for test DID:', actor)
       return {
         did: actor,
         handle: 'test.user',
@@ -74,7 +74,17 @@ export const atproto = {
       }
     }
     
-    return await request(`${bsky}/xrpc/${ENDPOINTS.getProfile}?actor=${actor}`)
+    // Check if endpoint supports getProfile
+    let apiEndpoint = bsky
+    
+    // Allow public.api.bsky.app and bsky.syu.is, redirect other PDS endpoints
+    if (!bsky.includes('public.api.bsky.app') && !bsky.includes('bsky.syu.is')) {
+      // If it's a PDS endpoint that doesn't support getProfile, redirect to public API
+      console.warn(`getProfile called with PDS endpoint ${bsky}, redirecting to public API`)
+      apiEndpoint = 'https://public.api.bsky.app'
+    }
+    
+    return await request(`${apiEndpoint}/xrpc/${ENDPOINTS.getProfile}?actor=${actor}`)
   },
 
   async getRecords(pds, repo, collection, limit = 10) {

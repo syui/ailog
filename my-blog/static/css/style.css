@@ -664,7 +664,8 @@ article.article-content {
 .chat-message.comment-style {
     background: #ffffff;
     border: 1px solid #d1d9e0;
-    border-radius: 8px;
+				border-left: 4px solid var(--theme-color);
+				border-radius: 8px;
     padding: 16px;
     margin-bottom: 12px;
 }

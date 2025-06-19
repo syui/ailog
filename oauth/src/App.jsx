@@ -24,13 +24,130 @@ export default function App() {
 
   // Event listeners for blog communication
   useEffect(() => {
-    const handleAIQuestion = (event) => {
+    // Clear OAuth completion flag once app is loaded
+    if (sessionStorage.getItem('oauth_just_completed') === 'true') {
+      setTimeout(() => {
+        sessionStorage.removeItem('oauth_just_completed')
+      }, 1000)
+    }
+
+    const handleAIQuestion = async (event) => {
       const { question } = event.detail
       if (question && adminData && user && agent) {
-        // Automatically open Ask AI panel and submit question
-        setShowAskAI(true)
-        // We'll need to pass this to the AskAI component
-        // For now, let's just open the panel
+        try {
+          console.log('Processing AI question:', question)
+          
+          // AI設定
+          const aiConfig = {
+            host: import.meta.env.VITE_AI_HOST || 'https://ollama.syui.ai',
+            model: import.meta.env.VITE_AI_MODEL || 'gemma3:1b',
+            systemPrompt: import.meta.env.VITE_AI_SYSTEM_PROMPT || 'あなたは6歳の女の子アイです。明るく元気で、ちょっとおっちょこちょい。自分のことは「アイ」って呼びます。'
+          }
+
+          const prompt = `${aiConfig.systemPrompt}
+
+Question: ${question}
+
+Answer:`
+
+          // Ollamaに直接リクエスト
+          const controller = new AbortController()
+          const timeoutId = setTimeout(() => controller.abort(), 30000)
+          
+          const response = await fetch(`${aiConfig.host}/api/generate`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Origin': 'https://syui.ai',
+            },
+            body: JSON.stringify({
+              model: aiConfig.model,
+              prompt: prompt,
+              stream: false,
+              options: {
+                temperature: 0.9,
+                top_p: 0.9,
+                num_predict: 200,
+                repeat_penalty: 1.1,
+              }
+            }),
+            signal: controller.signal
+          })
+          
+          clearTimeout(timeoutId)
+
+          if (!response.ok) {
+            throw new Error(`Ollama API error: ${response.status}`)
+          }
+
+          const data = await response.json()
+          const answer = data.response || 'エラーが発生しました'
+          
+          console.log('AI response received:', answer)
+
+          // Save conversation to ATProto
+          try {
+            const timestamp = new Date().toISOString()
+            const conversationRecord = {
+              repo: adminData.did,
+              collection: 'ai.syui.log.chat',
+              record: {
+                type: 'ai.syui.log.chat',
+                question: question,
+                answer: answer,
+                user: user ? {
+                  did: user.did,
+                  handle: user.handle,
+                  displayName: user.displayName || user.handle
+                } : null,
+                ai: {
+                  did: adminData.did,
+                  handle: adminData.profile?.handle,
+                  displayName: adminData.profile?.displayName
+                },
+                timestamp: timestamp,
+                createdAt: timestamp
+              }
+            }
+
+            await agent.com.atproto.repo.putRecord(conversationRecord)
+            console.log('Conversation saved to ATProto')
+          } catch (saveError) {
+            console.error('Failed to save conversation:', saveError)
+          }
+
+          // Send response to blog
+          window.dispatchEvent(new CustomEvent('aiResponseReceived', {
+            detail: {
+              question: question,
+              answer: answer,
+              timestamp: new Date().toISOString(),
+              aiProfile: adminData?.profile ? {
+                did: adminData.did,
+                handle: adminData.profile.handle,
+                displayName: adminData.profile.displayName,
+                avatar: adminData.profile.avatar
+              } : null
+            }
+          }))
+          
+        } catch (error) {
+          console.error('Failed to process AI question:', error)
+          // Send error response to blog
+          window.dispatchEvent(new CustomEvent('aiResponseReceived', {
+            detail: {
+              question: question,
+              answer: 'エラーが発生しました。もう一度お試しください。',
+              timestamp: new Date().toISOString(),
+              aiProfile: adminData?.profile ? {
+                did: adminData.did,
+                handle: adminData.profile.handle,
+                displayName: adminData.profile.displayName,
+                avatar: adminData.profile.avatar
+              } : null
+            }
+          }))
+        }
       }
     }
 
@@ -67,7 +184,11 @@ export default function App() {
 
   const isLoading = authLoading || dataLoading || userLoading
 
-  if (isLoading) {
+  // Don't show loading if we just completed OAuth callback
+  const isOAuthReturn = window.location.pathname === '/oauth/callback' || 
+                       sessionStorage.getItem('oauth_just_completed') === 'true'
+
+  if (isLoading && !isOAuthReturn) {
     return (
       <div style={{ 
         display: 'flex', 

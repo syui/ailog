@@ -38,6 +38,8 @@ export function useAuth() {
               user: authResult.user
             }, '*')
           } else {
+            // Set flag to skip loading screen after redirect
+            sessionStorage.setItem('oauth_just_completed', 'true')
             // Direct redirect
             setTimeout(() => {
               window.location.href = returnUrl
