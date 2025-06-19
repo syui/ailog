@@ -328,7 +328,7 @@ a.view-markdown:any-link {
 
 /* Article */
 .article-container {
-    display: grid;
+    /* display: grid; */
     grid-template-columns: 1fr 240px;
     gap: 40px;
     max-width: 1000px;

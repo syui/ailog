@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { atproto } from './api/atproto.js'
 import { useAuth } from './hooks/useAuth.js'
 import { useAdminData } from './hooks/useAdminData.js'
 import { useUserData } from './hooks/useUserData.js'
@@ -14,6 +15,8 @@ export default function App() {
   const { user, agent, loading: authLoading, login, logout } = useAuth()
   const { adminData, langRecords, commentRecords, loading: dataLoading, error, retryCount, refresh: refreshAdminData } = useAdminData()
   const { userComments, chatRecords, loading: userLoading, refresh: refreshUserData } = useUserData(adminData)
+  const [userChatRecords, setUserChatRecords] = useState([])
+  const [userChatLoading, setUserChatLoading] = useState(false)
   const pageContext = usePageContext()
   const [showAskAI, setShowAskAI] = useState(false)
   const [showTestUI, setShowTestUI] = useState(false)
@@ -21,6 +24,67 @@ export default function App() {
   // Environment-based feature flags
   const ENABLE_TEST_UI = import.meta.env.VITE_ENABLE_TEST_UI === 'true'
   const ENABLE_DEBUG = import.meta.env.VITE_ENABLE_DEBUG === 'true'
+
+  // Fetch user's own chat records
+  const fetchUserChatRecords = async () => {
+    if (!user || !agent) return
+    
+    setUserChatLoading(true)
+    try {
+      const records = await agent.api.com.atproto.repo.listRecords({
+        repo: user.did,
+        collection: 'ai.syui.log.chat',
+        limit: 50
+      })
+      
+      // Group questions and answers together
+      const chatPairs = []
+      const recordMap = new Map()
+      
+      // First pass: organize records by base rkey
+      records.data.records.forEach(record => {
+        const rkey = record.uri.split('/').pop()
+        const baseRkey = rkey.replace('-answer', '')
+        
+        if (!recordMap.has(baseRkey)) {
+          recordMap.set(baseRkey, { question: null, answer: null })
+        }
+        
+        if (record.value.type === 'question') {
+          recordMap.get(baseRkey).question = record
+        } else if (record.value.type === 'answer') {
+          recordMap.get(baseRkey).answer = record
+        }
+      })
+      
+      // Second pass: create chat pairs
+      recordMap.forEach((pair, rkey) => {
+        if (pair.question) {
+          chatPairs.push({
+            rkey,
+            question: pair.question,
+            answer: pair.answer,
+            createdAt: pair.question.value.createdAt
+          })
+        }
+      })
+      
+      // Sort by creation time (newest first)
+      chatPairs.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      
+      setUserChatRecords(chatPairs)
+    } catch (error) {
+      console.error('Failed to fetch user chat records:', error)
+      setUserChatRecords([])
+    } finally {
+      setUserChatLoading(false)
+    }
+  }
+
+  // Fetch user chat records when user/agent changes
+  useEffect(() => {
+    fetchUserChatRecords()
+  }, [user, agent])
 
   // Event listeners for blog communication
   useEffect(() => {
@@ -87,31 +151,80 @@ Answer:`
 
           // Save conversation to ATProto
           try {
-            const timestamp = new Date().toISOString()
-            const conversationRecord = {
-              repo: user.did,
-              collection: 'ai.syui.log.chat',
-              record: {
-                type: 'ai.syui.log.chat',
-                question: question,
-                answer: answer,
-                user: user ? {
-                  did: user.did,
-                  handle: user.handle,
-                  displayName: user.displayName || user.handle
-                } : null,
-                ai: {
-                  did: adminData.did,
-                  handle: adminData.profile?.handle,
-                  displayName: adminData.profile?.displayName
-                },
-                timestamp: timestamp,
-                createdAt: timestamp
-              }
+            const now = new Date()
+            const timestamp = now.toISOString()
+            const rkey = timestamp.replace(/[:.]/g, '-')
+            
+            // Extract post metadata from current page
+            const currentUrl = window.location.href
+            const postSlug = currentUrl.match(/\/posts\/([^/]+)/)?.[1] || ''
+            const postTitle = document.title.replace(' - syui.ai', '') || ''
+            
+            // 1. Save question record
+            const questionRecord = {
+              $type: 'ai.syui.log.chat',
+              post: {
+                url: currentUrl,
+                slug: postSlug,
+                title: postTitle,
+                date: timestamp,
+                tags: [],
+                language: "ja"
+              },
+              type: "question",
+              text: question,
+              author: {
+                did: user.did,
+                handle: user.handle,
+                displayName: user.displayName || user.handle,
+                avatar: user.avatar
+              },
+              createdAt: timestamp
             }
 
-            await agent.com.atproto.repo.putRecord(conversationRecord)
-            console.log('Conversation saved to ATProto')
+            await agent.api.com.atproto.repo.putRecord({
+              repo: user.did,
+              collection: 'ai.syui.log.chat',
+              rkey: rkey,
+              record: questionRecord
+            })
+            
+            // 2. Save answer record
+            const answerRkey = rkey + '-answer'
+            const answerRecord = {
+              $type: 'ai.syui.log.chat',
+              post: {
+                url: currentUrl,
+                slug: postSlug,
+                title: postTitle,
+                date: timestamp,
+                tags: [],
+                language: "ja"
+              },
+              type: "answer",
+              text: answer,
+              author: {
+                did: adminData.did,
+                handle: adminData.profile?.handle,
+                displayName: adminData.profile?.displayName,
+                avatar: adminData.profile?.avatar
+              },
+              createdAt: timestamp
+            }
+
+            await agent.api.com.atproto.repo.putRecord({
+              repo: user.did,
+              collection: 'ai.syui.log.chat',
+              rkey: answerRkey,
+              record: answerRecord
+            })
+            
+            console.log('Question and answer saved to ATProto')
+            
+            // Refresh chat records after saving
+            setTimeout(() => {
+              fetchUserChatRecords()
+            }, 1000)
           } catch (saveError) {
             console.error('Failed to save conversation:', saveError)
           }
@@ -318,6 +431,8 @@ Answer:`
             commentRecords={commentRecords}
             userComments={userComments}
             chatRecords={chatRecords}
+            userChatRecords={userChatRecords}
+            userChatLoading={userChatLoading}
             baseRecords={adminData.records}
             apiConfig={adminData.apiConfig}
             pageContext={pageContext}
@@ -326,6 +441,7 @@ Answer:`
             onRecordDeleted={() => {
               refreshAdminData?.()
               refreshUserData?.()
+              fetchUserChatRecords?.()
             }}
           />
 

@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import RecordList from './RecordList.jsx'
+import ChatRecordList from './ChatRecordList.jsx'
 import LoadingSkeleton from './LoadingSkeleton.jsx'
 
-export default function RecordTabs({ langRecords, commentRecords, userComments, chatRecords, baseRecords, apiConfig, pageContext, user = null, agent = null, onRecordDeleted = null }) {
+export default function RecordTabs({ langRecords, commentRecords, userComments, chatRecords, userChatRecords, userChatLoading, baseRecords, apiConfig, pageContext, user = null, agent = null, onRecordDeleted = null }) {
   const [activeTab, setActiveTab] = useState('lang')
 
   // Filter records based on page context
@@ -51,7 +52,7 @@ export default function RecordTabs({ langRecords, commentRecords, userComments, 
           className={`tab-btn ${activeTab === 'collection' ? 'active' : ''}`}
           onClick={() => setActiveTab('collection')}
         >
-          Posts ({filteredBaseRecords.length})
+          Posts ({userChatRecords?.length || 0})
         </button>
         <button 
           className={`tab-btn ${activeTab === 'users' ? 'active' : ''}`}
@@ -93,17 +94,15 @@ export default function RecordTabs({ langRecords, commentRecords, userComments, 
           )
         )}
         {activeTab === 'collection' && (
-          !baseRecords ? (
+          userChatLoading ? (
             <LoadingSkeleton count={2} showTitle={true} />
           ) : (
-            <RecordList 
-              title=""
-              records={filteredBaseRecords} 
+            <ChatRecordList 
+              chatPairs={userChatRecords} 
               apiConfig={apiConfig} 
               user={user}
               agent={agent}
               onRecordDeleted={onRecordDeleted}
-              showTitle={false}
             />
           )
         )}
