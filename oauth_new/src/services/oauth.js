@@ -66,11 +66,23 @@ export class OAuthService {
     const did = session.sub || session.did
     let handle = session.handle || 'unknown'
 
+    // Create Agent directly with session (per official docs)
+    try {
+      this.agent = new Agent(session)
+    } catch (err) {
+      // Fallback to dpopFetch method
+      this.agent = new Agent({
+        service: session.server?.serviceEndpoint || 'https://bsky.social',
+        fetch: session.dpopFetch
+      })
+    }
+
     this.sessionInfo = { did, handle }
 
     // Resolve handle if missing
     if (handle === 'unknown' && this.agent) {
       try {
+        await new Promise(resolve => setTimeout(resolve, 300))
         const profile = await this.agent.getProfile({ actor: did })
         handle = profile.data.handle
         this.sessionInfo.handle = handle
@@ -86,7 +98,9 @@ export class OAuthService {
     await this.initialize()
 
     const client = isSyuIsHandle(handle) ? this.clients.syu : this.clients.bsky
-    const authUrl = await client.authorize(handle, { scope: 'atproto' })
+    const authUrl = await client.authorize(handle, { 
+      scope: 'atproto transition:generic' 
+    })
     
     window.location.href = authUrl.toString()
   }

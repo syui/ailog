@@ -8,7 +8,7 @@ on:
 
 env:
   OAUTH_DIR: oauth_new
-  KEEP_DEPLOYMENTS: 5
+  KEEP_DEPLOYMENTS: 5  # 保持するデプロイメント数
 
 jobs:
   deploy:
@@ -24,91 +24,38 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '21'
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: ${{ env.OAUTH_DIR }}/package-lock.json
 
       - name: Install dependencies
         run: |
           cd ${{ env.OAUTH_DIR }}
-          npm install
+          npm ci
 
       - name: Build OAuth app
         run: |
           cd ${{ env.OAUTH_DIR }}
           NODE_ENV=production npm run build
-      - name: Copy OAuth build to static
-        run: |
-          rm -rf my-blog/static/assets
-          cp -rf ${{ env.OAUTH_DIR }}/dist/* my-blog/static/
-          cp ${{ env.OAUTH_DIR }}/dist/index.html my-blog/templates/oauth-assets.html
-          
-      - name: Cache ailog binary
-        uses: actions/cache@v4
-        with:
-          path: ./bin
-          key: ailog-bin-${{ runner.os }}
-          restore-keys: |
-            ailog-bin-${{ runner.os }}
-            
-      - name: Setup ailog binary
-        run: |
-          # Get expected version from Cargo.toml
-          EXPECTED_VERSION=$(grep '^version' Cargo.toml | cut -d'"' -f2)
-          echo "Expected version from Cargo.toml: $EXPECTED_VERSION"
-          
-          # Check current binary version if exists
-          if [ -f "./bin/ailog" ]; then
-            CURRENT_VERSION=$(./bin/ailog --version 2>/dev/null || echo "unknown")
-            echo "Current binary version: $CURRENT_VERSION"
-          else
-            CURRENT_VERSION="none"
-            echo "No binary found"
-          fi
-          
-          # Check OS
-          OS="${{ runner.os }}"
-          echo "Runner OS: $OS"
-          
-          # Use pre-packaged binary if version matches or extract from tar.gz
-          if [ "$CURRENT_VERSION" = "$EXPECTED_VERSION" ]; then
-            echo "Binary is up to date"
-            chmod +x ./bin/ailog
-          elif [ "$OS" = "Linux" ] && [ -f "./bin/ailog-linux-x86_64.tar.gz" ]; then
-            echo "Extracting ailog from pre-packaged tar.gz..."
-            cd bin
-            tar -xzf ailog-linux-x86_64.tar.gz
-            chmod +x ailog
-            cd ..
-            
-            # Verify extracted version
-            EXTRACTED_VERSION=$(./bin/ailog --version 2>/dev/null || echo "unknown")
-            echo "Extracted binary version: $EXTRACTED_VERSION"
-            
-            if [ "$EXTRACTED_VERSION" != "$EXPECTED_VERSION" ]; then
-              echo "Warning: Binary version mismatch. Expected $EXPECTED_VERSION but got $EXTRACTED_VERSION"
-            fi
-          else
-            echo "Error: No suitable binary found for OS: $OS"
-            exit 1
-          fi
+        env:
+          VITE_ADMIN: ${{ secrets.VITE_ADMIN }}
+          VITE_PDS: ${{ secrets.VITE_PDS }}
+          VITE_HANDLE_LIST: ${{ secrets.VITE_HANDLE_LIST }}
+          VITE_COLLECTION: ${{ secrets.VITE_COLLECTION }}
+          VITE_OAUTH_CLIENT_ID: ${{ secrets.VITE_OAUTH_CLIENT_ID }}
+          VITE_OAUTH_REDIRECT_URI: ${{ secrets.VITE_OAUTH_REDIRECT_URI }}
+          VITE_ENABLE_TEST_UI: 'false'
+          VITE_ENABLE_DEBUG: 'false'
 
-      - name: Build site with ailog
-        run: |
-          cd my-blog
-          ../bin/ailog build
-
-      - name: List public directory
-        run: |
-          ls -la my-blog/public/
-          
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/pages-action@v1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: ${{ secrets.CLOUDFLARE_PROJECT_NAME }}
-          directory: my-blog/public
+          directory: ${{ env.OAUTH_DIR }}/dist
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          wranglerVersion: '3'
+          deploymentName: Production
 
   cleanup:
     needs: deploy
@@ -117,7 +64,7 @@ jobs:
     
     steps:
       - name: Wait for deployment to complete
-        run: sleep 3
+        run: sleep 30
         
       - name: Cleanup old deployments
         run: |

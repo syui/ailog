@@ -1,0 +1,41 @@
+name: Cleanup Old Deployments
+
+on:
+  workflow_run:
+    workflows: ["Deploy to Cloudflare Pages"]
+    types:
+      - completed
+  workflow_dispatch:
+
+env:
+  KEEP_DEPLOYMENTS: 5  # 保持するデプロイメント数
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+    
+    steps:
+      - name: Cleanup old deployments
+        run: |
+          # Get all deployments
+          DEPLOYMENTS=$(curl -s -X GET \
+            "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects/${{ secrets.CLOUDFLARE_PROJECT_NAME }}/deployments" \
+            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
+            -H "Content-Type: application/json")
+          
+          # Extract deployment IDs (skip the latest N deployments)
+          DEPLOYMENT_IDS=$(echo "$DEPLOYMENTS" | jq -r ".result | sort_by(.created_on) | reverse | .[${{ env.KEEP_DEPLOYMENTS }}:] | .[].id")
+          
+          # Delete old deployments
+          for ID in $DEPLOYMENT_IDS; do
+            echo "Deleting deployment: $ID"
+            curl -s -X DELETE \
+              "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects/${{ secrets.CLOUDFLARE_PROJECT_NAME }}/deployments/$ID" \
+              -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
+              -H "Content-Type: application/json"
+            echo "Deleted deployment: $ID"
+            sleep 1  # Rate limiting
+          done
+          
+          echo "Cleanup completed!"

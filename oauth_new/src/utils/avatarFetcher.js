@@ -34,11 +34,15 @@ async function getDid(handle) {
 // DIDからプロフィール情報を取得
 async function getProfile(did, handle) {
   try {
+    // Determine which public API to use based on handle
     const pds = await getPdsFromHandle(handle)
     const apiConfig = getApiConfig(pds)
     
-    logger.log('Getting profile for DID:', did, 'using API:', apiConfig.bsky)
-    const response = await fetch(`${apiConfig.bsky}/xrpc/app.bsky.actor.getProfile?actor=${did}`)
+    // Use the appropriate public API endpoint
+    const publicApiUrl = apiConfig.bsky
+    
+    logger.log('Getting profile for DID:', did, 'using public API:', publicApiUrl)
+    const response = await fetch(`${publicApiUrl}/xrpc/app.bsky.actor.getProfile?actor=${did}`)
     
     if (!response.ok) {
       throw new Error(`Profile API error: ${response.status} ${response.statusText}`)
