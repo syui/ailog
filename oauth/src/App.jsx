@@ -89,7 +89,7 @@ Answer:`
           try {
             const timestamp = new Date().toISOString()
             const conversationRecord = {
-              repo: adminData.did,
+              repo: user.did,
               collection: 'ai.syui.log.chat',
               record: {
                 type: 'ai.syui.log.chat',
