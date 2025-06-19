@@ -465,7 +465,6 @@ body {
 }
 
 .user-message .message-content {
-  background: var(--primary);
   color: white;
 }
 

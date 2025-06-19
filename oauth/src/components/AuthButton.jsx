@@ -25,20 +25,20 @@ export default function AuthButton({ user, onLogin, onLogout, loading }) {
 
   if (user) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <div className="user-section" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         {user.avatar && (
           <img 
             src={user.avatar} 
             alt="Profile" 
-            className="avatar"
+            className="user-avatar"
             style={{ width: '24px', height: '24px' }}
           />
         )}
         <div>
-          <div className="display-name" style={{ fontSize: '14px', fontWeight: '700' }}>
+          <div className="user-display-name" style={{ fontSize: '14px', fontWeight: '700' }}>
             {user.displayName}
           </div>
-          <div className="handle" style={{ fontSize: '12px' }}>
+          <div className="user-handle" style={{ fontSize: '12px' }}>
             @{user.handle}
           </div>
         </div>

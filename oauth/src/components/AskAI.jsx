@@ -57,15 +57,15 @@ export default function AskAI({ adminData, user, agent, onClose }) {
       <div className="user-message">
         <div className="message-header">
           <div className="avatar">
-            {entry.user?.avatar ? (
-              <img src={entry.user.avatar} alt={entry.user.displayName} className="profile-avatar" />
+            {(entry.user?.avatar || user?.avatar) ? (
+              <img src={entry.user?.avatar || user?.avatar} alt={entry.user?.displayName || user?.displayName} className="profile-avatar" />
             ) : (
               '👤'
             )}
           </div>
           <div className="user-info">
-            <div className="display-name">{entry.user?.displayName || 'You'}</div>
-            <div className="handle">@{entry.user?.handle || 'user'}</div>
+            <div className="display-name">{entry.user?.displayName || user?.displayName || 'You'}</div>
+            <div className="handle">@{entry.user?.handle || user?.handle || 'user'}</div>
             <div className="timestamp">{formatTimestamp(entry.timestamp)}</div>
           </div>
         </div>

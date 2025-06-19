@@ -20,11 +20,15 @@ export default function OAuthCallback({ onAuthSuccess }) {
       }
 
       if (code) {
-        setStatus('認証成功！メインページに戻ります...')
+        setStatus('認証成功！元のページに戻ります...')
         
-        // 少し待ってからメインページにリダイレクト
+        // Get the referring page or use root
+        const referrer = document.referrer || window.location.origin
+        const returnUrl = referrer.includes('/oauth/callback') ? window.location.origin : referrer
+        
+        // 少し待ってから元のページにリダイレクト
         setTimeout(() => {
-          window.location.href = '/'
+          window.location.href = returnUrl
         }, 1500)
       } else {
         setStatus('認証情報が見つかりません')
