@@ -493,6 +493,7 @@ article.article-content {
 .article-body {
     color: #1f2328;
     line-height: 1.6;
+				padding-bottom: 200px;
 }
 
 .article-body h1, .article-body h2, .article-body h3 {
@@ -1007,6 +1008,7 @@ article.article-content {
     /* Article content mobile optimization */
     .article-body {
         overflow-x: hidden;
+								padding-bottom: 50px;
     }
     
     .article-body pre {
@@ -1071,3 +1073,8 @@ article.article-content {
         padding: 0;
     }
 }
+
+img {
+    width: 100%;
+}
+
