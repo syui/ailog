@@ -66,7 +66,7 @@ export default function CommentForm({ user, agent, onCommentPosted }) {
       }
       
       // Show success message briefly
-      setText('✓ コメントが投稿されました')
+      setText('✓ ')
       setTimeout(() => {
         setText('')
       }, 2000)
@@ -85,27 +85,27 @@ export default function CommentForm({ user, agent, onCommentPosted }) {
         padding: '40px', 
         color: 'var(--text-secondary)'
       }}>
-        <p>ログインしてコメントを投稿</p>
+        <p>atproto login</p>
       </div>
     )
   }
 
   return (
     <div>
-      <h3>コメントを投稿</h3>
+      <h3>post</h3>
       
       <form onSubmit={handleSubmit}>
         <div className="form-group" style={{ marginBottom: '12px', padding: '8px', backgroundColor: 'var(--background-secondary)', borderRadius: '4px', fontSize: '0.9em' }}>
-          <strong>投稿先:</strong> {window.location.href}
+          <strong>url:</strong> {window.location.href}
         </div>
 
         <div className="form-group">
-          <label htmlFor="comment-text">コメント:</label>
+          <label htmlFor="comment-text">comment:</label>
           <textarea
             id="comment-text"
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="コメントを入力してください..."
+            placeholder="text..."
             rows={4}
             required
             disabled={loading}
@@ -115,7 +115,7 @@ export default function CommentForm({ user, agent, onCommentPosted }) {
 
         {error && (
           <div className="error-message">
-            エラー: {error}
+            err: {error}
           </div>
         )}
 
@@ -125,7 +125,7 @@ export default function CommentForm({ user, agent, onCommentPosted }) {
             disabled={loading || !text.trim()}
             className={`btn ${loading ? 'btn-outline' : 'btn-primary'}`}
           >
-            {loading ? '投稿中...' : 'コメントを投稿'}
+            {loading ? 'posting...' : 'post comment'}
           </button>
         </div>
       </form>
