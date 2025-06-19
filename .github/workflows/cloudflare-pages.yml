@@ -6,6 +6,9 @@ on:
       - main
   workflow_dispatch:
 
+env:
+  OAUTH_DIR: oauth_new
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -24,21 +27,18 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd oauth
+          cd ${{ env.OAUTH_DIR }}
           npm install
 
       - name: Build OAuth app
         run: |
-          cd oauth
+          cd ${{ env.OAUTH_DIR }}
           NODE_ENV=production npm run build
       - name: Copy OAuth build to static
         run: |
-          # Remove old assets (following run.zsh pattern)
           rm -rf my-blog/static/assets
-          # Copy all dist files to static
-          cp -rf oauth/dist/* my-blog/static/
-          # Copy index.html to oauth-assets.html template
-          cp oauth/dist/index.html my-blog/templates/oauth-assets.html
+          cp -rf ${{ env.OAUTH_DIR }}/dist/* my-blog/static/
+          cp ${{ env.OAUTH_DIR }}/dist/index.html my-blog/templates/oauth-assets.html
           
       - name: Cache ailog binary
         uses: actions/cache@v4
