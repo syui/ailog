@@ -70,7 +70,6 @@ export default function App() {
   if (isLoading) {
     return (
       <div style={{ padding: '20px', textAlign: 'center' }}>
-        <h1>ATProto OAuth Demo</h1>
         <p>読み込み中...</p>
       </div>
     )
@@ -79,7 +78,7 @@ export default function App() {
   if (error) {
     return (
       <div style={{ padding: '20px', textAlign: 'center' }}>
-        <h1>ATProto OAuth Demo</h1>
+        <h1>エラー</h1>
         <div style={{ 
           background: '#fee', 
           color: '#c33', 
