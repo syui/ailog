@@ -110,49 +110,49 @@ jobs:
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           wranglerVersion: '3'
 
-#  cleanup:
-#    needs: deploy
-#    runs-on: ubuntu-latest
-#    if: success()
-#    steps:
-#      - name: Cleanup old deployments
-#        run: |
-#          curl -X PATCH \
-#            "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects/${{ secrets.CLOUDFLARE_PROJECT_NAME }} \
-#            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
-#            -H "Content-Type: application/json")
-#            -d "{ \"deployment_configs\": { \"production\": { \"deployment_retention\": ${{ env.KEEP_DEPLOYMENTS }} } } }"
-#          # Get all deployments
-#          DEPLOYMENTS=$(curl -s -X GET \
-#            "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects/${{ secrets.CLOUDFLARE_PROJECT_NAME }}/deployments" \
-#            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
-#            -H "Content-Type: application/json")
-#          
-#          # Extract deployment IDs (skip the latest N deployments)
-#          DEPLOYMENT_IDS=$(echo "$DEPLOYMENTS" | jq -r ".result | sort_by(.created_on) | reverse | .[${{ env.KEEP_DEPLOYMENTS }}:] | .[].id // empty")
-#          
-#          if [ -z "$DEPLOYMENT_IDS" ]; then
-#            echo "No old deployments to delete"
-#            exit 0
-#          fi
-#          
-#          # Delete old deployments
-#          for ID in $DEPLOYMENT_IDS; do
-#            echo "Deleting deployment: $ID"
-#            RESPONSE=$(curl -s -X DELETE \
-#              "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects/${{ secrets.CLOUDFLARE_PROJECT_NAME }}/deployments/$ID" \
-#              -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
-#              -H "Content-Type: application/json")
-#            
-#            SUCCESS=$(echo "$RESPONSE" | jq -r '.success')
-#            if [ "$SUCCESS" = "true" ]; then
-#              echo "Successfully deleted deployment: $ID"
-#            else
-#              echo "Failed to delete deployment: $ID"
-#              echo "$RESPONSE" | jq .
-#            fi
-#            
-#            sleep 1  # Rate limiting
-#          done
-#          
-#          echo "Cleanup completed!"
+  cleanup:
+    needs: deploy
+    runs-on: ubuntu-latest
+    if: success()
+    steps:
+      - name: Cleanup old deployments
+        run: |
+          curl -X PATCH \
+            "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects/${{ secrets.CLOUDFLARE_PROJECT_NAME }}" \
+            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d "{ \"deployment_configs\": { \"production\": { \"deployment_retention\": ${{ env.KEEP_DEPLOYMENTS }} } } }"
+          # Get all deployments
+          DEPLOYMENTS=$(curl -s -X GET \
+            "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects/${{ secrets.CLOUDFLARE_PROJECT_NAME }}/deployments" \
+            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
+            -H "Content-Type: application/json")
+          
+          # Extract deployment IDs (skip the latest N deployments)
+          DEPLOYMENT_IDS=$(echo "$DEPLOYMENTS" | jq -r ".result | sort_by(.created_on) | reverse | .[${{ env.KEEP_DEPLOYMENTS }}:] | .[].id // empty")
+          
+          if [ -z "$DEPLOYMENT_IDS" ]; then
+            echo "No old deployments to delete"
+            exit 0
+          fi
+          
+          # Delete old deployments
+          for ID in $DEPLOYMENT_IDS; do
+            echo "Deleting deployment: $ID"
+            RESPONSE=$(curl -s -X DELETE \
+              "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects/${{ secrets.CLOUDFLARE_PROJECT_NAME }}/deployments/$ID" \
+              -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
+              -H "Content-Type: application/json")
+            
+            SUCCESS=$(echo "$RESPONSE" | jq -r '.success')
+            if [ "$SUCCESS" = "true" ]; then
+              echo "Successfully deleted deployment: $ID"
+            else
+              echo "Failed to delete deployment: $ID"
+              echo "$RESPONSE" | jq .
+            fi
+            
+            sleep 1  # Rate limiting
+          done
+          
+          echo "Cleanup completed!"
