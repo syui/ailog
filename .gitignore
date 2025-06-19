@@ -16,5 +16,6 @@ my-blog/static/index.html
 my-blog/templates/oauth-assets.html
 cloudflared-config.yml
 .config
-oauth-server-example
 atproto
+oauth_old
+oauth_example

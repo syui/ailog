@@ -65,7 +65,7 @@ case "${1:-serve}" in
 		_oauth_build
 		;;
 	n)
-		oauth=$d/oauth_new
+		oauth=$d/oauth_old
 		_oauth_build
 		;;
 	comment|co)
