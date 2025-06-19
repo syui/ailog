@@ -125,17 +125,6 @@ export default function RecordList({ title, records, apiConfig, showTitle = true
             </div>
           </div>
           
-          {expandedRecords.has(i) && (
-            <div className="json-display">
-              <div className="json-header">json data</div>
-              <pre className="json-content">
-                {JSON.stringify(record, null, 2)}
-              </pre>
-            </div>
-          )}
-          
-          <div className="record-content">{record.value.text || record.value.content}</div>
-          
           <div className="record-meta">
             {record.value.post?.url && (
               <a 
@@ -148,6 +137,17 @@ export default function RecordList({ title, records, apiConfig, showTitle = true
               </a>
             )}
           </div>
+          
+          {expandedRecords.has(i) && (
+            <div className="json-display">
+              <div className="json-header">json data</div>
+              <pre className="json-content">
+                {JSON.stringify(record, null, 2)}
+              </pre>
+            </div>
+          )}
+          
+          <div className="record-content">{record.value.text || record.value.content}</div>
         </div>
       ))}
     </section>

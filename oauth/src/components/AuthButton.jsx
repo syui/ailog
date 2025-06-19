@@ -55,7 +55,7 @@ export default function AuthButton({ user, onLogin, onLogout, loading }) {
         type="text"
         value={handleInput}
         onChange={(e) => setHandleInput(e.target.value)}
-        placeholder="your.handle.com"
+        placeholder="user.bsky.social"
         disabled={isLoading}
         className="handle-input"
         onKeyPress={(e) => {
