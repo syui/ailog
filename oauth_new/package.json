@@ -1,6 +1,6 @@
 {
   "name": "oauth-simple",
-  "version": "1.0.0",
+  "version": "0.2.2",
   "type": "module",
   "scripts": {
     "dev": "vite",
