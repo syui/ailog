@@ -446,7 +446,12 @@ pub async fn init_user_list(project_dir: Option<PathBuf>, handles: Option<String
 }
 
 pub async fn start(project_dir: Option<PathBuf>, daemon: bool, ai_generate: bool) -> Result<()> {
+    println!("{}", "🚀 Starting ailog stream server...".cyan());
+    println!("{}", "📋 Step 1: Loading and refreshing authentication...".cyan());
+    
     let mut config = load_config_with_refresh().await?;
+    
+    println!("{}", "📋 Step 2: Configuration loaded successfully".green());
     
     // Load collection config with priority: env vars > project config > defaults
     let (collection_comment, _collection_user) = load_collection_config(project_dir.as_deref())?;
@@ -2019,7 +2024,14 @@ async fn generate_and_store_comment(
 ) -> Result<()> {
     // Generate comment using limited post content for brevity
     let limited_contents = if post.contents.len() > 300 {
-        format!("{}...", &post.contents[..300])
+        // Use char_indices to safely truncate at character boundaries
+        let truncate_pos = post.contents
+            .char_indices()
+            .take(100)  // Take first 100 characters instead of bytes
+            .last()
+            .map(|(idx, ch)| idx + ch.len_utf8())
+            .unwrap_or(post.contents.len());
+        format!("{}...", &post.contents[..truncate_pos])
     } else {
         post.contents.clone()
     };
@@ -2060,7 +2072,18 @@ async fn store_atproto_record(
     record_data: &serde_json::Value,
 ) -> Result<()> {
     // Always load fresh config to ensure we have valid tokens
-    let config = load_config_with_refresh().await?;
+    println!("{} Checking token before putRecord...", "🔄".yellow());
+    let config = match load_config_with_refresh().await {
+        Ok(c) => {
+            println!("{} Token check/refresh completed for putRecord", "✅".green());
+            println!("🔑 Using access JWT: {}...", &c.admin.access_jwt[..30.min(c.admin.access_jwt.len())]);
+            c
+        },
+        Err(e) => {
+            println!("{} Failed to refresh token: {}", "❌".red(), e);
+            return Err(anyhow::anyhow!("Token refresh failed: {}", e));
+        }
+    };
     
     let url = format!("{}/xrpc/com.atproto.repo.putRecord", config.admin.pds);
     

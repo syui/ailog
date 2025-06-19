@@ -537,19 +537,30 @@ fn migrate_config_if_needed(config_path: &std::path::Path, config_json: &str) ->
 // Load config with automatic token refresh
 pub async fn load_config_with_refresh() -> Result<AuthConfig> {
     let mut config = load_config()?;
+    let old_access_jwt = config.admin.access_jwt.clone();
     
-    // Test if current access token is still valid
-    if let Err(_) = test_api_access_with_auth(&config).await {
-        println!("{}", "🔄 Access token expired, refreshing...".yellow());
-        
-        // Try to refresh the token
-        match refresh_access_token(&mut config).await {
-            Ok(_) => {
+    // Always try to refresh token to avoid any expiration issues
+    println!("{}", "🔄 Refreshing access token...".yellow());
+    println!("📍 Current access JWT: {}...", &old_access_jwt[..30.min(old_access_jwt.len())]);
+    
+    // Try to refresh the token
+    match refresh_access_token(&mut config).await {
+        Ok(_) => {
+            if config.admin.access_jwt != old_access_jwt {
+                println!("{}", "✅ Token refreshed with new JWT".green());
+                println!("📍 New access JWT: {}...", &config.admin.access_jwt[..30.min(config.admin.access_jwt.len())]);
                 save_config(&config)?;
-                println!("{}", "✅ Token refreshed successfully".green());
+                println!("{}", "💾 Config saved to disk".green());
+            } else {
+                println!("{}", "ℹ️  Token refresh returned same JWT (still valid)".cyan());
             }
-            Err(e) => {
-                return Err(anyhow::anyhow!("Failed to refresh token: {}. Please run 'ailog auth init' again.", e));
+        }
+        Err(e) => {
+            // If refresh fails, test if current token is still valid
+            if let Ok(_) = test_api_access_with_auth(&config).await {
+                println!("{}", "ℹ️  Refresh failed but current token is still valid".cyan());
+            } else {
+                return Err(anyhow::anyhow!("Token expired and refresh failed: {}. Please run 'ailog auth init' again.", e));
             }
         }
     }
@@ -584,6 +595,9 @@ async fn refresh_access_token(config: &mut AuthConfig) -> Result<()> {
     let client = reqwest::Client::new();
     let url = format!("{}/xrpc/com.atproto.server.refreshSession", config.admin.pds);
     
+    println!("🔑 Refreshing token at: {}", url);
+    println!("🔑 Using refresh JWT: {}...", &config.admin.refresh_jwt[..20.min(config.admin.refresh_jwt.len())]);
+    
     let response = client
         .post(&url)
         .header("Authorization", format!("Bearer {}", config.admin.refresh_jwt))
@@ -601,10 +615,16 @@ async fn refresh_access_token(config: &mut AuthConfig) -> Result<()> {
     // Update tokens
     if let Some(access_jwt) = refresh_response["accessJwt"].as_str() {
         config.admin.access_jwt = access_jwt.to_string();
+        println!("✅ New access JWT: {}...", &access_jwt[..20.min(access_jwt.len())]);
+    } else {
+        println!("⚠️  No accessJwt in refresh response");
     }
     
     if let Some(refresh_jwt) = refresh_response["refreshJwt"].as_str() {
         config.admin.refresh_jwt = refresh_jwt.to_string();
+        println!("✅ New refresh JWT: {}...", &refresh_jwt[..20.min(refresh_jwt.len())]);
+    } else {
+        println!("⚠️  No refreshJwt in refresh response");
     }
     
     Ok(())
@@ -612,8 +632,43 @@ async fn refresh_access_token(config: &mut AuthConfig) -> Result<()> {
 
 fn save_config(config: &AuthConfig) -> Result<()> {
     let config_path = get_config_path()?;
+    println!("💾 Saving config to: {}", config_path.display());
+    
+    // Read old config to compare
+    let old_config = if config_path.exists() {
+        fs::read_to_string(&config_path).ok()
+    } else {
+        None
+    };
+    
     let config_json = serde_json::to_string_pretty(config)?;
-    fs::write(&config_path, config_json)?;
+    fs::write(&config_path, &config_json)?;
+    
+    // Verify the write was successful
+    let saved_content = fs::read_to_string(&config_path)?;
+    if saved_content == config_json {
+        println!("✅ Config successfully saved to {}", config_path.display());
+        
+        // Compare tokens if old config exists
+        if let Some(old) = old_config {
+            if let (Ok(old_json), Ok(new_json)) = (
+                serde_json::from_str::<AuthConfig>(&old),
+                serde_json::from_str::<AuthConfig>(&config_json)
+            ) {
+                if old_json.admin.access_jwt != new_json.admin.access_jwt {
+                    println!("📝 Access JWT was updated in file");
+                    println!("   Old: {}...", &old_json.admin.access_jwt[..30.min(old_json.admin.access_jwt.len())]);
+                    println!("   New: {}...", &new_json.admin.access_jwt[..30.min(new_json.admin.access_jwt.len())]);
+                }
+                if old_json.admin.refresh_jwt != new_json.admin.refresh_jwt {
+                    println!("📝 Refresh JWT was updated in file");
+                }
+            }
+        }
+    } else {
+        println!("❌ Config save verification failed!");
+    }
+    
     Ok(())
 }
 

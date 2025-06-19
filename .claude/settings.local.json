@@ -55,7 +55,8 @@
       "Bash(sed:*)",
       "Bash(./scpt/run.zsh:*)",
       "Bash(RUST_LOG=debug cargo run -- stream status)",
-      "Bash(RUST_LOG=debug cargo run -- stream test-api)"
+      "Bash(RUST_LOG=debug cargo run -- stream test-api)",
+      "Bash(# Restore the old (expired) token\nold_access_jwt=\"eyJ0eXAiOiJhdCtqd3QiLCJhbGciOiJIUzI1NiJ9.eyJzY29wZSI6ImNvbS5hdHByb3RvLmFjY2VzcyIsImF1ZCI6ImRpZDp3ZWI6c3l1LmlzIiwic3ViIjoiZGlkOnBsYzo2cXllY2t0ZWZsbHZlbmplMjRmY3huaWUiLCJpYXQiOjE3NTAyNTc0MjUsImV4cCI6MTc1MDI2NDYyNX0.FZFD6ZRYQZW1H4fJy2OBjmPGRo6h2xqTNKOJz5-hdQI\"\n\nconfig_file=~/.config/syui/ai/log/config.json\ncurrent_refresh_jwt=$(jq -r '.admin.refresh_jwt' $config_file)\n\n# Keep the refresh JWT but use expired access JWT\njq --arg access \"$old_access_jwt\" '.admin.access_jwt = $access' $config_file > ${config_file}.tmp && mv ${config_file}.tmp $config_file\n\necho \"✅ Restored expired access token for testing\")"
     ],
     "deny": []
   }
