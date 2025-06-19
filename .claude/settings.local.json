@@ -53,7 +53,9 @@
       "WebFetch(domain:atproto.com)",
       "WebFetch(domain:syu.is)",
       "Bash(sed:*)",
-      "Bash(./scpt/run.zsh:*)"
+      "Bash(./scpt/run.zsh:*)",
+      "Bash(RUST_LOG=debug cargo run -- stream status)",
+      "Bash(RUST_LOG=debug cargo run -- stream test-api)"
     ],
     "deny": []
   }

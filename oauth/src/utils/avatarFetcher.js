@@ -33,6 +33,12 @@ async function getDid(handle) {
 
 // DIDからプロフィール情報を取得
 async function getProfile(did, handle) {
+  // Skip test DIDs
+  if (did && did.includes('test-')) {
+    logger.log('Skipping profile fetch for test DID:', did)
+    return null
+  }
+  
   try {
     // Determine which public API to use based on handle
     const pds = await getPdsFromHandle(handle)
@@ -81,6 +87,11 @@ async function fetchFreshAvatar(handle, did) {
     
     // プロフィール取得
     const profile = await getProfile(actualDid, handle)
+    if (!profile) {
+      // Test DID or profile fetch failed
+      return null
+    }
+    
     const avatarUrl = profile.avatar || null
     
     // キャッシュに保存

@@ -253,6 +253,24 @@ function setupAskAIEventListeners() {
         handleAIResponse(event.detail);
     });
     
+    // Listen for OAuth callback completion from iframe
+    window.addEventListener('message', function(event) {
+        if (event.data.type === 'oauth_success') {
+            console.log('Received OAuth success message:', event.data);
+            
+            // Close any OAuth popups/iframes
+            const oauthFrame = document.getElementById('oauth-frame');
+            if (oauthFrame) {
+                oauthFrame.remove();
+            }
+            
+            // Reload the page to refresh OAuth app state
+            setTimeout(() => {
+                window.location.reload();
+            }, 500);
+        }
+    });
+    
     // Track IME composition state
     let isComposing = false;
     const aiQuestionInput = document.getElementById('aiQuestion');

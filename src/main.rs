@@ -152,6 +152,12 @@ enum StreamCommands {
     Status,
     /// Test API access to comments collection
     Test,
+    /// Test user list update functionality
+    TestUserUpdate,
+    /// Test recent comment detection logic
+    TestRecentDetection,
+    /// Test complete polling cycle logic
+    TestPollingCycle,
 }
 
 #[derive(Subcommand)]
@@ -234,6 +240,15 @@ async fn main() -> Result<()> {
                 }
                 StreamCommands::Test => {
                     commands::stream::test_api().await?;
+                }
+                StreamCommands::TestUserUpdate => {
+                    commands::stream::test_user_update().await?;
+                }
+                StreamCommands::TestRecentDetection => {
+                    commands::stream::test_recent_detection().await?;
+                }
+                StreamCommands::TestPollingCycle => {
+                    commands::stream::test_polling_cycle().await?;
                 }
             }
         }

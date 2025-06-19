@@ -18,6 +18,32 @@ export function useAuth() {
       if (authResult) {
         setUser(authResult.user)
         setAgent(authResult.agent)
+        
+        // If we're on callback page and authentication succeeded, notify parent
+        if (window.location.pathname === '/oauth/callback') {
+          console.log('OAuth callback completed, notifying parent window')
+          
+          // Get referrer or use stored return URL
+          const returnUrl = sessionStorage.getItem('oauth_return_url') || 
+                          document.referrer || 
+                          window.location.origin
+          
+          sessionStorage.removeItem('oauth_return_url')
+          
+          // Notify parent window if in iframe, otherwise redirect directly
+          if (window.parent !== window) {
+            window.parent.postMessage({
+              type: 'oauth_success',
+              returnUrl: returnUrl,
+              user: authResult.user
+            }, '*')
+          } else {
+            // Direct redirect
+            setTimeout(() => {
+              window.location.href = returnUrl
+            }, 1000)
+          }
+        }
       }
     } catch (error) {
       console.error('Auth initialization failed:', error)
@@ -27,6 +53,11 @@ export function useAuth() {
   }
 
   const login = async (handle) => {
+    // Store current page URL for post-auth redirect
+    if (window.location.pathname !== '/oauth/callback') {
+      sessionStorage.setItem('oauth_return_url', window.location.href)
+    }
+    
     await oauthService.login(handle)
   }
 

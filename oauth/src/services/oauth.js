@@ -65,6 +65,8 @@ export class OAuthService {
   async processSession(session) {
     const did = session.sub || session.did
     let handle = session.handle || 'unknown'
+    let displayName = null
+    let avatar = null
 
     // Create Agent directly with session (per official docs)
     try {
@@ -77,21 +79,43 @@ export class OAuthService {
       })
     }
 
-    this.sessionInfo = { did, handle }
-
-    // Resolve handle if missing
-    if (handle === 'unknown' && this.agent) {
+    // Get profile information using authenticated agent
+    // Skip test DIDs
+    if (this.agent && did && !did.includes('test-')) {
       try {
         await new Promise(resolve => setTimeout(resolve, 300))
         const profile = await this.agent.getProfile({ actor: did })
-        handle = profile.data.handle
-        this.sessionInfo.handle = handle
+        handle = profile.data.handle || handle
+        displayName = profile.data.displayName || null
+        avatar = profile.data.avatar || null
+        
+        console.log('Profile fetched from session:', {
+          did,
+          handle,
+          displayName,
+          avatar: avatar ? 'present' : 'none'
+        })
       } catch (error) {
-        console.log('Failed to resolve handle:', error)
+        console.log('Failed to get profile from session:', error)
+        // Keep the basic info we have
       }
+    } else if (did && did.includes('test-')) {
+      console.log('Skipping profile fetch for test DID:', did)
     }
 
-    return { did, handle }
+    this.sessionInfo = { 
+      did, 
+      handle, 
+      displayName, 
+      avatar 
+    }
+
+    return { 
+      did, 
+      handle, 
+      displayName, 
+      avatar 
+    }
   }
 
   async login(handle) {

@@ -63,6 +63,17 @@ export const atproto = {
   },
 
   async getProfile(bsky, actor) {
+    // Skip test DIDs
+    if (actor && actor.includes('test-')) {
+      logger.log('Skipping profile fetch for test DID:', actor)
+      return {
+        did: actor,
+        handle: 'test.user',
+        displayName: 'Test User',
+        avatar: null
+      }
+    }
+    
     return await request(`${bsky}/xrpc/${ENDPOINTS.getProfile}?actor=${actor}`)
   },
 

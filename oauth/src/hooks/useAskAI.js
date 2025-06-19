@@ -9,8 +9,12 @@ export function useAskAI(adminData, userProfile, agent) {
   const [error, setError] = useState(null)
   const [chatHistory, setChatHistory] = useState([])
 
-  // ask-AIサーバーのURL（環境変数から取得、フォールバック付き）
-  const askAIUrl = import.meta.env.VITE_ASK_AI_URL || 'http://localhost:3000/ask'
+  // AI設定を環境変数から取得
+  const aiConfig = {
+    host: import.meta.env.VITE_AI_HOST || 'https://ollama.syui.ai',
+    model: import.meta.env.VITE_AI_MODEL || 'gemma3:1b',
+    systemPrompt: import.meta.env.VITE_AI_SYSTEM_PROMPT || 'あなたは6歳の女の子アイです。明るく元気で、ちょっとおっちょこちょい。自分のことは「アイ」って呼びます。'
+  }
 
   const askQuestion = async (question) => {
     if (!question.trim()) return
@@ -19,28 +23,47 @@ export function useAskAI(adminData, userProfile, agent) {
     setError(null)
 
     try {
-      logger.log('Sending question to ask-AI:', question)
+      logger.log('Sending question to Ollama:', question)
 
-      // ask-AIサーバーにリクエスト送信
-      const response = await fetch(askAIUrl, {
+      // Ollamaに直接リクエスト送信（oauth_oldと同じ方式）
+      const prompt = `${aiConfig.systemPrompt}
+
+Question: ${question}
+
+Answer:`
+
+      // Add timeout to fetch request
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 30000) // 30 second timeout
+      
+      const response = await fetch(`${aiConfig.host}/api/generate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Origin': 'https://syui.ai',
         },
         body: JSON.stringify({
-          question: question.trim(),
-          context: {
-            url: window.location.href,
-            timestamp: new Date().toISOString()
+          model: aiConfig.model,
+          prompt: prompt,
+          stream: false,
+          options: {
+            temperature: 0.9,
+            top_p: 0.9,
+            num_predict: 200, // Longer responses for better answers
+            repeat_penalty: 1.1,
           }
-        })
+        }),
+        signal: controller.signal
       })
+      
+      clearTimeout(timeoutId)
 
       if (!response.ok) {
-        throw new Error(`ask-AI server error: ${response.status}`)
+        throw new Error(`Ollama API error: ${response.status}`)
       }
 
-      const aiResponse = await response.json()
+      const data = await response.json()
+      const aiResponse = { answer: data.response || 'エラーが発生しました' }
       logger.log('Received AI response:', aiResponse)
 
       // AI回答をチャット履歴に追加
@@ -81,7 +104,17 @@ export function useAskAI(adminData, userProfile, agent) {
 
     } catch (err) {
       logError(err, 'useAskAI.askQuestion')
-      setError(getErrorMessage(err))
+      
+      let errorMessage = 'AI応答の生成に失敗しました'
+      if (err.name === 'AbortError') {
+        errorMessage = 'AI応答がタイムアウトしました（30秒）'
+      } else if (err.message.includes('Ollama API error')) {
+        errorMessage = `Ollama API エラー: ${err.message}`
+      } else if (err.message.includes('Failed to fetch')) {
+        errorMessage = 'AI サーバーに接続できませんでした'
+      }
+      
+      setError(errorMessage)
       throw err
     } finally {
       setLoading(false)

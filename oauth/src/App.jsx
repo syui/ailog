@@ -69,8 +69,32 @@ export default function App() {
 
   if (isLoading) {
     return (
-      <div style={{ padding: '20px', textAlign: 'center' }}>
-        <p>読み込み中...</p>
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: 'column',
+        alignItems: 'center', 
+        justifyContent: 'center',
+        minHeight: '200px',
+        padding: '40px',
+        textAlign: 'center' 
+      }}>
+        <div style={{
+          width: '40px',
+          height: '40px',
+          border: '4px solid #f3f3f3',
+          borderTop: '4px solid #667eea',
+          borderRadius: '50%',
+          animation: 'spin 1s linear infinite',
+          marginBottom: '16px'
+        }} />
+        <p style={{ color: '#666', margin: 0 }}>読み込み中...</p>
+        
+        <style jsx>{`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}</style>
       </div>
     )
   }
@@ -115,6 +139,34 @@ export default function App() {
     <div className="app">
       <header className="oauth-app-header">
         <div className="oauth-header-content">
+          {user && (
+            <div className="oauth-user-profile">
+              <div className="profile-avatar-section">
+                {user.avatar ? (
+                  <img 
+                    src={user.avatar} 
+                    alt={user.displayName || user.handle} 
+                    className="profile-avatar"
+                  />
+                ) : (
+                  <div className="profile-avatar-fallback">
+                    {(user.displayName || user.handle || '?').charAt(0).toUpperCase()}
+                  </div>
+                )}
+              </div>
+              <div className="profile-info">
+                <div className="profile-display-name">
+                  {user.displayName || user.handle}
+                </div>
+                <div className="profile-handle">
+                  @{user.handle}
+                </div>
+                <div className="profile-did">
+                  {user.did}
+                </div>
+              </div>
+            </div>
+          )}
           <div className="oauth-header-actions">
             <AuthButton 
               user={user} 

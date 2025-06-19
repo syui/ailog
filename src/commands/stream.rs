@@ -315,6 +315,8 @@ struct JetstreamMessage {
 struct JetstreamCommit {
     operation: Option<String>,
     uri: Option<String>,
+    record: Option<Value>,
+    collection: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -333,7 +335,6 @@ struct UserListRecord {
     created_at: String,
     #[serde(rename = "updatedBy")]
     updated_by: UserInfo,
-    metadata: Option<Value>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -423,10 +424,7 @@ pub async fn init_user_list(project_dir: Option<PathBuf>, handles: Option<String
     // Create the initial user list
     println!("{}", format!("📝 Creating user list with {} users...", users.len()).cyan());
     
-    match post_user_list(&mut config, &users, json!({
-        "reason": "initial_setup",
-        "created_by": "ailog_stream_init"
-    })).await {
+    match post_user_list(&mut config, &users).await {
         Ok(_) => println!("{}", "✅ User list created successfully!".green()),
         Err(e) => {
             println!("{}", format!("❌ Failed to create user list: {}", e).red());
@@ -606,13 +604,15 @@ async fn run_monitor(config: &mut AuthConfig) -> Result<()> {
     
     let (mut write, mut read) = ws_stream.split();
     
-    // Subscribe to collections
+    // Subscribe to collections using Jetstream 2.0 format
     let subscribe_msg = json!({
-        "wantedCollections": config.jetstream.collections
+        "wantedCollections": config.jetstream.collections,
+        "wantedDids": [config.admin.did]
     });
     
     write.send(Message::Text(subscribe_msg.to_string())).await?;
-    println!("{}", "📨 Subscribed to collections".blue());
+    println!("{}", format!("📨 Subscribed to collections: {:?} for DID: {}", 
+             config.jetstream.collections, config.admin.did).blue());
     
     // Start periodic polling task
     let config_clone = config.clone();
@@ -625,15 +625,27 @@ async fn run_monitor(config: &mut AuthConfig) -> Result<()> {
         while let Some(msg) = read.next().await {
             match msg? {
                 Message::Text(text) => {
-                    // Filter out standard Bluesky collections for cleaner output
+                    // Check if this is a commit message with our collection
+                    let is_custom_collection = text.contains("ai.syui.log") || 
+                                             text.contains(&config.admin.did);
                     let should_debug = std::env::var("AILOG_DEBUG").is_ok();
                     let is_standard_collection = text.contains("app.bsky.feed.") || 
                                                text.contains("app.bsky.actor.") ||
-                                               text.contains("app.bsky.graph.");
+                                               text.contains("app.bsky.graph.") ||
+                                               text.contains("blue.flashes.") ||
+                                               text.contains("\"kind\":\"identity\"") ||
+                                               text.contains("\"kind\":\"account\"");
                     
-                    // Only show debug for custom collections or when explicitly requested
+                    // Always show custom collection messages
+                    if is_custom_collection {
+                        println!("{}", format!("🎯 Custom collection message: {}", text).green().bold());
+                    }
+                    
+                    // Only show debug for non-standard collections or when explicitly requested
                     if should_debug && (!is_standard_collection || std::env::var("AILOG_DEBUG_ALL").is_ok()) {
-                        println!("{}", format!("🔍 Received: {}", text).blue());
+                        if !is_custom_collection { // Avoid double printing
+                            println!("{}", format!("🔍 Received: {}", text).blue());
+                        }
                     }
                     
                     if let Err(e) = handle_message(&text, config).await {
@@ -671,7 +683,17 @@ async fn run_monitor(config: &mut AuthConfig) -> Result<()> {
 }
 
 async fn handle_message(text: &str, config: &mut AuthConfig) -> Result<()> {
-    let message: JetstreamMessage = serde_json::from_str(text)?;
+    // println!("🔧 handle_message called with text length: {}", text.len());
+    let message: JetstreamMessage = match serde_json::from_str(text) {
+        Ok(msg) => {
+            // println!("✅ JSON parsed successfully");
+            msg
+        }
+        Err(e) => {
+            println!("❌ JSON parse error: {}", e);
+            return Err(e.into());
+        }
+    };
     
     // Debug: Check all received collections (but filter standard ones)
     if let Some(collection) = &message.collection {
@@ -688,34 +710,59 @@ async fn handle_message(text: &str, config: &mut AuthConfig) -> Result<()> {
     }
     
     // Check if this is a comment creation
-    if let (Some(collection), Some(commit), Some(did)) = 
-        (&message.collection, &message.commit, &message.did) {
+    if let (Some(commit), Some(did)) = (&message.commit, &message.did) {
+        if let Some(collection) = &commit.collection {
         
-        if collection == &config.collections.comment() && commit.operation.as_deref() == Some("create") {
+        // Monitor both ai.syui.log and ai.syui.log.chat.comment collections
+        let is_main_collection = collection == &config.collections.comment();
+        let is_chat_comment_collection = collection == "ai.syui.log.chat.comment";
+        
+        if collection == "ai.syui.log" || collection == "ai.syui.log.chat.comment" {
+            println!("   🔍 Debug: collection='{}', expected='{}', is_main={}, is_chat={}", 
+                    collection, config.collections.comment(), is_main_collection, is_chat_comment_collection);
+            println!("   🔍 Debug: operation={:?}", commit.operation);
+        }
+        
+        if (is_main_collection || is_chat_comment_collection) && commit.operation.as_deref() == Some("create") {
             let unknown_uri = "unknown".to_string();
             let uri = commit.uri.as_ref().unwrap_or(&unknown_uri);
             
-            println!("{}", "🆕 New comment detected!".green().bold());
+            let collection_type = if is_main_collection { 
+                "main collection (ai.syui.log)" 
+            } else { 
+                "chat comment (ai.syui.log.chat.comment)" 
+            };
+            println!("{}", format!("🆕 New comment detected from {}!", collection_type).green().bold());
             println!("   📝 URI: {}", uri);
             println!("   👤 Author DID: {}", did);
             
-            // Resolve handle
-            let ai_config = load_ai_config_from_project().unwrap_or_default();
-            match resolve_handle(did, &ai_config.network).await {
-                Ok(handle) => {
-                    println!("   🏷️  Handle: {}", handle.cyan());
-                    
-                    // Update user list
-                    if let Err(e) = update_user_list(config, did, &handle).await {
-                        println!("{}", format!("   ⚠️  Failed to update user list: {}", e).yellow());
+            // Extract author info from the jetstream record
+            if let Some(record) = &commit.record {
+                if let Some(author) = record.get("author") {
+                    if let (Some(author_did), Some(author_handle)) = (
+                        author.get("did").and_then(|v| v.as_str()),
+                        author.get("handle").and_then(|v| v.as_str())
+                    ) {
+                        println!("   🏷️  Handle from record: {}", author_handle.cyan());
+                        
+                        // Update user list with jetstream author info
+                        if let Err(e) = update_user_list(config, author_did, author_handle).await {
+                            println!("{}", format!("   ⚠️  Failed to update user list: {}", e).yellow());
+                        } else {
+                            println!("{}", "   ✅ User list updated successfully".green());
+                        }
+                    } else {
+                        println!("{}", "   ⚠️  Missing author DID or handle in record".yellow());
                     }
+                } else {
+                    println!("{}", "   ⚠️  No author info in record".yellow());
                 }
-                Err(e) => {
-                    println!("{}", format!("   ⚠️  Failed to resolve handle: {}", e).yellow());
-                }
+            } else {
+                println!("{}", "   ⚠️  No record data in commit".yellow());
             }
             
             println!();
+        }
         }
     }
     
@@ -862,11 +909,7 @@ async fn update_user_list(config: &mut AuthConfig, did: &str, handle: &str) -> R
     updated_users.push(new_user);
     
     // Post updated user list
-    post_user_list(config, &updated_users, json!({
-        "reason": "auto_add_commenter",
-        "trigger_did": did,
-        "trigger_handle": handle
-    })).await?;
+    post_user_list(config, &updated_users).await?;
     
     println!("{}", "   ✅ User list updated successfully".green());
     
@@ -930,7 +973,7 @@ async fn get_current_user_list(config: &mut AuthConfig) -> Result<Vec<UserRecord
     Ok(user_list)
 }
 
-async fn post_user_list(config: &mut AuthConfig, users: &[UserRecord], metadata: Value) -> Result<()> {
+async fn post_user_list(config: &mut AuthConfig, users: &[UserRecord]) -> Result<()> {
     let client = reqwest::Client::new();
     
     let now = chrono::Utc::now();
@@ -948,7 +991,6 @@ async fn post_user_list(config: &mut AuthConfig, users: &[UserRecord], metadata:
             did: config.admin.did.clone(),
             handle: config.admin.handle.clone(),
         },
-        metadata: Some(metadata.clone()),
     };
     
     let url = format!("{}/xrpc/com.atproto.repo.putRecord", config.admin.pds);
@@ -975,7 +1017,7 @@ async fn post_user_list(config: &mut AuthConfig, users: &[UserRecord], metadata:
             if let Ok(_) = super::auth::load_config_with_refresh().await {
                 let refreshed_config = super::auth::load_config()?;
                 *config = refreshed_config;
-                return Box::pin(post_user_list(config, users, metadata)).await;
+                return Box::pin(post_user_list(config, users)).await;
             }
         }
         let error_text = response.text().await?;
@@ -1113,17 +1155,35 @@ async fn poll_comments_periodically(mut config: AuthConfig) -> Result<()> {
     let mut known_comments = HashSet::new();
     let mut interval = interval(Duration::from_secs(30)); // Poll every 30 seconds
     
-    // Initial population of known comments
+    // Initial population of known comments - only add comments older than 5 minutes to allow recent ones to be processed
     if let Ok(comments) = get_recent_comments(&mut config).await {
         for comment in &comments {
             if let Some(uri) = comment.get("uri").and_then(|v| v.as_str()) {
-                known_comments.insert(uri.to_string());
-                if std::env::var("AILOG_DEBUG").is_ok() {
-                    println!("{}", format!("🔍 Existing comment: {}", uri).blue());
+                // Check if this comment is old enough to be considered "existing"
+                let is_old_comment = if let Some(value) = comment.get("value") {
+                    if let Some(created_at) = value.get("createdAt").and_then(|v| v.as_str()) {
+                        !is_recent_comment(created_at)
+                    } else {
+                        true // If no timestamp, consider it old
+                    }
+                } else {
+                    true
+                };
+                
+                if is_old_comment {
+                    known_comments.insert(uri.to_string());
+                    if std::env::var("AILOG_DEBUG").is_ok() {
+                        println!("{}", format!("🔍 Existing comment: {}", uri).blue());
+                    }
+                } else {
+                    if std::env::var("AILOG_DEBUG").is_ok() {
+                        println!("{}", format!("🆕 Recent comment will be processed: {}", uri).green());
+                    }
                 }
             }
         }
-        println!("{}", format!("📝 Found {} existing comments", known_comments.len()).blue());
+        println!("{}", format!("📝 Found {} existing comments, {} recent comments will be processed", 
+                 known_comments.len(), comments.len() - known_comments.len()).blue());
         
         // Debug: Show full response for first comment
         if std::env::var("AILOG_DEBUG").is_ok() && !comments.is_empty() {
@@ -1161,24 +1221,23 @@ async fn poll_comments_periodically(mut config: AuthConfig) -> Result<()> {
                                     println!("{}", "🆕 New comment detected via polling!".green().bold());
                                     println!("   📝 URI: {}", uri);
                                     
-                                    // Extract author DID from URI
-                                    if let Some(did) = extract_did_from_uri(uri) {
-                                        println!("   👤 Author DID: {}", did);
-                                        
-                                        // Resolve handle and update user list
-                                        let ai_config = load_ai_config_from_project().unwrap_or_default();
-                                        match resolve_handle(&did, &ai_config.network).await {
-                                            Ok(handle) => {
-                                                println!("   🏷️  Handle: {}", handle.cyan());
-                                                
-                                                if let Err(e) = update_user_list(&mut config, &did, &handle).await {
-                                                    println!("{}", format!("   ⚠️  Failed to update user list: {}", e).yellow());
-                                                }
+                                    // Extract author DID and handle from comment value
+                                    if let Some(author) = value.get("author") {
+                                        if let (Some(author_did), Some(author_handle)) = (
+                                            author.get("did").and_then(|v| v.as_str()),
+                                            author.get("handle").and_then(|v| v.as_str())
+                                        ) {
+                                            println!("   👤 Author DID: {}", author_did);
+                                            println!("   🏷️  Handle: {}", author_handle.cyan());
+                                            
+                                            if let Err(e) = update_user_list(&mut config, author_did, author_handle).await {
+                                                println!("{}", format!("   ⚠️  Failed to update user list: {}", e).yellow());
                                             }
-                                            Err(e) => {
-                                                println!("{}", format!("   ⚠️  Failed to resolve handle: {}", e).yellow());
-                                            }
+                                        } else {
+                                            println!("{}", "   ⚠️  Comment missing author DID or handle".yellow());
                                         }
+                                    } else {
+                                        println!("{}", "   ⚠️  Comment missing author information".yellow());
                                     }
                                     
                                     println!();
@@ -1248,8 +1307,8 @@ fn is_recent_comment(created_at: &str) -> bool {
         let comment_utc = comment_time.with_timezone(&Utc);
         let diff = now.signed_duration_since(comment_utc);
         
-        // Consider comments from the last 5 minutes as "recent"
-        diff <= Duration::minutes(5) && diff >= Duration::zero()
+        // Consider comments from the last 15 minutes as "recent" (more generous for testing)
+        diff <= Duration::minutes(15) && diff >= Duration::zero()
     } else {
         false
     }
@@ -1327,6 +1386,197 @@ async fn resolve_handle_to_did(handle: &str, network_config: &NetworkConfig) -> 
     Ok(did.to_string())
 }
 
+pub async fn test_polling_cycle() -> Result<()> {
+    println!("{}", "🧪 Testing complete polling cycle logic...".cyan().bold());
+    
+    let mut config = load_config_with_refresh().await?;
+    
+    println!("👤 Testing as: {}", config.admin.handle.green());
+    println!("🌐 PDS: {}", config.admin.pds);
+    println!("🆔 DID: {}", config.admin.did);
+    println!();
+    
+    // Simulate the polling logic exactly as it runs in the stream
+    let mut known_comments = HashSet::new();
+    
+    // Initial population (skip recent comments)
+    println!("{}", "📊 Step 1: Initial population of known comments".cyan());
+    if let Ok(comments) = get_recent_comments(&mut config).await {
+        for comment in &comments {
+            if let Some(uri) = comment.get("uri").and_then(|v| v.as_str()) {
+                let is_old_comment = if let Some(value) = comment.get("value") {
+                    if let Some(created_at) = value.get("createdAt").and_then(|v| v.as_str()) {
+                        !is_recent_comment(created_at)
+                    } else {
+                        true
+                    }
+                } else {
+                    true
+                };
+                
+                if is_old_comment {
+                    known_comments.insert(uri.to_string());
+                    println!("   🔍 Added to known: {}", uri);
+                } else {
+                    println!("   🆕 Skipped (recent): {}", uri);
+                }
+            }
+        }
+        println!("{}", format!("📝 Found {} existing comments, {} recent comments will be processed", 
+                 known_comments.len(), comments.len() - known_comments.len()).blue());
+    }
+    
+    // Simulate first polling cycle
+    println!("{}", "\n📊 Step 2: First polling cycle".cyan());
+    if let Ok(comments) = get_recent_comments(&mut config).await {
+        for comment in comments {
+            if let (Some(uri), Some(value)) = (
+                comment.get("uri").and_then(|v| v.as_str()),
+                comment.get("value")
+            ) {
+                if !known_comments.contains(uri) {
+                    known_comments.insert(uri.to_string());
+                    
+                    if let Some(created_at) = value.get("createdAt").and_then(|v| v.as_str()) {
+                        if is_recent_comment(created_at) {
+                            println!("{}", "🆕 New comment detected via polling!".green().bold());
+                            println!("   📝 URI: {}", uri);
+                            
+                            // Extract author DID and handle from comment value
+                            if let Some(author) = value.get("author") {
+                                if let (Some(author_did), Some(author_handle)) = (
+                                    author.get("did").and_then(|v| v.as_str()),
+                                    author.get("handle").and_then(|v| v.as_str())
+                                ) {
+                                    println!("   👤 Author DID: {}", author_did);
+                                    println!("   🏷️  Handle: {}", author_handle.cyan());
+                                    
+                                    println!("   🧪 Calling update_user_list...");
+                                    match update_user_list(&mut config, author_did, author_handle).await {
+                                        Ok(_) => {
+                                            println!("   ✅ User list updated successfully!");
+                                        }
+                                        Err(e) => {
+                                            println!("{}", format!("   ❌ Failed to update user list: {}", e).red());
+                                        }
+                                    }
+                                } else {
+                                    println!("{}", "   ⚠️  Comment missing author DID or handle".yellow());
+                                }
+                            } else {
+                                println!("{}", "   ⚠️  Comment missing author information".yellow());
+                            }
+                            
+                            println!();
+                        } else {
+                            println!("   ⏭️  Not recent: {}", uri);
+                        }
+                    }
+                } else {
+                    println!("   ⏭️  Already known: {}", uri);
+                }
+            }
+        }
+    }
+    
+    Ok(())
+}
+
+pub async fn test_recent_detection() -> Result<()> {
+    println!("{}", "🧪 Testing recent comment detection logic...".cyan().bold());
+    
+    let mut config = load_config_with_refresh().await?;
+    
+    println!("👤 Testing as: {}", config.admin.handle.green());
+    println!("🌐 PDS: {}", config.admin.pds);
+    println!("🆔 DID: {}", config.admin.did);
+    println!();
+    
+    // Get recent comments and test the detection logic
+    match get_recent_comments(&mut config).await {
+        Ok(comments) => {
+            println!("{}", format!("📊 Retrieved {} comments from API", comments.len()).cyan());
+            
+            for (i, comment) in comments.iter().enumerate() {
+                if let (Some(uri), Some(value)) = (
+                    comment.get("uri").and_then(|v| v.as_str()),
+                    comment.get("value")
+                ) {
+                    println!("   {}. URI: {}", i + 1, uri);
+                    
+                    if let Some(created_at) = value.get("createdAt").and_then(|v| v.as_str()) {
+                        let is_recent = is_recent_comment(created_at);
+                        println!("      Created: {} - Recent: {}", created_at, 
+                                if is_recent { "✅ YES".green() } else { "❌ NO".red() });
+                        
+                        if is_recent {
+                            if let Some(did) = extract_did_from_uri(uri) {
+                                println!("      🎯 Would process: DID {} from recent comment", did.cyan());
+                            }
+                        }
+                    }
+                    
+                    if let Some(author) = value.get("author") {
+                        if let Some(author_did) = author.get("did").and_then(|v| v.as_str()) {
+                            if let Some(handle) = author.get("handle").and_then(|v| v.as_str()) {
+                                println!("      👤 Author: {} ({})", handle, author_did);
+                            }
+                        }
+                    }
+                    println!();
+                }
+            }
+        }
+        Err(e) => {
+            println!("{}", format!("❌ Failed to get comments: {}", e).red());
+            return Err(e);
+        }
+    }
+    
+    Ok(())
+}
+
+pub async fn test_user_update() -> Result<()> {
+    println!("{}", "🧪 Testing user list update functionality...".cyan().bold());
+    
+    let mut config = load_config_with_refresh().await?;
+    
+    println!("👤 Testing as: {}", config.admin.handle.green());
+    println!("🌐 PDS: {}", config.admin.pds);
+    println!("🆔 DID: {}", config.admin.did);
+    println!();
+    
+    // Get existing user list
+    let current_users = get_current_user_list(&mut config).await?;
+    println!("{}", format!("📋 Current user list has {} users", current_users.len()).cyan());
+    
+    for user in &current_users {
+        println!("   👤 {} ({}) - {}", user.handle, user.did, user.pds);
+    }
+    
+    // Test adding a dummy user (simulate a new commenter)
+    let test_did = "did:plc:test-user-update-12345";
+    let test_handle = "test.user.bsky.social";
+    
+    println!("{}", format!("🧪 Simulating new user: {} ({})", test_handle, test_did).yellow());
+    
+    match update_user_list(&mut config, test_did, test_handle).await {
+        Ok(_) => {
+            println!("{}", "✅ User list update test successful!".green());
+            
+            // Verify the update
+            let updated_users = get_current_user_list(&mut config).await?;
+            println!("{}", format!("📋 Updated user list now has {} users", updated_users.len()).cyan());
+        }
+        Err(e) => {
+            println!("{}", format!("❌ User list update test failed: {}", e).red());
+            return Err(e);
+        }
+    }
+    
+    Ok(())
+}
+
 pub async fn test_api() -> Result<()> {
     println!("{}", "🧪 Testing API access to comments collection...".cyan().bold());
     
@@ -1356,8 +1606,9 @@ pub async fn test_api() -> Result<()> {
                             println!("      Created: {}", created_at);
                         }
                         if let Some(text) = value.get("text").and_then(|v| v.as_str()) {
-                            let preview = if text.len() > 50 {
-                                format!("{}...", &text[..50])
+                            let preview = if text.chars().count() > 50 {
+                                let truncated: String = text.chars().take(50).collect();
+                                format!("{}...", truncated)
                             } else {
                                 text.to_string()
                             };
