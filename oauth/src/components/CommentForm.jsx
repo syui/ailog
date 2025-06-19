@@ -46,8 +46,13 @@ export default function CommentForm({ user, agent, onCommentPosted }) {
         }
       }
 
-      // Post the record
-      await atproto.putRecord(null, record, agent)
+      // Post the record using the same API as ask-AI
+      await agent.api.com.atproto.repo.putRecord({
+        repo: record.repo,
+        collection: record.collection,
+        rkey: record.rkey,
+        record: record.record
+      })
 
       // キャッシュを無効化
       collections.invalidateCache(env.collection)
@@ -59,6 +64,12 @@ export default function CommentForm({ user, agent, onCommentPosted }) {
       if (onCommentPosted) {
         onCommentPosted()
       }
+      
+      // Show success message briefly
+      setText('✓ コメントが投稿されました')
+      setTimeout(() => {
+        setText('')
+      }, 2000)
 
     } catch (err) {
       setError(err.message)
@@ -112,7 +123,7 @@ export default function CommentForm({ user, agent, onCommentPosted }) {
           <button 
             type="submit" 
             disabled={loading || !text.trim()}
-            className="btn btn-primary"
+            className={`btn ${loading ? 'btn-outline' : 'btn-primary'}`}
           >
             {loading ? '投稿中...' : 'コメントを投稿'}
           </button>
