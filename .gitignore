@@ -19,3 +19,4 @@ cloudflared-config.yml
 atproto
 oauth_old
 oauth_example
+my-blog/static/oauth/assets/comment-atproto*
