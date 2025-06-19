@@ -97,13 +97,6 @@ export class OAuthService {
   async login(handle) {
     await this.initialize()
 
-    // Save current URL for return after OAuth
-    const currentUrl = window.location.href
-    // Only save if not already on oauth callback page
-    if (!currentUrl.includes('/oauth/callback')) {
-      sessionStorage.setItem('oauth_return_url', currentUrl)
-    }
-
     const client = isSyuIsHandle(handle) ? this.clients.syu : this.clients.bsky
     const authUrl = await client.authorize(handle, { 
       scope: 'atproto transition:generic' 

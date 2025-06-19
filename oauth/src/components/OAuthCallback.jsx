@@ -20,18 +20,11 @@ export default function OAuthCallback({ onAuthSuccess }) {
       }
 
       if (code) {
-        setStatus('認証成功！元のページに戻ります...')
+        setStatus('認証成功！メインページに戻ります...')
         
-        // 認証前のページを復元するか、ルートページに戻る
-        const returnUrl = sessionStorage.getItem('oauth_return_url') || '/'
-        sessionStorage.removeItem('oauth_return_url')
-        
-        // Clean up URL fragments and normalize
-        const cleanReturnUrl = returnUrl.split('#')[0]
-        
-        // 少し待ってから元のページにリダイレクト
+        // 少し待ってからメインページにリダイレクト
         setTimeout(() => {
-          window.location.replace(cleanReturnUrl)
+          window.location.href = '/'
         }, 1500)
       } else {
         setStatus('認証情報が見つかりません')

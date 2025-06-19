@@ -2,34 +2,21 @@ import React, { useState } from 'react'
 import { atproto, collections } from '../api/atproto.js'
 import { env } from '../config/env.js'
 
-export default function CommentForm({ user, agent, onCommentPosted, pageContext }) {
+export default function CommentForm({ user, agent, onCommentPosted }) {
   const [text, setText] = useState('')
+  const [url, setUrl] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  
-  // Get current URL automatically, but exclude OAuth callback URLs
-  const getCurrentUrl = () => {
-    const currentPath = window.location.href
-    
-    // If on OAuth callback page, get the stored return URL or use root
-    if (currentPath.includes('/oauth/callback')) {
-      return sessionStorage.getItem('oauth_return_url') || window.location.origin
-    }
-    
-    // Remove hash fragments for clean URLs
-    return currentPath.split('#')[0]
-  }
-  
-  const currentUrl = getCurrentUrl()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!text.trim()) return
+    if (!text.trim() || !url.trim()) return
 
     setLoading(true)
     setError(null)
 
     try {
+      const currentUrl = url.trim()
       const timestamp = new Date().toISOString()
       
       // Create ai.syui.log record structure (new unified format)
@@ -68,6 +55,7 @@ export default function CommentForm({ user, agent, onCommentPosted, pageContext 
 
       // Clear form
       setText('')
+      setUrl('')
 
       // Notify parent component
       if (onCommentPosted) {
@@ -98,8 +86,18 @@ export default function CommentForm({ user, agent, onCommentPosted, pageContext 
       <h3>コメントを投稿</h3>
       
       <form onSubmit={handleSubmit}>
-        <div className="form-group" style={{ marginBottom: '8px', fontSize: '0.9em', color: 'var(--text-secondary)' }}>
-          <span>ページ: {currentUrl}</span>
+        <div className="form-group">
+          <label htmlFor="comment-url">ページURL:</label>
+          <input
+            id="comment-url"
+            type="url"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            placeholder="https://syui.ai/posts/example"
+            required
+            disabled={loading}
+            className="form-input"
+          />
         </div>
 
         <div className="form-group">

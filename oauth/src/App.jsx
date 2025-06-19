@@ -133,7 +133,6 @@ export default function App() {
             <CommentForm
               user={user}
               agent={agent}
-              pageContext={pageContext}
               onCommentPosted={() => {
                 refreshAdminData?.()
                 refreshUserData?.()
