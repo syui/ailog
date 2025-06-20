@@ -4,7 +4,7 @@ import ChatRecordList from './ChatRecordList.jsx'
 import LoadingSkeleton from './LoadingSkeleton.jsx'
 
 export default function RecordTabs({ langRecords, commentRecords, userComments, chatRecords, userChatRecords, userChatLoading, baseRecords, apiConfig, pageContext, user = null, agent = null, onRecordDeleted = null }) {
-  const [activeTab, setActiveTab] = useState('lang')
+  const [activeTab, setActiveTab] = useState('comment')
 
   // Filter records based on page context
   const filterRecords = (records) => {
@@ -37,16 +37,16 @@ export default function RecordTabs({ langRecords, commentRecords, userComments, 
     <div className="record-tabs">
       <div className="tab-header">
         <button 
-          className={`tab-btn ${activeTab === 'lang' ? 'active' : ''}`}
-          onClick={() => setActiveTab('lang')}
-        >
-          en ({filteredLangRecords.length})
-        </button>
-        <button 
           className={`tab-btn ${activeTab === 'comment' ? 'active' : ''}`}
           onClick={() => setActiveTab('comment')}
         >
           feedback ({filteredCommentRecords.length})
+        </button>
+        <button 
+          className={`tab-btn ${activeTab === 'lang' ? 'active' : ''}`}
+          onClick={() => setActiveTab('lang')}
+        >
+          en ({filteredLangRecords.length})
         </button>
         <button 
           className={`tab-btn ${activeTab === 'collection' ? 'active' : ''}`}

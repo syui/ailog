@@ -16,7 +16,7 @@ my-blog/static/index.html
 my-blog/templates/oauth-assets.html
 cloudflared-config.yml
 .config
-atproto
+repos
 oauth_old
 oauth_example
 my-blog/static/oauth/assets/comment-atproto*
