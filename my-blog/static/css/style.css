@@ -90,7 +90,7 @@ a.view-markdown:any-link {
 .site-title {
     color: var(--theme-color);
     text-decoration: none;
-    font-size: 20px;
+    font-size: 26px;
     font-weight: 600;
 }
 
@@ -328,7 +328,7 @@ a.view-markdown:any-link {
 
 /* Article */
 .article-container {
-    /* display: grid; */
+    display: grid;
     grid-template-columns: 1fr 240px;
     gap: 40px;
     max-width: 1000px;
@@ -494,6 +494,7 @@ article.article-content {
     color: #1f2328;
     line-height: 1.6;
 				padding-bottom: 200px;
+				font-size: 20px;
 }
 
 .article-body h1, .article-body h2, .article-body h3 {
@@ -543,7 +544,7 @@ article.article-content {
     background: #2D2D30;
     color: #AE81FF;
     padding: 8px 16px;
-    font-size: 12px;
+    font-size: 18px;
     font-family: 'SF Mono', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
     border-bottom: 1px solid #3E3D32;
     margin: 0;
@@ -573,7 +574,7 @@ article.article-content {
     padding: 2px 6px;
     border-radius: 4px;
     font-family: 'SF Mono', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
-    font-size: 13px;
+    font-size: 18px;
 }
 
 /* Molokai syntax highlighting */
@@ -646,7 +647,7 @@ article.article-content {
 .footer-social a {
     color: var(--dark-gray) !important;
     text-decoration: none !important;
-    font-size: 16px;
+    font-size: 20px;
     transition: all 0.2s ease;
 }
 
