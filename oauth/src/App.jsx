@@ -463,6 +463,10 @@ Answer:`
               </button>
             </div>
           )}
+          
+          <div className="bluesky-footer">
+            <i className="fab fa-bluesky"></i>
+          </div>
         </div>
       </div>
     </div>
