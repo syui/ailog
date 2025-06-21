@@ -233,6 +233,7 @@ body {
   border-left: none;
   margin: 0;
   padding: 10px 15px;
+  height: 40px;
 }
 
 /* Auth Button */
@@ -245,6 +246,10 @@ body {
   font-weight: 700;
   cursor: pointer;
   transition: background 0.2s;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .auth-button:hover {
@@ -813,7 +818,8 @@ body {
   
   .auth-button {
     white-space: nowrap !important;
-    min-width: 70px !important;
+    min-width: 90px !important;
+    width: 90px !important;
   }
   
   .tab-header {

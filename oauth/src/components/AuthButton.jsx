@@ -70,7 +70,7 @@ export default function AuthButton({ user, onLogin, onLogout, loading }) {
         disabled={isLoading || !handleInput.trim()}
         className="auth-button"
       >
-        {isLoading ? '認証中...' : <i className="fab fa-bluesky"></i>}
+        {isLoading ? 'Loading...' : <i className="fab fa-bluesky"></i>}
       </button>
     </div>
   )
