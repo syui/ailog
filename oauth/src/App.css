@@ -262,11 +262,22 @@ body {
   cursor: not-allowed;
 }
 
-/* Main Content */
 .main-content {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px 0;
+	grid-area: main;
+	max-width: 1000px;
+	margin: 0 auto;
+	padding: 0px;
+	width: 100%;
+}
+
+@media (max-width: 1000px) {
+	.main-content {
+		padding: 0px !important;
+		margin: 0px !important;
+		max-width: 100% !important;
+		width: 100% !important;
+		overflow-x: hidden !important;
+	}
 }
 
 /* Bluesky Footer */
@@ -744,15 +755,7 @@ body {
     padding: 0 !important;
     margin: 0 !important;
   }
-  
-  .main-content {
-    padding: 0px !important;
-    margin: 0px !important;
-    max-width: 100% !important;
-    width: 100% !important;
-    overflow-x: hidden !important;
-  }
-  
+ 
   /* OAuth app mobile fixes - prevent overflow and content issues */
   .oauth-app-header {
     padding: 0px !important;
