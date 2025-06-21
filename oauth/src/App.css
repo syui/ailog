@@ -520,6 +520,8 @@ body {
   line-height: 1.4;
   overflow-x: auto;
   white-space: pre-wrap;
+  word-wrap: break-word;
+  word-break: break-word;
   max-height: 300px;
   overflow-y: auto;
   color: var(--text);
@@ -886,6 +888,9 @@ body {
     padding: 8px !important;
     overflow-x: auto !important;
     -webkit-overflow-scrolling: touch !important;
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+    word-break: break-word !important;
   }
   
   .ask-ai-container {

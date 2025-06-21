@@ -140,7 +140,6 @@ export default function RecordList({ title, records, apiConfig, showTitle = true
           
           {expandedRecords.has(i) && (
             <div className="json-display">
-              <div className="json-header">json data</div>
               <pre className="json-content">
                 {JSON.stringify(record, null, 2)}
               </pre>

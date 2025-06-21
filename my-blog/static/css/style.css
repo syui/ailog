@@ -335,9 +335,7 @@ a.view-markdown:any-link {
     margin: 0 auto;
 }
 
-article.article-content {
-    padding: 10px;
-}
+/* article.article-content { padding: 10px; } */
 
 .article-meta {
     display: flex;
@@ -490,11 +488,39 @@ article.article-content {
     line-height: 1.25;
 }
 
+article.article-content {
+    word-wrap: break-word;
+    max-width: 800px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+}
+
 .article-body {
     color: #1f2328;
     line-height: 1.6;
-				padding-bottom: 200px;
 				font-size: 20px;
+				padding: 20px;
+				padding-bottom:200px;
+}
+
+.article-body img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 16px auto;
+}
+
+/* Apple Live Text overlay fix */
+.article-body div#image-overlay {
+    max-width: 100% !important;
+    contain: layout;
+}
+
+/* Ensure images and their containers don't overflow */
+.article-body p:has(img) {
+    overflow: hidden;
+    max-width: 100%;
 }
 
 .article-body h1, .article-body h2, .article-body h3 {
@@ -1009,6 +1035,7 @@ article.article-content {
     /* Article content mobile optimization */
     .article-body {
         overflow-x: hidden;
+								padding: 10px;
 								padding-bottom: 50px;
     }
     
@@ -1074,8 +1101,3 @@ article.article-content {
         padding: 0;
     }
 }
-
-img {
-    width: 100%;
-}
-
