@@ -125,7 +125,7 @@ export default function CommentForm({ user, agent, onCommentPosted }) {
             disabled={loading || !text.trim()}
             className={`btn ${loading ? 'btn-outline' : 'btn-primary'}`}
           >
-            {loading ? 'posting...' : 'post comment'}
+            {loading ? 'posting...' : 'post'}
           </button>
         </div>
       </form>

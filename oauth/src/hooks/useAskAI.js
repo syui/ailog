@@ -25,8 +25,12 @@ export function useAskAI(adminData, userProfile, agent) {
     try {
       logger.log('Sending question to Ollama:', question)
 
+      // ユーザー情報を含むシステムプロンプトを構築
+      const userInfo = userProfile ? `相手の名前は${userProfile.displayName || userProfile.handle}です。` : ''
+      const enhancedSystemPrompt = `${aiConfig.systemPrompt} ${userInfo}`
+
       // Ollamaに直接リクエスト送信（oauth_oldと同じ方式）
-      const prompt = `${aiConfig.systemPrompt}
+      const prompt = `${enhancedSystemPrompt}
 
 Question: ${question}
 
