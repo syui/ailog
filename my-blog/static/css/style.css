@@ -232,7 +232,7 @@ a.view-markdown:any-link {
 .timeline-feed {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    /* gap: 24px; */
 }
 
 .timeline-post {
@@ -754,8 +754,8 @@ article.article-content {
 .comment-section {
     max-width: 800px;
     margin: 0 auto;
-    margin-top: 48px;
-    padding-top: 32px;
+    /* margin-top: 48px; */
+    /* padding-top: 32px; */
 }
 
 .comment-container {

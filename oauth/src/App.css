@@ -203,7 +203,7 @@ body {
   display: flex;
   align-items: center;
   padding: 0;
-  gap: 0;
+  /* gap: 0; */
   width: 100%;
   /* max-width: 400px; */
 }
@@ -725,7 +725,7 @@ body {
   .oauth-header-content {
     max-width: 100% !important;
     width: 100% !important;
-    padding: 10px 15px !important;
+    padding: 10px 0px !important;
     margin: 0px !important;
     overflow-x: hidden !important;
   }

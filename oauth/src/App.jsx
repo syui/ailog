@@ -415,16 +415,18 @@ Answer:`
       <div className="main-content">
         <div className="content-area">
 
-          <div className="comment-form">
-            <CommentForm
-              user={user}
-              agent={agent}
-              onCommentPosted={() => {
-                refreshAdminData?.()
-                refreshUserData?.()
-              }}
-            />
-          </div>
+          {user && (
+            <div className="comment-form">
+              <CommentForm
+                user={user}
+                agent={agent}
+                onCommentPosted={() => {
+                  refreshAdminData?.()
+                  refreshUserData?.()
+                }}
+              />
+            </div>
+          )}
 
           <RecordTabs 
             langRecords={langRecords}
