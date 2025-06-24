@@ -79,6 +79,15 @@ enum Commands {
         /// Path to the blog directory
         #[arg(default_value = ".")]
         path: PathBuf,
+        /// Enable Claude proxy mode
+        #[arg(long)]
+        claude_proxy: bool,
+        /// API token for Claude proxy authentication
+        #[arg(long)]
+        api_token: Option<String>,
+        /// Claude Code executable path
+        #[arg(long, default_value = "claude")]
+        claude_code_path: String,
     },
     /// Generate documentation from code
     Doc(commands::doc::DocCommand),
@@ -203,9 +212,20 @@ async fn main() -> Result<()> {
             std::env::set_current_dir(path)?;
             commands::clean::execute().await?;
         }
-        Commands::Mcp { port, path } => {
+        Commands::Mcp { port, path, claude_proxy, api_token, claude_code_path } => {
             use crate::mcp::McpServer;
-            let server = McpServer::new(path);
+            let mut server = McpServer::new(path);
+            
+            if claude_proxy {
+                let token = api_token
+                    .or_else(|| std::env::var("CLAUDE_PROXY_API_TOKEN").ok())
+                    .ok_or_else(|| {
+                        anyhow::anyhow!("API token is required when --claude-proxy is enabled. Set CLAUDE_PROXY_API_TOKEN environment variable or use --api-token")
+                    })?;
+                server = server.with_claude_proxy(token, Some(claude_code_path.clone()));
+                println!("Claude proxy mode enabled - using Claude Code executable: {}", claude_code_path);
+            }
+            
             server.serve(port).await?;
         }
         Commands::Doc(doc_cmd) => {

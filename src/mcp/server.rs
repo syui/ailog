@@ -12,10 +12,12 @@ use std::sync::Arc;
 use tower_http::cors::CorsLayer;
 use crate::mcp::tools::BlogTools;
 use crate::mcp::types::{McpRequest, McpResponse, McpError, CreatePostRequest, ListPostsRequest, BuildRequest};
+use crate::mcp::claude_proxy::{claude_chat_handler, claude_tools_handler, ClaudeProxyState};
 
 #[derive(Clone)]
 pub struct AppState {
-    blog_tools: Arc<BlogTools>,
+    pub blog_tools: Arc<BlogTools>,
+    pub claude_proxy: Option<Arc<ClaudeProxyState>>,
 }
 
 pub struct McpServer {
@@ -25,9 +27,21 @@ pub struct McpServer {
 impl McpServer {
     pub fn new(base_path: PathBuf) -> Self {
         let blog_tools = Arc::new(BlogTools::new(base_path));
-        let app_state = AppState { blog_tools };
+        let app_state = AppState { 
+            blog_tools,
+            claude_proxy: None,
+        };
         
         Self { app_state }
+    }
+
+    pub fn with_claude_proxy(mut self, api_token: String, claude_code_path: Option<String>) -> Self {
+        let claude_code_path = claude_code_path.unwrap_or_else(|| "claude".to_string());
+        self.app_state.claude_proxy = Some(Arc::new(ClaudeProxyState { 
+            api_token,
+            claude_code_path,
+        }));
+        self
     }
 
     pub fn create_router(&self) -> Router {
@@ -36,6 +50,8 @@ impl McpServer {
             .route("/mcp/tools/list", get(list_tools))
             .route("/mcp/tools/call", post(call_tool))
             .route("/health", get(health_check))
+            .route("/api/claude-mcp", post(claude_chat_handler))
+            .route("/claude/tools", get(claude_tools_handler))
             .layer(CorsLayer::permissive())
             .with_state(self.app_state.clone())
     }
