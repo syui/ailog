@@ -32,7 +32,11 @@ export default function ProfileRecordList({ profileRecords, apiConfig, user = nu
   }
 
   const canDelete = (profile) => {
-    return user && agent && profile.uri && profile.value.author?.did === user.did
+    if (!user || !agent || !profile.uri) return false
+    
+    // Check if the record is in the current user's repository
+    const recordRepoDid = profile.uri.split('/')[2]
+    return recordRepoDid === user.did
   }
 
   return (
