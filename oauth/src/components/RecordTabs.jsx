@@ -1,10 +1,14 @@
 import React, { useState } from 'react'
 import RecordList from './RecordList.jsx'
 import ChatRecordList from './ChatRecordList.jsx'
+import ProfileRecordList from './ProfileRecordList.jsx'
 import LoadingSkeleton from './LoadingSkeleton.jsx'
+import { logger } from '../utils/logger.js'
 
 export default function RecordTabs({ langRecords, commentRecords, userComments, chatRecords, userChatRecords, userChatLoading, baseRecords, apiConfig, pageContext, user = null, agent = null, onRecordDeleted = null }) {
-  const [activeTab, setActiveTab] = useState('comment')
+  const [activeTab, setActiveTab] = useState('profiles')
+  
+  logger.log('RecordTabs: activeTab is', activeTab)
 
   // Filter records based on page context
   const filterRecords = (records) => {
@@ -32,21 +36,27 @@ export default function RecordTabs({ langRecords, commentRecords, userComments, 
   const filteredUserComments = filterRecords(userComments || [])
   const filteredChatRecords = filterRecords(chatRecords || [])
   const filteredBaseRecords = filterRecords(baseRecords || [])
+  
+  // Filter profile records from baseRecords
+  const profileRecords = (baseRecords || []).filter(record => record.value?.type === 'profile')
+  const sortedProfileRecords = profileRecords.sort((a, b) => {
+    if (a.value.profileType === 'admin' && b.value.profileType !== 'admin') return -1
+    if (a.value.profileType !== 'admin' && b.value.profileType === 'admin') return 1
+    return 0
+  })
+  const filteredProfileRecords = filterRecords(sortedProfileRecords)
 
   return (
     <div className="record-tabs">
       <div className="tab-header">
         <button 
-          className={`tab-btn ${activeTab === 'comment' ? 'active' : ''}`}
-          onClick={() => setActiveTab('comment')}
+          className={`tab-btn ${activeTab === 'profiles' ? 'active' : ''}`}
+          onClick={() => {
+            logger.log('RecordTabs: Profiles tab clicked')
+            setActiveTab('profiles')
+          }}
         >
-          feedback ({filteredCommentRecords.length})
-        </button>
-        <button 
-          className={`tab-btn ${activeTab === 'lang' ? 'active' : ''}`}
-          onClick={() => setActiveTab('lang')}
-        >
-          en ({filteredLangRecords.length})
+          about ({filteredProfileRecords.length})
         </button>
         <button 
           className={`tab-btn ${activeTab === 'collection' ? 'active' : ''}`}
@@ -59,6 +69,18 @@ export default function RecordTabs({ langRecords, commentRecords, userComments, 
           onClick={() => setActiveTab('users')}
         >
           comment ({filteredUserComments.length})
+        </button>
+        <button 
+          className={`tab-btn ${activeTab === 'comment' ? 'active' : ''}`}
+          onClick={() => setActiveTab('comment')}
+        >
+          feedback ({filteredCommentRecords.length})
+        </button>
+        <button 
+          className={`tab-btn ${activeTab === 'lang' ? 'active' : ''}`}
+          onClick={() => setActiveTab('lang')}
+        >
+          en ({filteredLangRecords.length})
         </button>
       </div>
 
@@ -118,6 +140,19 @@ export default function RecordTabs({ langRecords, commentRecords, userComments, 
               agent={agent}
               onRecordDeleted={onRecordDeleted}
               showTitle={false}
+            />
+          )
+        )}
+        {activeTab === 'profiles' && (
+          !baseRecords ? (
+            <LoadingSkeleton count={3} showTitle={true} />
+          ) : (
+            <ProfileRecordList 
+              profileRecords={filteredProfileRecords}
+              apiConfig={apiConfig} 
+              user={user}
+              agent={agent}
+              onRecordDeleted={onRecordDeleted}
             />
           )
         )}

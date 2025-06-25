@@ -37,10 +37,81 @@ function checkAuthenticationStatus() {
             document.getElementById('aiQuestion').focus();
         }, 50);
     } else {
-        // User not authenticated - show auth message
-        document.getElementById('authCheck').style.display = 'block';
+        // User not authenticated - show profiles instead of auth message
+        document.getElementById('authCheck').style.display = 'none';
         document.getElementById('chatForm').style.display = 'none';
-        document.getElementById('chatHistory').style.display = 'none';
+        document.getElementById('chatHistory').style.display = 'block';
+        loadAndShowProfiles();
+    }
+}
+
+// Load and display profiles from ai.syui.log.profile collection
+async function loadAndShowProfiles() {
+    const chatHistory = document.getElementById('chatHistory');
+    chatHistory.innerHTML = '<div class="loading-message">Loading profiles...</div>';
+    
+    try {
+        const ADMIN_HANDLE = 'ai.syui.ai';
+        const OAUTH_COLLECTION = 'ai.syui.log';
+        const ATPROTO_PDS = 'syu.is';
+        
+        const response = await fetch(`https://${ATPROTO_PDS}/xrpc/com.atproto.repo.listRecords?repo=${ADMIN_HANDLE}&collection=${OAUTH_COLLECTION}&limit=100`);
+        
+        if (!response.ok) {
+            throw new Error('Failed to fetch profiles');
+        }
+        
+        const data = await response.json();
+        console.log('Fetched records:', data.records);
+        
+        // Filter only profile records and sort
+        const profileRecords = (data.records || []).filter(record => record.value.type === 'profile');
+        console.log('Profile records:', profileRecords);
+        
+        const profiles = profileRecords.sort((a, b) => {
+            if (a.value.profileType === 'admin' && b.value.profileType !== 'admin') return -1;
+            if (a.value.profileType !== 'admin' && b.value.profileType === 'admin') return 1;
+            return 0;
+        });
+        console.log('Sorted profiles:', profiles);
+        
+        // Clear loading message
+        chatHistory.innerHTML = '';
+        
+        // Display profiles using the same format as chat
+        profiles.forEach(profile => {
+            const profileDiv = document.createElement('div');
+            profileDiv.className = 'chat-message ai-message comment-style';
+            
+            const avatarElement = profile.value.author.avatar 
+                ? `<img src="${profile.value.author.avatar}" alt="${profile.value.author.displayName || profile.value.author.handle}" class="profile-avatar">`
+                : `<div class="profile-avatar-fallback">${(profile.value.author.displayName || profile.value.author.handle || '?').charAt(0).toUpperCase()}</div>`;
+            
+            const adminBadge = profile.value.profileType === 'admin' 
+                ? '<span class="admin-badge">Admin</span>' 
+                : '';
+            
+            profileDiv.innerHTML = `
+                <div class="message-header">
+                    <div class="avatar">${avatarElement}</div>
+                    <div class="user-info">
+                        <div class="display-name">${profile.value.author.displayName || profile.value.author.handle} ${adminBadge}</div>
+                        <div class="handle">@${profile.value.author.handle}</div>
+                        <div class="timestamp">${new Date(profile.value.createdAt).toLocaleString()}</div>
+                    </div>
+                </div>
+                <div class="message-content">${profile.value.text}</div>
+            `;
+            chatHistory.appendChild(profileDiv);
+        });
+        
+        if (profiles.length === 0) {
+            chatHistory.innerHTML = '<div class="no-profiles">No profiles available</div>';
+        }
+        
+    } catch (error) {
+        console.error('Error loading profiles:', error);
+        chatHistory.innerHTML = '<div class="error-message">Failed to load profiles. Please try again later.</div>';
     }
 }
 

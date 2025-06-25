@@ -7,6 +7,7 @@ import { usePageContext } from './hooks/usePageContext.js'
 import AuthButton from './components/AuthButton.jsx'
 import RecordTabs from './components/RecordTabs.jsx'
 import CommentForm from './components/CommentForm.jsx'
+import ProfileForm from './components/ProfileForm.jsx'
 import AskAI from './components/AskAI.jsx'
 import TestUI from './components/TestUI.jsx'
 import OAuthCallback from './components/OAuthCallback.jsx'
@@ -421,6 +422,20 @@ Answer:`
                 user={user}
                 agent={agent}
                 onCommentPosted={() => {
+                  refreshAdminData?.()
+                  refreshUserData?.()
+                }}
+              />
+            </div>
+          )}
+
+          {user && (
+            <div className="profile-form">
+              <ProfileForm
+                user={user}
+                agent={agent}
+                apiConfig={adminData.apiConfig}
+                onProfilePosted={() => {
                   refreshAdminData?.()
                   refreshUserData?.()
                 }}

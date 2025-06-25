@@ -58,7 +58,8 @@ async function request(url, options = {}) {
 
 export const atproto = {
   async getDid(pds, handle) {
-    const res = await request(`https://${pds}/xrpc/${ENDPOINTS.describeRepo}?repo=${handle}`)
+    const endpoint = pds.startsWith('http') ? pds : `https://${pds}`
+    const res = await request(`${endpoint}/xrpc/${ENDPOINTS.describeRepo}?repo=${handle}`)
     return res.did
   },
 
@@ -175,6 +176,16 @@ export const collections = {
     if (cached) return cached
     
     const data = await atproto.getRecords(pds, repo, collection, limit)
+    dataCache.set(cacheKey, data)
+    return data
+  },
+
+  async getProfiles(pds, repo, collection, limit = 100) {
+    const cacheKey = dataCache.generateKey('profiles', pds, repo, collection, limit)
+    const cached = dataCache.get(cacheKey)
+    if (cached) return cached
+    
+    const data = await atproto.getRecords(pds, repo, `${collection}.profile`, limit)
     dataCache.set(cacheKey, data)
     return data
   },

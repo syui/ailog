@@ -34,6 +34,96 @@ body {
   background: var(--background);
 }
 
+/* Profile Form Styles */
+.profile-form-container {
+  background: var(--background-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.profile-form-container h3 {
+  margin: 0 0 16px 0;
+  color: var(--text);
+}
+
+.profile-form .form-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.profile-form .form-group {
+  flex: 1;
+}
+
+.profile-form .form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.profile-form .form-group input,
+.profile-form .form-group select,
+.profile-form .form-group textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.profile-form .form-group input:focus,
+.profile-form .form-group select:focus,
+.profile-form .form-group textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.profile-form .form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.profile-form .submit-btn {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.profile-form .submit-btn:hover:not(:disabled) {
+  background: var(--primary-hover);
+}
+
+.profile-form .submit-btn:disabled {
+  background: var(--text-secondary);
+  cursor: not-allowed;
+}
+
+/* Profile Record List Styles */
+.profile-record-list .record-item.admin {
+  border-left: 4px solid var(--primary);
+}
+
+.profile-record-list .admin-badge {
+  background: var(--primary);
+  color: white;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-weight: 500;
+  margin-left: 8px;
+}
+
 /* Header */
 .oauth-app-header {
   background: var(--background);
@@ -264,7 +354,7 @@ body {
 
 .main-content {
 	grid-area: main;
-	max-width: 1000px;
+	max-width: 800px;
 	margin: 0 auto;
 	padding: 0px;
 	width: 100%;
@@ -570,13 +660,10 @@ body {
   margin-bottom: 16px;
 }
 
-.user-message {
-  margin-left: 40px;
-}
-
-.ai-message {
-  margin-right: 40px;
-}
+/*
+.user-message { margin-left: 40px; }
+.ai-message { margin-right: 40px; }
+*/
 
 .message-header {
   display: flex;
