@@ -58,8 +58,6 @@ export default function ProfileRecordList({ profileRecords, apiConfig, user = nu
                   <span className="admin-badge"> Admin</span>
                 )}
               </div>
-              <div className="handle">@{profile.value.author?.handle}</div>
-              <div className="timestamp">{new Date(profile.value.createdAt).toLocaleString()}</div>
             </div>
             {canDelete(profile) && (
               <div className="record-actions">

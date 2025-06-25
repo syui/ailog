@@ -69,8 +69,6 @@ export default function ChatRecordList({ chatPairs, apiConfig, user = null, agen
                 )}
                 <div className="user-info">
                   <div className="display-name">{chatPair.question.value.author?.displayName || chatPair.question.value.author?.handle}</div>
-                  <div className="handle">@{chatPair.question.value.author?.handle}</div>
-                  <div className="timestamp">{new Date(chatPair.question.value.createdAt).toLocaleString()}</div>
                 </div>
                 {canDelete(chatPair) && (
                   <div className="record-actions">
@@ -105,8 +103,6 @@ export default function ChatRecordList({ chatPairs, apiConfig, user = null, agen
                 )}
                 <div className="user-info">
                   <div className="display-name">{chatPair.answer.value.author?.displayName || chatPair.answer.value.author?.handle}</div>
-                  <div className="handle">@{chatPair.answer.value.author?.handle}</div>
-                  <div className="timestamp">{new Date(chatPair.answer.value.createdAt).toLocaleString()}</div>
                 </div>
               </div>
               <div className="message-content">{chatPair.answer.value.text}</div>

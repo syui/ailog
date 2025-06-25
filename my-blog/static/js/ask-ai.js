@@ -12,24 +12,95 @@ function toggleAskAI() {
     panel.style.display = isVisible ? 'none' : 'block';
     
     if (!isVisible) {
-        checkAuthenticationStatus();
+        console.log('Ask AI panel opened');
+        
+        // If AI profile data is already available, show introduction immediately
+        if (aiProfileData) {
+            console.log('AI profile data available - showing introduction immediately');
+            // Quick check for authentication
+            const userSections = document.querySelectorAll('.user-section');
+            const isAuthenticated = userSections.length > 0;
+            handleAuthenticationStatus(isAuthenticated);
+            return;
+        }
+        
+        // For production fallback - if OAuth app fails to load, show profiles
+        const isProd = window.location.hostname !== 'localhost' && !window.location.hostname.includes('preview');
+        if (isProd) {
+            console.log('Production environment detected - using fallback profile display');
+            // Shorter timeout for production
+            setTimeout(() => {
+                const userSections = document.querySelectorAll('.user-section');
+                console.log('Production check - user sections:', userSections.length);
+                
+                if (userSections.length === 0) {
+                    console.log('No user sections found in production - showing profiles directly');
+                    handleAuthenticationStatus(false);
+                } else {
+                    console.log('User sections found in production - showing authenticated UI');
+                    handleAuthenticationStatus(true);
+                }
+            }, 300);
+        } else {
+            checkAuthenticationStatus();
+        }
     }
 }
 
 function checkAuthenticationStatus() {
-    const userSections = document.querySelectorAll('.user-section');
-    const isAuthenticated = userSections.length > 0;
+    // Check multiple times for OAuth app to load
+    let checkCount = 0;
+    const maxChecks = 10;
+    
+    const checkForAuth = () => {
+        console.log(`Auth check attempt ${checkCount + 1}/${maxChecks}`);
+        const userSections = document.querySelectorAll('.user-section');
+        const authButtons = document.querySelectorAll('[data-auth-status]');
+        const oauthContainers = document.querySelectorAll('#oauth-container');
+        
+        console.log('User sections found:', userSections.length);
+        console.log('Auth buttons found:', authButtons.length);
+        console.log('OAuth containers found:', oauthContainers.length);
+        
+        const isAuthenticated = userSections.length > 0;
+        
+        if (isAuthenticated || checkCount >= maxChecks - 1) {
+            console.log('Final auth status:', isAuthenticated);
+            handleAuthenticationStatus(isAuthenticated);
+        } else {
+            checkCount++;
+            setTimeout(checkForAuth, 200);
+        }
+    };
+    
+    checkForAuth();
+}
+
+function handleAuthenticationStatus(isAuthenticated) {
+    console.log('Handling auth status:', isAuthenticated);
+    
+    // Always hide loading first
+    document.getElementById('authCheck').style.display = 'none';
     
     if (isAuthenticated) {
         // User is authenticated - show Ask AI UI
-        document.getElementById('authCheck').style.display = 'none';
+        console.log('User authenticated - showing AI chat interface');
         document.getElementById('chatForm').style.display = 'block';
         document.getElementById('chatHistory').style.display = 'block';
         
-        // Show initial greeting if chat history is empty
+        // Show initial greeting if chat history is empty and AI profile is available
         const chatHistory = document.getElementById('chatHistory');
         if (chatHistory.children.length === 0) {
-            showInitialGreeting();
+            if (aiProfileData) {
+                showInitialGreeting();
+            } else {
+                // Wait for AI profile data
+                setTimeout(() => {
+                    if (aiProfileData) {
+                        showInitialGreeting();
+                    }
+                }, 500);
+            }
         }
         
         // Focus on input
@@ -37,11 +108,18 @@ function checkAuthenticationStatus() {
             document.getElementById('aiQuestion').focus();
         }, 50);
     } else {
-        // User not authenticated - show profiles instead of auth message
-        document.getElementById('authCheck').style.display = 'none';
+        // User not authenticated - show AI introduction directly if profile available
+        console.log('User not authenticated - showing AI introduction');
         document.getElementById('chatForm').style.display = 'none';
         document.getElementById('chatHistory').style.display = 'block';
-        loadAndShowProfiles();
+        
+        if (aiProfileData) {
+            // Show AI introduction directly using available profile data
+            showAIIntroduction();
+        } else {
+            // Fallback to profile loading
+            loadAndShowProfiles();
+        }
     }
 }
 
@@ -96,8 +174,7 @@ async function loadAndShowProfiles() {
                     <div class="avatar">${avatarElement}</div>
                     <div class="user-info">
                         <div class="display-name">${profile.value.author.displayName || profile.value.author.handle} ${adminBadge}</div>
-                        <div class="handle">@${profile.value.author.handle}</div>
-                        <div class="timestamp">${new Date(profile.value.createdAt).toLocaleString()}</div>
+                        <div class="handle"><a href="https://web.syu.is/profile/${profile.value.author.handle}" target="_blank" rel="noopener noreferrer">@${profile.value.author.handle}</a></div>
                     </div>
                 </div>
                 <div class="message-content">${profile.value.text}</div>
@@ -178,8 +255,7 @@ function addUserMessage(question) {
             <div class="avatar">${userAvatar}</div>
             <div class="user-info">
                 <div class="display-name">${userDisplay}</div>
-                <div class="handle">@${userHandle}</div>
-                <div class="timestamp">${new Date().toLocaleString()}</div>
+                <div class="handle"><a href="https://web.syu.is/profile/${userHandle}" target="_blank" rel="noopener noreferrer">@${userHandle}</a></div>
             </div>
         </div>
         <div class="message-content">${question}</div>
@@ -242,15 +318,55 @@ function showInitialGreeting() {
             <div class="avatar">${avatarElement}</div>
             <div class="user-info">
                 <div class="display-name">${aiProfileData.displayName}</div>
-                <div class="handle">@${aiProfileData.handle}</div>
-                <div class="timestamp">${new Date().toLocaleString()}</div>
+                <div class="handle"><a href="https://web.syu.is/profile/${aiProfileData.handle}" target="_blank" rel="noopener noreferrer">@${aiProfileData.handle}</a></div>
             </div>
         </div>
-        <div class="message-content">
-            Hello! I'm an AI assistant trained on this blog's content. I can answer questions about the articles, provide insights, and help you understand the topics discussed here. What would you like to know?
-        </div>
+        <div class="message-content">Hello! I'm an AI assistant trained on this blog's content. I can answer questions about the articles, provide insights, and help you understand the topics discussed here. What would you like to know?</div>
     `;
     chatHistory.appendChild(greetingDiv);
+}
+
+function showAIIntroduction() {
+    if (!aiProfileData) return;
+
+    const chatHistory = document.getElementById('chatHistory');
+    chatHistory.innerHTML = ''; // Clear any existing content
+    
+    // AI Introduction message
+    const introDiv = document.createElement('div');
+    introDiv.className = 'chat-message ai-message comment-style initial-greeting';
+    
+    const avatarElement = aiProfileData.avatar 
+        ? `<img src="${aiProfileData.avatar}" alt="${aiProfileData.displayName}" class="profile-avatar">`
+        : '🤖';
+    
+    introDiv.innerHTML = `
+        <div class="message-header">
+            <div class="avatar">${avatarElement}</div>
+            <div class="user-info">
+                <div class="display-name">${aiProfileData.displayName}</div>
+                <div class="handle"><a href="https://web.syu.is/profile/${aiProfileData.handle}" target="_blank" rel="noopener noreferrer">@${aiProfileData.handle}</a></div>
+            </div>
+        </div>
+        <div class="message-content">Hello! I'm an AI assistant trained on this blog's content. I can answer questions about the articles, provide insights, and help you understand the topics discussed here. What would you like to know?</div>
+    `;
+    chatHistory.appendChild(introDiv);
+    
+    // OAuth login message
+    const loginDiv = document.createElement('div');
+    loginDiv.className = 'chat-message user-message comment-style initial-greeting';
+    
+    loginDiv.innerHTML = `
+        <div class="message-header">
+            <div class="avatar">${avatarElement}</div>
+            <div class="user-info">
+                <div class="display-name">${aiProfileData.displayName}</div>
+                <div class="handle"><a href="https://web.syu.is/profile/${aiProfileData.handle}" target="_blank" rel="noopener noreferrer">@${aiProfileData.handle}</a></div>
+            </div>
+        </div>
+        <div class="message-content">Please atproto oauth login</div>
+    `;
+    chatHistory.appendChild(loginDiv);
 }
 
 function updateAskAIButton() {
@@ -288,8 +404,7 @@ function handleAIResponse(responseData) {
             <div class="avatar">${avatarElement}</div>
             <div class="user-info">
                 <div class="display-name">${aiProfile.displayName}</div>
-                <div class="handle">@${aiProfile.handle}</div>
-                <div class="timestamp">${timestamp.toLocaleString()}</div>
+                <div class="handle"><a href="https://web.syu.is/profile/${aiProfile.handle}" target="_blank" rel="noopener noreferrer">@${aiProfile.handle}</a></div>
             </div>
         </div>
         <div class="message-content">${responseData.answer}</div>
@@ -377,6 +492,37 @@ function setupAskAIEventListeners() {
 document.addEventListener('DOMContentLoaded', function() {
     setupAskAIEventListeners();
     console.log('Ask AI initialized successfully');
+    
+    // Also listen for OAuth app load completion
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.type === 'childList') {
+                // Check if user-section was added/removed
+                const userSectionAdded = Array.from(mutation.addedNodes).some(node => 
+                    node.nodeType === Node.ELEMENT_NODE && 
+                    (node.classList?.contains('user-section') || node.querySelector?.('.user-section'))
+                );
+                const userSectionRemoved = Array.from(mutation.removedNodes).some(node => 
+                    node.nodeType === Node.ELEMENT_NODE && 
+                    (node.classList?.contains('user-section') || node.querySelector?.('.user-section'))
+                );
+                
+                if (userSectionAdded || userSectionRemoved) {
+                    console.log('User section status changed');
+                    // Update Ask AI panel if it's visible
+                    const panel = document.getElementById('askAiPanel');
+                    if (panel && panel.style.display !== 'none') {
+                        checkAuthenticationStatus();
+                    }
+                }
+            }
+        });
+    });
+    
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
 });
 
 // Global functions for onclick handlers

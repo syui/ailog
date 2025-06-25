@@ -65,16 +65,16 @@ export default function RecordTabs({ langRecords, commentRecords, userComments, 
           chat ({userChatRecords?.length || 0})
         </button>
         <button 
-          className={`tab-btn ${activeTab === 'users' ? 'active' : ''}`}
-          onClick={() => setActiveTab('users')}
-        >
-          comment ({filteredUserComments.length})
-        </button>
-        <button 
           className={`tab-btn ${activeTab === 'comment' ? 'active' : ''}`}
           onClick={() => setActiveTab('comment')}
         >
           feedback ({filteredCommentRecords.length})
+        </button>
+        <button 
+          className={`tab-btn ${activeTab === 'users' ? 'active' : ''}`}
+          onClick={() => setActiveTab('users')}
+        >
+          comment ({filteredUserComments.length})
         </button>
         <button 
           className={`tab-btn ${activeTab === 'lang' ? 'active' : ''}`}

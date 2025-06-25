@@ -139,7 +139,7 @@ body {
   /* align-items: center; */
   max-width: 800px;
   margin: 0 auto;
-  padding: 45px 0;
+  padding: 25px 0;
   width: 100%;
 }
 
@@ -1070,6 +1070,10 @@ body {
     width: 100%;
     justify-content: center;
   }
+		article.article-content {
+			max-width: 100%;
+		}
+
 }
 
 /* Avatar Styles */
