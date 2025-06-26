@@ -13,7 +13,7 @@ function getCorrectWebUrl(avatarUrl) {
   
   // If avatar is from syu.is, use web.syu.is
   if (avatarUrl.includes('bsky.syu.is') || avatarUrl.includes('syu.is')) {
-    return 'https://web.syu.is'
+    return 'https://syu.is'
   }
   
   // Default to bsky.app

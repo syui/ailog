@@ -10,7 +10,7 @@ export function getApiConfig(pds) {
       pds: `https://${env.pds}`,
       bsky: `https://bsky.${env.pds}`,
       plc: `https://plc.${env.pds}`,
-      web: `https://web.${env.pds}`
+      web: `https://${env.pds}`
     }
   }
   return {

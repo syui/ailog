@@ -92,6 +92,26 @@
         <p>© {{ config.author }}</p>
     </footer>
 
+    <script>
+        // Config variables from Hugo
+        window.OAUTH_CONFIG = {
+            {% if config.oauth.pds %}
+            pds: "{{ config.oauth.pds }}",
+            {% else %}
+            pds: "syu.is",
+            {% endif %}
+            {% if config.oauth.admin %}
+            admin: "{{ config.oauth.admin }}",
+            {% else %}
+            admin: "ai.syui.ai",
+            {% endif %}
+            {% if config.oauth.collection %}
+            collection: "{{ config.oauth.collection }}"
+            {% else %}
+            collection: "ai.syui.log"
+            {% endif %}
+        };
+    </script>
     <script src="/js/ask-ai.js"></script>
     <script src="/js/theme.js"></script>
     

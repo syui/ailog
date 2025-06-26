@@ -5,6 +5,24 @@
 // Global variables for AI functionality
 let aiProfileData = null;
 
+// Get config from window or use defaults
+const OAUTH_PDS = window.OAUTH_CONFIG?.pds || 'syu.is';
+const ADMIN_HANDLE = window.OAUTH_CONFIG?.admin || 'ai.syui.ai';
+const OAUTH_COLLECTION = window.OAUTH_CONFIG?.collection || 'ai.syui.log';
+
+// Listen for AI profile data from OAuth app
+window.addEventListener('aiProfileLoaded', function(event) {
+    console.log('AI profile received from OAuth app:', event.detail);
+    aiProfileData = event.detail;
+    updateAskAIButton();
+});
+
+// Check if AI profile data is already available
+if (window.aiProfileData) {
+    console.log('AI profile already available:', window.aiProfileData);
+    aiProfileData = window.aiProfileData;
+}
+
 // Original functions from working implementation
 function toggleAskAI() {
     const panel = document.getElementById('askAiPanel');
@@ -129,11 +147,7 @@ async function loadAndShowProfiles() {
     chatHistory.innerHTML = '<div class="loading-message">Loading profiles...</div>';
     
     try {
-        const ADMIN_HANDLE = 'ai.syui.ai';
-        const OAUTH_COLLECTION = 'ai.syui.log';
-        const ATPROTO_PDS = 'syu.is';
-        
-        const response = await fetch(`https://${ATPROTO_PDS}/xrpc/com.atproto.repo.listRecords?repo=${ADMIN_HANDLE}&collection=${OAUTH_COLLECTION}&limit=100`);
+        const response = await fetch(`https://${OAUTH_PDS}/xrpc/com.atproto.repo.listRecords?repo=${ADMIN_HANDLE}&collection=${OAUTH_COLLECTION}&limit=100`);
         
         if (!response.ok) {
             throw new Error('Failed to fetch profiles');
@@ -174,7 +188,7 @@ async function loadAndShowProfiles() {
                     <div class="avatar">${avatarElement}</div>
                     <div class="user-info">
                         <div class="display-name">${profile.value.author.displayName || profile.value.author.handle} ${adminBadge}</div>
-                        <div class="handle"><a href="https://web.syu.is/profile/${profile.value.author.handle}" target="_blank" rel="noopener noreferrer">@${profile.value.author.handle}</a></div>
+                        <div class="handle"><a href="https://${OAUTH_PDS}/profile/${profile.value.author.handle}" target="_blank" rel="noopener noreferrer">@${profile.value.author.handle}</a></div>
                     </div>
                 </div>
                 <div class="message-content">${profile.value.text}</div>
@@ -255,7 +269,7 @@ function addUserMessage(question) {
             <div class="avatar">${userAvatar}</div>
             <div class="user-info">
                 <div class="display-name">${userDisplay}</div>
-                <div class="handle"><a href="https://web.syu.is/profile/${userHandle}" target="_blank" rel="noopener noreferrer">@${userHandle}</a></div>
+                <div class="handle"><a href="https://${OAUTH_PDS}/profile/${userHandle}" target="_blank" rel="noopener noreferrer">@${userHandle}</a></div>
             </div>
         </div>
         <div class="message-content">${question}</div>
@@ -318,7 +332,7 @@ function showInitialGreeting() {
             <div class="avatar">${avatarElement}</div>
             <div class="user-info">
                 <div class="display-name">${aiProfileData.displayName}</div>
-                <div class="handle"><a href="https://web.syu.is/profile/${aiProfileData.handle}" target="_blank" rel="noopener noreferrer">@${aiProfileData.handle}</a></div>
+                <div class="handle"><a href="https://${OAUTH_PDS}/profile/${aiProfileData.handle}" target="_blank" rel="noopener noreferrer">@${aiProfileData.handle}</a></div>
             </div>
         </div>
         <div class="message-content">Hello! I'm an AI assistant trained on this blog's content. I can answer questions about the articles, provide insights, and help you understand the topics discussed here. What would you like to know?</div>
@@ -345,7 +359,7 @@ function showAIIntroduction() {
             <div class="avatar">${avatarElement}</div>
             <div class="user-info">
                 <div class="display-name">${aiProfileData.displayName}</div>
-                <div class="handle"><a href="https://web.syu.is/profile/${aiProfileData.handle}" target="_blank" rel="noopener noreferrer">@${aiProfileData.handle}</a></div>
+                <div class="handle"><a href="https://${OAUTH_PDS}/profile/${aiProfileData.handle}" target="_blank" rel="noopener noreferrer">@${aiProfileData.handle}</a></div>
             </div>
         </div>
         <div class="message-content">Hello! I'm an AI assistant trained on this blog's content. I can answer questions about the articles, provide insights, and help you understand the topics discussed here. What would you like to know?</div>
@@ -361,7 +375,7 @@ function showAIIntroduction() {
             <div class="avatar">${avatarElement}</div>
             <div class="user-info">
                 <div class="display-name">${aiProfileData.displayName}</div>
-                <div class="handle"><a href="https://web.syu.is/profile/${aiProfileData.handle}" target="_blank" rel="noopener noreferrer">@${aiProfileData.handle}</a></div>
+                <div class="handle"><a href="https://${OAUTH_PDS}/profile/${aiProfileData.handle}" target="_blank" rel="noopener noreferrer">@${aiProfileData.handle}</a></div>
             </div>
         </div>
         <div class="message-content">Please atproto oauth login</div>
@@ -404,7 +418,7 @@ function handleAIResponse(responseData) {
             <div class="avatar">${avatarElement}</div>
             <div class="user-info">
                 <div class="display-name">${aiProfile.displayName}</div>
-                <div class="handle"><a href="https://web.syu.is/profile/${aiProfile.handle}" target="_blank" rel="noopener noreferrer">@${aiProfile.handle}</a></div>
+                <div class="handle"><a href="https://${OAUTH_PDS}/profile/${aiProfile.handle}" target="_blank" rel="noopener noreferrer">@${aiProfile.handle}</a></div>
             </div>
         </div>
         <div class="message-content">${responseData.answer}</div>

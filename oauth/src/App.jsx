@@ -87,6 +87,26 @@ export default function App() {
     fetchUserChatRecords()
   }, [user, agent])
 
+  // Expose AI profile data to blog's ask-ai.js
+  useEffect(() => {
+    if (adminData?.profile) {
+      console.log('AI profile loaded:', adminData.profile)
+      
+      // Make AI profile data available globally for ask-ai.js
+      window.aiProfileData = {
+        did: adminData.did,
+        handle: adminData.profile.handle,
+        displayName: adminData.profile.displayName,
+        avatar: adminData.profile.avatar
+      }
+      
+      // Dispatch event to notify ask-ai.js
+      window.dispatchEvent(new CustomEvent('aiProfileLoaded', {
+        detail: window.aiProfileData
+      }))
+    }
+  }, [adminData])
+
   // Event listeners for blog communication
   useEffect(() => {
     // Clear OAuth completion flag once app is loaded
