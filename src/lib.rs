@@ -7,6 +7,7 @@ pub mod config;
 pub mod doc_generator;
 pub mod generator;
 pub mod markdown;
+pub mod shortcode;
 pub mod mcp;
 pub mod oauth;
 // pub mod ollama_proxy; // Temporarily disabled - uses actix-web instead of axum

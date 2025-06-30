@@ -6,12 +6,14 @@ use syntect::html::{styled_line_to_highlighted_html, IncludeBackground};
 use gray_matter::Matter;
 use gray_matter::engine::YAML;
 use serde_json::Value;
+use crate::shortcode::ShortcodeProcessor;
 
 pub struct MarkdownProcessor {
     highlight_code: bool,
     highlight_theme: String,
     syntax_set: SyntaxSet,
     theme_set: ThemeSet,
+    shortcode_processor: ShortcodeProcessor,
 }
 
 impl MarkdownProcessor {
@@ -21,6 +23,7 @@ impl MarkdownProcessor {
             highlight_theme: highlight_theme.unwrap_or_else(|| "Monokai".to_string()),
             syntax_set: SyntaxSet::load_defaults_newlines(),
             theme_set: ThemeSet::load_defaults(),
+            shortcode_processor: ShortcodeProcessor::new(),
         }
     }
 
@@ -68,6 +71,9 @@ impl MarkdownProcessor {
 
 
     pub fn render(&self, content: &str) -> Result<String> {
+        // Process shortcodes first
+        let processed_content = self.shortcode_processor.process(content);
+        
         let mut options = Options::empty();
         options.insert(Options::ENABLE_STRIKETHROUGH);
         options.insert(Options::ENABLE_TABLES);
@@ -75,13 +81,19 @@ impl MarkdownProcessor {
         options.insert(Options::ENABLE_TASKLISTS);
 
         if self.highlight_code {
-            self.render_with_syntax_highlighting(content, options)
+            self.render_with_syntax_highlighting(&processed_content, options)
         } else {
-            let parser = Parser::new_ext(content, options);
+            let parser = Parser::new_ext(&processed_content, options);
             let mut html_output = String::new();
             html::push_html(&mut html_output, parser);
             Ok(html_output)
         }
+    }
+
+    /// Provide access to the shortcode processor for custom shortcode registration
+    #[allow(dead_code)]
+    pub fn shortcode_processor_mut(&mut self) -> &mut ShortcodeProcessor {
+        &mut self.shortcode_processor
     }
 
     fn render_with_syntax_highlighting(&self, content: &str, options: Options) -> Result<String> {

@@ -7,6 +7,7 @@ mod commands;
 mod doc_generator;
 mod generator;
 mod markdown;
+mod shortcode;
 mod template;
 mod oauth;
 mod translator;
