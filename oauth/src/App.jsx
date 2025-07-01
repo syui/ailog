@@ -14,7 +14,7 @@ import OAuthCallback from './components/OAuthCallback.jsx'
 
 export default function App() {
   const { user, agent, loading: authLoading, login, logout } = useAuth()
-  const { adminData, langRecords, commentRecords, loading: dataLoading, error, retryCount, refresh: refreshAdminData } = useAdminData()
+  const { adminData, langRecords, commentRecords, loading: dataLoading, error, refresh: refreshAdminData } = useAdminData()
   const { userComments, chatRecords, loading: userLoading, refresh: refreshUserData } = useUserData(adminData)
   const [userChatRecords, setUserChatRecords] = useState([])
   const [userChatLoading, setUserChatLoading] = useState(false)
@@ -75,7 +75,7 @@ export default function App() {
       
       setUserChatRecords(chatPairs)
     } catch (error) {
-      console.error('Failed to fetch user chat records:', error)
+      // Silently fail - no error logging
       setUserChatRecords([])
     } finally {
       setUserChatLoading(false)
@@ -90,8 +90,6 @@ export default function App() {
   // Expose AI profile data to blog's ask-ai.js
   useEffect(() => {
     if (adminData?.profile) {
-      console.log('AI profile loaded:', adminData.profile)
-      
       // Make AI profile data available globally for ask-ai.js
       window.aiProfileData = {
         did: adminData.did,
@@ -120,7 +118,6 @@ export default function App() {
       const { question } = event.detail
       if (question && adminData && user && agent) {
         try {
-          console.log('Processing AI question:', question)
           
           // AI設定
           const aiConfig = {
@@ -167,8 +164,6 @@ Answer:`
 
           const data = await response.json()
           const answer = data.response || 'エラーが発生しました'
-          
-          console.log('AI response received:', answer)
 
           // Save conversation to ATProto
           try {
@@ -240,14 +235,13 @@ Answer:`
               record: answerRecord
             })
             
-            console.log('Question and answer saved to ATProto')
             
             // Refresh chat records after saving
             setTimeout(() => {
               fetchUserChatRecords()
             }, 1000)
           } catch (saveError) {
-            console.error('Failed to save conversation:', saveError)
+            // Silently fail - no error logging
           }
 
           // Send response to blog
@@ -266,8 +260,7 @@ Answer:`
           }))
           
         } catch (error) {
-          console.error('Failed to process AI question:', error)
-          // Send error response to blog
+          // Silently fail - send error response to blog without logging
           window.dispatchEvent(new CustomEvent('aiResponseReceived', {
             detail: {
               question: question,
@@ -355,39 +348,8 @@ Answer:`
   }
 
   if (error) {
-    return (
-      <div style={{ padding: '20px', textAlign: 'center' }}>
-        <h1>エラー</h1>
-        <div style={{ 
-          background: '#fee', 
-          color: '#c33', 
-          padding: '15px', 
-          borderRadius: '5px',
-          margin: '20px auto',
-          maxWidth: '500px',
-          border: '1px solid #fcc'
-        }}>
-          <p><strong>エラー:</strong> {error}</p>
-          {retryCount > 0 && (
-            <p><small>自動リトライ中... ({retryCount}/3)</small></p>
-          )}
-        </div>
-        <button 
-          onClick={refreshAdminData}
-          style={{
-            background: '#007bff',
-            color: 'white',
-            border: 'none',
-            padding: '10px 20px',
-            borderRadius: '5px',
-            cursor: 'pointer',
-            fontSize: '16px'
-          }}
-        >
-          再読み込み
-        </button>
-      </div>
-    )
+    // Silently hide component on error - no error display
+    return null
   }
 
   return (

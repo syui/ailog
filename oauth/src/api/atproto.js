@@ -1,5 +1,5 @@
 // ATProto API client
-import { ATProtoError, logError } from '../utils/errorHandler.js'
+import { ATProtoError } from '../utils/errorHandler.js'
 
 const ENDPOINTS = {
   describeRepo: 'com.atproto.repo.describeRepo',
@@ -36,12 +36,10 @@ async function request(url, options = {}) {
         408,
         { url }
       )
-      logError(timeoutError, 'Request Timeout')
       throw timeoutError
     }
     
     if (error instanceof ATProtoError) {
-      logError(error, 'API Request')
       throw error
     }
     
@@ -51,7 +49,6 @@ async function request(url, options = {}) {
       0,
       { url, originalError: error.message }
     )
-    logError(networkError, 'Network Error')
     throw networkError
   }
 }
@@ -66,7 +63,6 @@ export const atproto = {
   async getProfile(bsky, actor) {
     // Skip test DIDs
     if (actor && actor.includes('test-')) {
-      console.log('Skipping profile fetch for test DID:', actor)
       return {
         did: actor,
         handle: 'test.user',
@@ -81,7 +77,6 @@ export const atproto = {
     // Allow public.api.bsky.app and bsky.syu.is, redirect other PDS endpoints
     if (!bsky.includes('public.api.bsky.app') && !bsky.includes('bsky.syu.is')) {
       // If it's a PDS endpoint that doesn't support getProfile, redirect to public API
-      console.warn(`getProfile called with PDS endpoint ${bsky}, redirecting to public API`)
       apiEndpoint = 'https://public.api.bsky.app'
     }
     
