@@ -56,6 +56,7 @@ impl OllamaTranslator {
         Ok(translated.to_string())
     }
     
+    #[allow(dead_code)]
     fn build_translation_prompt(&self, text: &str, config: &TranslationConfig) -> Result<String> {
         let source_info = self.language_mapping.get_language_info(&config.source_lang)
             .ok_or_else(|| anyhow::anyhow!("Unsupported source language: {}", config.source_lang))?;

@@ -74,7 +74,9 @@ pub struct LanguageMapping {
 
 #[derive(Debug, Clone)]
 pub struct LanguageInfo {
+    #[allow(dead_code)]
     pub name: String,
+    #[allow(dead_code)]
     pub code: String,
     pub ollama_prompt: String,
 }
