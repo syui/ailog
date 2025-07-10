@@ -13,6 +13,7 @@ impl ShortcodeProcessor {
         
         // Register built-in shortcodes
         processor.register_img_compare();
+        processor.register_message();
         
         processor
     }
@@ -24,14 +25,21 @@ impl ShortcodeProcessor {
         );
     }
 
+    fn register_message(&mut self) {
+        self.shortcodes.insert(
+            "msg".to_string(),
+            Box::new(|attrs| Self::parse_message_shortcode(attrs)),
+        );
+    }
+
     pub fn process(&self, content: &str) -> String {
         let mut processed = content.to_string();
 
         // Process {{< shortcode >}} format (Hugo-style)
-        let hugo_regex = Regex::new(r#"\{\{\<\s*(\w+(?:-\w+)*)\s+([^>]*)\s*\>\}\}"#).unwrap();
+        let hugo_regex = Regex::new(r#"\{\{<\s*(\w+(?:-\w+)*)\s*([^>]*)\s*>\}\}"#).unwrap();
         processed = hugo_regex.replace_all(&processed, |caps: &regex::Captures| {
             let shortcode_name = &caps[1];
-            let attrs = &caps[2];
+            let attrs = caps.get(2).map(|m| m.as_str()).unwrap_or("");
             
             if let Some(handler) = self.shortcodes.get(shortcode_name) {
                 handler(attrs)
@@ -41,10 +49,10 @@ impl ShortcodeProcessor {
         }).to_string();
 
         // Process [shortcode] format (Bracket-style)
-        let bracket_regex = Regex::new(r#"\[(\w+(?:-\w+)*)\s+([^\]]*)\]"#).unwrap();
+        let bracket_regex = Regex::new(r#"\[(\w+(?:-\w+)*)\s*([^\]]*)\]"#).unwrap();
         processed = bracket_regex.replace_all(&processed, |caps: &regex::Captures| {
             let shortcode_name = &caps[1];
-            let attrs = &caps[2];
+            let attrs = caps.get(2).map(|m| m.as_str()).unwrap_or("");
             
             if let Some(handler) = self.shortcodes.get(shortcode_name) {
                 handler(attrs)
@@ -110,6 +118,29 @@ impl ShortcodeProcessor {
             height, 
             before, before_caption, alt_suffix, width,
             after, after_caption, alt_suffix, width
+        )
+    }
+
+    fn parse_message_shortcode(attrs: &str) -> String {
+        let attributes = Self::parse_attributes(attrs);
+
+        let msg_type = attributes.get("type").map(|s| s.as_str()).unwrap_or("info");
+        let content = attributes.get("content").map(|s| s.as_str()).unwrap_or("");
+        
+        let (symbol, class_suffix) = match msg_type {
+            "info" => ("!", "message"),
+            "warning" => ("⚠", "warning"),
+            "error" => ("✖", "error"),
+            "success" => ("✓", "success"),
+            "note" => ("📝", "note"),
+            _ => ("!", "message"),
+        };
+
+        format!(r#"
+<aside class="msg {}"><span class="msg-symbol">{}</span><div class="msg-content">
+<p>{}</p>
+</div></aside>"#, 
+            class_suffix, symbol, content
         )
     }
 
@@ -188,5 +219,38 @@ mod tests {
         assert_eq!(attributes.get("before").unwrap(), "/test.jpg");
         assert_eq!(attributes.get("after").unwrap(), "test2.jpg");
         assert_eq!(attributes.get("width").unwrap(), "800");
+    }
+
+    #[test]
+    fn test_message_shortcode_info() {
+        let processor = ShortcodeProcessor::new();
+        let input = r#"[msg type="info" content="This is an info message"]"#;
+        let result = processor.process(input);
+        
+        assert!(result.contains("msg message"));
+        assert!(result.contains("This is an info message"));
+        assert!(result.contains("!"));
+    }
+
+    #[test]
+    fn test_message_shortcode_warning() {
+        let processor = ShortcodeProcessor::new();
+        let input = r#"{{< msg type="warning" content="This is a warning" >}}"#;
+        let result = processor.process(input);
+        
+        assert!(result.contains("msg warning"));
+        assert!(result.contains("This is a warning"));
+        assert!(result.contains("⚠"));
+    }
+
+    #[test]
+    fn test_message_shortcode_default() {
+        let processor = ShortcodeProcessor::new();
+        let input = r#"[msg content="Default message"]"#;
+        let result = processor.process(input);
+        
+        assert!(result.contains("msg message"));
+        assert!(result.contains("Default message"));
+        assert!(result.contains("!"));
     }
 }
