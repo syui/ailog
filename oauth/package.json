@@ -1,6 +1,6 @@
 {
   "name": "ailog-oauth",
-  "version": "0.2.5",
+  "version": "0.2.7",
   "type": "module",
   "scripts": {
     "dev": "vite",
