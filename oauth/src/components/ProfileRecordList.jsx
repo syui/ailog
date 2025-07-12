@@ -1,6 +1,35 @@
-import React from 'react'
+import React, { useState } from 'react'
+
+// Helper function to get correct web URL based on avatar URL
+function getCorrectWebUrl(avatarUrl) {
+  if (!avatarUrl) return 'https://bsky.app'
+  
+  // If avatar is from bsky.app (main Bluesky), use bsky.app
+  if (avatarUrl.includes('cdn.bsky.app') || avatarUrl.includes('bsky.app')) {
+    return 'https://bsky.app'
+  }
+  
+  // If avatar is from syu.is, use web.syu.is
+  if (avatarUrl.includes('bsky.syu.is') || avatarUrl.includes('syu.is')) {
+    return 'https://syu.is'
+  }
+  
+  // Default to bsky.app
+  return 'https://bsky.app'
+}
 
 export default function ProfileRecordList({ profileRecords, apiConfig, user = null, agent = null, onRecordDeleted = null }) {
+  const [expandedRecords, setExpandedRecords] = useState(new Set())
+
+  const toggleJsonView = (uri) => {
+    const newExpanded = new Set(expandedRecords)
+    if (newExpanded.has(uri)) {
+      newExpanded.delete(uri)
+    } else {
+      newExpanded.add(uri)
+    }
+    setExpandedRecords(newExpanded)
+  }
   if (!profileRecords || profileRecords.length === 0) {
     return (
       <section>
@@ -62,9 +91,26 @@ export default function ProfileRecordList({ profileRecords, apiConfig, user = nu
                   <span className="admin-badge"> Admin</span>
                 )}
               </div>
+              <div className="handle">
+                <a 
+                  href={`${getCorrectWebUrl(profile.value.author?.avatar)}/profile/${profile.value.author?.did}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="handle-link"
+                >
+                  @{profile.value.author?.handle}
+                </a>
+              </div>
             </div>
-            {canDelete(profile) && (
-              <div className="record-actions">
+            <div className="record-actions">
+              <button
+                onClick={() => toggleJsonView(profile.uri)}
+                className={`btn btn-sm ${expandedRecords.has(profile.uri) ? 'btn-outline' : 'btn-primary'}`}
+                title="Show/Hide JSON"
+              >
+                {expandedRecords.has(profile.uri) ? 'hide' : 'json'}
+              </button>
+              {canDelete(profile) && (
                 <button
                   onClick={() => handleDelete(profile)}
                   className="btn btn-danger btn-sm"
@@ -72,9 +118,16 @@ export default function ProfileRecordList({ profileRecords, apiConfig, user = nu
                 >
                   delete
                 </button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
+          {expandedRecords.has(profile.uri) && (
+            <div className="json-display">
+              <pre className="json-content">
+                {JSON.stringify(profile, null, 2)}
+              </pre>
+            </div>
+          )}
           <div className="message-content">{profile.value.text}</div>
         </div>
       ))}

@@ -11,13 +11,18 @@ export default function RecordTabs({ langRecords, commentRecords, userComments, 
   logger.log('RecordTabs: activeTab is', activeTab)
 
   // Filter records based on page context
-  const filterRecords = (records) => {
+  const filterRecords = (records, isProfile = false) => {
     if (pageContext.isTopPage) {
       // Top page: show latest 3 records
       return records.slice(0, 3)
     } else {
       // Individual page: show records matching the URL
       return records.filter(record => {
+        // Profile records should always be shown
+        if (isProfile || record.value?.type === 'profile') {
+          return true
+        }
+        
         const recordUrl = record.value?.post?.url
         if (!recordUrl) return false
         
@@ -44,7 +49,7 @@ export default function RecordTabs({ langRecords, commentRecords, userComments, 
     if (a.value.profileType !== 'admin' && b.value.profileType === 'admin') return 1
     return 0
   })
-  const filteredProfileRecords = filterRecords(sortedProfileRecords)
+  const filteredProfileRecords = filterRecords(sortedProfileRecords, true)
 
   return (
     <div className="record-tabs">
