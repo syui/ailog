@@ -1,6 +1,6 @@
 [package]
 name = "ailog"
-version = "0.2.7"
+version = "0.2.8"
 edition = "2021"
 authors = ["syui"]
 description = "A static blog generator with AI features"
@@ -56,6 +56,8 @@ tokio-tungstenite = { version = "0.21", features = ["rustls-tls-webpki-roots", "
 futures-util = "0.3"
 tungstenite = { version = "0.21", features = ["rustls-tls-webpki-roots"], default-features = false }
 rpassword = "7.3"
+rustyline = "14.0"
+dirs = "5.0"
 
 [dev-dependencies]
 tempfile = "3.14"

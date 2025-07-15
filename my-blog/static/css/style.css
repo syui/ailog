@@ -55,6 +55,73 @@ a.view-markdown:any-link {
     text-decoration: none !important;
 }
 
+/* AI Conversation Styles */
+
+.ai-conversation-display {
+    margin-bottom: 32px;
+}
+
+/* Style adjustments for AI conversation in chat area */
+.ai-conversation-display .chat-message {
+    margin-bottom: 16px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.ai-conversation-display .chat-message.ai-message {
+    background: linear-gradient(135deg, #f8f9ff, #f0f4ff);
+    border-left: 4px solid #667eea;
+}
+
+.ai-conversation-display .chat-message.user-message {
+    background: linear-gradient(135deg, #fff8f0, #fff4f0);
+    border-left: 4px solid #ff6b35;
+}
+
+.ai-conversation-display .message-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    padding: 12px 16px 0;
+}
+
+.ai-conversation-display .message-content {
+    padding: 0 16px 16px;
+    line-height: 1.6;
+    color: #2d3748;
+}
+
+.ai-conversation-display .avatar img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    margin-right: 12px;
+}
+
+.ai-conversation-display .user-info {
+    flex: 1;
+}
+
+.ai-conversation-display .display-name {
+    font-weight: 600;
+    color: #1a202c;
+    font-size: 14px;
+}
+
+.ai-conversation-display .handle {
+    font-size: 12px;
+    color: #718096;
+}
+
+.ai-conversation-display .handle a {
+    color: #667eea;
+    text-decoration: none;
+}
+
+.ai-conversation-display .handle a:hover {
+    text-decoration: underline;
+}
+
 /* Layout */
 .container {
     min-height: 100vh;
@@ -1447,5 +1514,328 @@ article.article-content {
         font-size: 14px;
         margin-right: 6px;
     }
+}
+
+/* AI Conversation Display Styles */
+.ai-conversation-notice {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.ai-conversation-display {
+    margin: 24px 0;
+}
+
+.ai-conversation-loading {
+    text-align: center;
+    padding: 32px;
+    color: #666;
+}
+
+.ai-conversation-list {
+    max-width: none;
+}
+
+.ai-conversation-pair {
+    margin-bottom: 32px;
+    border: 1px solid #e1e4e8;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.ai-question {
+    background: #f8f9fa;
+    border-bottom: 1px solid #e1e4e8;
+}
+
+.ai-answer {
+    background: #fff;
+}
+
+.ai-question .message-header,
+.ai-answer .message-header {
+    display: flex;
+    align-items: center;
+    padding: 16px 20px 8px 20px;
+    gap: 12px;
+}
+
+.ai-question .avatar,
+.ai-answer .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #e1e4e8;
+}
+
+.ai-question .user-info,
+.ai-answer .user-info {
+    flex: 1;
+}
+
+.ai-question .display-name,
+.ai-answer .display-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: #1f2328;
+    margin-bottom: 2px;
+}
+
+.ai-question .handle,
+.ai-answer .handle {
+    font-size: 12px;
+    color: #656d76;
+}
+
+.ai-question .message-content,
+.ai-answer .message-content {
+    padding: 8px 20px 20px 20px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #1f2328;
+    white-space: pre-wrap;
+}
+
+.ai-question .message-content {
+    background: #f8f9fa;
+    border-left: 4px solid #0969da;
+    margin-left: 16px;
+    margin-right: 16px;
+    border-radius: 0 6px 6px 0;
+    padding-left: 16px;
+}
+
+.ai-answer .message-content {
+    background: #fff;
+    border-left: 4px solid #7c3aed;
+    margin-left: 16px;
+    margin-right: 16px;
+    border-radius: 0 6px 6px 0;
+    padding-left: 16px;
+}
+
+/* Responsive styles for AI conversation */
+@media (max-width: 768px) {
+    .ai-conversation-pair {
+        margin-bottom: 24px;
+        border-radius: 8px;
+    }
+    
+    .ai-question .message-header,
+    .ai-answer .message-header {
+        padding: 12px 16px 6px 16px;
+        gap: 10px;
+    }
+    
+    .ai-question .avatar,
+    .ai-answer .avatar {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .ai-question .message-content,
+    .ai-answer .message-content {
+        padding: 6px 16px 16px 16px;
+        font-size: 14px;
+        margin-left: 12px;
+        margin-right: 12px;
+        padding-left: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .ai-conversation-pair {
+        margin-bottom: 20px;
+        border-radius: 6px;
+    }
+    
+    .ai-question .message-header,
+    .ai-answer .message-header {
+        padding: 10px 12px 4px 12px;
+        gap: 8px;
+    }
+    
+    .ai-question .avatar,
+    .ai-answer .avatar {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .ai-question .display-name,
+    .ai-answer .display-name {
+        font-size: 13px;
+    }
+    
+    .ai-question .handle,
+    .ai-answer .handle {
+        font-size: 11px;
+    }
+    
+    .ai-question .message-content,
+    .ai-answer .message-content {
+        padding: 4px 12px 12px 12px;
+        font-size: 13px;
+        margin-left: 8px;
+        margin-right: 8px;
+        padding-left: 10px;
+    }
+}
+
+/* AI Conversation Integration Styles */
+.chat-separator {
+    margin: 24px 0;
+    border-bottom: 1px solid var(--dark-white);
+}
+
+.article-body .chat-message {
+    margin-bottom: 24px;
+    background: var(--background);
+    border: 1px solid var(--dark-white);
+    border-radius: 6px;
+    padding: 16px;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.article-body .chat-message:hover {
+    background: var(--light-gray);
+    border-color: var(--dark-gray);
+}
+
+.article-body .chat-message.user-message {
+    border-left: 4px solid var(--theme-color);
+}
+
+.article-body .chat-message.ai-message {
+    border-left: 4px solid var(--ai-color);
+    background: #faf8ff;
+}
+
+.article-body .message-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+
+.article-body .message-header .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--light-gray);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    border: 1px solid var(--dark-white);
+    flex-shrink: 0;
+}
+
+.article-body .message-header .user-info {
+    flex: 1;
+}
+
+.article-body .message-header .display-name {
+    font-weight: 600;
+    color: #1f2328;
+    font-size: 15px;
+}
+
+.article-body .message-header .handle {
+    color: var(--dark-gray);
+    font-size: 13px;
+}
+
+.article-body .message-header .handle-link {
+    color: var(--dark-gray);
+    text-decoration: none;
+}
+
+.article-body .message-header .handle-link:hover {
+    color: var(--theme-color);
+    text-decoration: underline;
+}
+
+.article-body .message-content {
+    color: #1f2328;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+/* Ensure proper spacing for markdown content in chat messages */
+.article-body .message-content h1,
+.article-body .message-content h2,
+.article-body .message-content h3,
+.article-body .message-content h4,
+.article-body .message-content h5,
+.article-body .message-content h6 {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    line-height: 1.25;
+}
+
+.article-body .message-content p {
+    margin-bottom: 1rem;
+}
+
+.article-body .message-content ul,
+.article-body .message-content ol {
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+}
+
+.article-body .message-content li {
+    margin-bottom: 0.5rem;
+}
+
+.article-body .message-content blockquote {
+    margin: 1rem 0;
+    padding-left: 1rem;
+    border-left: 3px solid var(--dark-white);
+    color: var(--dark-gray);
+}
+
+.article-body .message-content pre {
+    background: #f6f8fa;
+    border: 1px solid var(--dark-white);
+    border-radius: 6px;
+    padding: 16px;
+    overflow-x: auto;
+    margin: 1rem 0;
+}
+
+.article-body .message-content code {
+    background: #f6f8fa;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+    font-size: 0.9em;
+}
+
+.article-body .message-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+}
+
+.article-body .message-content table th,
+.article-body .message-content table td {
+    padding: 8px 12px;
+    border: 1px solid var(--dark-white);
+    text-align: left;
+}
+
+.article-body .message-content table th {
+    background: var(--light-gray);
+    font-weight: 600;
 }
 

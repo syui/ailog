@@ -107,6 +107,8 @@ enum Commands {
         #[command(subcommand)]
         command: OauthCommands,
     },
+    /// Interactive blog writing mode (default)
+    Interactive,
 }
 
 #[derive(Subcommand)]
@@ -189,10 +191,8 @@ async fn main() -> Result<()> {
         return Ok(());
     }
     
-    // Require subcommand if no version flag
-    let command = cli.command.ok_or_else(|| {
-        anyhow::anyhow!("No subcommand provided. Use --help for usage information.")
-    })?;
+    // If no subcommand provided, start interactive mode
+    let command = cli.command.unwrap_or(Commands::Interactive);
 
     match command {
         Commands::Init { path } => {
@@ -279,6 +279,9 @@ async fn main() -> Result<()> {
                     commands::oauth::build(project_dir).await?;
                 }
             }
+        }
+        Commands::Interactive => {
+            commands::interactive::run().await?;
         }
     }
 

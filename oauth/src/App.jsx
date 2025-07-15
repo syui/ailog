@@ -14,7 +14,7 @@ import OAuthCallback from './components/OAuthCallback.jsx'
 
 export default function App() {
   const { user, agent, loading: authLoading, login, logout } = useAuth()
-  const { adminData, langRecords, commentRecords, loading: dataLoading, error, refresh: refreshAdminData } = useAdminData()
+  const { adminData, langRecords, commentRecords, chatRecords: adminChatRecords, loading: dataLoading, error, refresh: refreshAdminData } = useAdminData()
   const { userComments, chatRecords, loading: userLoading, refresh: refreshUserData } = useUserData(adminData)
   const [userChatRecords, setUserChatRecords] = useState([])
   const [userChatLoading, setUserChatLoading] = useState(false)
@@ -429,7 +429,7 @@ Answer:`
             langRecords={langRecords}
             commentRecords={commentRecords}
             userComments={userComments}
-            chatRecords={chatRecords}
+            chatRecords={adminChatRecords}
             userChatRecords={userChatRecords}
             userChatLoading={userChatLoading}
             baseRecords={adminData.records}

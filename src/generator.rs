@@ -235,6 +235,7 @@ impl Generator {
                 .unwrap_or_default(),
             translations: None,
             ai_comment: None,
+            extra: frontmatter.get("extra").cloned(),
         };
         
         // Auto-translate if enabled and post is in Japanese
@@ -341,7 +342,8 @@ impl Generator {
             "ai_comment": enhanced_post.ai_comment,
             "markdown_url": markdown_url,
             "translation_url": translation_urls.first(),
-            "language": self.config.site.language
+            "language": self.config.site.language,
+            "extra": enhanced_post.extra
         }));
 
         let html = self.template_engine.render_with_context("post.html", &context)?;
@@ -531,6 +533,7 @@ pub struct Post {
     pub tags: Vec<String>,
     pub translations: Option<Vec<Translation>>,
     pub ai_comment: Option<String>,
+    pub extra: Option<serde_json::Value>,
 }
 
 #[derive(Debug, Clone, serde::Serialize)]

@@ -10,6 +10,7 @@ dist
 node_modules
 package-lock.json 
 my-blog/static/assets/comment-atproto-*
+my-blog/static/ai-assets/comment-atproto-*
 bin/ailog
 docs
 my-blog/static/index.html

@@ -116,6 +116,24 @@
     <script src="/js/theme.js"></script>
     <script src="/js/image-comparison.js"></script>
     
+    <!-- Mermaid support -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'neutral',
+            securityLevel: 'loose',
+            themeVariables: {
+                fontFamily: 'system-ui, -apple-system, sans-serif',
+                fontSize: '14px'
+            }
+        });
+    </script>
+    
     {% include "oauth-assets.html" %}
+    
+    {% if post.extra and post.extra.type == "ai" %}
+    {% include "ai-conversation-assets.html" %}
+    {% endif %}
 </body>
 </html>

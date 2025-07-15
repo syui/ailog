@@ -7,3 +7,4 @@ pub mod doc;
 pub mod auth;
 pub mod stream;
 pub mod oauth;
+pub mod interactive;

@@ -1,0 +1,14 @@
+{{- $type := .Get "type" | default "info" -}}
+{{- $content := .Get "content" -}}
+<div class="msg msg-{{ $type }}">
+  <div class="msg-icon">
+    {{- if eq $type "info" -}}ℹ️
+    {{- else if eq $type "warning" -}}⚠️  
+    {{- else if eq $type "error" -}}❌
+    {{- else if eq $type "success" -}}✅
+    {{- else if eq $type "note" -}}📝
+    {{- else -}}ℹ️
+    {{- end -}}
+  </div>
+  <div class="msg-content">{{ $content | markdownify }}</div>
+</div>

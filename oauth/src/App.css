@@ -1274,12 +1274,6 @@ body {
 /* Chat Conversation Styles */
 .chat-conversation {
   margin-bottom: 32px;
-  padding-bottom: 24px;
-  border-bottom: 1px solid var(--border);
-}
-
-.chat-conversation:last-child {
-  border-bottom: none;
 }
 
 .chat-message.comment-style {

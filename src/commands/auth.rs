@@ -245,7 +245,7 @@ pub async fn init_with_pds(pds_override: Option<String>) -> Result<()> {
         }
     } else {
         // Auto-detect from handle suffix
-        if handle.ends_with(".syu.is") {
+        if handle.ends_with(".syu.is") || handle.ends_with(".syui.ai") {
             "https://syu.is".to_string()
         } else {
             "https://bsky.social".to_string()

@@ -1,0 +1,53 @@
+{
+  "records": [
+    {
+      "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.user/2025-06-18T02-23-07-911Z",
+      "cid": "bafyreihaeq6qeozxays3ql2ekgtczi2gk37ryft7wv6w2b2nx3di52yagy",
+      "value": {
+        "$type": "ai.syui.log.user",
+        "users": [
+          {
+            "did": "did:plc:syui-syui-ai-placeholder",
+            "pds": "https://bsky.social",
+            "handle": "syui.syui.ai"
+          },
+          {
+            "did": "did:plc:ai-syui-ai-placeholder",
+            "pds": "https://bsky.social",
+            "handle": "ai.syui.ai"
+          }
+        ],
+        "createdAt": "2025-06-18T02:23:07.911Z",
+        "updatedBy": {
+          "did": "did:plc:6qyecktefllvenje24fcxnie",
+          "handle": "ai.syui.ai"
+        }
+      }
+    },
+    {
+      "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.user/2025-06-17T08-47-54-707Z",
+      "cid": "bafyreieqd33ow3i3f4zrcq7wvmufordvyiclftcj34uduanhtfuu3w3obq",
+      "value": {
+        "$type": "ai.syui.log.user",
+        "users": [
+          {
+            "did": "did:plc:syui-syui-ai-placeholder",
+            "pds": "https://bsky.social",
+            "handle": "syui.syui.ai"
+          },
+          {
+            "did": "did:plc:ai-syui-ai-placeholder",
+            "pds": "https://bsky.social",
+            "handle": "ai.syui.ai"
+          }
+        ],
+        "createdAt": "2025-06-17T08:47:54.707Z",
+        "updatedBy": {
+          "did": "did:plc:6qyecktefllvenje24fcxnie",
+          "handle": "ai.syui.ai"
+        }
+      }
+    }
+  ],
+  "cursor": "2025-06-17T08-47-54-707Z"
+}
