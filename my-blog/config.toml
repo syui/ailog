@@ -94,3 +94,30 @@ admin = "ai.syui.ai"
 collection = "ai.syui.log"
 pds = "syu.is"
 handle_list = ["syui.syui.ai", "ai.syui.ai", "ai.ai"]
+
+[blog]
+base_url = "https://syui.ai"
+content_dir = "./my-blog/content/posts"
+
+[profiles]
+[profiles.user]
+handle = "syui.syui.ai"
+did = "did:plc:vzsvtbtbnwn22xjqhcu3vd6y"
+display_name = "syui"
+avatar_url = "https://bsky.syu.is/img/avatar/plain/did:plc:vzsvtbtbnwn22xjqhcu3vd6y/bafkreif62mqyra4ndv6ohlscl7adp3vhalcjxwhs676ktfj2sq2drs3pdi@jpeg"
+profile_url = "https://syu.is/profile/did:plc:vzsvtbtbnwn22xjqhcu3vd6y"
+
+[profiles.ai]
+handle = "ai.syui.ai"
+did = "did:plc:6qyecktefllvenje24fcxnie"
+display_name = "ai"
+avatar_url = "https://bsky.syu.is/img/avatar/plain/did:plc:6qyecktefllvenje24fcxnie/bafkreigo3ucp32carhbn3chfc3hlf6i7f4rplojc76iylihzpifyexi24y@jpeg"
+profile_url = "https://syu.is/profile/did:plc:6qyecktefllvenje24fcxnie"
+
+[paths]
+claude_paths = [
+    "/Users/syui/.claude/local/claude",
+    "claude",
+    "/usr/local/bin/claude",
+    "/opt/homebrew/bin/claude"
+]

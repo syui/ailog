@@ -6,6 +6,40 @@ use crate::commands::auth::{AuthConfig, load_config_with_refresh};
 use toml::Value as TomlValue;
 use rustyline::DefaultEditor;
 use rand::Rng;
+use serde::Deserialize;
+
+#[derive(Debug, Deserialize)]
+struct BlogConfig {
+    base_url: String,
+    content_dir: String,
+}
+
+#[derive(Debug, Deserialize)]
+struct ProfileConfig {
+    handle: String,
+    did: String,
+    display_name: String,
+    avatar_url: String,
+    profile_url: String,
+}
+
+#[derive(Debug, Deserialize)]
+struct ProfilesConfig {
+    user: ProfileConfig,
+    ai: ProfileConfig,
+}
+
+#[derive(Debug, Deserialize)]
+struct PathsConfig {
+    claude_paths: Vec<String>,
+}
+
+#[derive(Debug, Deserialize)]
+struct AppConfig {
+    blog: BlogConfig,
+    profiles: ProfilesConfig,
+    paths: PathsConfig,
+}
 
 pub async fn run() -> Result<()> {
     println!("🤖 Interactive Blog Writer");
@@ -91,11 +125,12 @@ pub async fn run() -> Result<()> {
 
     // Generate post
     println!("🔧 Generating post details...");
+    let app_config = load_app_config().await?;
     let now = Utc::now();
     let date = now.format("%Y-%m-%d").to_string();
     let hash = generate_hash(&title);
     let filename = format!("{}-{}.md", date, hash);
-    let url = format!("https://syui.ai/posts/{}", filename.replace(".md", ".html"));
+    let url = format!("{}/posts/{}", app_config.blog.base_url, filename.replace(".md", ".html"));
     println!("📝 Post details - Date: {}, Hash: {}, File: {}", date, hash, filename);
 
     // Create markdown file
@@ -170,6 +205,13 @@ async fn get_claude_response(question: &str) -> Result<String> {
     Ok(response)
 }
 
+async fn load_app_config() -> Result<AppConfig> {
+    let config_path = PathBuf::from("./my-blog/config.toml");
+    let config_content = std::fs::read_to_string(config_path)?;
+    let config: AppConfig = toml::from_str(&config_content)?;
+    Ok(config)
+}
+
 async fn load_system_prompt() -> Result<String> {
     let config_path = PathBuf::from("./my-blog/config.toml");
     let config_content = std::fs::read_to_string(config_path)?;
@@ -191,13 +233,9 @@ async fn try_claude_stdin(question: &str, _system_prompt: &str) -> Result<String
     use std::process::{Command, Stdio};
     use std::io::Write;
     
-    // Try to find Claude command
-    let claude_paths = vec![
-        "/Users/syui/.claude/local/claude",
-        "claude",
-        "/usr/local/bin/claude",
-        "/opt/homebrew/bin/claude",
-    ];
+    // Load Claude command paths from config
+    let app_config = load_app_config().await?;
+    let claude_paths = &app_config.paths.claude_paths;
     
     let mut last_error = None;
     
@@ -307,13 +345,9 @@ async fn try_claude_file(question: &str, _system_prompt: &str) -> Result<String>
 
 専門的な内容を保ちながら、キャラクターの視点から技術の面白さや可能性について語ってください。"#, system_prompt, question, current_year))?;
     
-    // Try to find Claude command
-    let claude_paths = vec![
-        "/Users/syui/.claude/local/claude",
-        "claude",
-        "/usr/local/bin/claude",
-        "/opt/homebrew/bin/claude",
-    ];
+    // Load Claude command paths from config
+    let app_config = load_app_config().await?;
+    let claude_paths = &app_config.paths.claude_paths;
     
     let mut last_error = None;
     
@@ -360,17 +394,11 @@ async fn create_post_file(
     conversation: &[ConversationPair],
     filename: &str
 ) -> Result<()> {
-    // Use hardcoded profile information for now
-    let user_avatar = "https://bsky.syu.is/img/avatar/plain/did:plc:vzsvtbtbnwn22xjqhcu3vd6y/bafkreif62mqyra4ndv6ohlscl7adp3vhalcjxwhs676ktfj2sq2drs3pdi@jpeg";
-    let user_display_name = "syui";
-    let user_profile_url = "https://syu.is/profile/did:plc:vzsvtbtbnwn22xjqhcu3vd6y";
-    let user_handle = "syui.syui.ai";
-    
-    let ai_avatar = "https://bsky.syu.is/img/avatar/plain/did:plc:6qyecktefllvenje24fcxnie/bafkreigo3ucp32carhbn3chfc3hlf6i7f4rplojc76iylihzpifyexi24y@jpeg";
-    let ai_display_name = "ai";
-    let ai_profile_url = "https://syu.is/profile/did:plc:6qyecktefllvenje24fcxnie";
-    let ai_handle = "ai.syui.ai";
-    let content_dir = PathBuf::from("./my-blog/content/posts");
+    // Load profile information from config
+    let app_config = load_app_config().await?;
+    let user_profile = &app_config.profiles.user;
+    let ai_profile = &app_config.profiles.ai;
+    let content_dir = PathBuf::from(&app_config.blog.content_dir);
     std::fs::create_dir_all(&content_dir)?;
     
     let file_path = content_dir.join(filename);
@@ -416,10 +444,10 @@ extra:
     </div>
     <div class="message-content">
 "#, 
-            user_avatar,
-            user_display_name,
-            user_profile_url,
-            user_handle
+            user_profile.avatar_url,
+            user_profile.display_name,
+            user_profile.profile_url,
+            user_profile.handle
         ));
         content.push_str(&pair.question);
         content.push_str("\n    </div>\n</div>\n\n");
@@ -439,10 +467,10 @@ extra:
     </div>
     <div class="message-content">
 "#, 
-            ai_avatar,
-            ai_display_name,
-            ai_profile_url,
-            ai_handle
+            ai_profile.avatar_url,
+            ai_profile.display_name,
+            ai_profile.profile_url,
+            ai_profile.handle
         ));
         content.push_str(&pair.answer);
         content.push_str("\n    </div>\n</div>\n\n");
@@ -544,30 +572,28 @@ async fn post_to_atproto(
 async fn get_user_profile(config: &AuthConfig) -> Result<Value> {
     use crate::atproto::profile::ProfileFetcher;
     
-    // Hardcoded user config for now (to be refactored later)
-    let user_handle = "syui.syui.ai";
-    let user_did = "did:plc:vzsvtbtbnwn22xjqhcu3vd6y";
-    let user_display_name = "syui";
-    let user_avatar_url = "https://bsky.syu.is/img/avatar/plain/did:plc:vzsvtbtbnwn22xjqhcu3vd6y/bafkreif62mqyra4ndv6ohlscl7adp3vhalcjxwhs676ktfj2sq2drs3pdi@jpeg";
+    // Load user config from app config
+    let app_config = load_app_config().await?;
+    let user_profile = &app_config.profiles.user;
     
     // Try to fetch profile dynamically
     let profile_fetcher = ProfileFetcher::new();
-    match profile_fetcher.fetch_profile_from_handle(&user_handle, &config.admin.pds).await {
+    match profile_fetcher.fetch_profile_from_handle(&user_profile.handle, &config.admin.pds).await {
         Ok(profile) => {
             Ok(json!({
                 "did": profile.did,
                 "handle": profile.handle,
-                "displayName": profile.display_name.unwrap_or_else(|| user_display_name.to_string()),
-                "avatar": profile.avatar.unwrap_or_else(|| user_avatar_url.to_string())
+                "displayName": profile.display_name.unwrap_or_else(|| user_profile.display_name.clone()),
+                "avatar": profile.avatar.unwrap_or_else(|| user_profile.avatar_url.clone())
             }))
         }
         Err(e) => {
             println!("⚠️ Failed to fetch user profile dynamically: {}, using config defaults", e);
             Ok(json!({
-                "did": user_did,
-                "handle": user_handle,
-                "displayName": user_display_name,
-                "avatar": user_avatar_url
+                "did": user_profile.did,
+                "handle": user_profile.handle,
+                "displayName": user_profile.display_name,
+                "avatar": user_profile.avatar_url
             }))
         }
     }
@@ -576,30 +602,28 @@ async fn get_user_profile(config: &AuthConfig) -> Result<Value> {
 async fn get_ai_profile(_client: &reqwest::Client, config: &AuthConfig) -> Result<Value> {
     use crate::atproto::profile::ProfileFetcher;
     
-    // Hardcoded AI config for now (to be refactored later)
-    let ai_handle = "ai.syui.ai";
-    let ai_did = "did:plc:6qyecktefllvenje24fcxnie";
-    let ai_display_name = "ai";
-    let ai_avatar_url = "https://bsky.syu.is/img/avatar/plain/did:plc:6qyecktefllvenje24fcxnie/bafkreigo3ucp32carhbn3chfc3hlf6i7f4rplojc76iylihzpifyexi24y@jpeg";
+    // Load AI config from app config
+    let app_config = load_app_config().await?;
+    let ai_profile = &app_config.profiles.ai;
     
     // Try to fetch profile dynamically
     let profile_fetcher = ProfileFetcher::new();
-    match profile_fetcher.fetch_profile_from_handle(&ai_handle, &config.admin.pds).await {
+    match profile_fetcher.fetch_profile_from_handle(&ai_profile.handle, &config.admin.pds).await {
         Ok(profile) => {
             Ok(json!({
                 "did": profile.did,
                 "handle": profile.handle,
-                "displayName": profile.display_name.unwrap_or_else(|| ai_display_name.to_string()),
-                "avatar": profile.avatar.unwrap_or_else(|| ai_avatar_url.to_string())
+                "displayName": profile.display_name.unwrap_or_else(|| ai_profile.display_name.clone()),
+                "avatar": profile.avatar.unwrap_or_else(|| ai_profile.avatar_url.clone())
             }))
         }
         Err(e) => {
             println!("⚠️ Failed to fetch AI profile dynamically: {}, using config defaults", e);
             Ok(json!({
-                "did": ai_did,
-                "handle": ai_handle,
-                "displayName": ai_display_name,
-                "avatar": ai_avatar_url
+                "did": ai_profile.did,
+                "handle": ai_profile.handle,
+                "displayName": ai_profile.display_name,
+                "avatar": ai_profile.avatar_url
             }))
         }
     }
