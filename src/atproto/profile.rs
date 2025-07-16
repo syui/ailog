@@ -160,6 +160,7 @@ impl ProfileFetcher {
     }
 
     /// Generate profile URL for a given DID and PDS
+    #[allow(dead_code)]
     pub fn generate_profile_url(did: &str, pds: &str) -> String {
         let network_config = Self::get_network_config(pds);
         match pds {
@@ -169,6 +170,7 @@ impl ProfileFetcher {
     }
 
     /// Convert Profile to JSON format used by the application
+    #[allow(dead_code)]
     pub fn profile_to_json(&self, profile: &Profile, _pds: &str) -> Value {
         serde_json::json!({
             "did": profile.did,

@@ -43,16 +43,6 @@ function _oauth_build() {
 	#npm run preview
 }
 
-function _ai_conversation_build() {
-	cd $d/ai-conversation
-	nvm use 21
-	npm i
-	npm run build
-	rm -rf $myblog/static/ai-assets
-	mkdir -p $myblog/static/ai-assets
-	cp -rf dist/assets/* $myblog/static/ai-assets/
-	cp $d/ai-conversation/dist/index.html $myblog/templates/ai-conversation-assets.html
-}
 
 function _server_comment() {
 	cargo build
@@ -74,9 +64,6 @@ case "${1:-serve}" in
 		;;
 	oauth|o)
 		_oauth_build
-		;;
-	ai|a)
-		_ai_conversation_build
 		;;
 	n)
 		oauth=$d/oauth_old

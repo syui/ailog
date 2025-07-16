@@ -608,7 +608,7 @@ async fn get_ai_profile(_client: &reqwest::Client, config: &AuthConfig) -> Resul
 async fn check_for_duplicates(
     client: &reqwest::Client,
     config: &AuthConfig,
-    conversation: &[ConversationPair],
+    _conversation: &[ConversationPair],
     _url: &str,
 ) -> Result<()> {
     // Simple check - just get recent records to warn about potential duplicates
