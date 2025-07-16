@@ -118,12 +118,10 @@ export default function RecordTabs({ langRecords, commentRecords, userComments, 
   const filteredLangRecords = filterRecords(Array.isArray(langRecords) ? langRecords : [])
   
   logger.log('RecordTabs: About to filter commentRecords:', commentRecords?.length || 0, commentRecords)
-  // User requested to display all comments without filtering
-  const filteredCommentRecords = Array.isArray(commentRecords) ? commentRecords : []
+  const filteredCommentRecords = filterRecords(Array.isArray(commentRecords) ? commentRecords : [])
   logger.log('RecordTabs: After filtering commentRecords:', filteredCommentRecords.length, filteredCommentRecords)
   
-  // User requested to display all comments without filtering
-  const filteredUserComments = Array.isArray(userComments) ? userComments : []
+  const filteredUserComments = filterRecords(Array.isArray(userComments) ? userComments : [])
   const filteredChatRecords = filterChatRecords(Array.isArray(chatRecords) ? chatRecords : [])
   const filteredBaseRecords = filterRecords(Array.isArray(baseRecords) ? baseRecords : [])
   
