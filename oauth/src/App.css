@@ -1337,7 +1337,7 @@ body {
 .message-content {
   color: var(--text);
   line-height: 1.5;
-  word-wrap: break-word;
+		word-wrap: anywhere;
 }
 
 /* Markdown styles */
