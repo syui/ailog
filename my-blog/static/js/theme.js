@@ -84,7 +84,6 @@ class Theme {
     setupLogoAnimations() {
         // Pure CSS animations are handled by the svg-animation-package.css
         // This method is reserved for any future JavaScript-based enhancements
-        console.log('Logo animations initialized (CSS-based)');
     }
 }
 

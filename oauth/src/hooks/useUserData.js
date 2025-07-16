@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { atproto, collections } from '../api/atproto.js'
 import { getApiConfig, isSyuIsHandle, getPdsFromHandle } from '../utils/pds.js'
 import { env } from '../config/env.js'
+import { logger } from '../utils/logger.js'
 
 export function useUserData(adminData) {
   const [userComments, setUserComments] = useState([])
@@ -25,13 +26,14 @@ export function useUserData(adminData) {
         )
 
         // 2. Get chat records from ai.syui.log.chat and process into pairs
-        const chatRecords = await collections.getChat(
+        const chatResult = await collections.getChat(
           adminData.apiConfig.pds,
           adminData.did,
           env.collection
         )
         
-        console.log('useUserData: raw chatRecords:', chatRecords.length, chatRecords)
+        const chatRecords = chatResult.records || chatResult
+        logger.log('useUserData: raw chatRecords:', chatRecords.length, chatRecords)
         
         // Process chat records into question-answer pairs
         const chatPairs = []
@@ -68,7 +70,7 @@ export function useUserData(adminData) {
         // Sort by creation time (newest first)
         chatPairs.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
         
-        console.log('useUserData: processed chatPairs:', chatPairs.length, chatPairs)
+        logger.log('useUserData: processed chatPairs:', chatPairs.length, chatPairs)
         setChatRecords(chatPairs)
 
         // 3. Get base collection records which contain user comments
@@ -101,7 +103,7 @@ export function useUserData(adminData) {
         // Also try to get individual user records from the user list
         // Currently skipping user list processing since users contain placeholder DIDs
         if (userListRecords.length > 0 && userListRecords[0].value?.users) {
-          console.log('User list found, but skipping placeholder users for now')
+          logger.log('User list found, but skipping placeholder users for now')
           
           // Filter out placeholder users
           const realUsers = userListRecords[0].value.users.filter(user => 
@@ -112,7 +114,7 @@ export function useUserData(adminData) {
           )
           
           if (realUsers.length > 0) {
-            console.log(`Processing ${realUsers.length} real users`)
+            logger.log(`Processing ${realUsers.length} real users`)
             
             for (const user of realUsers) {
               const userHandle = user.handle
@@ -139,7 +141,7 @@ export function useUserData(adminData) {
                     userApiConfig = getApiConfig(realPds)
                   } catch (error) {
                     // Fallback to syu.is if bsky.social fails
-                    console.warn(`Failed to get PDS for ${userHandle} from bsky.social, trying syu.is:`, error)
+                    logger.warn(`Failed to get PDS for ${userHandle} from bsky.social, trying syu.is:`, error)
                     userPds = env.pds
                     userApiConfig = getApiConfig(env.pds)
                     userDid = await atproto.getDid(userPds, userHandle)
@@ -163,7 +165,7 @@ export function useUserData(adminData) {
                 try {
                   profile = await atproto.getProfile(userApiConfig.bsky, userDid)
                 } catch (profileError) {
-                  console.warn(`Failed to get profile for ${userHandle}:`, profileError)
+                  logger.warn(`Failed to get profile for ${userHandle}:`, profileError)
                 }
 
                 // Add profile info to each record
@@ -182,11 +184,11 @@ export function useUserData(adminData) {
 
                 allUserComments.push(...enrichedRecords)
               } catch (userError) {
-                console.warn(`Failed to fetch data for user ${userHandle}:`, userError)
+                logger.warn(`Failed to fetch data for user ${userHandle}:`, userError)
               }
             }
           } else {
-            console.log('No real users found in user list - all appear to be placeholders')
+            logger.log('No real users found in user list - all appear to be placeholders')
           }
         }
 

@@ -12,14 +12,12 @@ const OAUTH_COLLECTION = window.OAUTH_CONFIG?.collection || 'ai.syui.log';
 
 // Listen for AI profile data from OAuth app
 window.addEventListener('aiProfileLoaded', function(event) {
-    console.log('AI profile received from OAuth app:', event.detail);
     aiProfileData = event.detail;
     updateAskAIButton();
 });
 
 // Check if AI profile data is already available
 if (window.aiProfileData) {
-    console.log('AI profile already available:', window.aiProfileData);
     aiProfileData = window.aiProfileData;
 }
 
@@ -30,11 +28,9 @@ function toggleAskAI() {
     panel.style.display = isVisible ? 'none' : 'block';
     
     if (!isVisible) {
-        console.log('Ask AI panel opened');
         
         // If AI profile data is already available, show introduction immediately
         if (aiProfileData) {
-            console.log('AI profile data available - showing introduction immediately');
             // Quick check for authentication
             const userSections = document.querySelectorAll('.user-section');
             const isAuthenticated = userSections.length > 0;
@@ -45,17 +41,13 @@ function toggleAskAI() {
         // For production fallback - if OAuth app fails to load, show profiles
         const isProd = window.location.hostname !== 'localhost' && !window.location.hostname.includes('preview');
         if (isProd) {
-            console.log('Production environment detected - using fallback profile display');
             // Shorter timeout for production
             setTimeout(() => {
                 const userSections = document.querySelectorAll('.user-section');
-                console.log('Production check - user sections:', userSections.length);
                 
                 if (userSections.length === 0) {
-                    console.log('No user sections found in production - showing profiles directly');
                     handleAuthenticationStatus(false);
                 } else {
-                    console.log('User sections found in production - showing authenticated UI');
                     handleAuthenticationStatus(true);
                 }
             }, 300);
@@ -71,19 +63,14 @@ function checkAuthenticationStatus() {
     const maxChecks = 10;
     
     const checkForAuth = () => {
-        console.log(`Auth check attempt ${checkCount + 1}/${maxChecks}`);
         const userSections = document.querySelectorAll('.user-section');
         const authButtons = document.querySelectorAll('[data-auth-status]');
         const oauthContainers = document.querySelectorAll('#oauth-container');
         
-        console.log('User sections found:', userSections.length);
-        console.log('Auth buttons found:', authButtons.length);
-        console.log('OAuth containers found:', oauthContainers.length);
         
         const isAuthenticated = userSections.length > 0;
         
         if (isAuthenticated || checkCount >= maxChecks - 1) {
-            console.log('Final auth status:', isAuthenticated);
             handleAuthenticationStatus(isAuthenticated);
         } else {
             checkCount++;
@@ -95,14 +82,12 @@ function checkAuthenticationStatus() {
 }
 
 function handleAuthenticationStatus(isAuthenticated) {
-    console.log('Handling auth status:', isAuthenticated);
     
     // Always hide loading first
     document.getElementById('authCheck').style.display = 'none';
     
     if (isAuthenticated) {
         // User is authenticated - show Ask AI UI
-        console.log('User authenticated - showing AI chat interface');
         document.getElementById('chatForm').style.display = 'block';
         document.getElementById('chatHistory').style.display = 'block';
         
@@ -127,7 +112,6 @@ function handleAuthenticationStatus(isAuthenticated) {
         }, 50);
     } else {
         // User not authenticated - show AI introduction directly if profile available
-        console.log('User not authenticated - showing AI introduction');
         document.getElementById('chatForm').style.display = 'none';
         document.getElementById('chatHistory').style.display = 'block';
         
@@ -154,18 +138,15 @@ async function loadAndShowProfiles() {
         }
         
         const data = await response.json();
-        console.log('Fetched records:', data.records);
         
         // Filter only profile records and sort
         const profileRecords = (data.records || []).filter(record => record.value.type === 'profile');
-        console.log('Profile records:', profileRecords);
         
         const profiles = profileRecords.sort((a, b) => {
             if (a.value.profileType === 'admin' && b.value.profileType !== 'admin') return -1;
             if (a.value.profileType !== 'admin' && b.value.profileType === 'admin') return 1;
             return 0;
         });
-        console.log('Sorted profiles:', profiles);
         
         // Clear loading message
         chatHistory.innerHTML = '';
@@ -201,7 +182,6 @@ async function loadAndShowProfiles() {
         }
         
     } catch (error) {
-        console.error('Error loading profiles:', error);
         chatHistory.innerHTML = '<div class="error-message">Failed to load profiles. Please try again later.</div>';
     }
 }
@@ -230,7 +210,6 @@ function askQuestion() {
         }));
         
     } catch (error) {
-        console.error('Failed to ask question:', error);
         showErrorMessage('Sorry, I encountered an error. Please try again.');
     } finally {
         askButton.disabled = false;
@@ -402,7 +381,6 @@ function handleAIResponse(responseData) {
     
     const aiProfile = responseData.aiProfile;
     if (!aiProfile || !aiProfile.handle || !aiProfile.displayName) {
-        console.error('AI profile data is missing');
         return;
     }
     
@@ -444,7 +422,6 @@ function setupAskAIEventListeners() {
     // Listen for AI profile updates from OAuth app
     window.addEventListener('aiProfileLoaded', function(event) {
         aiProfileData = event.detail;
-        console.log('AI profile loaded:', aiProfileData);
         updateAskAIButton();
     });
     
@@ -456,7 +433,6 @@ function setupAskAIEventListeners() {
     // Listen for OAuth callback completion from iframe
     window.addEventListener('message', function(event) {
         if (event.data.type === 'oauth_success') {
-            console.log('Received OAuth success message:', event.data);
             
             // Close any OAuth popups/iframes
             const oauthFrame = document.getElementById('oauth-frame');
@@ -505,7 +481,6 @@ function setupAskAIEventListeners() {
 // Initialize Ask AI when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     setupAskAIEventListeners();
-    console.log('Ask AI initialized successfully');
     
     // Also listen for OAuth app load completion
     const observer = new MutationObserver(function(mutations) {
@@ -522,7 +497,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 );
                 
                 if (userSectionAdded || userSectionRemoved) {
-                    console.log('User section status changed');
                     // Update Ask AI panel if it's visible
                     const panel = document.getElementById('askAiPanel');
                     if (panel && panel.style.display !== 'none') {

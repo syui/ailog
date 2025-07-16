@@ -3,6 +3,7 @@ import { atproto, collections } from '../api/atproto.js'
 import { getApiConfig } from '../utils/pds.js'
 import { env } from '../config/env.js'
 import { getErrorMessage } from '../utils/errorHandler.js'
+import { logger } from '../utils/logger.js'
 
 export function useAdminData() {
   const [adminData, setAdminData] = useState({ 
@@ -32,21 +33,35 @@ export function useAdminData() {
       const did = await atproto.getDid(env.pds, env.admin)
       const profile = await atproto.getProfile(apiConfig.bsky, did)
       
-      // Load all data in parallel
+      // Load all data in parallel with error handling
+      logger.log('useAdminData: Starting API calls...')
       const [records, lang, comment, chatResult] = await Promise.all([
-        collections.getBase(apiConfig.pds, did, env.collection),
-        collections.getLang(apiConfig.pds, did, env.collection),
-        collections.getComment(apiConfig.pds, did, env.collection),
-        collections.getChat(apiConfig.pds, did, env.collection, 10)
+        collections.getBase(apiConfig.pds, did, env.collection).catch(err => {
+          logger.error('getBase error:', err)
+          throw err
+        }),
+        collections.getLang(apiConfig.pds, did, env.collection).catch(err => {
+          logger.error('getLang error:', err)
+          throw err
+        }),
+        collections.getComment(apiConfig.pds, did, env.collection).catch(err => {
+          logger.error('getComment error:', err)
+          throw err
+        }),
+        collections.getChat(apiConfig.pds, did, env.collection, 10).catch(err => {
+          logger.error('getChat error:', err)
+          throw err
+        })
       ])
+      logger.log('useAdminData: API calls completed successfully')
       
       const chat = chatResult.records || chatResult
       const cursor = chatResult.cursor || null
       setChatCursor(cursor)
       setChatHasMore(!!cursor)
 
-      console.log('useAdminData: chatResult structure:', chatResult)
-      console.log('useAdminData: chat variable type:', typeof chat, 'isArray:', Array.isArray(chat))
+      logger.log('useAdminData: chatResult structure:', chatResult)
+      logger.log('useAdminData: chat variable type:', typeof chat, 'isArray:', Array.isArray(chat))
 
       // Process chat records into question-answer pairs
       const chatPairs = []
@@ -86,15 +101,21 @@ export function useAdminData() {
       // Sort by creation time (newest first)
       chatPairs.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
 
-      console.log('useAdminData: raw chat records:', chat.length)
-      console.log('useAdminData: processed chat pairs:', chatPairs.length, chatPairs)
+      logger.log('useAdminData: raw chat records:', chat.length)
+      logger.log('useAdminData: processed chat pairs:', chatPairs.length, chatPairs)
+      logger.log('useAdminData: setting state data:')
+      logger.log('  - records:', records.length)
+      logger.log('  - langRecords:', lang.length)
+      logger.log('  - commentRecords:', comment.length, comment)
+      logger.log('  - chatRecords:', chatPairs.length)
 
       setAdminData({ did, profile, records, apiConfig })
       setLangRecords(lang)
       setCommentRecords(comment)
       setChatRecords(chatPairs)
     } catch (err) {
-      // Silently fail - no error logging or retry attempts
+      // Log the actual error for debugging
+      logger.error('useAdminData: Error in loadAdminData:', err)
       setError('silent_failure')
     } finally {
       setLoading(false)
