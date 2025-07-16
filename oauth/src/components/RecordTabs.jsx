@@ -5,19 +5,22 @@ import ProfileRecordList from './ProfileRecordList.jsx'
 import LoadingSkeleton from './LoadingSkeleton.jsx'
 import { logger } from '../utils/logger.js'
 
-export default function RecordTabs({ langRecords, commentRecords, userComments, chatRecords, userChatRecords, userChatLoading, baseRecords, apiConfig, pageContext, user = null, agent = null, onRecordDeleted = null }) {
+export default function RecordTabs({ langRecords, commentRecords, userComments, chatRecords, chatHasMore, onLoadMoreChat, userChatRecords, userChatLoading, baseRecords, apiConfig, pageContext, user = null, agent = null, onRecordDeleted = null }) {
   const [activeTab, setActiveTab] = useState('profiles')
   
   logger.log('RecordTabs: activeTab is', activeTab)
 
   // Filter records based on page context
   const filterRecords = (records, isProfile = false) => {
+    // Ensure records is an array
+    const recordsArray = Array.isArray(records) ? records : []
+    
     if (pageContext.isTopPage) {
       // Top page: show latest 3 records
-      return records.slice(0, 3)
+      return recordsArray.slice(0, 3)
     } else {
       // Individual page: show records matching the URL
-      return records.filter(record => {
+      return recordsArray.filter(record => {
         // Profile records should always be shown
         if (isProfile || record.value?.type === 'profile') {
           return true
@@ -38,20 +41,25 @@ export default function RecordTabs({ langRecords, commentRecords, userComments, 
 
   // Special filter for chat records (which are already processed into pairs)
   const filterChatRecords = (chatPairs) => {
+    // Ensure chatPairs is an array
+    const chatArray = Array.isArray(chatPairs) ? chatPairs : []
+    
     console.log('filterChatRecords called:', { 
       isTopPage: pageContext.isTopPage, 
       rkey: pageContext.rkey, 
-      chatPairsLength: chatPairs.length 
+      chatPairsLength: chatArray.length,
+      chatPairsType: typeof chatPairs,
+      isArray: Array.isArray(chatPairs)
     })
     
     if (pageContext.isTopPage) {
       // Top page: show latest 3 pairs
-      const result = chatPairs.slice(0, 3)
+      const result = chatArray.slice(0, 3)
       console.log('Top page: returning', result.length, 'pairs')
       return result
     } else {
       // Individual page: show pairs matching the URL (compare path only, ignore domain)
-      const filtered = chatPairs.filter(chatPair => {
+      const filtered = chatArray.filter(chatPair => {
         const recordUrl = chatPair.question?.value?.post?.url
         if (!recordUrl) {
           console.log('No recordUrl for chatPair:', chatPair)
@@ -82,14 +90,14 @@ export default function RecordTabs({ langRecords, commentRecords, userComments, 
     }
   }
 
-  const filteredLangRecords = filterRecords(langRecords)
-  const filteredCommentRecords = filterRecords(commentRecords)
-  const filteredUserComments = filterRecords(userComments || [])
-  const filteredChatRecords = filterChatRecords(chatRecords || [])
-  const filteredBaseRecords = filterRecords(baseRecords || [])
+  const filteredLangRecords = filterRecords(Array.isArray(langRecords) ? langRecords : [])
+  const filteredCommentRecords = filterRecords(Array.isArray(commentRecords) ? commentRecords : [])
+  const filteredUserComments = filterRecords(Array.isArray(userComments) ? userComments : [])
+  const filteredChatRecords = filterChatRecords(Array.isArray(chatRecords) ? chatRecords : [])
+  const filteredBaseRecords = filterRecords(Array.isArray(baseRecords) ? baseRecords : [])
   
   // Filter profile records from baseRecords
-  const profileRecords = (baseRecords || []).filter(record => record.value?.type === 'profile')
+  const profileRecords = (Array.isArray(baseRecords) ? baseRecords : []).filter(record => record.value?.type === 'profile')
   const sortedProfileRecords = profileRecords.sort((a, b) => {
     if (a.value.profileType === 'admin' && b.value.profileType !== 'admin') return -1
     if (a.value.profileType !== 'admin' && b.value.profileType === 'admin') return 1
@@ -171,7 +179,9 @@ export default function RecordTabs({ langRecords, commentRecords, userComments, 
             <LoadingSkeleton count={2} showTitle={true} />
           ) : (
             <ChatRecordList 
-              chatPairs={filteredChatRecords.length > 0 ? filteredChatRecords : userChatRecords} 
+              chatPairs={filteredChatRecords.length > 0 ? filteredChatRecords : (Array.isArray(userChatRecords) ? userChatRecords : [])} 
+              chatHasMore={filteredChatRecords.length > 0 ? chatHasMore : false}
+              onLoadMoreChat={filteredChatRecords.length > 0 ? onLoadMoreChat : null}
               apiConfig={apiConfig} 
               user={user}
               agent={agent}

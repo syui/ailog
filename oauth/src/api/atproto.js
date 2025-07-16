@@ -83,9 +83,16 @@ export const atproto = {
     return await request(`${apiEndpoint}/xrpc/${ENDPOINTS.getProfile}?actor=${actor}`)
   },
 
-  async getRecords(pds, repo, collection, limit = 10) {
-    const res = await request(`${pds}/xrpc/${ENDPOINTS.listRecords}?repo=${repo}&collection=${collection}&limit=${limit}`)
-    return res.records || []
+  async getRecords(pds, repo, collection, limit = 10, cursor = null) {
+    let url = `${pds}/xrpc/${ENDPOINTS.listRecords}?repo=${repo}&collection=${collection}&limit=${limit}`
+    if (cursor) {
+      url += `&cursor=${cursor}`
+    }
+    const res = await request(url)
+    return {
+      records: res.records || [],
+      cursor: res.cursor || null
+    }
   },
 
   async searchPlc(plc, did) {
@@ -121,8 +128,10 @@ export const collections = {
     if (cached) return cached
     
     const data = await atproto.getRecords(pds, repo, collection, limit)
-    dataCache.set(cacheKey, data)
-    return data
+    // Extract records array for backward compatibility
+    const records = data.records || data
+    dataCache.set(cacheKey, records)
+    return records
   },
 
   async getLang(pds, repo, collection, limit = 10) {
@@ -131,8 +140,10 @@ export const collections = {
     if (cached) return cached
     
     const data = await atproto.getRecords(pds, repo, `${collection}.chat.lang`, limit)
-    dataCache.set(cacheKey, data)
-    return data
+    // Extract records array for backward compatibility
+    const records = data.records || data
+    dataCache.set(cacheKey, records)
+    return records
   },
 
   async getComment(pds, repo, collection, limit = 10) {
@@ -141,17 +152,29 @@ export const collections = {
     if (cached) return cached
     
     const data = await atproto.getRecords(pds, repo, `${collection}.chat.comment`, limit)
-    dataCache.set(cacheKey, data)
-    return data
+    // Extract records array for backward compatibility
+    const records = data.records || data
+    dataCache.set(cacheKey, records)
+    return records
   },
 
-  async getChat(pds, repo, collection, limit = 10) {
+  async getChat(pds, repo, collection, limit = 10, cursor = null) {
+    // Don't use cache for pagination requests
+    if (cursor) {
+      const result = await atproto.getRecords(pds, repo, `${collection}.chat`, limit, cursor)
+      return result
+    }
+    
     const cacheKey = dataCache.generateKey('chat', pds, repo, collection, limit)
     const cached = dataCache.get(cacheKey)
-    if (cached) return cached
+    if (cached) {
+      // Ensure cached data has the correct structure
+      return Array.isArray(cached) ? { records: cached, cursor: null } : cached
+    }
     
     const data = await atproto.getRecords(pds, repo, `${collection}.chat`, limit)
-    dataCache.set(cacheKey, data)
+    // Cache only the records array for backward compatibility
+    dataCache.set(cacheKey, data.records || data)
     return data
   },
 
@@ -161,8 +184,10 @@ export const collections = {
     if (cached) return cached
     
     const data = await atproto.getRecords(pds, repo, `${collection}.user`, limit)
-    dataCache.set(cacheKey, data)
-    return data
+    // Extract records array for backward compatibility
+    const records = data.records || data
+    dataCache.set(cacheKey, records)
+    return records
   },
 
   async getUserComments(pds, repo, collection, limit = 10) {
@@ -171,8 +196,10 @@ export const collections = {
     if (cached) return cached
     
     const data = await atproto.getRecords(pds, repo, collection, limit)
-    dataCache.set(cacheKey, data)
-    return data
+    // Extract records array for backward compatibility
+    const records = data.records || data
+    dataCache.set(cacheKey, records)
+    return records
   },
 
   async getProfiles(pds, repo, collection, limit = 100) {
@@ -181,8 +208,10 @@ export const collections = {
     if (cached) return cached
     
     const data = await atproto.getRecords(pds, repo, `${collection}.profile`, limit)
-    dataCache.set(cacheKey, data)
-    return data
+    // Extract records array for backward compatibility
+    const records = data.records || data
+    dataCache.set(cacheKey, records)
+    return records
   },
 
   // 投稿後にキャッシュを無効化

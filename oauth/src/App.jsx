@@ -14,7 +14,7 @@ import OAuthCallback from './components/OAuthCallback.jsx'
 
 export default function App() {
   const { user, agent, loading: authLoading, login, logout } = useAuth()
-  const { adminData, langRecords, commentRecords, chatRecords: adminChatRecords, loading: dataLoading, error, refresh: refreshAdminData } = useAdminData()
+  const { adminData, langRecords, commentRecords, chatRecords: adminChatRecords, chatHasMore, loading: dataLoading, error, refresh: refreshAdminData, loadMoreChat } = useAdminData()
   const { userComments, chatRecords, loading: userLoading, refresh: refreshUserData } = useUserData(adminData)
   const [userChatRecords, setUserChatRecords] = useState([])
   const [userChatLoading, setUserChatLoading] = useState(false)
@@ -430,6 +430,8 @@ Answer:`
             commentRecords={commentRecords}
             userComments={userComments}
             chatRecords={adminChatRecords}
+            chatHasMore={chatHasMore}
+            onLoadMoreChat={loadMoreChat}
             userChatRecords={userChatRecords}
             userChatLoading={userChatLoading}
             baseRecords={adminData.records}
@@ -461,9 +463,6 @@ Answer:`
             </div>
           )}
           
-          <div className="bluesky-footer">
-            <i className="fab fa-bluesky"></i>
-          </div>
         </div>
       </div>
     </div>

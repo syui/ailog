@@ -1,4 +1,8 @@
 import React, { useState } from 'react'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import rehypeHighlight from 'rehype-highlight'
+import 'highlight.js/styles/github-dark.css'
 
 // Helper function to get correct web URL based on avatar URL
 function getCorrectWebUrl(avatarUrl) {
@@ -18,7 +22,7 @@ function getCorrectWebUrl(avatarUrl) {
   return 'https://bsky.app'
 }
 
-export default function ChatRecordList({ chatPairs, apiConfig, user = null, agent = null, onRecordDeleted = null }) {
+export default function ChatRecordList({ chatPairs, chatHasMore, onLoadMoreChat, apiConfig, user = null, agent = null, onRecordDeleted = null }) {
   const [expandedRecords, setExpandedRecords] = useState(new Set())
 
   const toggleJsonView = (key) => {
@@ -139,7 +143,14 @@ export default function ChatRecordList({ chatPairs, apiConfig, user = null, agen
                   </pre>
                 </div>
               )}
-              <div className="message-content">{chatPair.question.value.text}</div>
+              <div className="message-content">
+                <ReactMarkdown 
+                  remarkPlugins={[remarkGfm]}
+                  rehypePlugins={[rehypeHighlight]}
+                >
+                  {chatPair.question.value.text}
+                </ReactMarkdown>
+              </div>
             </div>
           )}
 
@@ -190,25 +201,31 @@ export default function ChatRecordList({ chatPairs, apiConfig, user = null, agen
                   </pre>
                 </div>
               )}
-              <div className="message-content">{chatPair.answer.value.text}</div>
+              <div className="message-content">
+                <ReactMarkdown 
+                  remarkPlugins={[remarkGfm]}
+                  rehypePlugins={[rehypeHighlight]}
+                >
+                  {chatPair.answer.value.text}
+                </ReactMarkdown>
+              </div>
             </div>
           )}
 
-          {/* Post metadata */}
-          {chatPair.question?.value.post?.url && (
-            <div className="record-meta">
-              <a 
-                href={chatPair.question.value.post.url} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="record-url"
-              >
-                {chatPair.question.value.post.url}
-              </a>
-            </div>
-          )}
         </div>
       ))}
+      
+      {/* Load More Button */}
+      {chatHasMore && onLoadMoreChat && (
+        <div className="bluesky-footer">
+          <i 
+            className="fab fa-bluesky"
+            onClick={onLoadMoreChat}
+            style={{cursor: 'pointer'}}
+            title="続きを読み込む"
+          ></i>
+        </div>
+      )}
     </section>
   )
 }

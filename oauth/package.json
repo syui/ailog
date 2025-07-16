@@ -8,10 +8,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@atproto/api": "^0.15.12",
+    "@atproto/oauth-client-browser": "^0.3.19",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "@atproto/api": "^0.15.12",
-    "@atproto/oauth-client-browser": "^0.3.19"
+    "react-markdown": "^9.0.1",
+    "rehype-highlight": "^7.0.2",
+    "remark-gfm": "^4.0.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.0",
