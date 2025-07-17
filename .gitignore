@@ -24,3 +24,4 @@ my-blog/static/oauth/assets/comment-atproto*
 *.lock
 my-blog/config.toml
 .claude/settings.local.json
+my-blog/static/pds
