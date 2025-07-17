@@ -328,7 +328,7 @@ async fn serve_file(path: &str) -> Result<(&'static str, Vec<u8>, &'static str)>
     // Remove query parameters from path
     let clean_path = path.split('?').next().unwrap_or(path);
     
-    let file_path = if clean_path == "/" {
+    let mut file_path = if clean_path == "/" {
         PathBuf::from("public/index.html")
     } else {
         PathBuf::from("public").join(clean_path.trim_start_matches('/'))
@@ -337,9 +337,42 @@ async fn serve_file(path: &str) -> Result<(&'static str, Vec<u8>, &'static str)>
     println!("Serving file: {}", file_path.display());
 
     // Check if file exists and get metadata
-    let metadata = tokio::fs::metadata(&file_path).await?;
-    if !metadata.is_file() {
-        return Err(anyhow::anyhow!("Not a file: {}", file_path.display()));
+    let metadata = tokio::fs::metadata(&file_path).await;
+    
+    match metadata {
+        Ok(meta) if meta.is_file() => {
+            // File exists, proceed normally
+        }
+        Ok(meta) if meta.is_dir() => {
+            // Directory exists, try to serve index.html
+            file_path = file_path.join("index.html");
+            println!("Directory found, trying index.html: {}", file_path.display());
+            let index_metadata = tokio::fs::metadata(&file_path).await?;
+            if !index_metadata.is_file() {
+                return Err(anyhow::anyhow!("No index.html in directory: {}", file_path.display()));
+            }
+        }
+        Ok(_) => {
+            return Err(anyhow::anyhow!("Not a file: {}", file_path.display()));
+        }
+        Err(e) => {
+            // Try adding index.html to the original path
+            let index_path = PathBuf::from("public")
+                .join(clean_path.trim_start_matches('/'))
+                .join("index.html");
+            
+            println!("File not found, trying index.html: {}", index_path.display());
+            let index_metadata = tokio::fs::metadata(&index_path).await;
+            if let Ok(meta) = index_metadata {
+                if meta.is_file() {
+                    file_path = index_path;
+                } else {
+                    return Err(anyhow::anyhow!("Original error: {}", e));
+                }
+            } else {
+                return Err(anyhow::anyhow!("File not found: {}", file_path.display()));
+            }
+        }
     }
 
     let (content_type, cache_control) = match file_path.extension().and_then(|ext| ext.to_str()) {

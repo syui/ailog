@@ -86,6 +86,9 @@ impl Generator {
             }
         }
 
+        // Generate PDS page
+        self.generate_pds_page().await?;
+
         println!("{} {} posts", "Generated".cyan(), posts.len());
 
         Ok(())
@@ -491,6 +494,30 @@ impl Generator {
         Ok(())
     }
     
+    async fn generate_pds_page(&self) -> Result<()> {
+        let public_dir = self.base_path.join("public");
+        let pds_dir = public_dir.join("pds");
+        fs::create_dir_all(&pds_dir)?;
+        
+        // Generate PDS page using the pds.html template
+        let config_with_timestamp = self.create_config_with_timestamp()?;
+        let mut context = tera::Context::new();
+        context.insert("config", &config_with_timestamp);
+        context.insert("site", &self.config.site);
+        context.insert("page", &serde_json::json!({
+            "title": "AT URI Browser",
+            "description": "AT Protocol レコードをブラウズし、分散SNSのコンテンツを探索できます"
+        }));
+        
+        let rendered_content = self.template_engine.render("pds.html", &context)?;
+        let output_path = pds_dir.join("index.html");
+        fs::write(output_path, rendered_content)?;
+        
+        println!("{} PDS page", "Generated".cyan());
+        
+        Ok(())
+    }
+    
     fn extract_plain_text(&self, html_content: &str) -> String {
         // Remove HTML tags and extract plain text
         let mut text = String::new();
@@ -535,6 +562,7 @@ pub struct Post {
     pub ai_comment: Option<String>,
     pub extra: Option<serde_json::Value>,
 }
+
 
 #[derive(Debug, Clone, serde::Serialize)]
 pub struct Translation {

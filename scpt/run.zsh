@@ -5,6 +5,7 @@ function _env() {
 	ailog=$d/target/release/ailog
 	oauth=$d/oauth
 	myblog=$d/my-blog
+	pds=$d/pds
 	port=4173
 	#source $oauth/.env.production
 	case $OSTYPE in
@@ -43,6 +44,21 @@ function _oauth_build() {
 	#npm run preview
 }
 
+function _pds_build() {
+	cd $pds
+	nvm use 21
+	npm i
+	npm run build
+	rm -rf $myblog/static/pds
+	cp -rf dist $myblog/static/pds
+}
+
+function _pds_server() {
+	cd $pds
+	nvm use 21
+	npm run preview
+}
+
 
 function _server_comment() {
 	cargo build --release
@@ -64,6 +80,12 @@ case "${1:-serve}" in
 		;;
 	oauth|o)
 		_oauth_build
+		;;
+	pds|p)
+		_pds_build
+		;;
+	pds-server|ps)
+		_pds_server
 		;;
 	n)
 		oauth=$d/oauth_old
