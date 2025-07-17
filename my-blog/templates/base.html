@@ -12,6 +12,7 @@
     <!-- Stylesheets -->
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/svg-animation-package.css">
+    <link rel="stylesheet" href="/css/pds.css">
     <link rel="stylesheet" href="/pkg/icomoon/style.css">
     <link rel="stylesheet" href="/pkg/font-awesome/css/all.min.css">
     
@@ -48,7 +49,18 @@
                         </svg>
                     </a>
                 </div>
-                <div class="header-actions">
+																<div class="header-actions">
+																	<!-- User Handle Input Form -->
+																	<div class="pds-search-section">
+																		<form class="pds-search-form" onsubmit="searchUser(); return false;">
+																			<div class="form-group">
+																				<input type="text" id="handleInput" placeholder="at://syui.ai" value="syui.ai" />
+																				<button type="submit" id="searchButton" class="pds-btn">
+																				@
+																				</button>
+																			</div>
+																		</form>
+																	</div>
                     <button class="ask-ai-btn" onclick="toggleAskAI()" id="askAiButton">
                         <span class="ai-icon icon-ai"></span>
                         ai
@@ -75,8 +87,11 @@
                 <div id="chatHistory" class="chat-history" style="display: none;"></div>
             </div>
         </div>
-        
+
         <main class="main-content">
+								<!-- Pds Panel -->
+								{% include "pds-header.html" %}
+
             {% block content %}{% endblock %}
         </main>
 
@@ -113,6 +128,7 @@
         };
     </script>
     <script src="/js/ask-ai.js"></script>
+    <script src="/js/pds.js"></script>
     <script src="/js/theme.js"></script>
     <script src="/js/image-comparison.js"></script>
     

@@ -422,10 +422,6 @@ body {
   margin-bottom: 16px;
 }
 
-.form-group {
-  margin-bottom: 16px;
-}
-
 .form-group label {
   display: block;
   font-weight: 700;
@@ -917,10 +913,6 @@ body {
   .record-url {
     word-break: break-all !important;
     max-width: 100% !important;
-  }
-  
-  .form-group {
-    margin-bottom: 15px !important;
   }
   
   .form-input, .form-textarea {
