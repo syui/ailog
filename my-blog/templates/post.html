@@ -13,6 +13,7 @@
                 <span class="article-lang">{{ post.language }}</span>
                 {% endif %}
             </div>
+            {% if not post.extra.type or post.extra.type != "ai" %}
             <div class="article-actions">
                 {% if post.markdown_url %}
                 <a href="{{ post.markdown_url }}" class="action-btn markdown-btn" title="View Markdown">
@@ -25,8 +26,10 @@
                 </a>
                 {% endif %}
             </div>
+            {% endif %}
         </header>
         
+        {% if not post.extra.type or post.extra.type != "ai" %}
         <nav class="toc">
             <h3>Contents</h3>
             <div id="toc-content">
@@ -37,6 +40,7 @@
         <div class="article-body">
             {{ post.content | safe }}
         </div>
+        {% endif %}
         
         <div id="comment-atproto"></div>
     </article>

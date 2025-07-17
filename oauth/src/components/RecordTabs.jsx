@@ -6,7 +6,20 @@ import LoadingSkeleton from './LoadingSkeleton.jsx'
 import { logger } from '../utils/logger.js'
 
 export default function RecordTabs({ langRecords, commentRecords, userComments, chatRecords, chatHasMore, onLoadMoreChat, userChatRecords, userChatLoading, baseRecords, apiConfig, pageContext, user = null, agent = null, onRecordDeleted = null }) {
-  const [activeTab, setActiveTab] = useState('profiles')
+  // Check if current page has matching chat records (AI posts always have chat records)
+  const isAiPost = !pageContext.isTopPage && Array.isArray(chatRecords) && chatRecords.some(chatPair => {
+    const recordUrl = chatPair.question?.value?.post?.url
+    if (!recordUrl) return false
+    
+    try {
+      const recordRkey = new URL(recordUrl).pathname.split('/').pop()?.replace(/\.html$/, '')
+      return recordRkey === pageContext.rkey
+    } catch {
+      return false
+    }
+  })
+  
+  const [activeTab, setActiveTab] = useState(isAiPost ? 'collection' : 'profiles')
   
   // Monitor activeTab changes
   useEffect(() => {
@@ -145,6 +158,7 @@ export default function RecordTabs({ langRecords, commentRecords, userComments, 
 
   return (
     <div className="record-tabs">
+      {!isAiPost && (
       <div className="tab-header">
         <button 
           className={`tab-btn ${activeTab === 'profiles' ? 'active' : ''}`}
@@ -186,9 +200,10 @@ export default function RecordTabs({ langRecords, commentRecords, userComments, 
           en ({filteredLangRecords.length})
         </button>
       </div>
+      )}
 
       <div className="tab-content">
-        {activeTab === 'lang' && (
+        {activeTab === 'lang' && !isAiPost && (
           !langRecords ? (
             <LoadingSkeleton count={3} showTitle={true} />
           ) : (
@@ -203,7 +218,7 @@ export default function RecordTabs({ langRecords, commentRecords, userComments, 
             />
           )
         )}
-        {activeTab === 'comment' && (
+        {activeTab === 'comment' && !isAiPost && (
           !commentRecords ? (
             <LoadingSkeleton count={3} showTitle={true} />
           ) : (
@@ -233,7 +248,7 @@ export default function RecordTabs({ langRecords, commentRecords, userComments, 
             />
           )
         )}
-        {activeTab === 'users' && (
+        {activeTab === 'users' && !isAiPost && (
           !userComments ? (
             <LoadingSkeleton count={3} showTitle={true} />
           ) : (
@@ -248,7 +263,7 @@ export default function RecordTabs({ langRecords, commentRecords, userComments, 
             />
           )
         )}
-        {activeTab === 'profiles' && (
+        {activeTab === 'profiles' && !isAiPost && (
           !baseRecords ? (
             <LoadingSkeleton count={3} showTitle={true} />
           ) : (

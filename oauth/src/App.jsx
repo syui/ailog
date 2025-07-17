@@ -22,6 +22,19 @@ export default function App() {
   const [showAskAI, setShowAskAI] = useState(false)
   const [showTestUI, setShowTestUI] = useState(false)
   
+  // Check if current page has matching chat records (AI posts always have chat records)
+  const isAiPost = !pageContext.isTopPage && Array.isArray(adminChatRecords) && adminChatRecords.some(chatPair => {
+    const recordUrl = chatPair.question?.value?.post?.url
+    if (!recordUrl) return false
+    
+    try {
+      const recordRkey = new URL(recordUrl).pathname.split('/').pop()?.replace(/\.html$/, '')
+      return recordRkey === pageContext.rkey
+    } catch {
+      return false
+    }
+  })
+  
   // Environment-based feature flags
   const ENABLE_TEST_UI = import.meta.env.VITE_ENABLE_TEST_UI === 'true'
   const ENABLE_DEBUG = import.meta.env.VITE_ENABLE_DEBUG === 'true'
@@ -354,6 +367,7 @@ Answer:`
 
   return (
     <div className="app">
+      {!isAiPost && (
       <header className="oauth-app-header">
         <div className="oauth-header-content">
           {user && (
@@ -394,6 +408,7 @@ Answer:`
           </div>
         </div>
       </header>
+      )}
 
       <div className="main-content">
         <div className="content-area">

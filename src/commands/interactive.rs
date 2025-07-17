@@ -523,7 +523,8 @@ async fn post_to_atproto(
                 "slug": "",
                 "tags": [],
                 "title": title,
-                "language": "ja"
+                "language": "ja",
+                "type": "ai"
             },
             "text": pair.question,
             "type": "question",
@@ -548,7 +549,8 @@ async fn post_to_atproto(
                 "slug": "",
                 "tags": [],
                 "title": title,
-                "language": "ja"
+                "language": "ja",
+                "type": "ai"
             },
             "text": pair.answer,
             "type": "answer",
