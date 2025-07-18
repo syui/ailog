@@ -68,9 +68,9 @@ export default function AuthButton({ user, onLogin, onLogout, loading }) {
         type="button"
         onClick={handleSubmit}
         disabled={isLoading || !handleInput.trim()}
-        className="auth-button"
+        className={`auth-button ${isLoading ? 'loading' : ''}`}
       >
-        {isLoading ? 'Loading...' : <i className="fab fa-bluesky"></i>}
+        <i className={isLoading ? "fas fa-spinner" : "fab fa-bluesky"}></i>
       </button>
     </div>
   )

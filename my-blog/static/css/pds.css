@@ -1,3 +1,5 @@
+@import url('./style.css');
+
 .pds-container {
 }
 
@@ -19,7 +21,7 @@
 .pds-search-form {
     display: flex;
     justify-content: center;
-				margin: 0px 20px;
+				padding: 0px 20px;
 }
 
 .form-group {
@@ -28,19 +30,25 @@
 }
 
 .form-group input {
-    padding: 10px;
+    padding: 8px;
     border: 1px solid #ddd;
-    border-radius: 4px;
+    border-radius: 4px 0 0 4px;
 				font-size: 14px;
-    width: 600px;
+				width: 600px;
+    outline: none;
+    transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+.form-group input:focus {
+    border-color: var(--theme-color, #f40);
 }
 
 .form-group button {
-    padding: 10px 15px;
+    padding: 9px 15px;
     background: #1976d2;
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 0 4px 4px 0;
     cursor: pointer;
     display: flex;
     align-items: center;

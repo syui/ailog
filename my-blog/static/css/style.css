@@ -139,7 +139,7 @@ a.view-markdown:any-link {
     grid-area: header;
     background: #ffffff;
     border-bottom: 1px solid #d1d9e0;
-    padding: 16px 24px;
+    padding: 17px 24px;
     position: sticky;
     top: 0;
     z-index: 100;
@@ -723,7 +723,7 @@ article.article-content {
 .footer-social a {
     color: var(--dark-gray) !important;
     text-decoration: none !important;
-    font-size: 20px;
+    font-size: 25px;
     transition: all 0.2s ease;
 }
 

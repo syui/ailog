@@ -126,11 +126,11 @@ body {
 
 /* Header */
 .oauth-app-header {
-  background: var(--background);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  width: 100%;
+	background: var(--background);
+	position: sticky;
+	top: 0;
+	z-index: 100;
+	width: 100%;
 }
 
 .oauth-header-content {
@@ -139,7 +139,7 @@ body {
   /* align-items: center; */
   max-width: 800px;
   margin: 0 auto;
-  padding: 25px 0;
+  padding: 30px 0;
   width: 100%;
 }
 
@@ -287,7 +287,6 @@ body {
 .auth-section {
   display: flex;
   align-items: center;
-  gap: 8px;
 }
 
 .auth-section.search-bar-layout {
@@ -302,10 +301,10 @@ body {
 .auth-section.search-bar-layout .handle-input {
   flex: 1;
   margin: 0;
-  padding: 10px 15px;
-  font-size: 16px;
+  padding: 9px 15px;
+  font-size: 13px;
   border: 1px solid var(--border);
-  border-radius: 8px 0 0 8px;
+  border-radius: 4px 0 0 4px;
   background: var(--background);
   outline: none;
   transition: border-color 0.2s;
@@ -319,12 +318,13 @@ body {
 }
 
 .auth-section.search-bar-layout .auth-button {
-  border-radius: 0 6px 6px 0;
+  border-radius: 0 4px 4px 0;
   border: 1px solid var(--primary);
   border-left: none;
   margin: 0;
-  padding: 10px 15px;
-  height: 40px;
+  padding: 9px 15px;
+  min-width: 50px;
+  min-height: 30px;
 }
 
 /* Auth Button */
@@ -332,15 +332,26 @@ body {
   background: var(--primary);
   color: white;
   border: none;
-  border-radius: 6px;
-  padding: 8px 16px;
+  border-radius: 4px;
+  padding: 9px 15px;
   font-weight: 700;
   cursor: pointer;
   transition: background 0.2s;
-  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
+  min-width: 50px;
+  min-height: 30px;
+}
+
+/* Loading spinner for auth button */
+.auth-button.loading i {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .auth-button:hover {
