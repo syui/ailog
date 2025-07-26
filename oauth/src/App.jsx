@@ -118,6 +118,14 @@ export default function App() {
     }
   }, [adminData])
 
+  // Expose current user and agent for game page
+  useEffect(() => {
+    if (user && agent) {
+      window.currentUser = user
+      window.currentAgent = agent
+    }
+  }, [user, agent])
+
   // Event listeners for blog communication
   useEffect(() => {
     // Clear OAuth completion flag once app is loaded

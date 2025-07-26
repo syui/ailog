@@ -89,6 +89,9 @@ impl Generator {
         // Generate PDS page
         self.generate_pds_page().await?;
 
+        // Generate Game page
+        self.generate_game_page().await?;
+
         println!("{} {} posts", "Generated".cyan(), posts.len());
 
         Ok(())
@@ -514,6 +517,30 @@ impl Generator {
         fs::write(output_path, rendered_content)?;
         
         println!("{} PDS page", "Generated".cyan());
+        
+        Ok(())
+    }
+
+    async fn generate_game_page(&self) -> Result<()> {
+        let public_dir = self.base_path.join("public");
+        let game_dir = public_dir.join("game");
+        fs::create_dir_all(&game_dir)?;
+        
+        // Generate Game page using the game.html template
+        let config_with_timestamp = self.create_config_with_timestamp()?;
+        let mut context = tera::Context::new();
+        context.insert("config", &config_with_timestamp);
+        context.insert("site", &self.config.site);
+        context.insert("page", &serde_json::json!({
+            "title": "Game",
+            "description": "Play the game with AT Protocol authentication"
+        }));
+        
+        let rendered_content = self.template_engine.render("game.html", &context)?;
+        let output_path = game_dir.join("index.html");
+        fs::write(output_path, rendered_content)?;
+        
+        println!("{} Game page", "Generated".cyan());
         
         Ok(())
     }
