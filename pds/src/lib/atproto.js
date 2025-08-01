@@ -39,7 +39,6 @@ export const resolveIdentity = async (identifier) => {
         did = response.data.did
         resolved = true
       } catch (error) {
-        console.log('Failed to resolve from syu.is:', error)
       }
       
       if (!resolved) {
@@ -64,7 +63,6 @@ export const resolveIdentity = async (identifier) => {
         didDoc = await plcResponse.json()
       }
     } catch (error) {
-      console.log('Failed to resolve from plc.syu.is:', error)
     }
     
     // If plc.syu.is fails, try plc.directory
@@ -75,7 +73,6 @@ export const resolveIdentity = async (identifier) => {
           didDoc = await plcResponse.json()
         }
       } catch (error) {
-        console.log('Failed to resolve from plc.directory:', error)
       }
     }
     
@@ -114,17 +111,13 @@ export const resolveIdentity = async (identifier) => {
 // Get record from AT Protocol
 export const getRecord = async (did, collection, rkey) => {
   try {
-    console.log('getRecord called with:', { did, collection, rkey })
-    
     const identityResult = await resolveIdentity(did)
-    console.log('resolveIdentity result:', identityResult)
     
     if (!identityResult.success) {
       return { success: false, error: identityResult.error }
     }
 
     const pdsUrl = identityResult.pdsUrl
-    console.log('Using PDS URL:', pdsUrl)
     
     const client = createAtpClient(pdsUrl)
 
@@ -134,15 +127,12 @@ export const getRecord = async (did, collection, rkey) => {
       rkey
     })
 
-    console.log('getRecord response:', response)
-
     return {
       success: true,
       data: response.data,
       pdsUrl
     }
   } catch (error) {
-    console.error('getRecord error:', error)
     return {
       success: false,
       error: error.message

@@ -21,21 +21,14 @@ export default function AtUriViewer({ uri, onAtUriClick }) {
       setError(null)
 
       try {
-        console.log('Loading AT URI:', uri)
         const atUri = parseAtUri(uri)
         if (!atUri) {
           throw new Error('Invalid AT URI')
         }
 
-        console.log('Parsed AT URI:', {
-          hostname: atUri.hostname,
-          collection: atUri.collection,
-          rkey: atUri.rkey
-        })
 
         const result = await getRecord(atUri.hostname, atUri.collection, atUri.rkey)
         
-        console.log('getRecord result:', result)
         
         if (!result.success) {
           throw new Error(result.error)
@@ -43,7 +36,6 @@ export default function AtUriViewer({ uri, onAtUriClick }) {
 
         setRecord(result.data)
       } catch (err) {
-        console.error('AtUriViewer error:', err)
         setError(err.message)
       } finally {
         setLoading(false)
