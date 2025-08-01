@@ -2,6 +2,7 @@ import { BrowserOAuthClient } from '@atproto/oauth-client-browser'
 import { Agent } from '@atproto/api'
 import { env } from '../config/env.js'
 import { isSyuIsHandle } from '../utils/pds.js'
+import { logger } from '../utils/logger.js'
 
 export class OAuthService {
   constructor() {
@@ -44,7 +45,7 @@ export class OAuthService {
       // Try to restore session
       return await this.restoreSession()
     } catch (error) {
-      console.error('OAuth initialization failed:', error)
+      logger.error('OAuth initialization failed:', error)
       this.initPromise = null
       throw error
     }
@@ -89,18 +90,18 @@ export class OAuthService {
         displayName = profile.data.displayName || null
         avatar = profile.data.avatar || null
         
-        console.log('Profile fetched from session:', {
+        logger.log('Profile fetched from session:', {
           did,
           handle,
           displayName,
           avatar: avatar ? 'present' : 'none'
         })
       } catch (error) {
-        console.log('Failed to get profile from session:', error)
+        logger.log('Failed to get profile from session:', error)
         // Keep the basic info we have
       }
     } else if (did && did.includes('test-')) {
-      console.log('Skipping profile fetch for test DID:', did)
+      logger.log('Skipping profile fetch for test DID:', did)
     }
 
     this.sessionInfo = { 
@@ -140,7 +141,7 @@ export class OAuthService {
       }
       return null
     } catch (error) {
-      console.error('Auth check failed:', error)
+      logger.error('Auth check failed:', error)
       return null
     }
   }
@@ -168,7 +169,7 @@ export class OAuthService {
       // Reload page
       window.location.reload()
     } catch (error) {
-      console.error('Logout failed:', error)
+      logger.error('Logout failed:', error)
     }
   }
 

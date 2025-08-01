@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { OAuthService } from '../services/oauth.js'
+import { logger } from '../utils/logger.js'
 
 const oauthService = new OAuthService()
 
@@ -21,7 +22,7 @@ export function useAuth() {
         
         // If we're on callback page and authentication succeeded, notify parent
         if (window.location.pathname === '/oauth/callback') {
-          console.log('OAuth callback completed, notifying parent window')
+          logger.log('OAuth callback completed, notifying parent window')
           
           // Get referrer or use stored return URL
           const returnUrl = sessionStorage.getItem('oauth_return_url') || 
@@ -48,7 +49,7 @@ export function useAuth() {
         }
       }
     } catch (error) {
-      console.error('Auth initialization failed:', error)
+      logger.error('Auth initialization failed:', error)
     } finally {
       setLoading(false)
     }

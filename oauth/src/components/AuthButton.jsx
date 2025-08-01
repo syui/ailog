@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { logger } from '../utils/logger.js'
 
 export default function AuthButton({ user, onLogin, onLogout, loading }) {
   const [handleInput, setHandleInput] = useState('')
@@ -12,7 +13,7 @@ export default function AuthButton({ user, onLogin, onLogout, loading }) {
     try {
       await onLogin(handleInput.trim())
     } catch (error) {
-      console.error('Login failed:', error)
+      logger.error('Login failed:', error)
       alert('ログインに失敗しました: ' + error.message)
     } finally {
       setIsLoading(false)

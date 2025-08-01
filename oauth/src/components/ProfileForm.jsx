@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { atproto, collections } from '../api/atproto.js'
 import { env } from '../config/env.js'
+import { logger } from '../utils/logger.js'
 
 const ProfileForm = ({ user, agent, apiConfig, onProfilePosted }) => {
   const [text, setText] = useState('')
@@ -79,7 +80,7 @@ const ProfileForm = ({ user, agent, apiConfig, onProfilePosted }) => {
       }
       
     } catch (err) {
-      console.error('Failed to create profile:', err)
+      logger.error('Failed to create profile:', err)
       setError(err.message || 'プロフィールの作成に失敗しました')
     } finally {
       setPosting(false)
