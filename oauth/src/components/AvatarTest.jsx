@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import Avatar, { AvatarWithCard, AvatarList } from './Avatar.jsx'
 import { getAvatar, batchFetchAvatars, prefetchAvatar } from '../utils/avatar.js'
+import { logger } from '../utils/logger.js'
 
 /**
  * Test component to demonstrate avatar functionality
@@ -63,7 +64,7 @@ export default function AvatarTest() {
       
       setTestResults(results)
     } catch (error) {
-      console.error('Test failed:', error)
+      logger.error('Test failed:', error)
     } finally {
       setLoading(false)
     }
@@ -78,7 +79,7 @@ export default function AvatarTest() {
         batchResults: Object.fromEntries(avatarMap)
       }))
     } catch (error) {
-      console.error('Batch test failed:', error)
+      logger.error('Batch test failed:', error)
     } finally {
       setLoading(false)
     }
@@ -94,7 +95,7 @@ export default function AvatarTest() {
         prefetchResult: cachedAvatar
       }))
     } catch (error) {
-      console.error('Prefetch test failed:', error)
+      logger.error('Prefetch test failed:', error)
     } finally {
       setLoading(false)
     }

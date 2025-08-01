@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { atproto } from '../api/atproto.js'
 import { getPdsFromHandle, getApiConfig } from '../utils/pds.js'
+import { logger } from '../utils/logger.js'
 
 export default function UserLookup() {
   const [handleInput, setHandleInput] = useState('')
@@ -26,7 +27,7 @@ export default function UserLookup() {
         config: apiConfig
       })
     } catch (error) {
-      console.error('User lookup failed:', error)
+      logger.error('User lookup failed:', error)
       setUserInfo({ error: error.message })
     } finally {
       setLoading(false)
