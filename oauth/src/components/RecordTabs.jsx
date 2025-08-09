@@ -13,8 +13,6 @@ export default function RecordTabs({ langRecords, commentRecords, userComments, 
   const [pageSpecificChatRecords, setPageSpecificChatRecords] = useState([])
   const [pageSpecificLoading, setPageSpecificLoading] = useState(false)
   
-  
-  
   // Check if current page has matching chat records (AI posts always have chat records)
   const isAiPost = !pageContext.isTopPage && Array.isArray(chatRecords) && chatRecords.some(chatPair => {
     const recordUrl = chatPair.question?.value?.post?.url
@@ -30,10 +28,9 @@ export default function RecordTabs({ langRecords, commentRecords, userComments, 
   
   const [activeTab, setActiveTab] = useState(isAiPost ? 'collection' : 'profiles')
 
-  // Fixed useEffect with proper dependency array
+  // Fetch page-specific chat records for individual article pages
   useEffect(() => {
     if (!pageContext.isTopPage && pageContext.rkey) {
-      
       const fetchPageSpecificChats = async () => {
         setPageSpecificLoading(true)
         try {
@@ -59,14 +56,11 @@ export default function RecordTabs({ langRecords, commentRecords, userComments, 
     } else {
       setPageSpecificChatRecords([])
     }
-  }, [pageContext.isTopPage, pageContext.rkey]) // Add proper dependencies
-  
+  }, [pageContext.isTopPage, pageContext.rkey])
 
   // Filter records based on page context
   const filterRecords = (records, isProfile = false) => {
-    // Ensure records is an array
     const recordsArray = Array.isArray(records) ? records : []
-    
     
     if (pageContext.isTopPage) {
       // Top page: show latest 3 records
@@ -95,11 +89,9 @@ export default function RecordTabs({ langRecords, commentRecords, userComments, 
     }
   }
 
-  // Special filter for chat records (which are already processed into pairs)
+  // Filter chat records (which are already processed into pairs)
   const filterChatRecords = (chatPairs) => {
-    // Ensure chatPairs is an array
     const chatArray = Array.isArray(chatPairs) ? chatPairs : []
-    
     
     if (pageContext.isTopPage) {
       // Top page: show latest 3 pairs
@@ -128,14 +120,12 @@ export default function RecordTabs({ langRecords, commentRecords, userComments, 
     }
   }
 
+  // Apply filters to all record types
   const filteredLangRecords = filterRecords(Array.isArray(langRecords) ? langRecords : [])
-  
   const filteredCommentRecords = filterRecords(Array.isArray(commentRecords) ? commentRecords : [])
-  
   const filteredUserComments = filterRecords(Array.isArray(userComments) ? userComments : [])
   const filteredChatRecords = filterChatRecords(Array.isArray(chatRecords) ? chatRecords : [])
   const filteredBaseRecords = filterRecords(Array.isArray(baseRecords) ? baseRecords : [])
-  
   
   // Filter profile records from baseRecords
   const profileRecords = (Array.isArray(baseRecords) ? baseRecords : []).filter(record => record.value?.type === 'profile')

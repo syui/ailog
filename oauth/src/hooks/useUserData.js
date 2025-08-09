@@ -67,8 +67,8 @@ export function useUserData(adminData) {
           }
         })
         
-        // Sort by creation time (newest first)
-        chatPairs.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        // Sort by creation time (oldest first) - consistent with other components
+        chatPairs.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
         
         logger.log('useUserData: processed chatPairs:', chatPairs.length, chatPairs)
         setChatRecords(chatPairs)

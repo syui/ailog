@@ -105,21 +105,12 @@ export function useAdminData() {
         return dateA - dateB
       })
 
-      logger.log('useAdminData: raw chat records:', chat.length)
-      logger.log('useAdminData: processed chat pairs:', chatPairs.length, chatPairs)
-      logger.log('useAdminData: setting state data:')
-      logger.log('  - records:', records.length)
-      logger.log('  - langRecords:', lang.length)
-      logger.log('  - commentRecords:', comment.length, comment)
-      logger.log('  - chatRecords:', chatPairs.length)
 
       setAdminData({ did, profile, records, apiConfig })
       setLangRecords(lang)
       setCommentRecords(comment)
       setChatRecords(chatPairs)
     } catch (err) {
-      // Log the actual error for debugging
-      logger.error('useAdminData: Error in loadAdminData:', err)
       setError('silent_failure')
     } finally {
       setLoading(false)
