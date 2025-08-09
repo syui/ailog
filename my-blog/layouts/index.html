@@ -12,7 +12,7 @@
                     {% if post.language %}
                     <span class="post-lang">{{ post.language }}</span>
                     {% endif %}
-                    {% if post.extra and post.extra.type == "ai" %}
+                    {% if post.type == "ai" %}
                     <span class="post-ai">
                         <span class="ai-icon icon-ai"></span>
                         ai

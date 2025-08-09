@@ -1,0 +1,48 @@
+<div class="pds-container">
+    <div class="pds-header">
+    </div>
+    
+
+    
+    <!-- Current User DID -->
+    <div id="userDidSection" class="user-did-section" style="display: none;">
+        <div class="pds-display">
+            <strong>PDS:</strong> <span id="userPdsText"></span>
+        </div>
+        <div class="handle-display">
+            <strong>Handle:</strong> <span id="userHandleText"></span>
+        </div>
+        <div class="did-display">
+            <span id="userDidText"></span>
+        </div>
+    </div>
+    
+    <!-- Collection List -->
+    <div id="collectionsSection" class="collections-section" style="display: none;">
+        <div class="collections-header">
+            <button id="collectionsToggle" class="collections-toggle" onclick="toggleCollections()">[+] Collections</button>
+        </div>
+        <div id="collectionsList" class="collections-list" style="display: none;">
+            <!-- Collections will be populated here -->
+        </div>
+    </div>
+    
+    <!-- AT URI Records -->
+    <div id="recordsSection" class="records-section" style="display: none;">
+        <div id="recordsList" class="records-list">
+            <!-- Records will be populated here -->
+        </div>
+    </div>
+    
+    
+</div>
+
+<!-- AT URI Modal -->
+<div id="atUriModal" class="at-uri-modal-overlay" style="display: none;" onclick="closeAtUriModal(event)">
+    <div class="at-uri-modal-content">
+        <button class="at-uri-modal-close" onclick="closeAtUriModal()">&times;</button>
+        <div id="atUriContent"></div>
+    </div>
+</div>
+
+

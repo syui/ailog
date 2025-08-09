@@ -302,7 +302,8 @@ impl Generator {
                 "excerpt": excerpt,
                 "markdown_url": markdown_url,
                 "translation_url": translation_url,
-                "language": self.config.site.language
+                "language": self.config.site.language,
+                "extra": post.extra
             })
         }).collect();
         

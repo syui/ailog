@@ -1,0 +1,71 @@
+<!-- OAuth authentication widget for ailog -->
+<div id="oauth-widget">
+  <div id="status" class="status">
+    Login with your Bluesky account
+  </div>
+  
+  <!-- Login form -->
+  <div id="login-form">
+    <input type="text" id="handle-input" placeholder="Enter your handle (e.g., user.bsky.social)" style="width: 300px; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px;">
+    <br>
+    <button id="login-btn">🦋 Login with Bluesky</button>
+  </div>
+  
+  <!-- Authenticated state -->
+  <div id="authenticated-state" style="display: none;">
+    <div id="user-info"></div>
+    <button id="logout-btn">Logout</button>
+    <button id="test-profile-btn">Get Profile</button>
+  </div>
+  
+  <div id="console-log" class="log"></div>
+</div>
+
+<script src="/oauth-widget-simple.js"></script>
+
+<style>
+.status {
+  margin: 20px 0;
+  padding: 15px;
+  border-radius: 8px;
+  background: #f5f5f5;
+}
+.user-info {
+  background: #e8f5e8;
+  border: 1px solid #4caf50;
+}
+.error {
+  background: #ffeaea;
+  border: 1px solid #f44336;
+  color: #d32f2f;
+}
+#oauth-widget button {
+  background: #1185fe;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  margin: 10px;
+}
+#oauth-widget button:hover {
+  background: #0d6efd;
+}
+#oauth-widget button:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+}
+.log {
+  text-align: left;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  padding: 15px;
+  margin: 20px 0;
+  max-height: 300px;
+  overflow-y: auto;
+  font-family: monospace;
+  font-size: 14px;
+}
+</style>

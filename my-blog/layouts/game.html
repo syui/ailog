@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}Game - {{ config.title }}{% endblock %}
+
+{% block content %}
+<div id="gameContainer" class="game-container">
+    <div id="gameAuth" class="game-auth-section">
+        <h1>Login to Play</h1>
+        <p>Please authenticate with your AT Protocol account to access the game.</p>
+        <div id="authRoot"></div>
+    </div>
+    <div id="gameFrame" class="game-frame-container" style="display: none;">
+        <iframe 
+            id="pixelStreamingFrame"
+            src="https://verse.syui.ai/simple-noui.html"
+            frameborder="0"
+            allowfullscreen
+            allow="microphone; camera; fullscreen; autoplay"
+            class="pixel-streaming-iframe"
+        ></iframe>
+    </div>
+</div>
+
+<style>
+/* Game specific styles */
+.game-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: #000;
+    overflow: hidden;
+}
+
+.game-auth-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    color: white;
+}
+
+.game-auth-section h1 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    color: #fff;
+}
+
+.game-auth-section p {
+    font-size: 1.2em;
+    margin-bottom: 30px;
+    color: #ccc;
+}
+
+.game-frame-container {
+    width: 100%;
+    height: 100vh;
+    position: relative;
+}
+
+.pixel-streaming-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* Override auth button for game page */
+.game-auth-section .auth-section {
+    background: transparent;
+    box-shadow: none;
+}
+
+.game-auth-section .auth-button {
+    font-size: 1.2em;
+    padding: 12px 30px;
+}
+
+/* Hide header and footer on game page */
+body:has(.game-container) header,
+body:has(.game-container) footer,
+body:has(.game-container) nav {
+    display: none !important;
+}
+
+/* Remove any body padding/margin for full screen game */
+body:has(.game-container) {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+</style>
+
+<script>
+// Wait for OAuth component to be loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Check if user is already authenticated
+    const checkAuthStatus = () => {
+        // Check if OAuth components are available and user is authenticated
+        if (window.currentUser && window.currentAgent) {
+            showGame();
+            return true;
+        }
+        return false;
+    };
+
+    // Show game iframe
+    const showGame = () => {
+        document.getElementById('gameAuth').style.display = 'none';
+        document.getElementById('gameFrame').style.display = 'block';
+    };
+
+    // Listen for OAuth success
+    window.addEventListener('oauth-success', function(event) {
+        console.log('OAuth success:', event.detail);
+        showGame();
+    });
+
+    // Check auth status on load
+    if (!checkAuthStatus()) {
+        // Check periodically if OAuth components are loaded
+        const authCheckInterval = setInterval(() => {
+            if (checkAuthStatus()) {
+                clearInterval(authCheckInterval);
+            }
+        }, 500);
+    }
+});
+</script>
+
+<!-- Include OAuth assets -->
+{% include "oauth-assets.html" %}
+{% endblock %}
