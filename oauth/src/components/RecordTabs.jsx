@@ -26,7 +26,9 @@ export default function RecordTabs({ langRecords, commentRecords, userComments, 
     }
   })
   
-  const [activeTab, setActiveTab] = useState(isAiPost ? 'collection' : 'profiles')
+  const [activeTab, setActiveTab] = useState(
+    isAiPost ? 'collection' : (pageContext.isTopPage ? 'profiles' : 'users')
+  )
 
   // Fetch page-specific chat records for individual article pages
   useEffect(() => {
