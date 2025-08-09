@@ -125,18 +125,6 @@ export default function RecordList({ title, records, apiConfig, showTitle = true
             </div>
           </div>
           
-          <div className="record-meta">
-            {record.value.post?.url && (
-              <a 
-                href={record.value.post.url} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="record-url"
-              >
-                {record.value.post.url}
-              </a>
-            )}
-          </div>
           
           {expandedRecords.has(i) && (
             <div className="json-display">
