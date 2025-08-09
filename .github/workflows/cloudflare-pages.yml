@@ -56,9 +56,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ./bin
-          key: ailog-bin-${{ runner.os }}
+          key: ailog-bin-${{ runner.os }}-v${{ hashFiles('Cargo.toml') }}
           restore-keys: |
-            ailog-bin-${{ runner.os }}
+            ailog-bin-${{ runner.os }}-v
             
       - name: Setup ailog binary
         run: |
