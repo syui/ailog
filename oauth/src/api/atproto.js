@@ -83,10 +83,13 @@ export const atproto = {
     return await request(`${apiEndpoint}/xrpc/${ENDPOINTS.getProfile}?actor=${actor}`)
   },
 
-  async getRecords(pds, repo, collection, limit = 10, cursor = null) {
+  async getRecords(pds, repo, collection, limit = 10, cursor = null, reverse = false) {
     let url = `${pds}/xrpc/${ENDPOINTS.listRecords}?repo=${repo}&collection=${collection}&limit=${limit}`
     if (cursor) {
       url += `&cursor=${cursor}`
+    }
+    if (reverse) {
+      url += `&reverse=true`
     }
     const res = await request(url)
     return {
@@ -151,7 +154,7 @@ export const collections = {
     const cached = dataCache.get(cacheKey)
     if (cached) return cached
     
-    const data = await atproto.getRecords(pds, repo, `${collection}.chat.comment`, limit)
+    const data = await atproto.getRecords(pds, repo, `${collection}.chat.comment`, limit, null, true) // reverse=true for chronological order
     // Extract records array for backward compatibility
     const records = data.records || data
     dataCache.set(cacheKey, records)
@@ -161,7 +164,7 @@ export const collections = {
   async getChat(pds, repo, collection, limit = 10, cursor = null) {
     // Don't use cache for pagination requests
     if (cursor) {
-      const result = await atproto.getRecords(pds, repo, `${collection}.chat`, limit, cursor)
+      const result = await atproto.getRecords(pds, repo, `${collection}.chat`, limit, cursor, true) // reverse=true for chronological order
       return result
     }
     
@@ -172,7 +175,7 @@ export const collections = {
       return Array.isArray(cached) ? { records: cached, cursor: null } : cached
     }
     
-    const data = await atproto.getRecords(pds, repo, `${collection}.chat`, limit)
+    const data = await atproto.getRecords(pds, repo, `${collection}.chat`, limit, null, true) // reverse=true for chronological order
     // Cache only the records array for backward compatibility
     dataCache.set(cacheKey, data.records || data)
     return data

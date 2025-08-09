@@ -45,7 +45,10 @@ pub struct ProfileFetcher {
 impl ProfileFetcher {
     pub fn new() -> Self {
         Self {
-            client: reqwest::Client::new(),
+            client: reqwest::Client::builder()
+                .timeout(std::time::Duration::from_secs(30))
+                .build()
+                .unwrap_or_else(|_| reqwest::Client::new()),
         }
     }
 
@@ -84,11 +87,15 @@ impl ProfileFetcher {
         let response = self.client
             .get(&url)
             .query(&[("repo", handle)])
+            .timeout(std::time::Duration::from_secs(10))
             .send()
-            .await?;
+            .await
+            .map_err(|e| anyhow::anyhow!("Request failed: {}", e))?;
         
         if !response.status().is_success() {
-            return Err(anyhow::anyhow!("Failed to describe repo: {}", response.status()));
+            let status = response.status();
+            let error_text = response.text().await.unwrap_or_default();
+            return Err(anyhow::anyhow!("Failed to describe repo: {} - {}", status, error_text));
         }
         
         let repo_desc: RepoDescription = response.json().await?;
@@ -117,11 +124,15 @@ impl ProfileFetcher {
         let response = self.client
             .get(&url)
             .query(&[("actor", did)])
+            .timeout(std::time::Duration::from_secs(10))
             .send()
-            .await?;
+            .await
+            .map_err(|e| anyhow::anyhow!("Request failed: {}", e))?;
         
         if !response.status().is_success() {
-            return Err(anyhow::anyhow!("Failed to get profile: {}", response.status()));
+            let status = response.status();
+            let error_text = response.text().await.unwrap_or_default();
+            return Err(anyhow::anyhow!("Failed to get profile: {} - {}", status, error_text));
         }
         
         let profile_data: Value = response.json().await?;
