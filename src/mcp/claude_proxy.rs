@@ -70,10 +70,10 @@ async fn communicate_with_claude_mcp(
     // Claude Code MCPプロセスを起動
     // Use the full path to avoid shell function and don't use --continue
     let claude_executable = if claude_code_path == "claude" {
-        // Use $HOME environment variable instead of hardcoded path
-        match std::env::var("HOME") {
-            Ok(home) => format!("{}/.claude/local/claude", home),
-            Err(_) => "/Users/syui/.claude/local/claude".to_string(), // fallback
+        // Use dirs crate for cross-platform home directory detection
+        match dirs::home_dir() {
+            Some(home) => home.join(".claude/local/claude").to_string_lossy().to_string(),
+            None => "/Users/syui/.claude/local/claude".to_string(), // fallback
         }
     } else {
         claude_code_path.to_string()

@@ -20,9 +20,49 @@ function _env() {
 function _deploy_ailog() {
 }
 
+function _sync_versions() {
+	# Get version from Cargo.toml
+	local version=$(grep '^version = ' "$d/Cargo.toml" | cut -d'"' -f2)
+	if [[ -z "$version" ]]; then
+		echo "⚠️  Could not find version in Cargo.toml"
+		return 1
+	fi
+	
+	echo "ℹ️  Syncing versions to $version"
+	
+	# Update oauth/package.json
+	if [[ -f "$d/oauth/package.json" ]]; then
+		if command -v jq >/dev/null 2>&1; then
+			local temp_file=$(mktemp)
+			jq --arg version "$version" '.version = $version' "$d/oauth/package.json" > "$temp_file"
+			mv "$temp_file" "$d/oauth/package.json"
+			echo "✅ Updated oauth/package.json to $version"
+		else
+			sed -i.bak "s/\"version\":[[:space:]]*\"[^\"]*\"/\"version\": \"$version\"/" "$d/oauth/package.json"
+			rm -f "$d/oauth/package.json.bak"
+			echo "✅ Updated oauth/package.json to $version (sed)"
+		fi
+	fi
+	
+	# Update pds/package.json
+	if [[ -f "$d/pds/package.json" ]]; then
+		if command -v jq >/dev/null 2>&1; then
+			local temp_file=$(mktemp)
+			jq --arg version "$version" '.version = $version' "$d/pds/package.json" > "$temp_file"
+			mv "$temp_file" "$d/pds/package.json"
+			echo "✅ Updated pds/package.json to $version"
+		else
+			sed -i.bak "s/\"version\":[[:space:]]*\"[^\"]*\"/\"version\": \"$version\"/" "$d/pds/package.json"
+			rm -f "$d/pds/package.json.bak"
+			echo "✅ Updated pds/package.json to $version (sed)"
+		fi
+	fi
+}
+
 function _server() {
 	lsof -ti:$port | xargs kill -9 2>/dev/null || true
 	cd $d/my-blog
+	_sync_versions
 	cargo build --release
 	cp -rf $ailog $CARGO_HOME/bin/
 	$ailog build
