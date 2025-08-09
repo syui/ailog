@@ -1,6 +1,6 @@
 {
   "name": "pds-browser",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "AT Protocol browser for ai.log",
   "main": "index.js",
   "type": "module",
