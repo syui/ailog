@@ -1875,7 +1875,7 @@ async fn check_and_process_new_posts(
 
 async fn get_existing_records(config: &AuthConfig, collection: &str) -> Result<Vec<serde_json::Value>> {
     let client = reqwest::Client::new();
-    let url = format!("{}/xrpc/com.atproto.repo.listRecords?repo={}&collection={}&limit=100&reverse=true",
+    let url = format!("{}/xrpc/com.atproto.repo.listRecords?repo={}&collection={}&limit=100",
                      config.admin.pds,
                      urlencoding::encode(&config.admin.did),
                      urlencoding::encode(collection));

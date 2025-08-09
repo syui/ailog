@@ -48,7 +48,7 @@ export default function App() {
       const records = await agent.api.com.atproto.repo.listRecords({
         repo: user.did,
         collection: 'ai.syui.log.chat',
-        limit: 50
+        limit: 100
       })
       
       // Group questions and answers together
@@ -83,8 +83,8 @@ export default function App() {
         }
       })
       
-      // Sort by creation time (newest first)
-      chatPairs.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      // Sort by creation time (oldest first) - for chronological conversation flow  
+      chatPairs.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
       
       setUserChatRecords(chatPairs)
     } catch (error) {

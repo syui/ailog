@@ -24,6 +24,24 @@ function getCorrectWebUrl(avatarUrl) {
 
 export default function ChatRecordList({ chatPairs, chatHasMore, onLoadMoreChat, apiConfig, user = null, agent = null, onRecordDeleted = null }) {
   const [expandedRecords, setExpandedRecords] = useState(new Set())
+  
+  // Sort chat pairs by creation time (oldest first) for chronological conversation flow
+  const sortedChatPairs = Array.isArray(chatPairs) 
+    ? [...chatPairs].sort((a, b) => {
+        const dateA = new Date(a.createdAt)
+        const dateB = new Date(b.createdAt)
+        
+        // If creation times are the same, sort by URI (which contains sequence info)
+        if (dateA.getTime() === dateB.getTime()) {
+          const uriA = a.question?.uri || ''
+          const uriB = b.question?.uri || ''
+          return uriA.localeCompare(uriB)
+        }
+        
+        return dateA - dateB
+      })
+    : []
+  
 
   const toggleJsonView = (key) => {
     const newExpanded = new Set(expandedRecords)
@@ -35,7 +53,7 @@ export default function ChatRecordList({ chatPairs, chatHasMore, onLoadMoreChat,
     setExpandedRecords(newExpanded)
   }
 
-  if (!chatPairs || chatPairs.length === 0) {
+  if (!sortedChatPairs || sortedChatPairs.length === 0) {
     return (
       <section>
         <p>チャット履歴がありません</p>
@@ -84,7 +102,7 @@ export default function ChatRecordList({ chatPairs, chatHasMore, onLoadMoreChat,
 
   return (
     <section>
-      {chatPairs.map((chatPair, i) => (
+      {sortedChatPairs.map((chatPair, i) => (
         <div key={chatPair.rkey} className="chat-conversation">
           {/* Question */}
           {chatPair.question && (

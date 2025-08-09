@@ -48,7 +48,7 @@ export function useAdminData() {
           logger.error('getComment error:', err)
           throw err
         }),
-        collections.getChat(apiConfig.pds, did, env.collection, 10).catch(err => {
+        collections.getChat(apiConfig.pds, did, env.collection, 100).catch(err => {
           logger.error('getChat error:', err)
           throw err
         })
@@ -98,8 +98,12 @@ export function useAdminData() {
         }
       })
       
-      // Sort by creation time (newest first)
-      chatPairs.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      // Sort by creation time (oldest first) - for chronological conversation flow
+      chatPairs.sort((a, b) => {
+        const dateA = new Date(a.createdAt)
+        const dateB = new Date(b.createdAt)
+        return dateA - dateB
+      })
 
       logger.log('useAdminData: raw chat records:', chat.length)
       logger.log('useAdminData: processed chat pairs:', chatPairs.length, chatPairs)
@@ -128,7 +132,7 @@ export function useAdminData() {
     try {
       const apiConfig = getApiConfig(`https://${env.pds}`)
       const did = await atproto.getDid(env.pds, env.admin)
-      const chatResult = await collections.getChat(apiConfig.pds, did, env.collection, 10, chatCursor)
+      const chatResult = await collections.getChat(apiConfig.pds, did, env.collection, 100, chatCursor)
       
       const newChatRecords = chatResult.records || chatResult
       const newCursor = chatResult.cursor || null
@@ -168,8 +172,8 @@ export function useAdminData() {
         }
       })
       
-      // Sort new pairs by creation time (newest first)
-      newChatPairs.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      // Sort new pairs by creation time (oldest first) - for chronological conversation flow
+      newChatPairs.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
       
       // Append to existing chat records
       setChatRecords(prev => [...prev, ...newChatPairs])

@@ -4,8 +4,17 @@ import ChatRecordList from './ChatRecordList.jsx'
 import ProfileRecordList from './ProfileRecordList.jsx'
 import LoadingSkeleton from './LoadingSkeleton.jsx'
 import { logger } from '../utils/logger.js'
+import { collections } from '../api/atproto.js'
+import { getApiConfig } from '../utils/pds.js'
+import { env } from '../config/env.js'
 
 export default function RecordTabs({ langRecords, commentRecords, userComments, chatRecords, chatHasMore, onLoadMoreChat, userChatRecords, userChatLoading, baseRecords, apiConfig, pageContext, user = null, agent = null, onRecordDeleted = null }) {
+  // State for page-specific chat records
+  const [pageSpecificChatRecords, setPageSpecificChatRecords] = useState([])
+  const [pageSpecificLoading, setPageSpecificLoading] = useState(false)
+  
+  
+  
   // Check if current page has matching chat records (AI posts always have chat records)
   const isAiPost = !pageContext.isTopPage && Array.isArray(chatRecords) && chatRecords.some(chatPair => {
     const recordUrl = chatPair.question?.value?.post?.url
@@ -20,59 +29,68 @@ export default function RecordTabs({ langRecords, commentRecords, userComments, 
   })
   
   const [activeTab, setActiveTab] = useState(isAiPost ? 'collection' : 'profiles')
-  
-  // Monitor activeTab changes
+
+  // Fixed useEffect with proper dependency array
   useEffect(() => {
-    logger.log('RecordTabs: activeTab changed to', activeTab)
-  }, [activeTab])
+    if (!pageContext.isTopPage && pageContext.rkey) {
+      
+      const fetchPageSpecificChats = async () => {
+        setPageSpecificLoading(true)
+        try {
+          const apiConfig = getApiConfig(`https://${env.pds}`)
+          const { atproto } = await import('../api/atproto.js')
+          const did = await atproto.getDid(env.pds, env.admin)
+          
+          const records = await collections.getChatForPost(
+            apiConfig.pds, 
+            did, 
+            env.collection, 
+            pageContext.rkey
+          )
+          setPageSpecificChatRecords(records)
+        } catch (error) {
+          setPageSpecificChatRecords([])
+        } finally {
+          setPageSpecificLoading(false)
+        }
+      }
+      
+      fetchPageSpecificChats()
+    } else {
+      setPageSpecificChatRecords([])
+    }
+  }, [pageContext.isTopPage, pageContext.rkey]) // Add proper dependencies
   
-  logger.log('RecordTabs: activeTab is', activeTab)
-  logger.log('RecordTabs: commentRecords prop:', commentRecords?.length || 0, commentRecords)
 
   // Filter records based on page context
   const filterRecords = (records, isProfile = false) => {
     // Ensure records is an array
     const recordsArray = Array.isArray(records) ? records : []
     
-    logger.log('filterRecords called with:', {
-      recordsLength: recordsArray.length,
-      isProfile,
-      isTopPage: pageContext.isTopPage,
-      pageRkey: pageContext.rkey,
-      records: recordsArray
-    })
     
     if (pageContext.isTopPage) {
       // Top page: show latest 3 records
-      const result = recordsArray.slice(0, 3)
-      logger.log('filterRecords: Top page result:', result.length, result)
-      return result
+      return recordsArray.slice(0, 3)
     } else {
       // Individual page: show records matching the URL
       const filtered = recordsArray.filter(record => {
         // Profile records should always be shown
         if (isProfile || record.value?.type === 'profile') {
-          logger.log('filterRecords: Profile record included:', record.value?.type)
           return true
         }
         
         const recordUrl = record.value?.post?.url
         if (!recordUrl) {
-          logger.log('filterRecords: No recordUrl found for record:', record.value?.type)
           return false
         }
         
         try {
           const recordRkey = new URL(recordUrl).pathname.split('/').pop()?.replace(/\.html$/, '')
-          const matches = recordRkey === pageContext.rkey
-          logger.log('filterRecords: URL matching:', { recordRkey, pageRkey: pageContext.rkey, matches })
-          return matches
+          return recordRkey === pageContext.rkey
         } catch {
-          logger.log('filterRecords: URL parsing failed for:', recordUrl)
           return false
         }
       })
-      logger.log('filterRecords: Individual page result:', filtered.length, filtered)
       return filtered
     }
   }
@@ -82,25 +100,15 @@ export default function RecordTabs({ langRecords, commentRecords, userComments, 
     // Ensure chatPairs is an array
     const chatArray = Array.isArray(chatPairs) ? chatPairs : []
     
-    logger.log('filterChatRecords called:', { 
-      isTopPage: pageContext.isTopPage, 
-      rkey: pageContext.rkey, 
-      chatPairsLength: chatArray.length,
-      chatPairsType: typeof chatPairs,
-      isArray: Array.isArray(chatPairs)
-    })
     
     if (pageContext.isTopPage) {
       // Top page: show latest 3 pairs
-      const result = chatArray.slice(0, 3)
-      logger.log('Top page: returning', result.length, 'pairs')
-      return result
+      return chatArray.slice(0, 3)
     } else {
       // Individual page: show pairs matching the URL (compare path only, ignore domain)
       const filtered = chatArray.filter(chatPair => {
         const recordUrl = chatPair.question?.value?.post?.url
         if (!recordUrl) {
-          logger.log('No recordUrl for chatPair:', chatPair)
           return false
         }
         
@@ -109,43 +117,25 @@ export default function RecordTabs({ langRecords, commentRecords, userComments, 
           const recordPath = new URL(recordUrl).pathname
           const recordRkey = recordPath.split('/').pop()?.replace(/\.html$/, '')
           
-          logger.log('Comparing:', { recordRkey, pageRkey: pageContext.rkey, recordUrl })
-          
           // Compare with current page rkey
-          const matches = recordRkey === pageContext.rkey
-          if (matches) {
-            logger.log('Found matching chat pair!')
-          }
-          return matches
+          return recordRkey === pageContext.rkey
         } catch (error) {
-          logger.log('Error processing recordUrl:', recordUrl, error)
           return false
         }
       })
       
-      logger.log('Individual page: returning', filtered.length, 'filtered pairs')
       return filtered
     }
   }
 
   const filteredLangRecords = filterRecords(Array.isArray(langRecords) ? langRecords : [])
   
-  logger.log('RecordTabs: About to filter commentRecords:', commentRecords?.length || 0, commentRecords)
   const filteredCommentRecords = filterRecords(Array.isArray(commentRecords) ? commentRecords : [])
-  logger.log('RecordTabs: After filtering commentRecords:', filteredCommentRecords.length, filteredCommentRecords)
   
   const filteredUserComments = filterRecords(Array.isArray(userComments) ? userComments : [])
   const filteredChatRecords = filterChatRecords(Array.isArray(chatRecords) ? chatRecords : [])
   const filteredBaseRecords = filterRecords(Array.isArray(baseRecords) ? baseRecords : [])
   
-  logger.log('RecordTabs: filtered results:')
-  logger.log('  - filteredCommentRecords:', filteredCommentRecords.length, filteredCommentRecords)
-  logger.log('  - filteredLangRecords:', filteredLangRecords.length)
-  logger.log('  - filteredUserComments:', filteredUserComments.length)
-  logger.log('  - pageContext:', pageContext)
-  logger.log('RecordTabs: TAB RENDER VALUES:')
-  logger.log('  - filteredCommentRecords.length for tab:', filteredCommentRecords.length)
-  logger.log('  - commentRecords input:', commentRecords?.length || 0)
   
   // Filter profile records from baseRecords
   const profileRecords = (Array.isArray(baseRecords) ? baseRecords : []).filter(record => record.value?.type === 'profile')
@@ -162,10 +152,7 @@ export default function RecordTabs({ langRecords, commentRecords, userComments, 
       <div className="tab-header">
         <button 
           className={`tab-btn ${activeTab === 'profiles' ? 'active' : ''}`}
-          onClick={() => {
-            logger.log('RecordTabs: Profiles tab clicked')
-            setActiveTab('profiles')
-          }}
+          onClick={() => setActiveTab('profiles')}
         >
           about ({filteredProfileRecords.length})
         </button>
@@ -177,15 +164,9 @@ export default function RecordTabs({ langRecords, commentRecords, userComments, 
         </button>
         <button 
           className={`tab-btn ${activeTab === 'comment' ? 'active' : ''}`}
-          onClick={() => {
-            logger.log('RecordTabs: feedback tab clicked, setting activeTab to comment')
-            setActiveTab('comment')
-          }}
+          onClick={() => setActiveTab('comment')}
         >
-          feedback ({(() => {
-            logger.log('RecordTabs: feedback tab render - filteredCommentRecords.length:', filteredCommentRecords.length)
-            return filteredCommentRecords.length
-          })()})
+          feedback ({filteredCommentRecords.length})
         </button>
         <button 
           className={`tab-btn ${activeTab === 'users' ? 'active' : ''}`}
@@ -234,19 +215,33 @@ export default function RecordTabs({ langRecords, commentRecords, userComments, 
           )
         )}
         {activeTab === 'collection' && (
-          userChatLoading ? (
+          (userChatLoading || pageSpecificLoading) ? (
             <LoadingSkeleton count={2} showTitle={true} />
-          ) : (
-            <ChatRecordList 
-              chatPairs={filteredChatRecords.length > 0 ? filteredChatRecords : (Array.isArray(userChatRecords) ? userChatRecords : [])} 
-              chatHasMore={filteredChatRecords.length > 0 ? chatHasMore : false}
-              onLoadMoreChat={filteredChatRecords.length > 0 ? onLoadMoreChat : null}
-              apiConfig={apiConfig} 
-              user={user}
-              agent={agent}
-              onRecordDeleted={onRecordDeleted}
-            />
-          )
+          ) : (() => {
+            const chatPairsToUse = !pageContext.isTopPage && pageSpecificChatRecords.length > 0
+              ? pageSpecificChatRecords
+              : (filteredChatRecords.length > 0 ? filteredChatRecords : (Array.isArray(userChatRecords) ? userChatRecords : []))
+            
+            return (
+              <ChatRecordList 
+                chatPairs={chatPairsToUse} 
+                chatHasMore={
+                  !pageContext.isTopPage && pageSpecificChatRecords.length > 0
+                    ? false  // Page-specific records don't use pagination
+                    : (filteredChatRecords.length > 0 ? chatHasMore : false)
+                }
+                onLoadMoreChat={
+                  !pageContext.isTopPage && pageSpecificChatRecords.length > 0
+                    ? null   // Page-specific records don't use pagination
+                    : (filteredChatRecords.length > 0 ? onLoadMoreChat : null)
+                }
+                apiConfig={apiConfig} 
+                user={user}
+                agent={agent}
+                onRecordDeleted={onRecordDeleted}
+              />
+            )
+          })()
         )}
         {activeTab === 'users' && !isAiPost && (
           !userComments ? (
