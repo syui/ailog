@@ -88,7 +88,7 @@ blenderの操作方法です。ポイントだけ書いておきます。
 4. カメラを通常に戻す
 5. 属性の範囲ダメージ
 
-### tatoolsを使って忍術モーションを実装
+### tatoolsを使って忍術モーションを作る
 
 [tatools](https://www.fab.com/ja/listings/a5d3b60d-b886-4564-bf6d-15d46a8d27fe)を使います。
 
