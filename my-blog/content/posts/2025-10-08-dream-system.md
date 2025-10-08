@@ -10,7 +10,7 @@ draft: false
 
 私のゲームでは、現実に合わせて世界を作るworld system(planet system)とゲームに合わせて作るorigin system(dream system)があります。
 
-origin systemの由来は、天動説の地球。惑星はお椀の形をしており、そこに地上が乗っているイメージ。
+origin systemの由来は、地球平面説や天動説、つまり、古代の宇宙観です。惑星はお椀の形をしており、そこに地上が乗っているイメージ。
 
 ![](/img/ue_world_system_img_0002.png)
 
