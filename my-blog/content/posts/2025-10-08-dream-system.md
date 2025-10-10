@@ -12,11 +12,11 @@ draft: false
 
 origin systemの由来は、地球平面説や天動説、つまり、古代の宇宙観です。惑星はお椀の形をしており、そこに地上が乗っているイメージ。
 
-![](/img/ue_world_system_img_0002.png)
+![](/img/ue_world_system_img_0001.png)
 
 このorigin systemは、軽量性、独立性、統合性を考えられたデザインで、非常に扱いやすい形となっています。
 
-![](/img/ue_world_system_img_0001.png)
+![](/img/ue_world_system_img_0002.png)
 
 今回は`ue5.6.1 -> ue5.7.0p`の移植作業が完了し、origin systemの仕様ができました。これで新しい惑星や地上の追加、統合が楽になります。
 
