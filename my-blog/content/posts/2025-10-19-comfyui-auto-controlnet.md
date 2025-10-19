@@ -78,6 +78,8 @@ background: galaxy planet,
 
 ## ポーズの作成手順
 
+[https://openposes.com/](https://openposes.com/)
+
 例えば、自作ゲーム動画を保存し、`ffmepg`で画像化します。
 
 ```sh
