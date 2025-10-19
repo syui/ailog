@@ -6,7 +6,7 @@ tags: ["comfyui"]
 draft: false
 ---
 
-今回は、使用している`comfyui`の自動化を紹介します。この辺の情報は検索してもあまり見あたりませんので。
+今回は、`comfyui`の自動化を紹介します。
 
 ## comfyuiの自動化手順
 
@@ -15,7 +15,7 @@ draft: false
 1. `Apply InstantID`: 顔を指定します。
 2. `Apply ControlNet`: ポーズを指定します。
 
-まずこちらのworkflowを読み込みむと処理を書くのが早くなります。workflowは通常、comfyuiで作られた画像に記録されています。
+まずこちらのworkflowを読み込むと早く書けます。workflowは通常、comfyuiで作られた画像に記録されています。
 
 [https://docs.comfy.org/tutorials/controlnet/pose-controlnet-2-pass](https://docs.comfy.org/tutorials/controlnet/pose-controlnet-2-pass)
 
@@ -60,7 +60,7 @@ draft: false
 
 ## comfyuiの便利なノード
 
-私は、`filename_prefix`で`Get Date Time String(JPS)`を使用しています。これでファイル名が重複しづらくなります。
+`filename_prefix`で`Get Date Time String(JPS)`を使用しています。これでファイル名が重複しづらくなります。
 
 役立つ外部ノードです。
 
@@ -68,7 +68,7 @@ draft: false
 - JPS-Nodes
 - comfyui-custom-scripts
 
-例えば、私は、loop中にpromptをランダムで変える処理を追加しています。これは`LogicUtil_Uniform Random Choice`で実現しており、区切り文字は`,`です。
+例えば、loop中にpromptをランダムで変える処理を追加しています。これは`LogicUtil_Uniform Random Choice`で実現しており、区切り文字は`,`です。
 
 ```md
 background: city street,
@@ -78,7 +78,7 @@ background: galaxy planet,
 
 ## ポーズの作成手順
 
-私の場合、例えば、自作のゲーム動画を保存し、`ffmepg`で画像化します。
+例えば、自作ゲーム動画を保存し、`ffmepg`で画像化します。
 
 ```sh
 $ ffmpeg -i input.mp4 output%04d.png
