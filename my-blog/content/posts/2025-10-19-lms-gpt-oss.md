@@ -8,7 +8,7 @@ draft: false
 
 今回は、openaiの[gpt-oss](https://huggingface.co/openai/gpt-oss-120b)を使用する方法です。
 
-https://openai.com/ja-JP/index/introducing-gpt-oss/
+[https://openai.com/ja-JP/index/introducing-gpt-oss/](https://openai.com/ja-JP/index/introducing-gpt-oss/)
 
 `120b`, `20b`があります。好きな方を使いましょう。ここでは`20b`を使用します。
 
