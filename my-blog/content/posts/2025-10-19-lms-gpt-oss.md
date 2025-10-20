@@ -103,6 +103,8 @@ $ curl http://localhost:8000/v1/chat/completions \
 
 最近、iphoneやmacを買うより、`DGX Spark`を買ったほうが良いのではないかと考えることがあります。
 
+[https://www.nvidia.com/ja-jp/products/workstations/dgx-spark/](https://www.nvidia.com/ja-jp/products/workstations/dgx-spark/)
+
 pc(RTX)やmacは、60万円ほどかかりますし、それは`DGX Spark`の値段と同じです。どうせ同じ値段を使うなら、何を買うのが良いのでしょう。
 
 パソコンのスペックというのは、毎年それほど変わりません。RTXにしても同じです。
