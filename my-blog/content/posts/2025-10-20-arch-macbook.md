@@ -16,7 +16,8 @@ $ uname -r
 運用のコツとしては、`linux-lts`を使うこと。`linux-firmware`を入れないこと。`broadcom-wl`を入れること。
 
 ```sh
-$ pacman -S linux-lts linux-lts-headers broadcom-wl
+$ pacman -S linux-lts
+$ pacman -S pacman -S broadcom-wl-dkms linux-lts-headers
 $ grub-mkconfig -o /boot/grub/grub.cfg
 ---
 $ pacman -Qq | grep "^linux-firmware" | sudo pacman -R -
