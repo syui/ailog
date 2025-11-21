@@ -13,7 +13,7 @@ draft: false
 
 [https://github.com/takram-design-engineering/three-geospatial](https://github.com/takram-design-engineering/three-geospatial)
 
-![](/img/three_cloud_vrm_0001.png)
+<iframe width="100%" height="415" src="https://www.youtube.com/embed/mTuvL_lJDk8?rel=0&showinfo=0&controls=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ## three-vrm+vrmaの最小構成
 
