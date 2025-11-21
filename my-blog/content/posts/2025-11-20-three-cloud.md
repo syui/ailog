@@ -400,6 +400,10 @@ example.com
 
 これでサイトにapi-keyが埋め込まれていても比較的安全です。また、gh-pagesではなく、`gh-actions + cf-pages`でdeployしたほうがいいかも。
 
+[msg type="warning" content="2つのkeyを用意することで、localhostを削除したり追加する手順を省略できます。keyにlocalhostを許可している状態だと悪用される危険が高まります。"]
+
+[msg type="note" content="gh-pagesは無料プランでprivate-repoを許可していないません。そのため、private-repoでgh-actionsからcf-pagesにdeployする方法があります。"]
+
 ### ハマったポイント
 
 vrmとの合せ技なので、太陽光を調整するのが難しく、影が大きくなりすぎてしまい見づらかいのでやめました。
