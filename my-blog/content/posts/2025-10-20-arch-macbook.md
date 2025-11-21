@@ -25,7 +25,7 @@ $ mkinitcpio -P
 ```
 
 ```sh:/etc/pacman.conf
-IgnorePkg   = linux linux-headers
+IgnorePkg   = linux linux-headers broadcom-wl-dkms
 ```
 
 ## usbからの実行
