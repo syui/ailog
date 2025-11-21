@@ -402,7 +402,7 @@ example.com
 
 [msg type="warning" content="2つのkeyを用意することで、localhostを削除したり追加する手順を省略できます。keyにlocalhostを許可している状態だと悪用される危険が高まります。"]
 
-[msg type="note" content="gh-pagesは無料プランでprivate-repoを許可していないません。そのため、private-repoでgh-actionsからcf-pagesにdeployする方法があります。"]
+[msg type="note" content="gh-pagesは無料プランでprivate-repoを許可していません。そのため、private-repoでgh-actionsからcf-pagesにdeployする方法があります。"]
 
 ### ハマったポイント
 
