@@ -365,3 +365,45 @@ export default function App() {
 }
 ```
 
+## google map api
+
+街を表示するには料金がかかります。
+
+`gcp`で`Map Tiles API`だけ有効にすればよいです。
+
+```sh:.env
+VITE_GOOGLE_MAP_API_KEY=xxx
+```
+
+```js:src/App.jsx
+import {
+  GLTFExtensionsPlugin,
+  GoogleCloudAuthPlugin,
+  TileCompressionPlugin,
+  TilesFadePlugin,
+  UpdateOnChangePlugin,
+} from '3d-tiles-renderer/plugins';
+
+const apiKey = import.meta.env.VITE_GOOGLE_MAP_API_KEY;
+```
+
+認証情報は、localhostで使用するものと、webで使用するものを分けて、それぞれ制限をつけましょう。
+
+```md
+[test-map]
+localhost:4400
+
+[production-map]
+example.com
+```
+
+これでサイトにapi-keyが埋め込まれていても比較的安全です。また、gh-pagesではなく、`gh-actions + cf-pages`でdeployしたほうがいいかも。
+
+### ハマったポイント
+
+vrmとの合せ技なので、太陽光を調整するのが難しく、影が大きくなりすぎてしまい見づらかいのでやめました。
+
+```diff
+- <AerialPerspective sky sunLight skyLight />
++ <AerialPerspective sky />
+```
