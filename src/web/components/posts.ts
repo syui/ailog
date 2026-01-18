@@ -3,6 +3,15 @@ import { renderMarkdown } from '../lib/markdown'
 import { renderDiscussion, loadDiscussionPosts } from './discussion'
 import { getCurrentLang } from './mode-tabs'
 
+// Format date as yyyy/mm/dd
+function formatDate(dateStr: string): string {
+  const d = new Date(dateStr)
+  const year = d.getFullYear()
+  const month = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${year}/${month}/${day}`
+}
+
 // Render post list
 export function renderPostList(posts: Post[], handle: string): string {
   if (posts.length === 0) {
@@ -13,7 +22,7 @@ export function renderPostList(posts: Post[], handle: string): string {
 
   const items = posts.map(post => {
     const rkey = post.uri.split('/').pop() || ''
-    const date = new Date(post.value.createdAt).toLocaleDateString('en-US')
+    const date = formatDate(post.value.createdAt)
     const originalLang = post.value.lang || 'ja'
     const translations = post.value.translations
 
@@ -46,7 +55,7 @@ export function renderPostDetail(
   appUrl: string = 'https://bsky.app'
 ): string {
   const rkey = post.uri.split('/').pop() || ''
-  const date = new Date(post.value.createdAt).toLocaleDateString('en-US')
+  const date = formatDate(post.value.createdAt)
   const jsonUrl = `/@${handle}/at/collection/${collection}/${rkey}`
 
   // Build post URL for discussion search
