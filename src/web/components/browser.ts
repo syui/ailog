@@ -29,6 +29,7 @@ function groupCollectionsByService(collections: string[]): Map<string, string[]>
 const localFavicons: Record<string, string> = {
   'syui.ai': '/favicon/syui.ai.png',
   'bsky.app': '/favicon/bsky.app.png',
+  'bsky.chat': '/favicon/bsky.app.png',
   'atproto.com': '/favicon/atproto.com.png',
 }
 
