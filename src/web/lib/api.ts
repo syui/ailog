@@ -80,13 +80,16 @@ async function getLocalProfile(did: string): Promise<Profile | null> {
   return null
 }
 
-// Load profile (local first for admin, remote for others)
-export async function getProfile(did: string, localFirst = true): Promise<Profile | null> {
-  if (localFirst) {
-    const local = await getLocalProfile(did)
-    if (local) return local
-  }
+// Load profile (local only for admin, remote for others)
+export async function getProfile(did: string, localOnly = false): Promise<Profile | null> {
+  // Try local first
+  const local = await getLocalProfile(did)
+  if (local) return local
 
+  // If local only mode, don't call API
+  if (localOnly) return null
+
+  // Remote fallback
   const pds = await getPds(did)
   if (!pds) return null
 
@@ -101,8 +104,23 @@ export async function getProfile(did: string, localFirst = true): Promise<Profil
   return null
 }
 
-// Get avatar URL
-export async function getAvatarUrl(did: string, profile: Profile): Promise<string | null> {
+// Get avatar URL (local only for admin, remote for others)
+export function getAvatarUrl(did: string, profile: Profile, localOnly = false): string | null {
+  if (!profile.value.avatar) return null
+
+  const cid = profile.value.avatar.ref.$link
+
+  // Local mode: use local blob path (sync command downloads this)
+  if (localOnly) {
+    return `/content/${did}/blob/${cid}`
+  }
+
+  // Remote mode: use PDS blob URL (requires getPds call from caller if needed)
+  return null
+}
+
+// Get avatar URL with PDS lookup (async, for remote users)
+export async function getAvatarUrlRemote(did: string, profile: Profile): Promise<string | null> {
   if (!profile.value.avatar) return null
 
   const pds = await getPds(did)
@@ -132,13 +150,16 @@ async function getLocalPosts(did: string, collection: string): Promise<Post[]> {
   return []
 }
 
-// Load posts (local first for admin, remote for others)
-export async function getPosts(did: string, collection: string, localFirst = true): Promise<Post[]> {
-  if (localFirst) {
-    const local = await getLocalPosts(did, collection)
-    if (local.length > 0) return local
-  }
+// Load posts (local only for admin, remote for others)
+export async function getPosts(did: string, collection: string, localOnly = false): Promise<Post[]> {
+  // Try local first
+  const local = await getLocalPosts(did, collection)
+  if (local.length > 0) return local
 
+  // If local only mode, don't call API
+  if (localOnly) return []
+
+  // Remote fallback
   const pds = await getPds(did)
   if (!pds) return []
 
@@ -158,17 +179,20 @@ export async function getPosts(did: string, collection: string, localFirst = tru
   return []
 }
 
-// Get single post
-export async function getPost(did: string, collection: string, rkey: string, localFirst = true): Promise<Post | null> {
-  if (localFirst) {
-    try {
-      const res = await fetch(`/content/${did}/${collection}/${rkey}.json`)
-      if (res.ok && isJsonResponse(res)) return res.json()
-    } catch {
-      // Not found
-    }
+// Get single post (local only for admin, remote for others)
+export async function getPost(did: string, collection: string, rkey: string, localOnly = false): Promise<Post | null> {
+  // Try local first
+  try {
+    const res = await fetch(`/content/${did}/${collection}/${rkey}.json`)
+    if (res.ok && isJsonResponse(res)) return res.json()
+  } catch {
+    // Not found
   }
 
+  // If local only mode, don't call API
+  if (localOnly) return null
+
+  // Remote fallback
   const pds = await getPds(did)
   if (!pds) return null
 

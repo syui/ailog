@@ -8,10 +8,9 @@
     "title": "ailogを作り直した",
     "translations": {
       "en": {
-        "content": "## About ailog\n\nA site generator that integrates with atproto.\n\n## How to Use ailog\n\n```sh\n$ git clone https://git.syui.ai/ai/log\n$ cd log\n$ cat public/config.json\n{\n  \"title\": \"syui.ai\",\n  \"handle\": \"syui.syui.ai\",\n  \"collection\": \"ai.syui.log.post\",\n  \"network\": \"syu.is\",\n  \"color\": \"#0066cc\",\n  \"siteUrl\": \"https://syui.ai\"\n}\n---\n$ npm run dev\n```\n\n## ailog's Concept\n\n1. Based on at-browser architecture\n2. Uses atproto oAuth for login\n3. Allows posting articles through the logged-in account",
+        "content": "## What is ailog?\n\nA site generator that integrates with atproto.\n\n## How to use ailog\n\n```sh\n$ git clone https://git.syui.ai/ai/log\n$ cd log\n$ cat public/config.json\n{\n  \"title\": \"syui.ai\",\n  \"handle\": \"syui.syui.ai\",\n  \"collection\": \"ai.syui.log.post\",\n  \"network\": \"syu.is\",\n  \"color\": \"#0066cc\",\n  \"siteUrl\": \"https://syui.ai\"\n}\n---\n$ npm run dev\n```\n\n## ailog's concept\n\n1. Based on at-browser as its foundation\n2. Logs in via atproto oauth\n3. Allows users to post articles using their logged-in account",
         "title": "recreated ailog"
       }
-    },
-    "lang": "ja"
+    }
   }
 }

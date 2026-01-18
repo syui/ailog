@@ -1,13 +1,17 @@
 import type { Profile } from '../types'
-import { getAvatarUrl } from '../lib/api'
+import { getAvatarUrl, getAvatarUrlRemote } from '../lib/api'
 
 export async function renderProfile(
   did: string,
   profile: Profile,
   handle: string,
-  webUrl?: string
+  webUrl?: string,
+  localOnly = false
 ): Promise<string> {
-  const avatarUrl = await getAvatarUrl(did, profile)
+  // Local mode: sync, no API call. Remote mode: async with API call
+  const avatarUrl = localOnly
+    ? getAvatarUrl(did, profile, true)
+    : await getAvatarUrlRemote(did, profile)
   const displayName = profile.value.displayName || handle || 'Unknown'
   const description = profile.value.description || ''
 

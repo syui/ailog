@@ -1,6 +1,7 @@
 // Config types
 export interface AppConfig {
   title: string
+  did?: string
   handle: string
   collection: string
   network: string

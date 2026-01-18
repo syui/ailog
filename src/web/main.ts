@@ -14,6 +14,7 @@ import { showLoading, hideLoading } from './components/loading'
 const app = document.getElementById('app')!
 
 let currentHandle = ''
+let isFirstRender = true
 
 // Filter collections by service domain
 function filterCollectionsByService(collections: string[], service: string): string[] {
@@ -52,7 +53,10 @@ async function getWebUrl(handle: string): Promise<string | undefined> {
 }
 
 async function render(route: Route): Promise<void> {
-  showLoading(app)
+  // Skip loading indicator on first render for faster perceived performance
+  if (!isFirstRender) {
+    showLoading(app)
+  }
 
   try {
     const config = await getConfig()
@@ -73,12 +77,14 @@ async function render(route: Route): Promise<void> {
     // Handle OAuth callback if present (check both ? and #)
     const searchParams = new URLSearchParams(window.location.search)
     const hashParams = window.location.hash ? new URLSearchParams(window.location.hash.slice(1)) : null
-    if (searchParams.has('code') || searchParams.has('state') || hashParams?.has('code') || hashParams?.has('state')) {
+    if (oauthEnabled && (searchParams.has('code') || searchParams.has('state') || hashParams?.has('code') || hashParams?.has('state'))) {
       await handleCallback()
     }
 
-    // Restore session from storage
-    await restoreSession()
+    // Restore session from storage (skip if oauth disabled)
+    if (oauthEnabled) {
+      await restoreSession()
+    }
 
     // Redirect logged-in user from root to their user page
     if (route.type === 'home' && isLoggedIn()) {
@@ -89,25 +95,31 @@ async function render(route: Route): Promise<void> {
       }
     }
 
-    // Determine handle and whether to use local data
+    // Determine handle and whether to use local data only (no API calls)
     let handle: string
-    let localFirst: boolean
+    let localOnly: boolean
+    let did: string | null
 
     if (route.type === 'home') {
       handle = config.handle
-      localFirst = true
+      localOnly = true
+      did = config.did || null
     } else if (route.handle) {
       handle = route.handle
-      localFirst = handle === config.handle
+      localOnly = handle === config.handle
+      did = localOnly ? (config.did || null) : null
     } else {
       handle = config.handle
-      localFirst = true
+      localOnly = true
+      did = config.did || null
     }
 
     currentHandle = handle
 
-    // Resolve handle to DID
-    const did = await resolveHandle(handle)
+    // Resolve handle to DID only for remote users
+    if (!did) {
+      did = await resolveHandle(handle)
+    }
 
     if (!did) {
       app.innerHTML = `
@@ -119,12 +131,12 @@ async function render(route: Route): Promise<void> {
       return
     }
 
-    // Load profile
-    const profile = await getProfile(did, localFirst)
+    // Load profile (local only for admin, remote for others)
+    const profile = await getProfile(did, localOnly)
     const webUrl = await getWebUrl(handle)
 
-    // Load posts to check for translations
-    const posts = await getPosts(did, config.collection, localFirst)
+    // Load posts (local only for admin, remote for others)
+    const posts = await getPosts(did, config.collection, localOnly)
 
     // Collect available languages from posts
     const availableLangs = new Set<string>()
@@ -151,7 +163,7 @@ async function render(route: Route): Promise<void> {
 
     // Profile section
     if (profile) {
-      html += await renderProfile(did, profile, handle, webUrl)
+      html += await renderProfile(did, profile, handle, webUrl, localOnly)
     }
 
     // Check if logged-in user owns this content
@@ -197,7 +209,7 @@ async function render(route: Route): Promise<void> {
 
     } else if (route.type === 'post' && route.rkey) {
       // Post detail (config.collection with markdown)
-      const post = await getPost(did, config.collection, route.rkey, localFirst)
+      const post = await getPost(did, config.collection, route.rkey, localOnly)
       html += renderLangSelector(langList)
       if (post) {
         html += `<div id="content">${renderPostDetail(post, handle, config.collection, isOwner, config.siteUrl, webUrl)}</div>`
@@ -273,6 +285,8 @@ async function render(route: Route): Promise<void> {
     `
     hideLoading(app)
     setupEventHandlers()
+  } finally {
+    isFirstRender = false
   }
 }
 

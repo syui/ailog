@@ -308,6 +308,27 @@ pub async fn sync_to_local(output: &str) -> Result<()> {
         let profile_path = format!("{}/self.json", profile_dir);
         fs::write(&profile_path, serde_json::to_string_pretty(&profile)?)?;
         println!("Saved: {}", profile_path);
+
+        // Download avatar blob if present
+        if let Some(avatar_cid) = profile["value"]["avatar"]["ref"]["$link"].as_str() {
+            let blob_dir = format!("{}/blob", did_dir);
+            fs::create_dir_all(&blob_dir)?;
+            let blob_path = format!("{}/{}", blob_dir, avatar_cid);
+
+            let blob_url = format!(
+                "{}/xrpc/com.atproto.sync.getBlob?did={}&cid={}",
+                pds, did, avatar_cid
+            );
+            println!("Downloading avatar: {}", avatar_cid);
+            let blob_res = client.get(&blob_url).send().await?;
+            if blob_res.status().is_success() {
+                let blob_bytes = blob_res.bytes().await?;
+                fs::write(&blob_path, &blob_bytes)?;
+                println!("Saved: {}", blob_path);
+            } else {
+                println!("Failed to download avatar: {}", blob_res.status());
+            }
+        }
     }
 
     // 3. Sync collection records
