@@ -1710,6 +1710,69 @@ body {
   border-bottom: 1px solid #eee;
 }
 
+.record-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.record-header-top h3 {
+  margin: 0;
+}
+
+/* Validate Button */
+.validate-btn {
+  padding: 6px 12px;
+  background: #f0f0f0;
+  color: #666;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.validate-btn:hover {
+  background: #e8e8e8;
+  color: #333;
+}
+
+.validate-btn:disabled {
+  background: #f5f5f5;
+  color: #999;
+  cursor: not-allowed;
+}
+
+/* Validate Result */
+.validate-result {
+  margin-top: 8px;
+  font-size: 13px;
+}
+
+.validate-valid {
+  color: #155724;
+  background: #d4edda;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.validate-invalid {
+  color: #721c24;
+  background: #f8d7da;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.validate-error {
+  display: block;
+  margin-top: 4px;
+  color: #721c24;
+  font-family: monospace;
+  font-size: 12px;
+  word-break: break-all;
+}
+
 .record-uri,
 .record-cid {
   font-family: monospace;
@@ -1844,6 +1907,26 @@ body {
   .schema-none {
     background: #2a2a2a;
     color: #888;
+  }
+  .validate-btn {
+    background: #2a2a2a;
+    border-color: #444;
+    color: #888;
+  }
+  .validate-btn:hover {
+    background: #333;
+    color: #e0e0e0;
+  }
+  .validate-valid {
+    background: #1e3a29;
+    color: #75b798;
+  }
+  .validate-invalid {
+    background: #3a1e1e;
+    color: #f5a5a5;
+  }
+  .validate-error {
+    color: #f5a5a5;
   }
   .delete-btn {
     background: #dc3545;

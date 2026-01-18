@@ -189,10 +189,14 @@ export function renderRecordDetail(
   return `
     <article class="record-detail">
       <header class="record-header">
-        <h3>${collection}</h3>
+        <div class="record-header-top">
+          <h3>${collection}</h3>
+          <button type="button" class="validate-btn" id="validate-btn" data-collection="${collection}">Validate</button>
+        </div>
         <p class="record-uri">URI: ${record.uri}</p>
         <p class="record-cid">CID: ${record.cid}</p>
         ${deleteBtn}
+        <div id="validate-result" class="validate-result"></div>
       </header>
       <div class="json-view">
         <pre><code>${escapeHtml(JSON.stringify(record.value, null, 2))}</code></pre>

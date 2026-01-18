@@ -9,9 +9,10 @@
   },
   "dependencies": {
     "@atproto/api": "^0.15.12",
+    "@atproto/lexicon": "^0.6.0",
     "@atproto/oauth-client-browser": "^0.3.19",
-    "marked": "^15.0.6",
-    "highlight.js": "^11.11.1"
+    "highlight.js": "^11.11.1",
+    "marked": "^15.0.6"
   },
   "devDependencies": {
     "typescript": "^5.7.3",

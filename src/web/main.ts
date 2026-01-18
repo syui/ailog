@@ -2,6 +2,7 @@ import './styles/main.css'
 import { getConfig, resolveHandle, getProfile, getPosts, getPost, describeRepo, listRecords, getRecord, getPds, getNetworks } from './lib/api'
 import { parseRoute, onRouteChange, navigate, type Route } from './lib/router'
 import { login, logout, handleCallback, restoreSession, isLoggedIn, getLoggedInHandle, getLoggedInDid, deleteRecord, updatePost } from './lib/auth'
+import { validateRecord } from './lib/lexicon'
 import { renderHeader } from './components/header'
 import { renderProfile } from './components/profile'
 import { renderPostList, renderPostDetail, setupPostDetail } from './components/posts'
@@ -171,11 +172,13 @@ async function render(route: Route): Promise<void> {
     const isOwner = isLoggedIn() && loggedInDid === did
 
     // Content section based on route type
+    let currentRecord: { uri: string; cid: string; value: unknown } | null = null
+
     if (route.type === 'record' && route.collection && route.rkey) {
       // AT-Browser: Single record view
-      const record = await getRecord(did, route.collection, route.rkey)
-      if (record) {
-        html += `<div id="content">${renderRecordDetail(record, route.collection, isOwner)}</div>`
+      currentRecord = await getRecord(did, route.collection, route.rkey)
+      if (currentRecord) {
+        html += `<div id="content">${renderRecordDetail(currentRecord, route.collection, isOwner)}</div>`
       } else {
         html += `<div id="content" class="error">Record not found</div>`
       }
@@ -268,6 +271,11 @@ async function render(route: Route): Promise<void> {
       setupPostEdit(config.collection)
     }
 
+    // Setup validate button for record detail
+    if (currentRecord) {
+      setupValidateButton(currentRecord)
+    }
+
     // Setup post detail (translation toggle, discussion)
     if (route.type === 'post') {
       const contentEl = document.getElementById('content')
@@ -323,6 +331,44 @@ function setupEventHandlers(): void {
   const logoutBtn = document.getElementById('logout-btn')
   logoutBtn?.addEventListener('click', async () => {
     await logout()
+  })
+}
+
+// Setup validate button for record detail
+function setupValidateButton(record: { value: unknown }): void {
+  const validateBtn = document.getElementById('validate-btn')
+  const resultDiv = document.getElementById('validate-result')
+  if (!validateBtn || !resultDiv) return
+
+  validateBtn.addEventListener('click', async () => {
+    const collection = validateBtn.getAttribute('data-collection')
+    if (!collection) return
+
+    // Show loading state
+    validateBtn.textContent = 'Validating...'
+    ;(validateBtn as HTMLButtonElement).disabled = true
+    resultDiv.innerHTML = ''
+
+    try {
+      const result = await validateRecord(collection, record.value)
+
+      if (result.valid) {
+        resultDiv.innerHTML = `<span class="validate-valid">✓ Valid</span>`
+      } else {
+        resultDiv.innerHTML = `
+          <span class="validate-invalid">✗ Invalid</span>
+          <span class="validate-error">${result.error || 'Unknown error'}</span>
+        `
+      }
+    } catch (err) {
+      resultDiv.innerHTML = `
+        <span class="validate-invalid">✗ Error</span>
+        <span class="validate-error">${err}</span>
+      `
+    }
+
+    validateBtn.textContent = 'Validate'
+    ;(validateBtn as HTMLButtonElement).disabled = false
   })
 }
 

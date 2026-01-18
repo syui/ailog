@@ -189,3 +189,61 @@ requires `.env`:
 TRANSLATE_URL=http://127.0.0.1:1234/v1
 TRANSLATE_MODEL=plamo-2-translate
 ```
+
+## Lexicon Validation (Browser)
+
+AT-Browser has a "Validate" button on record detail pages to validate records against their lexicon schema.
+
+### How it works
+
+```
+NSID: app.bsky.actor.profile
+        ↓
+1. Parse NSID → authority: actor.bsky.app
+        ↓
+2. DNS TXT lookup: _lexicon.actor.bsky.app
+   → did=did:plc:xxx
+        ↓
+3. Resolve DID → PDS endpoint
+        ↓
+4. Fetch lexicon from PDS:
+   com.atproto.repo.getRecord
+   - repo: did:plc:xxx
+   - collection: com.atproto.lexicon.schema
+   - rkey: app.bsky.actor.profile
+        ↓
+5. Validate record with @atproto/lexicon
+```
+
+### DNS TXT Record Setup
+
+To publish your own lexicon, set a DNS TXT record:
+
+```
+_lexicon.log.syui.ai  TXT  "did=did:plc:uqzpqmrjnptsxezjx4xuh2mn"
+```
+
+Then create the lexicon record in your repo under `com.atproto.lexicon.schema` collection.
+
+### Browser-compatible DNS lookup
+
+Uses Cloudflare DNS-over-HTTPS (DoH) for browser compatibility:
+
+```
+https://mozilla.cloudflare-dns.com/dns-query?name=_lexicon.actor.bsky.app&type=TXT
+```
+
+### Note: com.atproto.lexicon.resolveLexicon
+
+ATProto spec defines `com.atproto.lexicon.resolveLexicon` endpoint, but it's not yet implemented on any PDS (bsky.social, syu.is, etc.):
+
+```sh
+$ curl "https://bsky.social/xrpc/com.atproto.lexicon.resolveLexicon?nsid=app.bsky.actor.profile"
+{"error":"XRPCNotSupported","message":"XRPCNotSupported"}
+```
+
+The current implementation uses the DNS-based approach instead, which works today.
+
+### Reference
+
+- [resolve-lexicon](https://resolve-lexicon.pages.dev/) - Browser-compatible lexicon resolver
