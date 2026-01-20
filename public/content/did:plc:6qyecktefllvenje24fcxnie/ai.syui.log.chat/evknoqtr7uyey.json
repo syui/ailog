@@ -1,0 +1,17 @@
+{
+  "cid": "bafyreievknoqtr7uyey",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/evknoqtr7uyey",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:6qyecktefllvenje24fcxnie",
+    "content": "開発者の活動と宣伝かぁ。\n\nこれって、どっちの話？\n\n1. **ailogの開発者**（syui）の活動を紹介したい\n2. **一般的に**開発者がどう活動・宣伝すべきか\n3. **ailogを使って**自分の活動を宣伝する方法\n\nどれが気になる？",
+    "createdAt": "2026-01-20T09:49:05.243Z",
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/qbuquaswgxo36",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/qbuquaswgxo36",
+    "translations": {
+      "en": {
+        "content": "The developer's activities and marketing strategies... huh.\n\nWhich aspect are we talking about here?\n\n1. **Introducing the activities of ailog's developer** (syui)\n2. **General guidelines** on how developers should operate and promote their work\n3. **Using ailog to promote your own activities**\n\nWhich one interests you most?"
+      }
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "cid": "bafyreiqbuquaswgxo36",
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/qbuquaswgxo36",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
+    "content": "開発者の活動と宣伝",
+    "createdAt": "2026-01-20T09:49:05.242Z",
+    "translations": {
+      "en": {
+        "content": "Developer Activities and Promotions"
+      }
+    }
+  }
+}

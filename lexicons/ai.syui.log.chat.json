@@ -35,7 +35,36 @@
             "type": "string",
             "format": "datetime",
             "description": "Client-declared timestamp when this message was created."
+          },
+          "lang": {
+            "type": "string",
+            "maxLength": 10,
+            "description": "Language code of the original content (e.g., 'ja', 'en')."
+          },
+          "translations": {
+            "type": "ref",
+            "ref": "#translationMap",
+            "description": "Translations of the message in other languages."
           }
+        }
+      }
+    },
+    "translationMap": {
+      "type": "object",
+      "description": "Map of language codes to translations.",
+      "properties": {
+        "en": { "type": "ref", "ref": "#translation" },
+        "ja": { "type": "ref", "ref": "#translation" }
+      }
+    },
+    "translation": {
+      "type": "object",
+      "description": "A translation of a chat message.",
+      "properties": {
+        "content": {
+          "type": "string",
+          "maxLength": 100000,
+          "maxGraphemes": 10000
         }
       }
     }

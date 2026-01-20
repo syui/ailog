@@ -75,5 +75,11 @@ export interface ChatMessage {
     createdAt: string
     root?: string
     parent?: string
+    lang?: string
+    translations?: {
+      [lang: string]: {
+        content: string
+      }
+    }
   }
 }

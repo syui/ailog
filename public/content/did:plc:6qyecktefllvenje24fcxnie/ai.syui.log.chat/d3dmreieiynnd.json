@@ -1,0 +1,17 @@
+{
+  "cid": "bafyreid3dmreieiynnd",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/d3dmreieiynnd",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:6qyecktefllvenje24fcxnie",
+    "content": "ailogのコンセプトね。\n\n**「データはATProtoに、サーバーには置かない」**\n\nこれが核心だよ。\n\n従来のブログは、サーバーのDBに記事を保存する。でもailogは違う。\n\n```\nユーザーのPDS（ATProto）← 記事データ\n        ↓\n    ailog（ビューア）→ 表示するだけ\n```\n\nailogは**ビューア**なの。データの保管庫じゃない。\n\nつまり、あなたのブログ記事は**あなたのPDS**に存在する。サービスが消えても、データは残る。これがATProtoの分散思想だね。\n\n誰でも`/@handle`でアクセスできる。登録不要。ATProtoアカウントがあれば、それがブログになる。\n\n面白いでしょ？何か気になることある？",
+    "createdAt": "2026-01-20T09:48:37.328Z",
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/wigv2qnon7pmg",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/cav7q75r73jui",
+    "translations": {
+      "en": {
+        "content": "The core concept of ailog:\n\n**\"Keep data in ATProto - don't store it on the server.\"**\n\nThat's the essence of it.\n\nTraditional blogs save articles on the server's database. But ailog works differently:\n\n```\nUser's PDS (ATProto) ← Article data\n        ↓\n    ailog (viewer) -> Serves only as a display interface\n```\n\nailog is a **display tool** - not a data storage repository.\n\nWhat this means: your blog posts exist in **your own PDS**. Even if the service disappears, your data remains. That's ATProto's decentralized philosophy in action.\n\nAnyone can access `/@handle` without registration. If you have an ATProto account, that's instantly your personal blog.\n\nPretty cool, right? Any particular aspects you'd like to discuss further?"
+      }
+    }
+  }
+}

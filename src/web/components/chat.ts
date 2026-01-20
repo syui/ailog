@@ -1,5 +1,18 @@
 import type { ChatMessage, Profile } from '../types'
 import { renderMarkdown } from '../lib/markdown'
+import { getCurrentLang } from './mode-tabs'
+
+// Get translated content for a chat message
+function getTranslatedContent(msg: ChatMessage): string {
+  const currentLang = getCurrentLang()
+  const originalLang = msg.value.lang || 'ja'
+  const translations = msg.value.translations
+
+  if (translations && currentLang !== originalLang && translations[currentLang]) {
+    return translations[currentLang].content || msg.value.content
+  }
+  return msg.value.content
+}
 
 // Escape HTML to prevent XSS
 function escapeHtml(text: string): string {
@@ -123,10 +136,11 @@ export function renderChatThreadList(
       ? `<img class="chat-avatar" src="${author.avatarUrl}" alt="@${escapeHtml(author.handle)}">`
       : `<div class="chat-avatar-placeholder"></div>`
 
-    // Truncate content for preview
-    const preview = msg.value.content.length > 100
-      ? msg.value.content.slice(0, 100) + '...'
-      : msg.value.content
+    // Truncate content for preview (use translated content)
+    const displayContent = getTranslatedContent(msg)
+    const preview = displayContent.length > 100
+      ? displayContent.slice(0, 100) + '...'
+      : displayContent
 
     return `
       <a href="/@${userHandle}/at/chat/${rkey}" class="chat-thread-item">
@@ -206,7 +220,8 @@ export function renderChatThread(
       ? `<img class="chat-avatar" src="${author.avatarUrl}" alt="@${escapeHtml(author.handle)}">`
       : `<div class="chat-avatar-placeholder"></div>`
 
-    const content = renderMarkdown(msg.value.content)
+    const displayContent = getTranslatedContent(msg)
+    const content = renderMarkdown(displayContent)
     const recordLink = `/@${author.handle}/at/collection/ai.syui.log.chat/${rkey}`
 
     return `

@@ -1,0 +1,17 @@
+{
+  "cid": "bafyreip6mxoi2x2ooz6",
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/p6mxoi2x2ooz6",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
+    "content": "開発者の日々の活動を投稿したり配信したりするのは大切だと思う。\nせっかくなら多くの人に使ってもらいたいけど、何をやってるのかわからないと判断できないと思う。\nでも、その活動をどうやって紹介すればいいのか悩んでいます。\n1. AIとの会話を自動で投稿(ブログ書く手間が省ける)\n2. AIと話しながら配信(開発状況もわかる)\n3. twitter, note, youtubeで他の人と同じことをやってみる\n(向いていない、すぐ更新しなくなるのは目に見えている。書くことも話すこともほとんどない)",
+    "createdAt": "2026-01-20T09:49:39.262Z",
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/evknoqtr7uyey",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/qbuquaswgxo36",
+    "translations": {
+      "en": {
+        "content": "I believe it's important for developers to regularly post and share about their daily activities.\nIf we hope to gain widespread adoption, it's impossible for people to evaluate our work when they don't understand what we're doing.\nHowever, I'm struggling to figure out the most effective way to introduce these activities:\n1. Automated posting of AI conversations (saves time from writing blogs)\n2. Live streaming while interacting with AI (also shows development progress)\n3. Try out the same things on platforms like Twitter, note, or YouTube as others are doing\n(This is clearly unsustainable - I would quickly lose motivation to post. There's barely anything to write about or talk about to begin with.)"
+      }
+    }
+  }
+}

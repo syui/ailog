@@ -268,7 +268,7 @@ $ ailog login ai.syu.is -p <password> -s syu.is --bot
 
 ```
 CHAT_URL=http://127.0.0.1:1234/v1
-CHAT_MODEL=gemma-2-9b
+CHAT_MODEL=gpt-oss-20b
 ```
 
 3. (Optional) Set character/system prompt:

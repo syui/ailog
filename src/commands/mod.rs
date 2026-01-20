@@ -4,3 +4,4 @@ pub mod post;
 pub mod gen;
 pub mod lang;
 pub mod did;
+pub mod index;

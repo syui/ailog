@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "ailog index 2>/dev/null || true",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },

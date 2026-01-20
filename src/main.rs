@@ -144,6 +144,14 @@ enum Commands {
     /// Run MCP server (for Claude Code integration)
     #[command(name = "mcp-serve")]
     McpServe,
+
+    /// Rebuild index.json files for content collections
+    #[command(alias = "i")]
+    Index {
+        /// Content directory
+        #[arg(short, long, default_value = "public/content")]
+        dir: String,
+    },
 }
 
 #[tokio::main]
@@ -189,6 +197,9 @@ async fn main() -> Result<()> {
         }
         Commands::McpServe => {
             mcp::serve()?;
+        }
+        Commands::Index { dir } => {
+            commands::index::run(std::path::Path::new(&dir))?;
         }
     }
 

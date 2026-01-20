@@ -11,6 +11,7 @@ const BUNDLE_ID: &str = "ai.syui.log";
 
 // JSON-RPC types
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 struct JsonRpcRequest {
     jsonrpc: String,
     id: Option<Value>,
@@ -111,8 +112,6 @@ struct ChatRecord {
 struct McpSession {
     root_uri: Option<String>,
     last_uri: Option<String>,
-    #[serde(default)]
-    skip_next_save: bool,
 }
 
 fn session_path() -> Result<std::path::PathBuf> {
@@ -196,13 +195,13 @@ fn save_chat_record(
     // Update index.json
     let index_path = collection_dir.join("index.json");
     let mut rkeys: Vec<String> = if index_path.exists() {
-        let content = fs::read_to_string(&index_path).unwrap_or_else(|_| "[]".to_string());
-        serde_json::from_str(&content).unwrap_or_default()
+        let index_content = fs::read_to_string(&index_path).unwrap_or_else(|_| "[]".to_string());
+        serde_json::from_str(&index_content).unwrap_or_default()
     } else {
         Vec::new()
     };
     if !rkeys.contains(&rkey) {
-        rkeys.push(rkey);
+        rkeys.push(rkey.clone());
         fs::write(&index_path, serde_json::to_string_pretty(&rkeys)?)?;
     }
 
@@ -211,15 +210,8 @@ fn save_chat_record(
 
 /// Handle chat_save tool
 fn handle_chat_save(params: ChatSaveParams) -> Result<String> {
-    // Check if we should skip this save (after chat_new)
+    // Load session
     let mut session = load_mcp_session();
-    if session.skip_next_save {
-        session.skip_next_save = false;
-        session.root_uri = None;
-        session.last_uri = None;
-        save_mcp_session(&session)?;
-        return Ok("Skipped save (new thread started). Next message will be saved.".to_string());
-    }
 
     // Get output directory
     let output_dir = env::var("CHAT_OUTPUT").unwrap_or_else(|_| {
@@ -325,7 +317,6 @@ fn handle_chat_new() -> Result<String> {
     let session = McpSession {
         root_uri: None,
         last_uri: None,
-        skip_next_save: true,  // Skip the next save (the "new thread" message)
     };
     save_mcp_session(&session)?;
     Ok("New chat thread started. The next conversation will begin a new thread.".to_string())

@@ -1,6 +1,5 @@
 {
   "collections": [
-    "ai.syui.log.chat",
     "ai.syui.log.post",
     "app.bsky.actor.profile",
     "app.bsky.feed.post",

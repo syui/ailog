@@ -140,7 +140,7 @@ async function render(route: Route): Promise<void> {
     // Load posts (local only for admin, remote for others)
     const posts = await getPosts(did, config.collection, localOnly)
 
-    // Collect available languages from posts
+    // Collect available languages from posts (used for non-chat pages)
     const availableLangs = new Set<string>()
     for (const post of posts) {
       // Add original language (default: ja for Japanese posts)
@@ -153,7 +153,7 @@ async function render(route: Route): Promise<void> {
         }
       }
     }
-    const langList = Array.from(availableLangs)
+    let langList = Array.from(availableLangs)
 
     // Build page
     let html = renderHeader(handle, oauthEnabled)
@@ -237,6 +237,21 @@ async function render(route: Route): Promise<void> {
       const chatMessages = await getChatMessages(did, aiDid, 'ai.syui.log.chat')
       const aiProfile = await getProfile(aiDid, false)
       const pds = await getPds(did)
+
+      // Collect available languages from chat messages
+      const chatLangs = new Set<string>()
+      for (const msg of chatMessages) {
+        const msgLang = msg.value.lang || 'ja'
+        chatLangs.add(msgLang)
+        if (msg.value.translations) {
+          for (const lang of Object.keys(msg.value.translations)) {
+            chatLangs.add(lang)
+          }
+        }
+      }
+      langList = Array.from(chatLangs)
+
+      html += renderLangSelector(langList)
       html += `<div id="content">${renderChatListPage(chatMessages, did, handle, aiDid, aiHandle, profile, aiProfile, pds || undefined)}</div>`
       html += `<nav class="back-nav"><a href="/@${handle}">${handle}</a></nav>`
 
@@ -248,6 +263,21 @@ async function render(route: Route): Promise<void> {
       const chatMessages = await getChatMessages(did, aiDid, 'ai.syui.log.chat')
       const aiProfile = await getProfile(aiDid, false)
       const pds = await getPds(did)
+
+      // Collect available languages from chat messages
+      const chatLangs = new Set<string>()
+      for (const msg of chatMessages) {
+        const msgLang = msg.value.lang || 'ja'
+        chatLangs.add(msgLang)
+        if (msg.value.translations) {
+          for (const lang of Object.keys(msg.value.translations)) {
+            chatLangs.add(lang)
+          }
+        }
+      }
+      langList = Array.from(chatLangs)
+
+      html += renderLangSelector(langList)
       html += `<div id="content">${renderChatThreadPage(chatMessages, route.rkey, did, handle, aiDid, aiHandle, profile, aiProfile, pds || undefined)}</div>`
       html += `<nav class="back-nav"><a href="/@${handle}/at/chat">chat</a></nav>`
 
