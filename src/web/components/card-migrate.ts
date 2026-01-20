@@ -186,9 +186,24 @@ export function renderMigrationPage(
   return `
     <div class="card-page">
       <div class="card-header">
-        <span class="migrate-title">api.syui.ai → ai.syui.card.old</span>
-        ${buttonHtml}
+        <div class="card-stats">
+          <div class="stat">
+            <span class="stat-value">${oldApiUser.username}</span>
+            <span class="stat-label">User</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value">${oldApiUser.aiten.toLocaleString()}</span>
+            <span class="stat-label">Aiten</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value">${Math.floor(oldApiUser.planet).toLocaleString()}</span>
+            <span class="stat-label">Planet</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-actions">
         <a href="${jsonUrl}" class="json-btn">json</a>
+        ${buttonHtml}
       </div>
       <div class="card-grid">${cardsHtml}</div>
     </div>
