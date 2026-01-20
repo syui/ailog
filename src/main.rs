@@ -1,6 +1,7 @@
 mod commands;
 mod lexicons;
 mod lms;
+mod mcp;
 
 use anyhow::Result;
 use clap::{Parser, Subcommand};
@@ -139,6 +140,10 @@ enum Commands {
         #[arg(long)]
         new: bool,
     },
+
+    /// Run MCP server (for Claude Code integration)
+    #[command(name = "mcp-serve")]
+    McpServe,
 }
 
 #[tokio::main]
@@ -181,6 +186,9 @@ async fn main() -> Result<()> {
         }
         Commands::Chat { message, new } => {
             lms::chat::run(message.as_deref(), new).await?;
+        }
+        Commands::McpServe => {
+            mcp::serve()?;
         }
     }
 

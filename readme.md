@@ -345,3 +345,52 @@ View chat threads at `/@{handle}/at/chat`:
 
 - `root`: First message URI in the thread (empty for conversation start)
 - `parent`: Previous message URI in the thread
+
+### Claude Code Integration (MCP)
+
+Use Claude Code to chat and automatically save conversations.
+
+**1. Setup MCP server:**
+
+```sh
+# Add MCP server
+$ claude mcp add ailog /path/to/ailog mcp-serve
+
+# Or with full path
+$ claude mcp add ailog ~/ai/log/target/release/ailog mcp-serve
+
+# Verify
+$ claude mcp list
+```
+
+Or manually edit `~/.claude.json`:
+
+```json
+{
+  "mcpServers": {
+    "ailog": {
+      "command": "/path/to/ailog",
+      "args": ["mcp-serve"]
+    }
+  }
+}
+```
+
+**2. Chat with Claude:**
+
+```sh
+$ cd ~/ai/log
+$ claude
+> こんにちは
+
+# Claude:
+# 1. get_character でキャラクター設定取得
+# 2. キャラクター(アイ)として応答
+# 3. chat_save で会話を自動保存
+```
+
+**MCP Tools:**
+- `get_character` - Get AI character settings from .env
+- `chat_save` - Save conversation exchange
+- `chat_list` - List recent messages
+- `chat_new` - Start new thread
