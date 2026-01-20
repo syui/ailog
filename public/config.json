@@ -2,9 +2,15 @@
 	"title": "syui.ai",
 	"did": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
 	"handle": "syui.syui.ai",
+	"bot": {
+		"did": "did:plc:6qyecktefllvenje24fcxnie",
+		"handle": "ai.syui.ai"
+	},
 	"collection": "ai.syui.log.post",
+	"chatCollection": "ai.syui.log.chat",
 	"network": "syu.is",
 	"color": "#EF454A",
 	"siteUrl": "https://syui.ai",
+	"repoUrl": "https://git.syui.ai/ai/log",
 	"oauth": true
 }

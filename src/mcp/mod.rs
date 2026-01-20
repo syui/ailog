@@ -223,14 +223,16 @@ fn handle_chat_save(params: ChatSaveParams) -> Result<String> {
     });
 
     // Get user DID from token.json
-    let user_did = token::load_session()
-        .map(|s| s.did)
-        .unwrap_or_else(|_| "did:plc:unknown".to_string());
+    let user_did = match token::load_session() {
+        Ok(s) => s.did,
+        Err(_) => return Err(anyhow::anyhow!("User not logged in. Run: ailog login <handle> -p <password>")),
+    };
 
     // Get bot DID from bot.json
-    let bot_did = token::load_bot_session()
-        .map(|s| s.did)
-        .unwrap_or_else(|_| "did:plc:6qyecktefllvenje24fcxnie".to_string());
+    let bot_did = match token::load_bot_session() {
+        Ok(s) => s.did,
+        Err(_) => return Err(anyhow::anyhow!("Bot not logged in. Run: ailog login <handle> -p <password> --bot")),
+    };
 
     // Reset session if new_thread requested
     if params.new_thread {
@@ -278,9 +280,10 @@ fn handle_chat_list() -> Result<String> {
             .to_string()
     });
 
-    let user_did = token::load_session()
-        .map(|s| s.did)
-        .unwrap_or_else(|_| "did:plc:unknown".to_string());
+    let user_did = match token::load_session() {
+        Ok(s) => s.did,
+        Err(_) => return Err(anyhow::anyhow!("User not logged in. Run: ailog login <handle> -p <password>")),
+    };
 
     let collection_dir = std::path::Path::new(&output_dir)
         .join(&user_did)

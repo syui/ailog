@@ -1,11 +1,12 @@
-export function renderFooter(handle: string): string {
+export function renderFooter(handle: string, repoUrl?: string): string {
   // Extract username from handle: {username}.{name}.{domain} -> username
   const username = handle.split('.')[0] || handle
+  const repo = repoUrl || '#'
 
   return `
     <footer id="footer" class="footer">
       <div class="license">
-        <a href="https://git.syui.ai/ai/log" target="_blank" rel="noopener">
+        <a href="${repo}" target="_blank" rel="noopener">
           <img src="/ai.svg" alt="ai" class="license-icon">
         </a>
       </div>

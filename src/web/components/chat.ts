@@ -171,10 +171,11 @@ export function renderChatThread(
   botHandle: string,
   userProfile?: Profile | null,
   botProfile?: Profile | null,
-  pds?: string
+  pds?: string,
+  chatCollection: string = 'ai.syui.log.chat'
 ): string {
   // Find root message
-  const rootUri = `at://${userDid}/ai.syui.log.chat/${rootRkey}`
+  const rootUri = `at://${userDid}/${chatCollection}/${rootRkey}`
   const rootMsg = messages.find(m => m.uri === rootUri)
 
   if (!rootMsg) {
@@ -222,7 +223,7 @@ export function renderChatThread(
 
     const displayContent = getTranslatedContent(msg)
     const content = renderMarkdown(displayContent)
-    const recordLink = `/@${author.handle}/at/collection/ai.syui.log.chat/${rkey}`
+    const recordLink = `/@${author.handle}/at/collection/${chatCollection}/${rkey}`
 
     return `
       <article class="chat-message">
@@ -268,8 +269,9 @@ export function renderChatThreadPage(
   botHandle: string,
   userProfile?: Profile | null,
   botProfile?: Profile | null,
-  pds?: string
+  pds?: string,
+  chatCollection: string = 'ai.syui.log.chat'
 ): string {
-  const thread = renderChatThread(messages, rootRkey, userDid, userHandle, botDid, botHandle, userProfile, botProfile, pds)
+  const thread = renderChatThread(messages, rootRkey, userDid, userHandle, botDid, botHandle, userProfile, botProfile, pds, chatCollection)
   return `<div class="chat-container">${thread}</div>`
 }

@@ -1,12 +1,20 @@
 // Config types
+export interface BotConfig {
+  did: string
+  handle: string
+}
+
 export interface AppConfig {
   title: string
   did?: string
   handle: string
+  bot?: BotConfig
   collection: string
+  chatCollection?: string
   network: string
   color: string
   siteUrl: string
+  repoUrl?: string
   oauth?: boolean
 }
 
@@ -15,6 +23,7 @@ export interface Networks {
     plc: string
     bsky: string
     web: string
+    handleDomains?: string[]
   }
 }
 

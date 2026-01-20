@@ -34,20 +34,20 @@ function filterCollectionsByService(collections: string[], service: string): str
 async function getWebUrl(handle: string): Promise<string | undefined> {
   const networks = await getNetworks()
   // Check each network for matching handle domain
-  for (const [domain, network] of Object.entries(networks)) {
-    // Direct domain match (e.g., handle.syu.is -> syu.is)
-    if (handle.endsWith(`.${domain}`)) {
-      return network.web
+  for (const [_domain, network] of Object.entries(networks)) {
+    // Check handleDomains if configured
+    if (network.handleDomains) {
+      for (const hd of network.handleDomains) {
+        if (handle.endsWith(`.${hd}`)) {
+          return network.web
+        }
+      }
     }
-    // Check if handle domain matches network's web domain (e.g., syui.syui.ai -> syu.is via web: syu.is)
+    // Check if handle domain matches network's web domain
     const webDomain = network.web?.replace(/^https?:\/\//, '')
     if (webDomain && handle.endsWith(`.${webDomain}`)) {
       return network.web
     }
-  }
-  // Check for syui.ai handles -> syu.is network
-  if (handle.endsWith('.syui.ai')) {
-    return networks['syu.is']?.web
   }
   // Default to first network's web
   const firstNetwork = Object.values(networks)[0]
@@ -127,7 +127,7 @@ async function render(route: Route): Promise<void> {
       app.innerHTML = `
         ${renderHeader(handle, oauthEnabled)}
         <div class="error">Could not resolve handle: ${handle}</div>
-        ${renderFooter(handle)}
+        ${renderFooter(handle, config.repoUrl)}
       `
       setupEventHandlers()
       return
@@ -230,13 +230,18 @@ async function render(route: Route): Promise<void> {
 
     } else if (route.type === 'chat') {
       // Chat list page - show threads started by this user
-      const aiDid = 'did:plc:6qyecktefllvenje24fcxnie' // ai.syui.ai
-      const aiHandle = 'ai.syui.ai'
+      if (!config.bot) {
+        html += `<div id="content" class="error">Bot not configured in config.json</div>`
+        html += `<nav class="back-nav"><a href="/@${handle}">${handle}</a></nav>`
+      } else {
+      const botDid = config.bot.did
+      const botHandle = config.bot.handle
+      const chatCollection = config.chatCollection || 'ai.syui.log.chat'
 
       // Load messages and profiles in parallel
-      const [chatMessages, aiProfile, pds] = await Promise.all([
-        getChatMessages(did, aiDid, 'ai.syui.log.chat'),
-        getProfile(aiDid, false),
+      const [chatMessages, botProfile, pds] = await Promise.all([
+        getChatMessages(did, botDid, chatCollection),
+        getProfile(botDid, false),
         getPds(did)
       ])
 
@@ -254,18 +259,24 @@ async function render(route: Route): Promise<void> {
       langList = Array.from(chatLangs)
 
       html += renderLangSelector(langList)
-      html += `<div id="content">${renderChatListPage(chatMessages, did, handle, aiDid, aiHandle, profile, aiProfile, pds || undefined)}</div>`
+      html += `<div id="content">${renderChatListPage(chatMessages, did, handle, botDid, botHandle, profile, botProfile, pds || undefined)}</div>`
       html += `<nav class="back-nav"><a href="/@${handle}">${handle}</a></nav>`
+      }
 
     } else if (route.type === 'chat-thread' && route.rkey) {
       // Chat thread page - show full conversation
-      const aiDid = 'did:plc:6qyecktefllvenje24fcxnie' // ai.syui.ai
-      const aiHandle = 'ai.syui.ai'
+      if (!config.bot) {
+        html += `<div id="content" class="error">Bot not configured in config.json</div>`
+        html += `<nav class="back-nav"><a href="/@${handle}">${handle}</a></nav>`
+      } else {
+      const botDid = config.bot.did
+      const botHandle = config.bot.handle
+      const chatCollection = config.chatCollection || 'ai.syui.log.chat'
 
       // Load messages and profiles in parallel
-      const [chatMessages, aiProfile, pds] = await Promise.all([
-        getChatMessages(did, aiDid, 'ai.syui.log.chat'),
-        getProfile(aiDid, false),
+      const [chatMessages, botProfile, pds] = await Promise.all([
+        getChatMessages(did, botDid, chatCollection),
+        getProfile(botDid, false),
         getPds(did)
       ])
 
@@ -283,8 +294,9 @@ async function render(route: Route): Promise<void> {
       langList = Array.from(chatLangs)
 
       html += renderLangSelector(langList)
-      html += `<div id="content">${renderChatThreadPage(chatMessages, route.rkey, did, handle, aiDid, aiHandle, profile, aiProfile, pds || undefined)}</div>`
+      html += `<div id="content">${renderChatThreadPage(chatMessages, route.rkey, did, handle, botDid, botHandle, profile, botProfile, pds || undefined, chatCollection)}</div>`
       html += `<nav class="back-nav"><a href="/@${handle}/at/chat">chat</a></nav>`
+      }
 
     } else {
       // User page: compact collection buttons + posts
@@ -298,7 +310,7 @@ async function render(route: Route): Promise<void> {
       html += `<div id="content">${renderPostList(posts, handle)}</div>`
     }
 
-    html += renderFooter(handle)
+    html += renderFooter(handle, config.repoUrl)
 
     app.innerHTML = html
     hideLoading(app)
@@ -349,7 +361,7 @@ async function render(route: Route): Promise<void> {
     app.innerHTML = `
       ${renderHeader(currentHandle, false)}
       <div class="error">Error: ${error}</div>
-      ${renderFooter(currentHandle)}
+      ${renderFooter(currentHandle, undefined)}
     `
     hideLoading(app)
     setupEventHandlers()

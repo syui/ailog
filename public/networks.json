@@ -2,11 +2,13 @@
   "bsky.social": {
     "plc": "https://plc.directory",
     "bsky": "https://public.api.bsky.app",
-    "web": "https://bsky.app"
+    "web": "https://bsky.app",
+    "handleDomains": ["bsky.social"]
   },
   "syu.is": {
     "plc": "https://plc.syu.is",
     "bsky": "https://bsky.syu.is",
-    "web": "https://syu.is"
+    "web": "https://syu.is",
+    "handleDomains": ["syu.is", "syui.ai"]
   }
 }
