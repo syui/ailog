@@ -375,22 +375,23 @@ export async function getChatMessages(
   botDid: string,
   collection: string = 'ai.syui.log.chat'
 ): Promise<ChatMessage[]> {
-  const messages: ChatMessage[] = []
-
-  // Load from both DIDs
-  for (const did of [userDid, botDid]) {
+  // Load messages for a single DID
+  async function loadForDid(did: string): Promise<ChatMessage[]> {
     // Try local first
     try {
       const res = await fetch(`/content/${did}/${collection}/index.json`)
       if (res.ok && isJsonResponse(res)) {
         const rkeys: string[] = await res.json()
-        for (const rkey of rkeys) {
+        // Load all messages in parallel
+        const msgPromises = rkeys.map(async (rkey) => {
           const msgRes = await fetch(`/content/${did}/${collection}/${rkey}.json`)
           if (msgRes.ok && isJsonResponse(msgRes)) {
-            messages.push(await msgRes.json())
+            return msgRes.json() as Promise<ChatMessage>
           }
-        }
-        continue
+          return null
+        })
+        const results = await Promise.all(msgPromises)
+        return results.filter((m): m is ChatMessage => m !== null)
       }
     } catch {
       // Try remote
@@ -398,7 +399,7 @@ export async function getChatMessages(
 
     // Remote fallback
     const pds = await getPds(did)
-    if (!pds) continue
+    if (!pds) return []
 
     try {
       const host = pds.replace('https://', '')
@@ -406,12 +407,21 @@ export async function getChatMessages(
       const res = await fetch(url)
       if (res.ok) {
         const data: ListRecordsResponse<ChatMessage> = await res.json()
-        messages.push(...data.records)
+        return data.records
       }
     } catch {
       // Failed
     }
+    return []
   }
+
+  // Load from both DIDs in parallel
+  const [userMessages, botMessages] = await Promise.all([
+    loadForDid(userDid),
+    loadForDid(botDid)
+  ])
+
+  const messages = [...userMessages, ...botMessages]
 
   // Sort by createdAt
   return messages.sort((a, b) =>

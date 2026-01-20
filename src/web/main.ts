@@ -233,10 +233,12 @@ async function render(route: Route): Promise<void> {
       const aiDid = 'did:plc:6qyecktefllvenje24fcxnie' // ai.syui.ai
       const aiHandle = 'ai.syui.ai'
 
-      // Load messages for the current user (did) and bot
-      const chatMessages = await getChatMessages(did, aiDid, 'ai.syui.log.chat')
-      const aiProfile = await getProfile(aiDid, false)
-      const pds = await getPds(did)
+      // Load messages and profiles in parallel
+      const [chatMessages, aiProfile, pds] = await Promise.all([
+        getChatMessages(did, aiDid, 'ai.syui.log.chat'),
+        getProfile(aiDid, false),
+        getPds(did)
+      ])
 
       // Collect available languages from chat messages
       const chatLangs = new Set<string>()
@@ -260,9 +262,12 @@ async function render(route: Route): Promise<void> {
       const aiDid = 'did:plc:6qyecktefllvenje24fcxnie' // ai.syui.ai
       const aiHandle = 'ai.syui.ai'
 
-      const chatMessages = await getChatMessages(did, aiDid, 'ai.syui.log.chat')
-      const aiProfile = await getProfile(aiDid, false)
-      const pds = await getPds(did)
+      // Load messages and profiles in parallel
+      const [chatMessages, aiProfile, pds] = await Promise.all([
+        getChatMessages(did, aiDid, 'ai.syui.log.chat'),
+        getProfile(aiDid, false),
+        getPds(did)
+      ])
 
       // Collect available languages from chat messages
       const chatLangs = new Set<string>()
