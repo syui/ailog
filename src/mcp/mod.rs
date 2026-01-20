@@ -178,7 +178,7 @@ fn save_chat_record(
 
     let record = ChatRecord {
         uri: uri.clone(),
-        cid: format!("bafyrei{}", rkey),
+        cid: String::new(), // CID is assigned by PDS on push
         value,
     };
 
