@@ -1,5 +1,5 @@
 import { xrpcUrl, comAtprotoIdentity, comAtprotoRepo } from '../lexicons'
-import type { AppConfig, Networks, Profile, Post, ListRecordsResponse, ChatMessage } from '../types'
+import type { AppConfig, Networks, Profile, Post, ListRecordsResponse, ChatMessage, CardCollection } from '../types'
 
 // Cache
 let configCache: AppConfig | null = null
@@ -427,4 +427,38 @@ export async function getChatMessages(
   return messages.sort((a, b) =>
     new Date(a.value.createdAt).getTime() - new Date(b.value.createdAt).getTime()
   )
+}
+
+// Get user's card collection (ai.syui.card.user)
+export async function getCards(
+  did: string,
+  collection: string = 'ai.syui.card.user'
+): Promise<CardCollection | null> {
+  // Try local first
+  try {
+    const res = await fetch(`/content/${did}/${collection}/self.json`)
+    if (res.ok && isJsonResponse(res)) {
+      const record = await res.json()
+      return record.value as CardCollection
+    }
+  } catch {
+    // Try remote
+  }
+
+  // Remote fallback
+  const pds = await getPds(did)
+  if (!pds) return null
+
+  try {
+    const host = pds.replace('https://', '')
+    const url = `${xrpcUrl(host, comAtprotoRepo.getRecord)}?repo=${did}&collection=${collection}&rkey=self`
+    const res = await fetch(url)
+    if (res.ok) {
+      const record = await res.json()
+      return record.value as CardCollection
+    }
+  } catch {
+    // Failed
+  }
+  return null
 }

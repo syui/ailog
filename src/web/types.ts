@@ -11,6 +11,7 @@ export interface AppConfig {
   bot?: BotConfig
   collection: string
   chatCollection?: string
+  cardCollection?: string
   network: string
   color: string
   siteUrl: string
@@ -91,4 +92,18 @@ export interface ChatMessage {
       }
     }
   }
+}
+
+// Card types
+export interface UserCard {
+  id: number
+  cp: number
+  rare: number
+  cid: string
+}
+
+export interface CardCollection {
+  card: UserCard[]
+  createdAt: string
+  updatedAt: string
 }

@@ -1,0 +1,403 @@
+/* Card Display Effects - Based on ~/ai/card web-card-effects.ts */
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 24px;
+  padding: 16px 0;
+}
+
+.card-wrapper {
+  display: grid;
+  place-items: center;
+  position: relative;
+  aspect-ratio: 5/7;
+  width: 100%;
+  max-width: 200px;
+  margin: 0 auto;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.card-wrapper:hover {
+  transform: scale(1.05);
+}
+
+.card-reflection {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  border-radius: 7px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  height: 100%;
+}
+
+.card-reflection img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.card-reflection::after {
+  content: "";
+  height: 100%;
+  width: 30px;
+  position: absolute;
+  top: -180px;
+  left: 0;
+  background-color: #ffffffa8;
+  opacity: 0;
+  transform: rotate(45deg);
+  animation: reflection 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes reflection {
+  0% { transform: scale(0) rotate(45deg); opacity: 0; }
+  80% { transform: scale(0) rotate(45deg); opacity: 0.5; }
+  81% { transform: scale(2) rotate(45deg); opacity: 1; }
+  100% { transform: scale(3) rotate(45deg); opacity: 0; }
+}
+
+.card-status {
+  aspect-ratio: 5/7;
+  border-radius: 7px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* rare=0: Normal - no effect */
+
+/* rare=1: Rare (Cyan/Turquoise - like "first") */
+.pattern-rare {
+  background: repeating-radial-gradient(circle at -150% -25%,
+    rgba(0, 255, 255, 0.3),
+    transparent 3px,
+    rgba(64, 224, 208, 0.2) 6px);
+  background-position: 50% 50%;
+  background-size: 120% 120%;
+  mix-blend-mode: screen;
+  opacity: 0.7;
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+.color-rare {
+  background: linear-gradient(115deg,
+    transparent 0%,
+    rgba(0, 255, 255, 0.4) 25%,
+    transparent 50%,
+    rgba(64, 224, 208, 0.3) 75%,
+    transparent 100%);
+  background-position: 50% 50%;
+  background-size: 200% 200%;
+  mix-blend-mode: soft-light;
+  opacity: 0.6;
+  animation: gradient-shift 4s ease-in-out infinite;
+}
+
+/* rare=2: Shiny (Yellow/Rainbow - like "yui") */
+.pattern-shiny {
+  background: repeating-radial-gradient(circle at -150% -25%, rgba(255, 255, 0, 0.3), transparent 3px, rgba(255, 255, 0, 0.2) 6px);
+  background-position: 50% 50%;
+  background-size: 120% 120%;
+  mix-blend-mode: screen;
+  opacity: 0.7;
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+.color-shiny {
+  background: linear-gradient(45deg,
+    #ff0000, #ff7f00, #ffff00, #00ff00,
+    #0000ff, #4b0082, #9400d3, #ff0000);
+  background-size: 400% 400%;
+  animation: rainbow-flow 3s ease-in-out infinite;
+  mix-blend-mode: color-dodge;
+  opacity: 0.3;
+}
+
+/* rare=3: Unique (Gold/Special - like "seven") */
+.pattern-unique {
+  background: repeating-radial-gradient(circle at center, #fff700, #313131 3px, #000700 3px);
+  background-position: 50% 50%;
+  background-size: 120% 120%;
+  mix-blend-mode: screen;
+  opacity: 0.6;
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+.color-unique {
+  background: linear-gradient(115deg, transparent 20%, #fff700 30%, transparent 48% 52%, #fff700 70%, transparent);
+  background-position: 50% 50%;
+  background-size: 200% 200%;
+  mix-blend-mode: soft-light;
+  opacity: 0.5;
+  animation: gradient-shift 4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% { opacity: 0.4; background-size: 120% 120%; }
+  50% { opacity: 0.6; background-size: 140% 140%; }
+}
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes rainbow-flow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Enhanced holographic sweep effect */
+.card-status.pattern-rare::after,
+.card-status.pattern-shiny::after,
+.card-status.pattern-unique::after {
+  content: "";
+  position: absolute;
+  top: -180px;
+  left: 0;
+  width: 30px;
+  height: 100%;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+  opacity: 0;
+  transform: rotate(45deg);
+  animation: holographic-sweep 6s ease-in-out infinite;
+}
+
+@keyframes holographic-sweep {
+  0% { transform: scale(0) rotate(45deg) translateX(-50px); opacity: 0; }
+  10% { transform: scale(0) rotate(45deg) translateX(-50px); opacity: 0; }
+  15% { transform: scale(1) rotate(45deg) translateX(-25px); opacity: 0.6; }
+  20% { transform: scale(1.5) rotate(45deg) translateX(0px); opacity: 1; }
+  25% { transform: scale(2) rotate(45deg) translateX(25px); opacity: 0.8; }
+  30% { transform: scale(2.5) rotate(45deg) translateX(50px); opacity: 0; }
+  100% { transform: scale(0) rotate(45deg) translateX(75px); opacity: 0; }
+}
+
+/* Floating particles effect */
+.card-wrapper::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image:
+    radial-gradient(2px 2px at 20px 30px, rgba(255, 255, 255, 0.8), transparent),
+    radial-gradient(2px 2px at 40px 70px, rgba(255, 255, 255, 0.6), transparent),
+    radial-gradient(1px 1px at 90px 40px, rgba(255, 255, 255, 0.4), transparent),
+    radial-gradient(1px 1px at 130px 80px, rgba(255, 255, 255, 0.7), transparent);
+  background-repeat: repeat;
+  background-size: 200px 200px;
+  animation: float-particles 8s linear infinite;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 15;
+}
+
+.card-wrapper:hover::before {
+  opacity: 1;
+}
+
+@keyframes float-particles {
+  0% { transform: translateY(0px) translateX(0px); }
+  33% { transform: translateY(-10px) translateX(5px); }
+  66% { transform: translateY(-5px) translateX(-5px); }
+  100% { transform: translateY(0px) translateX(0px); }
+}
+
+/* Hover acceleration */
+.card-wrapper:hover .pattern-rare,
+.card-wrapper:hover .pattern-shiny,
+.card-wrapper:hover .pattern-unique {
+  animation-duration: 1.5s;
+  opacity: 0.7;
+}
+
+.card-wrapper:hover .color-rare,
+.card-wrapper:hover .color-shiny,
+.card-wrapper:hover .color-unique {
+  animation-duration: 2s;
+  opacity: 0.8;
+}
+
+/* Service icons in profile (right side) */
+.service-icons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-left: auto;
+  align-self: flex-start;
+}
+
+.service-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  opacity: 0.8;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.service-icon:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* Card page layout */
+.card-page {
+  padding: 16px 0;
+}
+
+.card-header {
+  margin-bottom: 8px;
+}
+
+.card-header h2 {
+  margin: 0;
+}
+
+.card-actions {
+  margin-bottom: 16px;
+}
+
+.card-stats {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 16px;
+  background: var(--bg-secondary, #f5f5f5);
+  border-radius: 8px;
+  flex: 1;
+}
+
+.card-stats .stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 50px;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.card-stats .stat-value {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: var(--text-primary, #333);
+}
+
+.card-stats .stat-label {
+  font-size: 0.75em;
+  color: var(--text-secondary, #666);
+}
+
+/* Rarity colored stats */
+.card-stats .rare-unique {
+  background: rgba(255, 247, 0, 0.2);
+}
+.card-stats .rare-unique .stat-value {
+  color: #b8860b;
+}
+
+.card-stats .rare-shiny {
+  background: linear-gradient(135deg, rgba(255, 255, 0, 0.15), rgba(255, 127, 0, 0.15));
+}
+.card-stats .rare-shiny .stat-value {
+  color: #ff8c00;
+}
+
+.card-stats .rare-rare {
+  background: rgba(0, 255, 255, 0.15);
+}
+.card-stats .rare-rare .stat-value {
+  color: #20b2aa;
+}
+
+/* Card item with detail below */
+.card-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card-count {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: bold;
+  z-index: 50;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.no-cards {
+  text-align: center;
+  padding: 32px;
+  color: var(--text-secondary, #666);
+}
+
+/* Card detail below card */
+.card-detail {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--text-primary, #333);
+}
+
+.card-detail .card-cp {
+  font-weight: bold;
+}
+
+.card-detail .card-rarity {
+  font-size: 16px;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .card-stats {
+    background: var(--bg-secondary, #2a2a2a);
+  }
+
+  .card-stats .stat-value {
+    color: var(--text-primary, #eee);
+  }
+
+  .card-stats .stat-label {
+    color: var(--text-secondary, #aaa);
+  }
+
+  .card-stats .rare-unique .stat-value {
+    color: #ffd700;
+  }
+
+  .card-stats .rare-shiny .stat-value {
+    color: #ffa500;
+  }
+
+  .card-stats .rare-rare .stat-value {
+    color: #40e0d0;
+  }
+
+  .card-detail {
+    color: var(--text-primary, #eee);
+  }
+
+  .card-detail .card-status-text {
+    color: var(--text-secondary, #aaa);
+  }
+}

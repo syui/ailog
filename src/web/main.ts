@@ -1,5 +1,6 @@
 import './styles/main.css'
-import { getConfig, resolveHandle, getProfile, getPosts, getPost, describeRepo, listRecords, getRecord, getPds, getNetworks, getChatMessages } from './lib/api'
+import './styles/card.css'
+import { getConfig, resolveHandle, getProfile, getPosts, getPost, describeRepo, listRecords, getRecord, getPds, getNetworks, getChatMessages, getCards } from './lib/api'
 import { parseRoute, onRouteChange, navigate, type Route } from './lib/router'
 import { login, logout, handleCallback, restoreSession, isLoggedIn, getLoggedInHandle, getLoggedInDid, deleteRecord, updatePost } from './lib/auth'
 import { validateRecord } from './lib/lexicon'
@@ -11,6 +12,7 @@ import { renderCollectionButtons, renderServerInfo, renderServiceList, renderCol
 import { renderModeTabs, renderLangSelector, setupModeTabs } from './components/mode-tabs'
 import { renderFooter } from './components/footer'
 import { renderChatListPage, renderChatThreadPage } from './components/chat'
+import { renderCardPage } from './components/card'
 import { showLoading, hideLoading } from './components/loading'
 
 const app = document.getElementById('app')!
@@ -133,9 +135,12 @@ async function render(route: Route): Promise<void> {
       return
     }
 
-    // Load profile (local only for admin, remote for others)
-    const profile = await getProfile(did, localOnly)
-    const webUrl = await getWebUrl(handle)
+    // Load profile and collections (local only for admin, remote for others)
+    const [profile, webUrl, collections] = await Promise.all([
+      getProfile(did, localOnly),
+      getWebUrl(handle),
+      describeRepo(did)
+    ])
 
     // Load posts (local only for admin, remote for others)
     const posts = await getPosts(did, config.collection, localOnly)
@@ -164,14 +169,14 @@ async function render(route: Route): Promise<void> {
       (route.type === 'atbrowser' || route.type === 'service' || route.type === 'collection' || route.type === 'record' ? 'browser' : 'blog')
     html += renderModeTabs(handle, activeTab, localOnly)
 
-    // Profile section
-    if (profile) {
-      html += await renderProfile(did, profile, handle, webUrl, localOnly)
-    }
-
     // Check if logged-in user owns this content
     const loggedInDid = getLoggedInDid()
     const isOwner = isLoggedIn() && loggedInDid === did
+
+    // Profile section
+    if (profile) {
+      html += await renderProfile(did, profile, handle, webUrl, localOnly, isOwner, collections)
+    }
 
     // Content section based on route type
     let currentRecord: { uri: string; cid: string; value: unknown } | null = null
@@ -195,16 +200,14 @@ async function render(route: Route): Promise<void> {
       html += `<nav class="back-nav"><a href="/@${handle}/at/service/${encodeURIComponent(service)}">${service}</a></nav>`
 
     } else if (route.type === 'service' && route.service) {
-      // AT-Browser: Service collections list
-      const collections = await describeRepo(did)
+      // AT-Browser: Service collections list (use pre-loaded collections)
       const filtered = filterCollectionsByService(collections, route.service)
       html += `<div id="content">${renderCollectionList(filtered, handle, route.service)}</div>`
       html += `<nav class="back-nav"><a href="/@${handle}/at">at</a></nav>`
 
     } else if (route.type === 'atbrowser') {
-      // AT-Browser: Main view with server info + service list
+      // AT-Browser: Main view with server info + service list (use pre-loaded collections)
       const pds = await getPds(did)
-      const collections = await describeRepo(did)
 
       html += `<div id="browser">`
       html += renderServerInfo(did, pds)
@@ -226,6 +229,13 @@ async function render(route: Route): Promise<void> {
     } else if (route.type === 'postpage') {
       // Post form page
       html += `<div id="post-form">${renderPostForm(config.collection)}</div>`
+      html += `<nav class="back-nav"><a href="/@${handle}">${handle}</a></nav>`
+
+    } else if (route.type === 'card') {
+      // Card collection page
+      const cardCollection = config.cardCollection || 'ai.syui.card.user'
+      const cards = await getCards(did, cardCollection)
+      html += `<div id="content">${renderCardPage(cards, handle, cardCollection)}</div>`
       html += `<nav class="back-nav"><a href="/@${handle}">${handle}</a></nav>`
 
     } else if (route.type === 'chat') {
@@ -299,8 +309,7 @@ async function render(route: Route): Promise<void> {
       }
 
     } else {
-      // User page: compact collection buttons + posts
-      const collections = await describeRepo(did)
+      // User page: compact collection buttons + posts (use pre-loaded collections)
       html += `<div id="browser">${renderCollectionButtons(collections, handle)}</div>`
 
       // Language selector above content

@@ -1,5 +1,5 @@
 export interface Route {
-  type: 'home' | 'user' | 'post' | 'postpage' | 'atbrowser' | 'service' | 'collection' | 'record' | 'chat' | 'chat-thread'
+  type: 'home' | 'user' | 'post' | 'postpage' | 'atbrowser' | 'service' | 'collection' | 'record' | 'chat' | 'chat-thread' | 'card'
   handle?: string
   rkey?: string
   service?: string
@@ -51,6 +51,12 @@ export function parseRoute(): Route {
     return { type: 'postpage', handle: postPageMatch[1] }
   }
 
+  // Card page: /@handle/at/card
+  const cardMatch = path.match(/^\/@([^/]+)\/at\/card\/?$/)
+  if (cardMatch) {
+    return { type: 'card', handle: cardMatch[1] }
+  }
+
   // Chat thread: /@handle/at/chat/{rkey}
   const chatThreadMatch = path.match(/^\/@([^/]+)\/at\/chat\/([^/]+)$/)
   if (chatThreadMatch) {
@@ -91,6 +97,8 @@ export function navigate(route: Route): void {
     path = `/@${route.handle}/at/collection/${route.collection}`
   } else if (route.type === 'record' && route.handle && route.collection && route.rkey) {
     path = `/@${route.handle}/at/collection/${route.collection}/${route.rkey}`
+  } else if (route.type === 'card' && route.handle) {
+    path = `/@${route.handle}/at/card`
   } else if (route.type === 'chat' && route.handle) {
     path = `/@${route.handle}/at/chat`
   } else if (route.type === 'chat-thread' && route.handle && route.rkey) {

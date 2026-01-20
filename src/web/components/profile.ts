@@ -1,12 +1,38 @@
 import type { Profile } from '../types'
 import { getAvatarUrl, getAvatarUrlRemote } from '../lib/api'
 
+// Service definitions for profile icons
+export interface ServiceLink {
+  name: string
+  icon: string
+  url: string
+  collection: string
+}
+
+// Get available services based on user's collections
+export function getServiceLinks(handle: string, collections: string[]): ServiceLink[] {
+  const services: ServiceLink[] = []
+
+  if (collections.includes('ai.syui.card.user')) {
+    services.push({
+      name: 'Card',
+      icon: '/service/ai.syui.card.png',
+      url: `/@${handle}/at/card`,
+      collection: 'ai.syui.card.user'
+    })
+  }
+
+  return services
+}
+
 export async function renderProfile(
   did: string,
   profile: Profile,
   handle: string,
   webUrl?: string,
-  localOnly = false
+  localOnly = false,
+  isLoggedIn = false,
+  collections: string[] = []
 ): Promise<string> {
   // Local mode: sync, no API call. Remote mode: async with API call
   const avatarUrl = localOnly
@@ -26,6 +52,20 @@ export async function renderProfile(
     ? `<img src="${avatarUrl}" alt="${escapeHtml(displayName)}" class="profile-avatar">`
     : `<div class="profile-avatar-placeholder"></div>`
 
+  // Service icons (only for logged-in users with matching collections)
+  let serviceIconsHtml = ''
+  if (isLoggedIn && collections.length > 0) {
+    const services = getServiceLinks(handle, collections)
+    if (services.length > 0) {
+      const iconsHtml = services.map(s => `
+        <a href="${s.url}" class="service-icon-link" title="${s.name}">
+          <img src="${s.icon}" alt="${s.name}" class="service-icon" />
+        </a>
+      `).join('')
+      serviceIconsHtml = `<div class="service-icons">${iconsHtml}</div>`
+    }
+  }
+
   return `
     <div class="profile">
       ${avatarHtml}
@@ -34,6 +74,7 @@ export async function renderProfile(
         <p class="profile-handle">${handleHtml}</p>
         ${description ? `<p class="profile-desc">${escapeHtml(description)}</p>` : ''}
       </div>
+      ${serviceIconsHtml}
     </div>
   `
 }
