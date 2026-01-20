@@ -1,0 +1,16 @@
+{
+  "collections": [
+    "ai.syui.card.admin",
+    "ai.syui.card.user",
+    "ai.syui.log.chat",
+    "ai.syui.rse.admin",
+    "ai.syui.rse.user",
+    "app.bsky.actor.profile",
+    "app.bsky.feed.generator",
+    "app.bsky.feed.post",
+    "app.bsky.graph.follow",
+    "app.bsky.graph.verification"
+  ],
+  "did": "did:plc:6qyecktefllvenje24fcxnie",
+  "handle": "ai.syui.ai"
+}

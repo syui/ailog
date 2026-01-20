@@ -1,5 +1,5 @@
 import { xrpcUrl, comAtprotoIdentity, comAtprotoRepo } from '../lexicons'
-import type { AppConfig, Networks, Profile, Post, ListRecordsResponse } from '../types'
+import type { AppConfig, Networks, Profile, Post, ListRecordsResponse, ChatMessage } from '../types'
 
 // Cache
 let configCache: AppConfig | null = null
@@ -367,4 +367,54 @@ export interface SearchPost {
     avatar?: string
   }
   record: unknown
+}
+
+// Load chat messages from both user and bot repos
+export async function getChatMessages(
+  userDid: string,
+  botDid: string,
+  collection: string = 'ai.syui.log.chat'
+): Promise<ChatMessage[]> {
+  const messages: ChatMessage[] = []
+
+  // Load from both DIDs
+  for (const did of [userDid, botDid]) {
+    // Try local first
+    try {
+      const res = await fetch(`/content/${did}/${collection}/index.json`)
+      if (res.ok && isJsonResponse(res)) {
+        const rkeys: string[] = await res.json()
+        for (const rkey of rkeys) {
+          const msgRes = await fetch(`/content/${did}/${collection}/${rkey}.json`)
+          if (msgRes.ok && isJsonResponse(msgRes)) {
+            messages.push(await msgRes.json())
+          }
+        }
+        continue
+      }
+    } catch {
+      // Try remote
+    }
+
+    // Remote fallback
+    const pds = await getPds(did)
+    if (!pds) continue
+
+    try {
+      const host = pds.replace('https://', '')
+      const url = `${xrpcUrl(host, comAtprotoRepo.listRecords)}?repo=${did}&collection=${collection}&limit=100`
+      const res = await fetch(url)
+      if (res.ok) {
+        const data: ListRecordsResponse<ChatMessage> = await res.json()
+        messages.push(...data.records)
+      }
+    } catch {
+      // Failed
+    }
+  }
+
+  // Sort by createdAt
+  return messages.sort((a, b) =>
+    new Date(a.value.createdAt).getTime() - new Date(b.value.createdAt).getTime()
+  )
 }

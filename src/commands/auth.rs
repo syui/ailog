@@ -20,7 +20,7 @@ struct CreateSessionResponse {
 }
 
 /// Login to ATProto PDS
-pub async fn login(handle: &str, password: &str, pds: &str) -> Result<()> {
+pub async fn login(handle: &str, password: &str, pds: &str, is_bot: bool) -> Result<()> {
     let client = reqwest::Client::new();
     let url = lexicons::url(pds, &com_atproto_server::CREATE_SESSION);
 
@@ -29,7 +29,8 @@ pub async fn login(handle: &str, password: &str, pds: &str) -> Result<()> {
         password: password.to_string(),
     };
 
-    println!("Logging in to {} as {}...", pds, handle);
+    let account_type = if is_bot { "bot" } else { "user" };
+    println!("Logging in to {} as {} ({})...", pds, handle, account_type);
 
     let res = client
         .post(&url)
@@ -54,7 +55,11 @@ pub async fn login(handle: &str, password: &str, pds: &str) -> Result<()> {
         pds: Some(pds.to_string()),
     };
 
-    token::save_session(&session)?;
+    if is_bot {
+        token::save_bot_session(&session)?;
+    } else {
+        token::save_session(&session)?;
+    }
     println!("Logged in as {} ({})", session.handle, session.did);
 
     Ok(())
@@ -92,6 +97,42 @@ pub async fn refresh_session() -> Result<Session> {
     };
 
     token::save_session(&session)?;
+
+    Ok(session)
+}
+
+/// Refresh bot access token
+pub async fn refresh_bot_session() -> Result<Session> {
+    let session = token::load_bot_session()?;
+    let pds = session.pds.as_deref().unwrap_or("bsky.social");
+
+    let client = reqwest::Client::new();
+    let url = lexicons::url(pds, &com_atproto_server::REFRESH_SESSION);
+
+    let res = client
+        .post(&url)
+        .header("Authorization", format!("Bearer {}", session.refresh_jwt))
+        .send()
+        .await
+        .context("Failed to refresh bot session")?;
+
+    if !res.status().is_success() {
+        let status = res.status();
+        let body = res.text().await.unwrap_or_default();
+        anyhow::bail!("Bot refresh failed: {} - {}. Try 'ailog login --bot' again.", status, body);
+    }
+
+    let new_session: CreateSessionResponse = res.json().await?;
+
+    let session = Session {
+        did: new_session.did,
+        handle: new_session.handle,
+        access_jwt: new_session.access_jwt,
+        refresh_jwt: new_session.refresh_jwt,
+        pds: Some(pds.to_string()),
+    };
+
+    token::save_bot_session(&session)?;
 
     Ok(session)
 }

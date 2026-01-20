@@ -1,0 +1,17 @@
+{
+  "cid": "bafyreigknaeiqn7txi3of25k7o3jnxdcft4pmcqi2sbfkkfefriqm6tyoe",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/app.bsky.actor.profile/self",
+  "value": {
+    "$type": "app.bsky.actor.profile",
+    "avatar": {
+      "$type": "blob",
+      "mimeType": "image/jpeg",
+      "ref": {
+        "$link": "bafkreigo3ucp32carhbn3chfc3hlf6i7f4rplojc76iylihzpifyexi24y"
+      },
+      "size": 375259
+    },
+    "description": "https://syu.is/syui",
+    "displayName": "ai"
+  }
+}

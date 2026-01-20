@@ -1,5 +1,5 @@
 import './styles/main.css'
-import { getConfig, resolveHandle, getProfile, getPosts, getPost, describeRepo, listRecords, getRecord, getPds, getNetworks } from './lib/api'
+import { getConfig, resolveHandle, getProfile, getPosts, getPost, describeRepo, listRecords, getRecord, getPds, getNetworks, getChatMessages } from './lib/api'
 import { parseRoute, onRouteChange, navigate, type Route } from './lib/router'
 import { login, logout, handleCallback, restoreSession, isLoggedIn, getLoggedInHandle, getLoggedInDid, deleteRecord, updatePost } from './lib/auth'
 import { validateRecord } from './lib/lexicon'
@@ -10,6 +10,7 @@ import { renderPostForm, setupPostForm } from './components/postform'
 import { renderCollectionButtons, renderServerInfo, renderServiceList, renderCollectionList, renderRecordList, renderRecordDetail } from './components/browser'
 import { renderModeTabs, renderLangSelector, setupModeTabs } from './components/mode-tabs'
 import { renderFooter } from './components/footer'
+import { renderChatListPage, renderChatThreadPage } from './components/chat'
 import { showLoading, hideLoading } from './components/loading'
 
 const app = document.getElementById('app')!
@@ -157,10 +158,11 @@ async function render(route: Route): Promise<void> {
     // Build page
     let html = renderHeader(handle, oauthEnabled)
 
-    // Mode tabs (Blog/Browser/Post/PDS)
+    // Mode tabs (Blog/Browser/Post/Chat/PDS)
     const activeTab = route.type === 'postpage' ? 'post' :
+      (route.type === 'chat' || route.type === 'chat-thread') ? 'chat' :
       (route.type === 'atbrowser' || route.type === 'service' || route.type === 'collection' || route.type === 'record' ? 'browser' : 'blog')
-    html += renderModeTabs(handle, activeTab)
+    html += renderModeTabs(handle, activeTab, localOnly)
 
     // Profile section
     if (profile) {
@@ -225,6 +227,29 @@ async function render(route: Route): Promise<void> {
       // Post form page
       html += `<div id="post-form">${renderPostForm(config.collection)}</div>`
       html += `<nav class="back-nav"><a href="/@${handle}">${handle}</a></nav>`
+
+    } else if (route.type === 'chat') {
+      // Chat list page - show threads started by this user
+      const aiDid = 'did:plc:6qyecktefllvenje24fcxnie' // ai.syui.ai
+      const aiHandle = 'ai.syui.ai'
+
+      // Load messages for the current user (did) and bot
+      const chatMessages = await getChatMessages(did, aiDid, 'ai.syui.log.chat')
+      const aiProfile = await getProfile(aiDid, false)
+      const pds = await getPds(did)
+      html += `<div id="content">${renderChatListPage(chatMessages, did, handle, aiDid, aiHandle, profile, aiProfile, pds || undefined)}</div>`
+      html += `<nav class="back-nav"><a href="/@${handle}">${handle}</a></nav>`
+
+    } else if (route.type === 'chat-thread' && route.rkey) {
+      // Chat thread page - show full conversation
+      const aiDid = 'did:plc:6qyecktefllvenje24fcxnie' // ai.syui.ai
+      const aiHandle = 'ai.syui.ai'
+
+      const chatMessages = await getChatMessages(did, aiDid, 'ai.syui.log.chat')
+      const aiProfile = await getProfile(aiDid, false)
+      const pds = await getPds(did)
+      html += `<div id="content">${renderChatThreadPage(chatMessages, route.rkey, did, handle, aiDid, aiHandle, profile, aiProfile, pds || undefined)}</div>`
+      html += `<nav class="back-nav"><a href="/@${handle}/at/chat">chat</a></nav>`
 
     } else {
       // User page: compact collection buttons + posts

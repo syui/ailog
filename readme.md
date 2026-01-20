@@ -247,3 +247,101 @@ The current implementation uses the DNS-based approach instead, which works toda
 ### Reference
 
 - [resolve-lexicon](https://resolve-lexicon.pages.dev/) - Browser-compatible lexicon resolver
+
+## chat
+
+Chat with AI bot and save conversations to ATProto.
+
+### Setup
+
+1. Login as user and bot:
+
+```sh
+# User login
+$ ailog login user.syu.is -p <password> -s syu.is
+
+# Bot login
+$ ailog login ai.syu.is -p <password> -s syu.is --bot
+```
+
+2. Configure LLM endpoint in `.env`:
+
+```
+CHAT_URL=http://127.0.0.1:1234/v1
+CHAT_MODEL=gemma-2-9b
+```
+
+3. (Optional) Set character/system prompt:
+
+```sh
+# Direct prompt
+CHAT_SYSTEM="You are ai, a friendly AI assistant."
+
+# Or load from file
+CHAT_SYSTEM_FILE=./character.txt
+```
+
+### Usage
+
+```sh
+# Start a new conversation
+$ ailog chat --new "hello"
+
+# Continue the conversation
+$ ailog chat "how are you?"
+
+# Interactive mode (new session)
+$ ailog chat --new
+
+# Interactive mode (continue)
+$ ailog chat
+```
+
+### Data Storage
+
+Messages are saved locally to `public/content/{did}/ai.syui.log.chat/`:
+
+```
+public/content/
+├── did:plc:xxx/              # User's messages
+│   └── ai.syui.log.chat/
+│       ├── index.json
+│       └── {rkey}.json
+└── did:plc:yyy/              # Bot's messages
+    └── ai.syui.log.chat/
+        ├── index.json
+        └── {rkey}.json
+```
+
+### Sync & Push
+
+```sh
+# Sync bot data from PDS to local
+$ ailog sync --bot
+
+# Push local chat to PDS
+$ ailog push -c ai.syui.log.chat --bot
+```
+
+### Web Display
+
+View chat threads at `/@{handle}/at/chat`:
+
+- `/@user.syu.is/at/chat` - Thread list (conversations started by user)
+- `/@user.syu.is/at/chat/{rkey}` - Full conversation thread
+
+### Record Schema
+
+```json
+{
+  "$type": "ai.syui.log.chat",
+  "content": "message text",
+  "author": "did:plc:xxx",
+  "createdAt": "2025-01-01T00:00:00.000Z",
+  "root": "at://did:plc:xxx/ai.syui.log.chat/{rkey}",
+  "parent": "at://did:plc:yyy/ai.syui.log.chat/{rkey}"
+}
+```
+
+- `root`: First message URI in the thread (empty for conversation start)
+- `parent`: Previous message URI in the thread

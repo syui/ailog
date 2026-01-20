@@ -1,0 +1,43 @@
+{
+  "lexicon": 1,
+  "id": "ai.syui.log.chat",
+  "defs": {
+    "main": {
+      "type": "record",
+      "description": "Record containing a chat message in a conversation.",
+      "key": "tid",
+      "record": {
+        "type": "object",
+        "required": ["content", "author", "createdAt"],
+        "properties": {
+          "content": {
+            "type": "string",
+            "maxLength": 100000,
+            "maxGraphemes": 10000,
+            "description": "The content of the message."
+          },
+          "author": {
+            "type": "string",
+            "format": "did",
+            "description": "DID of the message author."
+          },
+          "root": {
+            "type": "string",
+            "format": "at-uri",
+            "description": "AT-URI of the root message in the thread."
+          },
+          "parent": {
+            "type": "string",
+            "format": "at-uri",
+            "description": "AT-URI of the parent message being replied to."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "datetime",
+            "description": "Client-declared timestamp when this message was created."
+          }
+        }
+      }
+    }
+  }
+}

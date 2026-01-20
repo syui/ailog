@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::fs;
 
-use super::auth;
+use super::{auth, token};
 use crate::lexicons::{self, com_atproto_repo, com_atproto_identity};
 
 #[derive(Debug, Serialize)]
@@ -234,39 +234,55 @@ struct DescribeRepoResponse {
 }
 
 /// Sync PDS data to local content directory
-pub async fn sync_to_local(output: &str) -> Result<()> {
-    let config_content = fs::read_to_string("public/config.json")
-        .context("config.json not found")?;
-    let config: Config = serde_json::from_str(&config_content)?;
-
-    println!("Syncing data for {}", config.handle);
-
+pub async fn sync_to_local(output: &str, is_bot: bool, collection_override: Option<&str>) -> Result<()> {
     let client = reqwest::Client::new();
 
-    // Resolve handle to DID
-    let resolve_url = format!(
-        "{}?handle={}",
-        lexicons::url("public.api.bsky.app", &com_atproto_identity::RESOLVE_HANDLE),
-        config.handle
-    );
-    let res = client.get(&resolve_url).send().await?;
-    let resolve: serde_json::Value = res.json().await?;
-    let did = resolve["did"].as_str().context("Could not resolve handle")?;
+    let (did, pds, _handle, collection) = if is_bot {
+        // Bot mode: use bot.json
+        let session = token::load_bot_session()?;
+        let pds = session.pds.as_deref().unwrap_or("bsky.social");
+        let collection = collection_override.unwrap_or("ai.syui.log.chat");
+        println!("Syncing bot data for {} ({})", session.handle, session.did);
+        (session.did.clone(), format!("https://{}", pds), session.handle.clone(), collection.to_string())
+    } else {
+        // User mode: use config.json
+        let config_content = fs::read_to_string("public/config.json")
+            .context("config.json not found")?;
+        let config: Config = serde_json::from_str(&config_content)?;
+
+        println!("Syncing data for {}", config.handle);
+
+        // Resolve handle to DID
+        let resolve_url = format!(
+            "{}?handle={}",
+            lexicons::url("public.api.bsky.app", &com_atproto_identity::RESOLVE_HANDLE),
+            config.handle
+        );
+        let res = client.get(&resolve_url).send().await?;
+        let resolve: serde_json::Value = res.json().await?;
+        let did = resolve["did"].as_str().context("Could not resolve handle")?.to_string();
+
+        // Get PDS from DID document
+        let plc_url = format!("https://plc.directory/{}", did);
+        let res = client.get(&plc_url).send().await?;
+        let did_doc: serde_json::Value = res.json().await?;
+        let pds = did_doc["service"]
+            .as_array()
+            .and_then(|services| {
+                services.iter().find(|s| s["type"] == "AtprotoPersonalDataServer")
+            })
+            .and_then(|s| s["serviceEndpoint"].as_str())
+            .context("Could not find PDS")?
+            .to_string();
+
+        let collection = collection_override
+            .map(|s| s.to_string())
+            .unwrap_or_else(|| config.collection.as_deref().unwrap_or("ai.syui.log.post").to_string());
+
+        (did, pds, config.handle.clone(), collection)
+    };
 
     println!("DID: {}", did);
-
-    // Get PDS from DID document
-    let plc_url = format!("https://plc.directory/{}", did);
-    let res = client.get(&plc_url).send().await?;
-    let did_doc: serde_json::Value = res.json().await?;
-    let pds = did_doc["service"]
-        .as_array()
-        .and_then(|services| {
-            services.iter().find(|s| s["type"] == "AtprotoPersonalDataServer")
-        })
-        .and_then(|s| s["serviceEndpoint"].as_str())
-        .context("Could not find PDS")?;
-
     println!("PDS: {}", pds);
 
     // Remove https:// prefix for lexicons::url
@@ -332,7 +348,6 @@ pub async fn sync_to_local(output: &str) -> Result<()> {
     }
 
     // 3. Sync collection records
-    let collection = config.collection.as_deref().unwrap_or("ai.syui.log.post");
     let records_url = format!(
         "{}?repo={}&collection={}&limit=100",
         lexicons::url(pds_host, &com_atproto_repo::LIST_RECORDS),
@@ -367,6 +382,85 @@ pub async fn sync_to_local(output: &str) -> Result<()> {
     }
 
     println!("Sync complete!");
+
+    Ok(())
+}
+
+/// Push local content to PDS
+pub async fn push_to_remote(input: &str, collection: &str, is_bot: bool) -> Result<()> {
+    let session = if is_bot {
+        auth::refresh_bot_session().await?
+    } else {
+        auth::refresh_session().await?
+    };
+    let pds = session.pds.as_deref().unwrap_or("bsky.social");
+    let did = &session.did;
+
+    // Build collection directory path
+    let collection_dir = format!("{}/{}/{}", input, did, collection);
+
+    if !std::path::Path::new(&collection_dir).exists() {
+        anyhow::bail!("Collection directory not found: {}", collection_dir);
+    }
+
+    println!("Pushing records from {} to {}", collection_dir, collection);
+
+    let client = reqwest::Client::new();
+    let url = lexicons::url(pds, &com_atproto_repo::PUT_RECORD);
+
+    let mut count = 0;
+    for entry in fs::read_dir(&collection_dir)? {
+        let entry = entry?;
+        let path = entry.path();
+
+        // Skip non-JSON files and index.json
+        if path.extension().map(|e| e != "json").unwrap_or(true) {
+            continue;
+        }
+        let filename = path.file_stem().and_then(|s| s.to_str()).unwrap_or("");
+        if filename == "index" {
+            continue;
+        }
+
+        let rkey = filename.to_string();
+        let content = fs::read_to_string(&path)?;
+        let record_data: Value = serde_json::from_str(&content)?;
+
+        // Extract value from record (sync saves as {uri, cid, value})
+        let record = if record_data.get("value").is_some() {
+            record_data["value"].clone()
+        } else {
+            record_data
+        };
+
+        let req = PutRecordRequest {
+            repo: did.clone(),
+            collection: collection.to_string(),
+            rkey: rkey.clone(),
+            record,
+        };
+
+        println!("Pushing: {}", rkey);
+
+        let res = client
+            .post(&url)
+            .header("Authorization", format!("Bearer {}", session.access_jwt))
+            .json(&req)
+            .send()
+            .await?;
+
+        if !res.status().is_success() {
+            let status = res.status();
+            let body = res.text().await.unwrap_or_default();
+            println!("  Failed: {} - {}", status, body);
+        } else {
+            let result: PutRecordResponse = res.json().await?;
+            println!("  OK: {}", result.uri);
+            count += 1;
+        }
+    }
+
+    println!("Pushed {} records to {}", count, collection);
 
     Ok(())
 }

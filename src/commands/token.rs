@@ -27,6 +27,16 @@ pub fn token_path() -> Result<PathBuf> {
     Ok(config_dir.join("token.json"))
 }
 
+/// Get bot token file path: ~/Library/Application Support/ai.syui.log/bot.json
+pub fn bot_token_path() -> Result<PathBuf> {
+    let config_dir = dirs::config_dir()
+        .context("Could not find config directory")?
+        .join(BUNDLE_ID);
+
+    fs::create_dir_all(&config_dir)?;
+    Ok(config_dir.join("bot.json"))
+}
+
 /// Load session from token file
 pub fn load_session() -> Result<Session> {
     let path = token_path()?;
@@ -42,5 +52,23 @@ pub fn save_session(session: &Session) -> Result<()> {
     let content = serde_json::to_string_pretty(session)?;
     fs::write(&path, content)?;
     println!("Token saved to {:?}", path);
+    Ok(())
+}
+
+/// Load bot session from bot token file
+pub fn load_bot_session() -> Result<Session> {
+    let path = bot_token_path()?;
+    let content = fs::read_to_string(&path)
+        .with_context(|| format!("Bot token file not found: {:?}. Run 'ailog login --bot' first.", path))?;
+    let session: Session = serde_json::from_str(&content)?;
+    Ok(session)
+}
+
+/// Save bot session to bot token file
+pub fn save_bot_session(session: &Session) -> Result<()> {
+    let path = bot_token_path()?;
+    let content = serde_json::to_string_pretty(session)?;
+    fs::write(&path, content)?;
+    println!("Bot token saved to {:?}", path);
     Ok(())
 }

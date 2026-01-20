@@ -64,3 +64,16 @@ export interface ListRecordsResponse<T> {
   records: T[]
   cursor?: string
 }
+
+export interface ChatMessage {
+  cid: string
+  uri: string
+  value: {
+    $type: string
+    content: string
+    author: string
+    createdAt: string
+    root?: string
+    parent?: string
+  }
+}

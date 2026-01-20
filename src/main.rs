@@ -26,6 +26,9 @@ enum Commands {
         /// PDS server
         #[arg(short, long, default_value = "bsky.social")]
         server: String,
+        /// Login as bot (saves to bot.json)
+        #[arg(long)]
+        bot: bool,
     },
 
     /// Update lexicon schema
@@ -75,6 +78,25 @@ enum Commands {
         /// Output directory
         #[arg(short, long, default_value = "public/content")]
         output: String,
+        /// Sync bot data (uses bot.json)
+        #[arg(long)]
+        bot: bool,
+        /// Collection to sync (for bot)
+        #[arg(short, long)]
+        collection: Option<String>,
+    },
+
+    /// Push local content to PDS
+    Push {
+        /// Input directory
+        #[arg(short, long, default_value = "public/content")]
+        input: String,
+        /// Collection (e.g., ai.syui.log.post)
+        #[arg(short, long, default_value = "ai.syui.log.post")]
+        collection: String,
+        /// Push as bot (uses bot.json)
+        #[arg(long)]
+        bot: bool,
     },
 
     /// Generate lexicon Rust code from ATProto lexicon JSON files
@@ -107,6 +129,16 @@ enum Commands {
         #[arg(short, long, default_value = "bsky.social")]
         server: String,
     },
+
+    /// Chat with AI
+    #[command(alias = "c")]
+    Chat {
+        /// Message to send (optional, starts interactive mode if omitted)
+        message: Option<String>,
+        /// Start new conversation
+        #[arg(long)]
+        new: bool,
+    },
 }
 
 #[tokio::main]
@@ -117,8 +149,8 @@ async fn main() -> Result<()> {
     let cli = Cli::parse();
 
     match cli.command {
-        Commands::Login { handle, password, server } => {
-            commands::auth::login(&handle, &password, &server).await?;
+        Commands::Login { handle, password, server, bot } => {
+            commands::auth::login(&handle, &password, &server, bot).await?;
         }
         Commands::Lexicon { file } => {
             commands::post::put_lexicon(&file).await?;
@@ -132,8 +164,11 @@ async fn main() -> Result<()> {
         Commands::Delete { collection, rkey } => {
             commands::post::delete_record(&collection, &rkey).await?;
         }
-        Commands::Sync { output } => {
-            commands::post::sync_to_local(&output).await?;
+        Commands::Sync { output, bot, collection } => {
+            commands::post::sync_to_local(&output, bot, collection.as_deref()).await?;
+        }
+        Commands::Push { input, collection, bot } => {
+            commands::post::push_to_remote(&input, &collection, bot).await?;
         }
         Commands::Gen { input, output } => {
             commands::gen::generate(&input, &output)?;
@@ -143,6 +178,9 @@ async fn main() -> Result<()> {
         }
         Commands::Did { handle, server } => {
             commands::did::resolve(&handle, &server).await?;
+        }
+        Commands::Chat { message, new } => {
+            lms::chat::run(message.as_deref(), new).await?;
         }
     }
 
