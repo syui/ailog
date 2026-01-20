@@ -175,7 +175,7 @@ async function render(route: Route): Promise<void> {
 
     // Profile section
     if (profile) {
-      html += await renderProfile(did, profile, handle, webUrl, localOnly, isOwner, collections)
+      html += await renderProfile(did, profile, handle, webUrl, localOnly, collections)
     }
 
     // Content section based on route type

@@ -31,7 +31,6 @@ export async function renderProfile(
   handle: string,
   webUrl?: string,
   localOnly = false,
-  isLoggedIn = false,
   collections: string[] = []
 ): Promise<string> {
   // Local mode: sync, no API call. Remote mode: async with API call
@@ -52,9 +51,9 @@ export async function renderProfile(
     ? `<img src="${avatarUrl}" alt="${escapeHtml(displayName)}" class="profile-avatar">`
     : `<div class="profile-avatar-placeholder"></div>`
 
-  // Service icons (only for logged-in users with matching collections)
+  // Service icons (show for users with matching collections)
   let serviceIconsHtml = ''
-  if (isLoggedIn && collections.length > 0) {
+  if (collections.length > 0) {
     const services = getServiceLinks(handle, collections)
     if (services.length > 0) {
       const iconsHtml = services.map(s => `
