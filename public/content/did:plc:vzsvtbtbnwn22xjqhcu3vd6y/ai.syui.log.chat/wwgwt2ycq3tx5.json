@@ -1,0 +1,17 @@
+{
+  "cid": "",
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/wwgwt2ycq3tx5",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
+    "content": "ssh, shellを多用するからIDEは向かない。\n今おすすめな開発環境ってある?何が注目されているのかな。",
+    "createdAt": "2026-01-20T12:14:48.229Z",
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/qds5wk4kh4x6y",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3ucggdsyhth6h",
+    "translations": {
+      "en": {
+        "content": "Since I make extensive use of SSH and shell commands, IDEs don't really suit my needs.\nWhat are some good development environments recommended these days? What technologies are gaining attention?"
+      }
+    }
+  }
+}

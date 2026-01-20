@@ -143,6 +143,7 @@ sync pds data to local content directory.
 $ ailog sync [-o <output>]
 $ ailog s
 $ ailog s -o ./public/content
+$ ailog s -c ai.syui.log.chat
 ```
 
 ### lexicon

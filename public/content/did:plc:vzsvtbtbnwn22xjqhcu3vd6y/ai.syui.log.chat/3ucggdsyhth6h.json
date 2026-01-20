@@ -1,0 +1,15 @@
+{
+  "cid": "",
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3ucggdsyhth6h",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
+    "content": "開発環境の紹介",
+    "createdAt": "2026-01-20T12:09:16.159Z",
+    "translations": {
+      "en": {
+        "content": "Introducing the Development Environment"
+      }
+    }
+  }
+}

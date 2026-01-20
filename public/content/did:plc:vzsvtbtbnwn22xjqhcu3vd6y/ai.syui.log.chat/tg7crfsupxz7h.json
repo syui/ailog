@@ -1,0 +1,17 @@
+{
+  "cid": "",
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/tg7crfsupxz7h",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
+    "content": "ほとんどtermだから、IDEは使わない。gemini3試してみた時に使った。\nc++は必要なときだけ。BPに統一するのが一番いいね。",
+    "createdAt": "2026-01-20T12:11:26.543Z",
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/inwkl55s7osg3",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3ucggdsyhth6h",
+    "translations": {
+      "en": {
+        "content": "I hardly use IDEs since most tasks are terminal-based. Used it briefly when trying out gemini3.\nOnly use C++ when absolutely necessary. Combining everything with BP would be the best approach."
+      }
+    }
+  }
+}
