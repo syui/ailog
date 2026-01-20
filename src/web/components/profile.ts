@@ -9,8 +9,14 @@ export interface ServiceLink {
   collection: string
 }
 
+// Migration state for api.syui.ai users
+export interface MigrationInfo {
+  hasOldApi: boolean
+  hasMigrated: boolean
+}
+
 // Get available services based on user's collections
-export function getServiceLinks(handle: string, collections: string[]): ServiceLink[] {
+export function getServiceLinks(handle: string, collections: string[], migration?: MigrationInfo): ServiceLink[] {
   const services: ServiceLink[] = []
 
   if (collections.includes('ai.syui.card.user')) {
@@ -19,6 +25,16 @@ export function getServiceLinks(handle: string, collections: string[]): ServiceL
       icon: '/service/ai.syui.card.png',
       url: `/@${handle}/at/card`,
       collection: 'ai.syui.card.user'
+    })
+  }
+
+  // Add migration link if user has api.syui.ai account
+  if (migration?.hasOldApi) {
+    services.push({
+      name: 'Card (old)',
+      icon: '/service/ai.syui.card.old.png',
+      url: `/@${handle}/at/card-old`,
+      collection: 'ai.syui.card.old'
     })
   }
 
@@ -31,7 +47,8 @@ export async function renderProfile(
   handle: string,
   webUrl?: string,
   localOnly = false,
-  collections: string[] = []
+  collections: string[] = [],
+  migration?: MigrationInfo
 ): Promise<string> {
   // Local mode: sync, no API call. Remote mode: async with API call
   const avatarUrl = localOnly
@@ -51,10 +68,10 @@ export async function renderProfile(
     ? `<img src="${avatarUrl}" alt="${escapeHtml(displayName)}" class="profile-avatar">`
     : `<div class="profile-avatar-placeholder"></div>`
 
-  // Service icons (show for users with matching collections)
+  // Service icons (show for users with matching collections or migration available)
   let serviceIconsHtml = ''
-  if (collections.length > 0) {
-    const services = getServiceLinks(handle, collections)
+  if (collections.length > 0 || migration?.hasOldApi) {
+    const services = getServiceLinks(handle, collections, migration)
     if (services.length > 0) {
       const iconsHtml = services.map(s => `
         <a href="${s.url}" class="service-icon-link" title="${s.name}">

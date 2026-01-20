@@ -1,6 +1,7 @@
 import './styles/main.css'
 import './styles/card.css'
-import { getConfig, resolveHandle, getProfile, getPosts, getPost, describeRepo, listRecords, getRecord, getPds, getNetworks, getChatMessages, getCards } from './lib/api'
+import './styles/card-migrate.css'
+import { getConfig, resolveHandle, getProfile, getPosts, getPost, describeRepo, listRecords, getRecord, getPds, getNetworks, getChatMessages, getCards, getOldApiUserByDid, hasCardOldRecord } from './lib/api'
 import { parseRoute, onRouteChange, navigate, type Route } from './lib/router'
 import { login, logout, handleCallback, restoreSession, isLoggedIn, getLoggedInHandle, getLoggedInDid, deleteRecord, updatePost } from './lib/auth'
 import { validateRecord } from './lib/lexicon'
@@ -13,6 +14,7 @@ import { renderModeTabs, renderLangSelector, setupModeTabs } from './components/
 import { renderFooter } from './components/footer'
 import { renderChatListPage, renderChatThreadPage } from './components/chat'
 import { renderCardPage } from './components/card'
+import { checkMigrationStatus, renderMigrationPage, setupMigrationButton } from './components/card-migrate'
 import { showLoading, hideLoading } from './components/loading'
 
 const app = document.getElementById('app')!
@@ -173,13 +175,21 @@ async function render(route: Route): Promise<void> {
     const loggedInDid = getLoggedInDid()
     const isOwner = isLoggedIn() && loggedInDid === did
 
+    // Check migration status (api.syui.ai -> ATProto)
+    const [oldApiUser, hasMigrated] = await Promise.all([
+      getOldApiUserByDid(did),
+      hasCardOldRecord(did)
+    ])
+    const migration = oldApiUser ? { hasOldApi: true, hasMigrated } : undefined
+
     // Profile section
     if (profile) {
-      html += await renderProfile(did, profile, handle, webUrl, localOnly, collections)
+      html += await renderProfile(did, profile, handle, webUrl, localOnly, collections, migration)
     }
 
     // Content section based on route type
     let currentRecord: { uri: string; cid: string; value: unknown } | null = null
+    let cardMigrationState: Awaited<ReturnType<typeof checkMigrationStatus>> | null = null
 
     if (route.type === 'record' && route.collection && route.rkey) {
       // AT-Browser: Single record view
@@ -236,6 +246,12 @@ async function render(route: Route): Promise<void> {
       const cardCollection = config.cardCollection || 'ai.syui.card.user'
       const cards = await getCards(did, cardCollection)
       html += `<div id="content">${renderCardPage(cards, handle, cardCollection)}</div>`
+      html += `<nav class="back-nav"><a href="/@${handle}">${handle}</a></nav>`
+
+    } else if (route.type === 'card-old') {
+      // Card migration page
+      cardMigrationState = await checkMigrationStatus(did)
+      html += `<div id="content">${renderMigrationPage(cardMigrationState, handle, isOwner)}</div>`
       html += `<nav class="back-nav"><a href="/@${handle}">${handle}</a></nav>`
 
     } else if (route.type === 'chat') {
@@ -363,6 +379,15 @@ async function render(route: Route): Promise<void> {
       if (contentEl) {
         setupPostDetail(contentEl)
       }
+    }
+
+    // Setup card migration button
+    if (route.type === 'card-old' && cardMigrationState?.oldApiUser && cardMigrationState?.oldApiCards) {
+      setupMigrationButton(
+        cardMigrationState.oldApiUser,
+        cardMigrationState.oldApiCards,
+        () => render(parseRoute())  // Refresh on success
+      )
     }
 
   } catch (error) {

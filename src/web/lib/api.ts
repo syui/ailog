@@ -429,6 +429,147 @@ export async function getChatMessages(
   )
 }
 
+// ============================================
+// api.syui.ai migration functions
+// ============================================
+
+const API_SYUI_AI = 'https://api.syui.ai'
+
+// Old API user type
+export interface OldApiUser {
+  id: number
+  username: string
+  did: string
+  member: boolean
+  book: boolean
+  manga: boolean
+  badge: boolean
+  bsky: boolean
+  mastodon: boolean
+  delete: boolean
+  handle: boolean
+  created_at: string
+  updated_at: string
+  raid_at: string
+  server_at: string
+  egg_at: string
+  luck: number
+  luck_at: string
+  like: number
+  like_rank: number
+  like_at: string
+  fav: number
+  ten: boolean
+  ten_su: number
+  ten_kai: number
+  aiten: number
+  ten_card: string
+  ten_delete: string
+  ten_post: string
+  ten_get: string
+  ten_at: string
+  next: string
+  room: number
+  model: boolean
+  model_at: string
+  model_attack: number
+  model_limit: number
+  model_skill: number
+  model_mode: number
+  model_critical: number
+  model_critical_d: number
+  game: boolean
+  game_test: boolean
+  game_end: boolean
+  game_account: boolean
+  game_lv: number
+  game_exp: number
+  game_story: number
+  game_limit: boolean
+  coin: number
+  coin_open: boolean
+  coin_at: string
+  planet: number
+  planet_at: string
+  login: boolean
+  login_at: string
+  location_x: number
+  location_y: number
+  location_z: number
+  location_n: number
+}
+
+// Old API card type
+export interface OldApiCard {
+  id: number
+  card: number
+  skill: string
+  status: string
+  cp: number
+  url: string
+  count: number
+  author: string
+  created_at: string
+}
+
+// Check if user exists in api.syui.ai by DID
+export async function getOldApiUserByDid(did: string): Promise<OldApiUser | null> {
+  try {
+    const res = await fetch(`${API_SYUI_AI}/users?itemsPerPage=2500`)
+    if (!res.ok) return null
+    const users: OldApiUser[] = await res.json()
+    return users.find(u => u.did === did) || null
+  } catch {
+    return null
+  }
+}
+
+// Get user's cards from api.syui.ai
+export async function getOldApiCards(userId: number): Promise<OldApiCard[]> {
+  try {
+    const res = await fetch(`${API_SYUI_AI}/users/${userId}/card?itemsPerPage=5000`)
+    if (!res.ok) return []
+    return res.json()
+  } catch {
+    return []
+  }
+}
+
+// Check if ai.syui.card.old record exists and return the rkey
+export async function getCardOldRecordKey(did: string): Promise<string | null> {
+  const pds = await getPds(did)
+  if (!pds) return null
+
+  try {
+    const host = pds.replace('https://', '')
+    const url = `${xrpcUrl(host, comAtprotoRepo.listRecords)}?repo=${did}&collection=ai.syui.card.old&limit=1`
+    const res = await fetch(url)
+    if (!res.ok) return null
+    const data = await res.json()
+    if (data.records && data.records.length > 0) {
+      // Extract rkey from URI: at://did/collection/rkey
+      const uri = data.records[0].uri as string
+      const rkey = uri.split('/').pop()
+      return rkey || null
+    }
+    return null
+  } catch {
+    return null
+  }
+}
+
+// Check if ai.syui.card.old record exists
+export async function hasCardOldRecord(did: string): Promise<boolean> {
+  const rkey = await getCardOldRecordKey(did)
+  return rkey !== null
+}
+
+// Generate checksum for verification
+export function generateChecksum(user: OldApiUser, cards: OldApiCard[]): string {
+  const sum = user.id + user.aiten + user.fav + cards.reduce((acc, c) => acc + c.id + c.cp + c.card, 0)
+  return btoa(String(sum))
+}
+
 // Get user's card collection (ai.syui.card.user)
 export async function getCards(
   did: string,

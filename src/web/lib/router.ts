@@ -1,5 +1,5 @@
 export interface Route {
-  type: 'home' | 'user' | 'post' | 'postpage' | 'atbrowser' | 'service' | 'collection' | 'record' | 'chat' | 'chat-thread' | 'card'
+  type: 'home' | 'user' | 'post' | 'postpage' | 'atbrowser' | 'service' | 'collection' | 'record' | 'chat' | 'chat-thread' | 'card' | 'card-old'
   handle?: string
   rkey?: string
   service?: string
@@ -57,6 +57,12 @@ export function parseRoute(): Route {
     return { type: 'card', handle: cardMatch[1] }
   }
 
+  // Card migration page: /@handle/at/card-old
+  const cardOldMatch = path.match(/^\/@([^/]+)\/at\/card-old\/?$/)
+  if (cardOldMatch) {
+    return { type: 'card-old', handle: cardOldMatch[1] }
+  }
+
   // Chat thread: /@handle/at/chat/{rkey}
   const chatThreadMatch = path.match(/^\/@([^/]+)\/at\/chat\/([^/]+)$/)
   if (chatThreadMatch) {
@@ -99,6 +105,8 @@ export function navigate(route: Route): void {
     path = `/@${route.handle}/at/collection/${route.collection}/${route.rkey}`
   } else if (route.type === 'card' && route.handle) {
     path = `/@${route.handle}/at/card`
+  } else if (route.type === 'card-old' && route.handle) {
+    path = `/@${route.handle}/at/card-old`
   } else if (route.type === 'chat' && route.handle) {
     path = `/@${route.handle}/at/chat`
   } else if (route.type === 'chat-thread' && route.handle && route.rkey) {

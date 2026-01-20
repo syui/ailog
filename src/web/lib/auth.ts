@@ -272,6 +272,56 @@ export async function updatePost(
   }
 }
 
+// Save migrated card data to ai.syui.card.old
+export async function saveMigratedCardData(
+  user: {
+    username: string
+    did: string
+    aiten: number
+    planet: number
+    fav: number
+    coin: number
+    createdAt: string
+    updatedAt: string
+  },
+  cards: {
+    id: number
+    card: number
+    cp: number
+    status: string
+    skill: string
+    createdAt: string
+  }[],
+  checksum: string
+): Promise<{ uri: string; cid: string } | null> {
+  if (!agent) return null
+
+  const collection = 'ai.syui.card.old'
+  const rkey = 'self'
+
+  try {
+    const record = {
+      $type: collection,
+      user,
+      cards,
+      checksum,
+      migratedAt: new Date().toISOString(),
+    }
+
+    const result = await agent.com.atproto.repo.putRecord({
+      repo: agent.assertDid,
+      collection,
+      rkey,
+      record,
+    })
+
+    return { uri: result.data.uri, cid: result.data.cid }
+  } catch (err) {
+    console.error('Save migrated card data error:', err)
+    throw err
+  }
+}
+
 // Delete record
 export async function deleteRecord(
   collection: string,

@@ -1,0 +1,44 @@
+/* Card Migration Page Styles */
+
+.migrate-title {
+  font-weight: 500;
+  color: var(--text-secondary, #666);
+}
+
+.migrated-badge {
+  color: #00a060;
+  font-size: 0.9em;
+}
+
+.migrate-btn {
+  background: var(--btn-color, #0066cc);
+  color: white;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.migrate-btn:hover {
+  opacity: 0.9;
+}
+
+.migrate-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.no-data {
+  color: var(--text-secondary, #666);
+  text-align: center;
+  padding: 32px;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .migrate-title {
+    color: var(--text-secondary, #aaa);
+  }
+}
