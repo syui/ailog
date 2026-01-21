@@ -603,3 +603,52 @@ export async function getCards(
   }
   return null
 }
+
+// RSE collection type
+export interface RseItem {
+  id: number
+  cp: number
+  mode: number
+  shiny: boolean
+  unique: boolean
+}
+
+export interface RseCollection {
+  item: RseItem[]
+  character: RseItem[]
+  createdAt: string
+  updatedAt: string
+}
+
+// Get user's RSE collection (ai.syui.rse.user)
+export async function getRse(did: string): Promise<RseCollection | null> {
+  const collection = 'ai.syui.rse.user'
+
+  // Try local first
+  try {
+    const res = await fetch(`/content/${did}/${collection}/self.json`)
+    if (res.ok && isJsonResponse(res)) {
+      const record = await res.json()
+      return record.value as RseCollection
+    }
+  } catch {
+    // Try remote
+  }
+
+  // Remote fallback
+  const pds = await getPds(did)
+  if (!pds) return null
+
+  try {
+    const host = pds.replace('https://', '')
+    const url = `${xrpcUrl(host, comAtprotoRepo.getRecord)}?repo=${did}&collection=${collection}&rkey=self`
+    const res = await fetch(url)
+    if (res.ok) {
+      const record = await res.json()
+      return record.value as RseCollection
+    }
+  } catch {
+    // Failed
+  }
+  return null
+}

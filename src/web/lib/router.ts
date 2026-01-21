@@ -1,5 +1,5 @@
 export interface Route {
-  type: 'home' | 'user' | 'post' | 'postpage' | 'atbrowser' | 'service' | 'collection' | 'record' | 'chat' | 'chat-thread' | 'card' | 'card-old'
+  type: 'home' | 'user' | 'post' | 'postpage' | 'atbrowser' | 'service' | 'collection' | 'record' | 'chat' | 'chat-thread' | 'card' | 'card-old' | 'rse'
   handle?: string
   rkey?: string
   service?: string
@@ -61,6 +61,12 @@ export function parseRoute(): Route {
   const cardOldMatch = path.match(/^\/@([^/]+)\/at\/card-old\/?$/)
   if (cardOldMatch) {
     return { type: 'card-old', handle: cardOldMatch[1] }
+  }
+
+  // RSE page: /@handle/at/rse
+  const rseMatch = path.match(/^\/@([^/]+)\/at\/rse\/?$/)
+  if (rseMatch) {
+    return { type: 'rse', handle: rseMatch[1] }
   }
 
   // Chat thread: /@handle/at/chat/{rkey}

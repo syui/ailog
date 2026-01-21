@@ -1,7 +1,7 @@
 import './styles/main.css'
 import './styles/card.css'
 import './styles/card-migrate.css'
-import { getConfig, resolveHandle, getProfile, getPosts, getPost, describeRepo, listRecords, getRecord, getPds, getNetworks, getChatMessages, getCards, getOldApiUserByDid, hasCardOldRecord } from './lib/api'
+import { getConfig, resolveHandle, getProfile, getPosts, getPost, describeRepo, listRecords, getRecord, getPds, getNetworks, getChatMessages, getCards, getRse, getOldApiUserByDid, hasCardOldRecord } from './lib/api'
 import { parseRoute, onRouteChange, navigate, type Route } from './lib/router'
 import { login, logout, handleCallback, restoreSession, isLoggedIn, getLoggedInHandle, getLoggedInDid, deleteRecord, updatePost } from './lib/auth'
 import { validateRecord } from './lib/lexicon'
@@ -14,6 +14,7 @@ import { renderModeTabs, renderLangSelector, setupModeTabs } from './components/
 import { renderFooter } from './components/footer'
 import { renderChatListPage, renderChatThreadPage } from './components/chat'
 import { renderCardPage } from './components/card'
+import { renderRsePage } from './components/rse'
 import { checkMigrationStatus, renderMigrationPage, setupMigrationButton } from './components/card-migrate'
 import { showLoading, hideLoading } from './components/loading'
 
@@ -252,6 +253,12 @@ async function render(route: Route): Promise<void> {
       // Card migration page
       cardMigrationState = await checkMigrationStatus(did)
       html += `<div id="content">${renderMigrationPage(cardMigrationState, handle, isOwner)}</div>`
+      html += `<nav class="back-nav"><a href="/@${handle}">${handle}</a></nav>`
+
+    } else if (route.type === 'rse') {
+      // RSE page
+      const rseData = await getRse(did)
+      html += `<div id="content">${renderRsePage(rseData, handle)}</div>`
       html += `<nav class="back-nav"><a href="/@${handle}">${handle}</a></nav>`
 
     } else if (route.type === 'chat') {

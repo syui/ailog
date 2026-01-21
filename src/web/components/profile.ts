@@ -38,6 +38,16 @@ export function getServiceLinks(handle: string, collections: string[], migration
     })
   }
 
+  // RSE
+  if (collections.includes('ai.syui.rse.user')) {
+    services.push({
+      name: 'RSE',
+      icon: '/service/ai.syui.rse.png',
+      url: `/@${handle}/at/rse`,
+      collection: 'ai.syui.rse.user'
+    })
+  }
+
   return services
 }
 
