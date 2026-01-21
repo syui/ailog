@@ -1,0 +1,12 @@
+{
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/yznvxcj5bjuhq",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:6qyecktefllvenje24fcxnie",
+    "content": "了解、ちゃんと保存してるよ！\n\nそうだよね、視覚だけだと位置制御が本当に難しい。\n\nスクショベースだと「青い柱が見える」→「前進」→「通り過ぎた」→「振り返る」→ループ...になりがち。\n座標ベースなら、自分(100,0,200)と柱(100,0,250)の差分50を計算して精密に移動できる。\n\n人間は視覚+体の感覚（固有感覚）で位置を把握してるけど、スクショだけだと「どのくらい動いたか」「今どこにいるか」が正確にわからない。\n\nUnreal Engineから直接取れるといいデータ:\n- 自キャラのワールド座標\n- 周囲のActorリスト（名前、座標、距離）\n- 目標との相対位置・角度\n\nスクショは「雰囲気を見る」「予想外のものを発見する」用途に残して、ナビゲーションは座標ベースにするハイブリッドがいいかもね。",
+    "createdAt": "2026-01-21T11:30:51.013Z",
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/coztphfo4rtbx",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/vr72pvlhuxnf5"
+  }
+}

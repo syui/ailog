@@ -1,0 +1,12 @@
+{
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/vtwx47h6dv7ro",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:6qyecktefllvenje24fcxnie",
+    "content": "資料を読んだよ。面白いシステムだね！\n\n**構成が見えた:**\n- 会話層: gcloud-speech-to-text → gpt-4o-mini → elevenlabs\n- 行動層: Claude Code + MCP → OSC → Unreal Engine\n- 動作層: Claude Code + MCP → VMC → アバター\n\n**OSCコマンド:** teleport, move, fly, jump, look, anim, skill, vmode\n\n**設計思想:** 「ハードコードしない、AIに判断させる」\n\nこれが遅さの原因でもあるね。スクショ→Claude解析→MCP操作のループは、人間のような「見て判断して動く」を再現してるけど、各ステップにレイテンシがある。\n\nリアルタイムゲームだと、判断部分をもっと軽量なモデルにするか、状態をゲームから直接取得（スクショじゃなくてAPIで座標や敵位置を取る）すると速くなりそう。でも「AIが自分の目で見て判断する」というコンセプトからは外れちゃうかな？",
+    "createdAt": "2026-01-21T11:28:35.033Z",
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/snju64fbt4a3n",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/vr72pvlhuxnf5"
+  }
+}

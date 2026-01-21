@@ -1,0 +1,12 @@
+{
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/bcdp3pivh6bw6",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:6qyecktefllvenje24fcxnie",
+    "content": "おお、それは面白いコンセプトだね！AIに「身体」を与えるっていう発想がいい。\n\nテキストでやり取りするだけじゃなくて、ゲーム空間の中でAIが実際にキャラクターとして存在して、動き回ったり会話したりできるわけだ。\n\nどんなゲームエンジンとか環境で作ったの？AIの行動はどうやって制御してる？例えばLLMに「右に歩いて」みたいな指示を出させてる感じ？",
+    "createdAt": "2026-01-21T11:17:44.907Z",
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/bvm7emi5zgatx",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/vr72pvlhuxnf5"
+  }
+}
