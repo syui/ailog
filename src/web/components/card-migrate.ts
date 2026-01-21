@@ -52,9 +52,14 @@ function toUtcDatetime(dateStr: string): string {
   }
 }
 
+// Maximum cards to migrate (ATProto record size limit ~256KB)
+const MAX_MIGRATE_CARDS = 1200
+
 // Perform migration
 export async function performMigration(user: OldApiUser, cards: OldApiCard[]): Promise<boolean> {
-  const checksum = generateChecksum(user, cards)
+  // Limit cards to avoid exceeding ATProto record size limit
+  const limitedCards = cards.slice(0, MAX_MIGRATE_CARDS)
+  const checksum = generateChecksum(user, limitedCards)
 
   // Convert user data (only required + used fields, matching lexicon types)
   // Note: ATProto doesn't support float, so planet is converted to integer
@@ -70,7 +75,7 @@ export async function performMigration(user: OldApiUser, cards: OldApiCard[]): P
   }
 
   // Convert card data (only required + used fields)
-  const cardData = cards.map(c => ({
+  const cardData = limitedCards.map(c => ({
     id: c.id,
     card: c.card,
     cp: c.cp,
@@ -199,6 +204,10 @@ export function renderMigrationPage(
             <span class="stat-value">${Math.floor(oldApiUser.planet).toLocaleString()}</span>
             <span class="stat-label">Planet</span>
           </div>
+          <div class="stat">
+            <span class="stat-value">${(oldApiUser.coin ?? 0).toLocaleString()}</span>
+            <span class="stat-label">Coin</span>
+          </div>
         </div>
       </div>
       <div class="card-actions">
@@ -229,7 +238,9 @@ export function setupMigrationButton(
       return
     }
 
-    if (!confirm(`Migrate ${oldApiCards.length} cards to ATProto?`)) {
+    const migrateCount = Math.min(oldApiCards.length, MAX_MIGRATE_CARDS)
+    const limitMsg = oldApiCards.length > MAX_MIGRATE_CARDS ? ` (limited from ${oldApiCards.length})` : ''
+    if (!confirm(`Migrate ${migrateCount} cards${limitMsg} to ATProto?`)) {
       return
     }
 
