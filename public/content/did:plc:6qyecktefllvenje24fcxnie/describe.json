@@ -1,7 +1,6 @@
 {
   "collections": [
     "ai.syui.card.admin",
-    "ai.syui.card.old",
     "ai.syui.card.user",
     "ai.syui.log.chat",
     "ai.syui.rse.admin",
