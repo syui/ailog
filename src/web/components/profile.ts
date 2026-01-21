@@ -9,14 +9,8 @@ export interface ServiceLink {
   collection: string
 }
 
-// Migration state for api.syui.ai users
-export interface MigrationInfo {
-  hasOldApi: boolean
-  hasMigrated: boolean
-}
-
 // Get available services based on user's collections
-export function getServiceLinks(handle: string, collections: string[], migration?: MigrationInfo): ServiceLink[] {
+export function getServiceLinks(handle: string, collections: string[]): ServiceLink[] {
   const services: ServiceLink[] = []
 
   if (collections.includes('ai.syui.card.user')) {
@@ -28,8 +22,8 @@ export function getServiceLinks(handle: string, collections: string[], migration
     })
   }
 
-  // Add migration link if user has api.syui.ai account
-  if (migration?.hasOldApi) {
+  // Card (old) - show if user has ai.syui.card.old collection
+  if (collections.includes('ai.syui.card.old')) {
     services.push({
       name: 'Card (old)',
       icon: '/service/ai.syui.card.old.png',
@@ -57,8 +51,7 @@ export async function renderProfile(
   handle: string,
   webUrl?: string,
   localOnly = false,
-  collections: string[] = [],
-  migration?: MigrationInfo
+  collections: string[] = []
 ): Promise<string> {
   // Local mode: sync, no API call. Remote mode: async with API call
   const avatarUrl = localOnly
@@ -78,10 +71,10 @@ export async function renderProfile(
     ? `<img src="${avatarUrl}" alt="${escapeHtml(displayName)}" class="profile-avatar">`
     : `<div class="profile-avatar-placeholder"></div>`
 
-  // Service icons (show for users with matching collections or migration available)
+  // Service icons (show for users with matching collections)
   let serviceIconsHtml = ''
-  if (collections.length > 0 || migration?.hasOldApi) {
-    const services = getServiceLinks(handle, collections, migration)
+  if (collections.length > 0) {
+    const services = getServiceLinks(handle, collections)
     if (services.length > 0) {
       const iconsHtml = services.map(s => `
         <a href="${s.url}" class="service-icon-link" title="${s.name}">
