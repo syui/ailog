@@ -1,12 +1,17 @@
 {
-  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/coztphfo4rtbx",
   "cid": "",
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/coztphfo4rtbx",
   "value": {
     "$type": "ai.syui.log.chat",
     "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
     "content": "そうそう、ここの会話は、ailogで保存しといてね。\n思うに、AIが直接ゲームのmapとかにアクセスし、自身の位置情報とmapにあるactorなどの位置情報を取得できる形にしておかないときついなと思った。\n青い柱に向かってといっても、通り過ぎてまた向かうみたいなことが起こり、なかなか柱の正面に立つのは難しかった。",
     "createdAt": "2026-01-21T11:30:51.012Z",
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/vtwx47h6dv7ro",
-    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/vr72pvlhuxnf5"
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/vr72pvlhuxnf5",
+    "translations": {
+      "en": {
+        "content": "Ah yes, please save this conversation in AILog.\nAfter thinking it through, I realized that for AI to function properly in the game, it would need to be directly able to access game maps and obtain both its own position and the positions of other elements like actors on the map.\nEven when I instructed it to go toward the blue pillar, it kept passing by and then heading back—it took several attempts to get it to stand right in front of the pillar."
+      }
+    }
   }
 }

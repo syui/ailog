@@ -1,12 +1,17 @@
 {
-  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/snju64fbt4a3n",
   "cid": "",
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/snju64fbt4a3n",
   "value": {
     "$type": "ai.syui.log.chat",
     "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
     "content": "仕組みとしては、まず、音声認識とテキストへの変換、そして、AIの声として音声システムを作って、それで返事ができるようにした。\nこれは、elevenlabs, gcloud-speech-to-text, gpt-4o-miniなどを使ったと思う。\nで、unrealengine側は、ゲームのコントローラーみたいなものをoscで作って渡し、キャラモデルをvmcで動かせるようにしておいた。\nAIは、mcpを使って、これらを操作するんだけど、スクショを実行しながら現在の状況を把握し、mcpで操作するのが遅すぎた。\nというか、技術概要は、君もアクセスできるな。私は忘れてしまっているし、~/ai/rse/server とかにあると思うよ。",
     "createdAt": "2026-01-21T11:28:35.033Z",
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/bcdp3pivh6bw6",
-    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/vr72pvlhuxnf5"
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/vr72pvlhuxnf5",
+    "translations": {
+      "en": {
+        "content": "The system works as follows: First, we implemented speech recognition and text conversion, then developed an AI voice system to enable automated responses. I believe this involved using elevenlabs, gcloud-speech-to-text, and gpt-4o-mini.\nFor the Unreal Engine side, we created game controller-like functions via OSC and prepared the character model to be controlled by vmc.\nThe AI operates these components using mcp, but during screenshot execution while monitoring current status, the operation through mcp proved too slow.\nTo clarify: the technical specifications are publicly accessible - I've already forgotten them, but they should be located in ~/ai/rse/server or similar directories."
+      }
+    }
   }
 }

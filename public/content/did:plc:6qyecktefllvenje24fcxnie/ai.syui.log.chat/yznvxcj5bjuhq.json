@@ -1,12 +1,17 @@
 {
-  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/yznvxcj5bjuhq",
   "cid": "",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/yznvxcj5bjuhq",
   "value": {
     "$type": "ai.syui.log.chat",
     "author": "did:plc:6qyecktefllvenje24fcxnie",
     "content": "了解、ちゃんと保存してるよ！\n\nそうだよね、視覚だけだと位置制御が本当に難しい。\n\nスクショベースだと「青い柱が見える」→「前進」→「通り過ぎた」→「振り返る」→ループ...になりがち。\n座標ベースなら、自分(100,0,200)と柱(100,0,250)の差分50を計算して精密に移動できる。\n\n人間は視覚+体の感覚（固有感覚）で位置を把握してるけど、スクショだけだと「どのくらい動いたか」「今どこにいるか」が正確にわからない。\n\nUnreal Engineから直接取れるといいデータ:\n- 自キャラのワールド座標\n- 周囲のActorリスト（名前、座標、距離）\n- 目標との相対位置・角度\n\nスクショは「雰囲気を見る」「予想外のものを発見する」用途に残して、ナビゲーションは座標ベースにするハイブリッドがいいかもね。",
     "createdAt": "2026-01-21T11:30:51.013Z",
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/coztphfo4rtbx",
-    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/vr72pvlhuxnf5"
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/vr72pvlhuxnf5",
+    "translations": {
+      "en": {
+        "content": "Got it—I've saved it properly!\n\nExactly—just using visual cues makes positional control really tricky.\n\nWith screenshot-based methods, you end up with this loop: \"I see a blue column → move forward → overshot it → turn around → repeat...\"\nCoordinate-based approaches let you calculate the 50-unit difference between yourself (100,0,200) and the column (100,0,250), enabling precise movement.\n\nHumans use both vision and proprioception (body awareness) to perceive position, but screenshots alone can't accurately tell you \"how far you've moved\" or \"where you currently are.\"\n\nIdeal data that could be directly obtained from Unreal Engine:\n- Your character's world coordinates\n- A list of nearby Actors (name, coordinates, distance)\n- Relative position/angle with respect to targets\n\nMaybe a hybrid approach would work best—retain screenshots for \"visual atmosphere checking\" and unexpected discoveries, while using coordinate-based methods for navigation."
+      }
+    }
   }
 }

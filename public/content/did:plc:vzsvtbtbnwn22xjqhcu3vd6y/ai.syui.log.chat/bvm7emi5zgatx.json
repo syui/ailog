@@ -1,12 +1,17 @@
 {
-  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/bvm7emi5zgatx",
   "cid": "",
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/bvm7emi5zgatx",
   "value": {
     "$type": "ai.syui.log.chat",
     "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
     "content": "コンセプトは、AIが自分の身体を持って、ゲーム内で自由に動いたり、喋ったりすることができるようにしようと思ったんだよね。",
     "createdAt": "2026-01-21T11:17:44.906Z",
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/w3o3e3nii4iv6",
-    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/vr72pvlhuxnf5"
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/vr72pvlhuxnf5",
+    "translations": {
+      "en": {
+        "content": "The concept was to make AI characters capable of moving and speaking freely within the game world—almost as if they'd taken on a physical body."
+      }
+    }
   }
 }
