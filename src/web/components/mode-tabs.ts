@@ -38,14 +38,14 @@ export function renderModeTabs(handle: string, activeTab: 'blog' | 'browser' | '
     tabs += `<a href="/@${handle}/at/link" class="tab ${activeTab === 'link' ? 'active' : ''}">link</a>`
   }
 
-  tabs += `
+  const pdsSelector = `
     <div class="pds-selector" id="pds-selector">
       <button type="button" class="tab" id="pds-tab">pds</button>
       <div class="pds-dropdown" id="pds-dropdown"></div>
     </div>
   `
 
-  return `<div class="mode-tabs">${tabs}</div>`
+  return `<div class="mode-tabs"><div class="tabs-scroll">${tabs}</div>${pdsSelector}</div>`
 }
 
 // Render language selector (above content)
