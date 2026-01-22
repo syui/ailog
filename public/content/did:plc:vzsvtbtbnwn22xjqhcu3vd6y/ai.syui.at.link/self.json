@@ -1,0 +1,11 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.at.link/self",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.at.link",
+    "links": [
+      { "service": "github", "username": "syui" }
+    ],
+    "createdAt": "2026-01-22T12:00:00.000Z"
+  }
+}

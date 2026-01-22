@@ -1,7 +1,7 @@
 import './styles/main.css'
 import './styles/card.css'
 import './styles/card-migrate.css'
-import { getConfig, resolveHandle, getProfile, getPosts, getPost, describeRepo, listRecords, getRecord, getPds, getNetworks, getChatMessages, getCards, getRse } from './lib/api'
+import { getConfig, resolveHandle, getProfile, getPosts, getPost, describeRepo, listRecords, getRecord, getPds, getNetworks, getChatMessages, getCards, getRse, getLinks } from './lib/api'
 import { parseRoute, onRouteChange, navigate, type Route } from './lib/router'
 import { login, logout, handleCallback, restoreSession, isLoggedIn, getLoggedInHandle, getLoggedInDid, deleteRecord, updatePost, updateChat } from './lib/auth'
 import { validateRecord } from './lib/lexicon'
@@ -15,6 +15,7 @@ import { renderFooter } from './components/footer'
 import { renderChatListPage, renderChatThreadPage, renderChatEditForm } from './components/chat'
 import { renderCardPage } from './components/card'
 import { renderRsePage } from './components/rse'
+import { renderLinkPage } from './components/link'
 import { checkMigrationStatus, renderMigrationPage, setupMigrationButton } from './components/card-migrate'
 import { showLoading, hideLoading } from './components/loading'
 
@@ -252,6 +253,12 @@ async function render(route: Route): Promise<void> {
       // RSE page
       const rseData = await getRse(did)
       html += `<div id="content">${renderRsePage(rseData, handle)}</div>`
+      html += `<nav class="back-nav"><a href="/@${handle}">${handle}</a></nav>`
+
+    } else if (route.type === 'link') {
+      // Link page
+      const links = await getLinks(did)
+      html += `<div id="content">${renderLinkPage(links, handle)}</div>`
       html += `<nav class="back-nav"><a href="/@${handle}">${handle}</a></nav>`
 
     } else if (route.type === 'chat') {

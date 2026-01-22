@@ -42,6 +42,16 @@ export function getServiceLinks(handle: string, collections: string[]): ServiceL
     })
   }
 
+  // Link
+  if (collections.includes('ai.syui.at.link')) {
+    services.push({
+      name: 'Link',
+      icon: '/service/ai.syui.at.png',
+      url: `/@${handle}/at/link`,
+      collection: 'ai.syui.at.link'
+    })
+  }
+
   return services
 }
 

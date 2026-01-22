@@ -652,3 +652,49 @@ export async function getRse(did: string): Promise<RseCollection | null> {
   }
   return null
 }
+
+// Link item type
+export interface LinkItem {
+  service: 'github' | 'youtube' | 'x'
+  username: string
+}
+
+// Link collection type
+export interface LinkCollection {
+  links: LinkItem[]
+  createdAt: string
+  updatedAt?: string
+}
+
+// Get user's links (ai.syui.at.link)
+export async function getLinks(did: string): Promise<LinkCollection | null> {
+  const collection = 'ai.syui.at.link'
+
+  // Try local first
+  try {
+    const res = await fetch(`/content/${did}/${collection}/self.json`)
+    if (res.ok && isJsonResponse(res)) {
+      const record = await res.json()
+      return record.value as LinkCollection
+    }
+  } catch {
+    // Try remote
+  }
+
+  // Remote fallback
+  const pds = await getPds(did)
+  if (!pds) return null
+
+  try {
+    const host = pds.replace('https://', '')
+    const url = `${xrpcUrl(host, comAtprotoRepo.getRecord)}?repo=${did}&collection=${collection}&rkey=self`
+    const res = await fetch(url)
+    if (res.ok) {
+      const record = await res.json()
+      return record.value as LinkCollection
+    }
+  } catch {
+    // Failed
+  }
+  return null
+}
