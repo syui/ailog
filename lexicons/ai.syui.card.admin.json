@@ -1,0 +1,28 @@
+{
+  "$type": "com.atproto.lexicon.schema",
+  "lexicon": 1,
+  "id": "ai.syui.card.admin",
+  "defs": {
+    "main": {
+      "type": "record",
+      "key": "literal:self",
+      "description": "Card game configuration (admin only)",
+      "record": {
+        "type": "object",
+        "required": ["card", "createdAt", "updatedAt"],
+        "properties": {
+          "card": {
+            "type": "object",
+            "required": ["pickup", "normal"],
+            "properties": {
+              "pickup": { "type": "integer", "description": "Pickup card ID" },
+              "normal": { "type": "integer", "description": "Normal card ID" }
+            }
+          },
+          "createdAt": { "type": "string", "format": "datetime" },
+          "updatedAt": { "type": "string", "format": "datetime" }
+        }
+      }
+    }
+  }
+}

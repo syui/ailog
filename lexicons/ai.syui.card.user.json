@@ -1,0 +1,33 @@
+{
+  "$type": "com.atproto.lexicon.schema",
+  "lexicon": 1,
+  "id": "ai.syui.card.user",
+  "defs": {
+    "main": {
+      "type": "record",
+      "key": "literal:self",
+      "description": "User card collection",
+      "record": {
+        "type": "object",
+        "required": ["card", "createdAt", "updatedAt"],
+        "properties": {
+          "card": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "cp", "rare", "cid"],
+              "properties": {
+                "id": { "type": "integer", "description": "Card type ID" },
+                "cp": { "type": "integer", "description": "Card power" },
+                "rare": { "type": "integer", "description": "Rarity level" },
+                "cid": { "type": "string", "description": "Unique card instance ID (TID format)" }
+              }
+            }
+          },
+          "createdAt": { "type": "string", "format": "datetime" },
+          "updatedAt": { "type": "string", "format": "datetime" }
+        }
+      }
+    }
+  }
+}

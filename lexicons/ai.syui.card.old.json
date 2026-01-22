@@ -1,0 +1,53 @@
+{
+  "lexicon": 1,
+  "id": "ai.syui.card.old",
+  "defs": {
+    "main": {
+      "type": "record",
+      "key": "literal:self",
+      "description": "Migrated card data from api.syui.ai",
+      "record": {
+        "type": "object",
+        "required": ["user", "cards", "migratedAt"],
+        "properties": {
+          "user": {
+            "type": "object",
+            "required": ["username"],
+            "properties": {
+              "username": { "type": "string" },
+              "did": { "type": "string" },
+              "aiten": { "type": "integer" },
+              "fav": { "type": "integer" },
+              "coin": { "type": "integer" },
+              "planet": { "type": "integer" },
+              "createdAt": { "type": "string", "format": "datetime" },
+              "updatedAt": { "type": "string", "format": "datetime" }
+            }
+          },
+          "cards": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "card", "cp"],
+              "properties": {
+                "id": { "type": "integer" },
+                "card": { "type": "integer" },
+                "cp": { "type": "integer" },
+                "status": { "type": "string" },
+                "skill": { "type": "string" },
+                "createdAt": { "type": "string", "format": "datetime" }
+              }
+            }
+          },
+          "checksum": {
+            "type": "string"
+          },
+          "migratedAt": {
+            "type": "string",
+            "format": "datetime"
+          }
+        }
+      }
+    }
+  }
+}

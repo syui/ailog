@@ -1,0 +1,77 @@
+{
+  "$type": "com.atproto.lexicon.schema",
+  "lexicon": 1,
+  "id": "ai.syui.rse.admin",
+  "defs": {
+    "main": {
+      "type": "record",
+      "key": "literal:self",
+      "description": "RSE admin configuration - abilities, characters, systems and collections",
+      "record": {
+        "type": "object",
+        "required": ["ability", "createdAt", "updatedAt"],
+        "properties": {
+          "ability": {
+            "type": "array",
+            "description": "Ability/attribute definitions",
+            "items": {
+              "type": "object",
+              "required": ["id", "name", "kind"],
+              "properties": {
+                "id": { "type": "integer", "description": "Ability ID" },
+                "name": { "type": "string", "description": "Ability name (ai, quark, neutron, atom, sun)" },
+                "kind": { "type": "string", "description": "Attribute type (consciousness, matter)" },
+                "level": { "type": "integer", "description": "Hierarchy level (0=fundamental)" },
+                "relation": { "type": "array", "items": { "type": "integer" }, "description": "Advantage IDs" },
+                "weakness": { "type": "array", "items": { "type": "integer" }, "description": "Weakness IDs" },
+                "multiplier": { "type": "integer", "description": "Damage multiplier percent (e.g., 150 = 1.5x)" }
+              }
+            }
+          },
+          "character": {
+            "type": "array",
+            "description": "Character definitions",
+            "items": {
+              "type": "object",
+              "required": ["id", "name", "ability", "mode"],
+              "properties": {
+                "id": { "type": "integer", "description": "Character ID" },
+                "name": { "type": "string", "description": "Character name" },
+                "ability": { "type": "integer", "description": "Ability ID reference" },
+                "mode": { "type": "integer", "description": "Character mode" }
+              }
+            }
+          },
+          "system": {
+            "type": "array",
+            "description": "System definitions",
+            "items": {
+              "type": "object",
+              "required": ["id", "name", "domain"],
+              "properties": {
+                "id": { "type": "integer", "description": "System ID" },
+                "name": { "type": "string", "description": "System name" },
+                "domain": { "type": "string", "description": "System domain (ability, unique, account, planet, origin)" }
+              }
+            }
+          },
+          "collection": {
+            "type": "array",
+            "description": "ATProto collection definitions",
+            "items": {
+              "type": "object",
+              "required": ["id", "nsid", "name"],
+              "properties": {
+                "id": { "type": "integer", "description": "Collection ID" },
+                "nsid": { "type": "string", "description": "Namespaced identifier (e.g., ai.syui.card)" },
+                "name": { "type": "string", "description": "Collection short name" }
+              }
+            }
+          },
+          "createdAt": { "type": "string", "format": "datetime" },
+          "updatedAt": { "type": "string", "format": "datetime" }
+        }
+      }
+    }
+  }
+}

@@ -10,7 +10,8 @@
     "app.bsky.feed.generator",
     "app.bsky.feed.post",
     "app.bsky.graph.follow",
-    "app.bsky.graph.verification"
+    "app.bsky.graph.verification",
+    "com.atproto.lexicon.schema"
   ],
   "did": "did:plc:6qyecktefllvenje24fcxnie",
   "handle": "ai.syui.ai"

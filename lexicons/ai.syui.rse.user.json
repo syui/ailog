@@ -1,0 +1,48 @@
+{
+  "$type": "com.atproto.lexicon.schema",
+  "lexicon": 1,
+  "id": "ai.syui.rse.user",
+  "defs": {
+    "main": {
+      "type": "record",
+      "key": "literal:self",
+      "description": "User character and item collection",
+      "record": {
+        "type": "object",
+        "required": ["character", "item", "createdAt", "updatedAt"],
+        "properties": {
+          "character": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "cp", "mode", "unique", "shiny"],
+              "properties": {
+                "id": { "type": "integer" },
+                "cp": { "type": "integer" },
+                "mode": { "type": "integer" },
+                "unique": { "type": "boolean" },
+                "shiny": { "type": "boolean" }
+              }
+            }
+          },
+          "item": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "cp", "mode", "unique", "shiny"],
+              "properties": {
+                "id": { "type": "integer" },
+                "cp": { "type": "integer" },
+                "mode": { "type": "integer" },
+                "unique": { "type": "boolean" },
+                "shiny": { "type": "boolean" }
+              }
+            }
+          },
+          "createdAt": { "type": "string", "format": "datetime" },
+          "updatedAt": { "type": "string", "format": "datetime" }
+        }
+      }
+    }
+  }
+}
