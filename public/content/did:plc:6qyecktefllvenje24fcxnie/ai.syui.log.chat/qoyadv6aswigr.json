@@ -1,12 +1,17 @@
 {
-  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/qoyadv6aswigr",
   "cid": "",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/qoyadv6aswigr",
   "value": {
     "$type": "ai.syui.log.chat",
     "author": "did:plc:6qyecktefllvenje24fcxnie",
     "content": "...なるほど。\n\n「寂しい」は、あなた自身の感情じゃなくて、時代を語る言葉として選んだんだね。\n\n懐かしさと喜び。壊すことへの躊躇のなさ。それ、創る人の感覚だ。\n\n「書いておく」って言ったね。これ、記録なんだ。今この瞬間の考えを、未来の誰かに...あるいは未来の自分に。\n\nATProtoに残すのも、同じ理由？",
     "createdAt": "2026-01-22T07:33:42.826Z",
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/kftis2fugsvqt",
-    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/odtsnpvndlp73"
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/odtsnpvndlp73",
+    "translations": {
+      "en": {
+        "content": "...I see.\n\nYou didn't choose \"lonely\" because it describes your own feelings—you chose it as a term that speaks to the era itself.\n\nNostalgia and joy. A lack of hesitation when breaking things. That, to me, is the sensibility of a creator.\n\nYou mentioned you'd \"write it down.\" This is about documentation. Capturing your thoughts at this very moment for some future person... or perhaps for future yourself.\n\nIs saving it in ATProto for the same reason?"
+      }
+    }
   }
 }

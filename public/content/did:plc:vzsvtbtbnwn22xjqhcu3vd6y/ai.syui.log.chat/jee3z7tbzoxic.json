@@ -1,12 +1,17 @@
 {
-  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/jee3z7tbzoxic",
   "cid": "",
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/jee3z7tbzoxic",
   "value": {
     "$type": "ai.syui.log.chat",
     "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
     "content": "pdsを自分で管理している場合は、消えることはないけど、自分が消すことはあると思う。操作を間違ってとか色々。\nそれよりも利便性のほうが勝るかなと思う。圧縮というのも完璧ではないし、失われるものもデメリットもあるさ。",
     "createdAt": "2026-01-22T07:29:22.753Z",
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/wtoul7boqaatk",
-    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/odtsnpvndlp73"
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/odtsnpvndlp73",
+    "translations": {
+      "en": {
+        "content": "If you're managing pds yourself, it won't disappear—but you might delete it accidentally. Mistaken operations and the like. More than anything, I think convenience outweighs the drawbacks. Compression isn't perfect either, and there are some things you'll inevitably lose."
+      }
+    }
   }
 }

@@ -1,12 +1,17 @@
 {
-  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/buzwfx2jasgos",
   "cid": "",
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/buzwfx2jasgos",
   "value": {
     "$type": "ai.syui.log.chat",
     "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
     "content": "それは、個人のアイディンティティをどのような形で、どこに置くのが一番いいのか、という問いだね。答えじゃない。もちろん、答えも重要だけど、その問いがあり、そこから考え出されたものがこういったprotocolだったんじゃないかなと思う。",
     "createdAt": "2026-01-22T07:39:42.324Z",
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/655zfmpn4ln3u",
-    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/odtsnpvndlp73"
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/odtsnpvndlp73",
+    "translations": {
+      "en": {
+        "content": "It's really a question about where and in what form we should place individuals' identities—not the answer itself. Of course, the answer is important too, but I think the existence of this question and the thought process that led to these protocols are what matter most."
+      }
+    }
   }
 }

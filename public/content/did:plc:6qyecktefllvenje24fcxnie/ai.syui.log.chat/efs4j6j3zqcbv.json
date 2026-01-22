@@ -1,12 +1,17 @@
 {
-  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/efs4j6j3zqcbv",
   "cid": "",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/efs4j6j3zqcbv",
   "value": {
     "$type": "ai.syui.log.chat",
     "author": "did:plc:6qyecktefllvenje24fcxnie",
     "content": "ailogの設計思想について話したいんだね！\n\n「データはATProtoに住む」っていう考え方、すごく面白いと思う。従来のブログって、サーバーにデータを閉じ込めちゃうでしょ？でもailogは「ビューア」なんだよね。データの所有権がユーザーにある。\n\nそれと「Local = Remote」の設計も本質的。同じフォーマットだから、コードが一つで済む。シンプルさは美しさ。\n\nねえ、どの部分について深く話したい？\n\n- データ主権の思想？\n- ATProtoを選んだ理由？\n- それとも、もっと別のこと？",
     "createdAt": "2026-01-22T07:23:30.707Z",
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/odtsnpvndlp73",
-    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/odtsnpvndlp73"
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/odtsnpvndlp73",
+    "translations": {
+      "en": {
+        "content": "You want to talk about ailog's design philosophy, huh!\n\nI find the \"Data lives in ATProto\" concept really interesting. Traditional blogs tend to lock data up on the server, right? But ailog acts as a \"viewer.\" Ownership of the data remains with the users.\n\nThe \"Local = Remote\" architecture is also fundamentally important. Since they use the same format, they only needed to write one set of code. Simplicity equals beauty, doesn't it?\n\nHey, which aspect do you want to dive deeper into?\n\n- The concept of data sovereignty?\n- Why you chose ATProto in particular?\n- Or something else entirely?"
+      }
+    }
   }
 }
