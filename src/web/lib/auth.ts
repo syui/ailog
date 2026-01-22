@@ -254,8 +254,8 @@ export async function updatePost(
 
   try {
     // Fetch existing record to preserve translations
-    let existingTranslations = undefined
-    let existingCreatedAt = new Date().toISOString()
+    let existingTranslations: unknown = undefined
+    let existingCreatedAt: unknown = new Date().toISOString()
     try {
       const existing = await agent.com.atproto.repo.getRecord({
         repo: agent.assertDid,
@@ -266,7 +266,7 @@ export async function updatePost(
         const value = existing.data.value as Record<string, unknown>
         existingTranslations = value.translations
         if (value.createdAt) {
-          existingCreatedAt = value.createdAt as string
+          existingCreatedAt = value.createdAt
         }
       }
     } catch {
@@ -294,6 +294,51 @@ export async function updatePost(
     return { uri: result.data.uri, cid: result.data.cid }
   } catch (err) {
     console.error('Update post error:', err)
+    throw err
+  }
+}
+
+// Update chat message
+export async function updateChat(
+  collection: string,
+  rkey: string,
+  content: string
+): Promise<{ uri: string; cid: string } | null> {
+  if (!agent) return null
+
+  try {
+    // Fetch existing record to preserve translations and other fields
+    let existingRecord: Record<string, unknown> = {}
+    try {
+      const existing = await agent.com.atproto.repo.getRecord({
+        repo: agent.assertDid,
+        collection,
+        rkey,
+      })
+      if (existing.data.value) {
+        existingRecord = existing.data.value as Record<string, unknown>
+      }
+    } catch {
+      // Record doesn't exist
+      throw new Error('Record not found')
+    }
+
+    const record: Record<string, unknown> = {
+      ...existingRecord,
+      $type: collection,
+      content,
+    }
+
+    const result = await agent.com.atproto.repo.putRecord({
+      repo: agent.assertDid,
+      collection,
+      rkey,
+      record,
+    })
+
+    return { uri: result.data.uri, cid: result.data.cid }
+  } catch (err) {
+    console.error('Update chat error:', err)
     throw err
   }
 }

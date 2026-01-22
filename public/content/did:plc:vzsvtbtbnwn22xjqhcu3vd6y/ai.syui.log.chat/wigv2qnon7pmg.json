@@ -1,10 +1,10 @@
 {
-  "cid": "bafyreidsy43pp3svebjnihwxavlad2rdczwb4vyjnjlmjep2amiae46iia",
+  "cid": "bafyreiexvd4rbzzmj5nvkxpk5ps4jp6lu3qp3i2ib6h677g6ahs4w7iu5q",
   "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/wigv2qnon7pmg",
   "value": {
     "$type": "ai.syui.log.chat",
     "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "ailogのコンセプトを短く紹介してみて。",
+    "content": "ailogのコンセプト",
     "createdAt": "2026-01-20T09:48:37.328Z",
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3ar343fz5oop3",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/cav7q75r73jui",

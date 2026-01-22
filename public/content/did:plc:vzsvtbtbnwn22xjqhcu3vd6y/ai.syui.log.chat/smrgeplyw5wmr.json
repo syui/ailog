@@ -1,10 +1,10 @@
 {
-  "cid": "",
+  "cid": "bafyreialo6tv5rdgvndsdl5o3jhhzzq3lb5m4fksabzwlcrc7pwlt2mive",
   "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/smrgeplyw5wmr",
   "value": {
     "$type": "ai.syui.log.chat",
     "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "AIとの会話をblogにするailog chat",
+    "content": "AIとの会話をblogに",
     "createdAt": "2026-01-22T08:22:43.604Z",
     "translations": {
       "en": {

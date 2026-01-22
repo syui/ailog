@@ -2510,3 +2510,133 @@ button.tab {
   line-height: 1.4;
   white-space: pre-line;
 }
+
+/* Chat Edit Button */
+.chat-edit-btn {
+  color: #888;
+  font-size: 0.8rem;
+  text-decoration: none;
+  margin-left: 8px;
+}
+
+.chat-edit-btn:hover {
+  color: var(--btn-color);
+  text-decoration: underline;
+}
+
+/* Chat Edit Form */
+.chat-edit-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.chat-edit-container h2 {
+  margin-bottom: 20px;
+  font-size: 1.2rem;
+}
+
+.chat-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.chat-edit-content {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 200px;
+}
+
+.chat-edit-content:focus {
+  outline: none;
+  border-color: var(--btn-color);
+}
+
+.chat-edit-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-edit-collection {
+  color: #888;
+  font-size: 0.85rem;
+}
+
+.chat-edit-buttons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.chat-edit-cancel {
+  color: #666;
+  text-decoration: none;
+  padding: 8px 16px;
+}
+
+.chat-edit-cancel:hover {
+  text-decoration: underline;
+}
+
+.chat-edit-save {
+  background: var(--btn-color);
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.chat-edit-save:hover {
+  opacity: 0.9;
+}
+
+.chat-edit-save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.chat-edit-status {
+  margin-top: 10px;
+}
+
+.chat-edit-success {
+  color: #22c55e;
+}
+
+.chat-edit-error {
+  color: #ef4444;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .chat-edit-btn {
+    color: #888;
+  }
+
+  .chat-edit-btn:hover {
+    color: var(--btn-color);
+  }
+
+  .chat-edit-content {
+    background: #1a1a1a;
+    border-color: #333;
+    color: #e0e0e0;
+  }
+
+  .chat-edit-content:focus {
+    border-color: var(--btn-color);
+  }
+
+  .chat-edit-cancel {
+    color: #999;
+  }
+}

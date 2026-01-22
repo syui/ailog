@@ -3,7 +3,7 @@ import './styles/card.css'
 import './styles/card-migrate.css'
 import { getConfig, resolveHandle, getProfile, getPosts, getPost, describeRepo, listRecords, getRecord, getPds, getNetworks, getChatMessages, getCards, getRse } from './lib/api'
 import { parseRoute, onRouteChange, navigate, type Route } from './lib/router'
-import { login, logout, handleCallback, restoreSession, isLoggedIn, getLoggedInHandle, getLoggedInDid, deleteRecord, updatePost } from './lib/auth'
+import { login, logout, handleCallback, restoreSession, isLoggedIn, getLoggedInHandle, getLoggedInDid, deleteRecord, updatePost, updateChat } from './lib/auth'
 import { validateRecord } from './lib/lexicon'
 import { renderHeader } from './components/header'
 import { renderProfile } from './components/profile'
@@ -12,7 +12,7 @@ import { renderPostForm, setupPostForm } from './components/postform'
 import { renderCollectionButtons, renderServerInfo, renderServiceList, renderCollectionList, renderRecordList, renderRecordDetail } from './components/browser'
 import { renderModeTabs, renderLangSelector, setupModeTabs } from './components/mode-tabs'
 import { renderFooter } from './components/footer'
-import { renderChatListPage, renderChatThreadPage } from './components/chat'
+import { renderChatListPage, renderChatThreadPage, renderChatEditForm } from './components/chat'
 import { renderCardPage } from './components/card'
 import { renderRsePage } from './components/rse'
 import { checkMigrationStatus, renderMigrationPage, setupMigrationButton } from './components/card-migrate'
@@ -168,7 +168,7 @@ async function render(route: Route): Promise<void> {
 
     // Mode tabs (Blog/Browser/Post/Chat/PDS)
     const activeTab = route.type === 'postpage' ? 'post' :
-      (route.type === 'chat' || route.type === 'chat-thread') ? 'chat' :
+      (route.type === 'chat' || route.type === 'chat-thread' || route.type === 'chat-edit') ? 'chat' :
       (route.type === 'atbrowser' || route.type === 'service' || route.type === 'collection' || route.type === 'record' ? 'browser' : 'blog')
     html += renderModeTabs(handle, activeTab, localOnly)
 
@@ -320,8 +320,33 @@ async function render(route: Route): Promise<void> {
       langList = Array.from(chatLangs)
 
       html += renderLangSelector(langList)
-      html += `<div id="content">${renderChatThreadPage(chatMessages, route.rkey, did, handle, botDid, botHandle, profile, botProfile, pds || undefined, chatCollection)}</div>`
+      html += `<div id="content">${renderChatThreadPage(chatMessages, route.rkey, did, handle, botDid, botHandle, profile, botProfile, pds || undefined, chatCollection, loggedInDid)}</div>`
       html += `<nav class="back-nav"><a href="/@${handle}/at/chat">chat</a></nav>`
+      }
+
+    } else if (route.type === 'chat-edit' && route.rkey) {
+      // Chat edit page
+      if (!config.bot) {
+        html += `<div id="content" class="error">Bot not configured in config.json</div>`
+        html += `<nav class="back-nav"><a href="/@${handle}">${handle}</a></nav>`
+      } else if (!isOwner) {
+        html += `<div id="content" class="error">You can only edit your own messages</div>`
+        html += `<nav class="back-nav"><a href="/@${handle}/at/chat">chat</a></nav>`
+      } else {
+        const botDid = config.bot.did
+        const chatCollection = config.chatCollection || 'ai.syui.log.chat'
+
+        // Get the specific message
+        const chatMessages = await getChatMessages(did, botDid, chatCollection)
+        const targetUri = `at://${did}/${chatCollection}/${route.rkey}`
+        const message = chatMessages.find(m => m.uri === targetUri)
+
+        if (!message) {
+          html += `<div id="content" class="error">Message not found</div>`
+        } else {
+          html += `<div id="content">${renderChatEditForm(message, chatCollection, handle)}</div>`
+        }
+        html += `<nav class="back-nav"><a href="/@${handle}/at/chat">chat</a></nav>`
       }
 
     } else {
@@ -366,6 +391,12 @@ async function render(route: Route): Promise<void> {
     if (isOwner) {
       setupRecordDelete(handle, route)
       setupPostEdit(config.collection)
+    }
+
+    // Setup chat edit form
+    if (route.type === 'chat-edit' && isOwner) {
+      const chatCollection = config.chatCollection || 'ai.syui.log.chat'
+      setupChatEdit(chatCollection, handle)
     }
 
     // Setup validate button for record detail
@@ -560,6 +591,49 @@ function setupPostEdit(collection: string): void {
       alert('Update failed: ' + err)
       saveBtn.textContent = 'Save'
       ;(saveBtn as HTMLButtonElement).disabled = false
+    }
+  })
+}
+
+// Setup chat edit form
+function setupChatEdit(collection: string, handle: string): void {
+  const form = document.getElementById('chat-edit-form') as HTMLFormElement
+  const contentInput = document.getElementById('chat-edit-content') as HTMLTextAreaElement
+  const saveBtn = document.getElementById('chat-edit-save') as HTMLButtonElement
+  const statusEl = document.getElementById('chat-edit-status') as HTMLDivElement
+
+  if (!form || !saveBtn) return
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault()
+
+    const rkey = saveBtn.getAttribute('data-rkey')
+    if (!rkey || !contentInput) return
+
+    const content = contentInput.value.trim()
+
+    if (!content) {
+      alert('Content is required')
+      return
+    }
+
+    try {
+      saveBtn.textContent = 'Saving...'
+      saveBtn.disabled = true
+
+      await updateChat(collection, rkey, content)
+
+      statusEl.innerHTML = '<span class="chat-edit-success">Saved!</span>'
+
+      // Navigate back to chat thread
+      setTimeout(() => {
+        navigate({ type: 'chat-thread', handle, rkey })
+      }, 1000)
+    } catch (err) {
+      console.error('Update failed:', err)
+      statusEl.innerHTML = `<span class="chat-edit-error">Error: ${err}</span>`
+      saveBtn.textContent = 'Save'
+      saveBtn.disabled = false
     }
   })
 }

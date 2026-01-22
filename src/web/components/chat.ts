@@ -171,7 +171,8 @@ export function renderChatThread(
   userProfile?: Profile | null,
   botProfile?: Profile | null,
   pds?: string,
-  chatCollection: string = 'ai.syui.log.chat'
+  chatCollection: string = 'ai.syui.log.chat',
+  loggedInDid?: string | null
 ): string {
   // Find root message
   const rootUri = `at://${userDid}/${chatCollection}/${rootRkey}`
@@ -223,6 +224,8 @@ export function renderChatThread(
     const displayContent = getTranslatedContent(msg)
     const content = renderMarkdown(displayContent)
     const recordLink = `/@${author.handle}/at/collection/${chatCollection}/${rkey}`
+    const canEdit = loggedInDid && authorDid === loggedInDid
+    const editLink = `/@${userHandle}/at/chat/${rkey}/edit`
 
     return `
       <article class="chat-message">
@@ -233,6 +236,7 @@ export function renderChatThread(
           <div class="chat-message-header">
             <a href="/@${author.handle}" class="chat-author">@${escapeHtml(author.handle)}</a>
             <a href="${recordLink}" class="chat-time">${time}</a>
+            ${canEdit ? `<a href="${editLink}" class="chat-edit-btn">edit</a>` : ''}
           </div>
           <div class="chat-content">${content}</div>
         </div>
@@ -269,8 +273,41 @@ export function renderChatThreadPage(
   userProfile?: Profile | null,
   botProfile?: Profile | null,
   pds?: string,
-  chatCollection: string = 'ai.syui.log.chat'
+  chatCollection: string = 'ai.syui.log.chat',
+  loggedInDid?: string | null
 ): string {
-  const thread = renderChatThread(messages, rootRkey, userDid, userHandle, botDid, botHandle, userProfile, botProfile, pds, chatCollection)
+  const thread = renderChatThread(messages, rootRkey, userDid, userHandle, botDid, botHandle, userProfile, botProfile, pds, chatCollection, loggedInDid)
   return `<div class="chat-container">${thread}</div>`
+}
+
+// Render chat edit form
+export function renderChatEditForm(
+  message: ChatMessage,
+  collection: string,
+  userHandle: string
+): string {
+  const rkey = message.uri.split('/').pop() || ''
+  const content = message.value.content
+
+  return `
+    <div class="chat-edit-container">
+      <h2>Edit Chat Message</h2>
+      <form class="chat-edit-form" id="chat-edit-form">
+        <textarea
+          class="chat-edit-content"
+          id="chat-edit-content"
+          rows="10"
+          required
+        >${escapeHtml(content)}</textarea>
+        <div class="chat-edit-footer">
+          <span class="chat-edit-collection">${collection}</span>
+          <div class="chat-edit-buttons">
+            <a href="/@${userHandle}/at/chat/${rkey}" class="chat-edit-cancel">Cancel</a>
+            <button type="submit" class="chat-edit-save" id="chat-edit-save" data-rkey="${rkey}">Save</button>
+          </div>
+        </div>
+      </form>
+      <div id="chat-edit-status" class="chat-edit-status"></div>
+    </div>
+  `
 }
