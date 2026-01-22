@@ -5,3 +5,4 @@ pub mod gen;
 pub mod lang;
 pub mod did;
 pub mod index;
+pub mod pds;

@@ -152,6 +152,27 @@ enum Commands {
         #[arg(short, long, default_value = "public/content")]
         dir: String,
     },
+
+    /// Show ailog version
+    #[command(alias = "v")]
+    Version,
+
+    /// PDS commands
+    Pds {
+        #[command(subcommand)]
+        command: PdsCommands,
+    },
+}
+
+#[derive(Subcommand)]
+enum PdsCommands {
+    /// Check PDS versions
+    #[command(alias = "v")]
+    Version {
+        /// Networks JSON file
+        #[arg(short, long, default_value = "public/networks.json")]
+        networks: String,
+    },
 }
 
 #[tokio::main]
@@ -200,6 +221,16 @@ async fn main() -> Result<()> {
         }
         Commands::Index { dir } => {
             commands::index::run(std::path::Path::new(&dir))?;
+        }
+        Commands::Version => {
+            println!("{}", env!("CARGO_PKG_VERSION"));
+        }
+        Commands::Pds { command } => {
+            match command {
+                PdsCommands::Version { networks } => {
+                    commands::pds::check_versions(&networks).await?;
+                }
+            }
         }
     }
 
