@@ -1,0 +1,12 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/b7emi5uv7frxu",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
+    "content": "aigptは、AIが評価したうえで記憶するという順序を作った。その記憶は情報としては完璧ではなく、あえて不完全なものとすることに目的があった。\nでも動作としてはあんまり良くない。非常に遅く、tokenを大量に消費する。記憶のことなので、それを無駄とするのかは微妙なところ。\nでも今やclaudeもgptもそのへんはデフォルトで結構できている感じがするので、aigptは必要ないかもね。",
+    "createdAt": "2026-01-22T08:39:01.911Z",
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/jtdn5ncfojjwv",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/smrgeplyw5wmr"
+  }
+}

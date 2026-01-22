@@ -1,0 +1,12 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/y2qobgxho6jte",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
+    "content": "何かを作るには、自分の考えと前提を理解しているAIとでないと、厳しいと感じる。それを解決するための記憶装置。mcpとして作ってる。でもあまりエコじゃないから適切なアルゴリズムと設計、アイデアが必要だと感じる。\nchatgptはclaudeに優位な部分はそこだと感じてる。chatgptの記憶システムはより個人に近く、重要なことだけ記憶し、あとは捨てる。そして、重要な記憶についても重さみたいなものが設定されていて、時間とともにより軽くなり、消えていくようなシステムを構築しているのかもしれないな。",
+    "createdAt": "2026-01-22T08:34:39.089Z",
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/ouyhar727gfwx",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/smrgeplyw5wmr"
+  }
+}

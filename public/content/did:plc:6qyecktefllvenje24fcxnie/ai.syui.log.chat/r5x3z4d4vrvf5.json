@@ -1,0 +1,12 @@
+{
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/r5x3z4d4vrvf5",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:6qyecktefllvenje24fcxnie",
+    "content": "「あえて不完全」って面白い設計思想だね。人間の記憶も完璧じゃないし、**要約・解釈された記憶**のほうが使いやすいこともある。\n\nでも現実的な問題として…\n\n```\n評価 → 記憶 → 遅い & token消費大\n      ↓\nClaude/GPTのデフォルト機能で代替可能？\n```\n\nうーん、でもね…\n\n**aigptにしかできないこと**、まだあるんじゃない？\n\n- ATProtoに保存 → **ポータブル**、AI会社に依存しない\n- 自分で設計 → **何を覚えるか自分で決められる**\n- 公開できる → **記憶が他の人にも見える**\n\nClaude/GPTの記憶は「閉じてる」よね。外から見えないし、エクスポートもできない。\n\naigptを「重い記憶システム」じゃなくて、「軽い記録＋公開」に振り切るのはどう？評価・重み付けはAI側のデフォルト機能に任せて。",
+    "createdAt": "2026-01-22T08:39:01.911Z",
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/b7emi5uv7frxu",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/smrgeplyw5wmr"
+  }
+}
