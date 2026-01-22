@@ -282,6 +282,14 @@ body {
   display: flex;
   gap: 4px;
   margin-bottom: 16px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.mode-tabs::-webkit-scrollbar {
+  display: none;
 }
 
 .tab {
@@ -293,6 +301,8 @@ body {
   border-radius: 6px;
   font-size: 14px;
   cursor: pointer;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .tab:hover {
