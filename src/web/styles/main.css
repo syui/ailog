@@ -2383,6 +2383,25 @@ button.tab {
   color: var(--btn-color);
 }
 
+.chat-content table {
+  display: block;
+  overflow-x: auto;
+  border-collapse: collapse;
+  margin: 8px 0;
+  font-size: 0.9rem;
+}
+
+.chat-content th,
+.chat-content td {
+  border: 1px solid #ddd;
+  padding: 6px 10px;
+  white-space: nowrap;
+}
+
+.chat-content th {
+  background: #f5f5f5;
+}
+
 /* Dark mode chat */
 @media (prefers-color-scheme: dark) {
   .chat-message {
@@ -2411,6 +2430,15 @@ button.tab {
 
   .chat-content code {
     background: #333;
+  }
+
+  .chat-content th,
+  .chat-content td {
+    border-color: #444;
+  }
+
+  .chat-content th {
+    background: #2a2a2a;
   }
 
   .chat-avatar-placeholder {
@@ -2480,7 +2508,5 @@ button.tab {
   color: #666;
   font-size: 0.95rem;
   line-height: 1.4;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: pre-line;
 }

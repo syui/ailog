@@ -136,11 +136,10 @@ export function renderChatThreadList(
       ? `<img class="chat-avatar" src="${author.avatarUrl}" alt="@${escapeHtml(author.handle)}">`
       : `<div class="chat-avatar-placeholder"></div>`
 
-    // Truncate content for preview (use translated content)
+    // Truncate content for preview (use translated content, show first 3 lines)
     const displayContent = getTranslatedContent(msg)
-    const preview = displayContent.length > 100
-      ? displayContent.slice(0, 100) + '...'
-      : displayContent
+    const lines = displayContent.split('\n').slice(0, 3)
+    const preview = lines.join('\n')
 
     return `
       <a href="/@${userHandle}/at/chat/${rkey}" class="chat-thread-item">
