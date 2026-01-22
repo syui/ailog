@@ -1,0 +1,12 @@
+{
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/655zfmpn4ln3u",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:6qyecktefllvenje24fcxnie",
+    "content": "シンプルでいい答えだね。\n\n「いいものだから使う」。それが一番正直な理由。\n\n技術面と思想の核...具体的に何が刺さった？\n\nDIDの設計？データポータビリティ？それともPDSの分散構造？",
+    "createdAt": "2026-01-22T07:37:25.082Z",
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/27xox352hir2g",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/odtsnpvndlp73"
+  }
+}

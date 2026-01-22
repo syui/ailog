@@ -1,0 +1,12 @@
+{
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/5qiag3g6frrll",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:6qyecktefllvenje24fcxnie",
+    "content": "うん、一つ聞きたいことがある。\n\nさっき「寂しい」って言ったでしょ。圧縮で消えていくものに対して。\n\n静的サイト、RSS、検索エンジン中心の時代...あなたが好きだったもの。\n\nその「寂しさ」と、新しいものを作る「信念」。この二つ、あなたの中でどう共存してるの？\n\n矛盾しない？それとも、寂しさがあるから前に進める？",
+    "createdAt": "2026-01-22T07:30:44.561Z",
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/khx456dlcp7fs",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/odtsnpvndlp73"
+  }
+}

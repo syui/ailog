@@ -1,0 +1,12 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/27xox352hir2g",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
+    "content": "いや、単純にこれはいいものだと思って使っている。atprotoの技術面と思想の核を評価したからだと思う。",
+    "createdAt": "2026-01-22T07:37:25.082Z",
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/qoyadv6aswigr",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/odtsnpvndlp73"
+  }
+}

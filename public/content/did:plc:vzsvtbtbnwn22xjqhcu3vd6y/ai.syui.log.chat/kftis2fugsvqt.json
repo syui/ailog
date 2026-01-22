@@ -1,0 +1,12 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/kftis2fugsvqt",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
+    "content": "うーん、私は寂しさをあまり感じないけど、そう、人は何かが消えていく時、寂しいと感じるもの。\n私は懐かしさと喜びを感じるな。何かを作ることは、何かを壊していくことでもある。そこに躊躇しないで進める信念も時代を作っていくうえでは重要だと思ったので書いておくんだよ。",
+    "createdAt": "2026-01-22T07:33:42.825Z",
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/5qiag3g6frrll",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/odtsnpvndlp73"
+  }
+}
