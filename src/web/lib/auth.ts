@@ -253,16 +253,42 @@ export async function updatePost(
   if (!agent) return null
 
   try {
+    // Fetch existing record to preserve translations
+    let existingTranslations = undefined
+    let existingCreatedAt = new Date().toISOString()
+    try {
+      const existing = await agent.com.atproto.repo.getRecord({
+        repo: agent.assertDid,
+        collection,
+        rkey,
+      })
+      if (existing.data.value) {
+        const value = existing.data.value as Record<string, unknown>
+        existingTranslations = value.translations
+        if (value.createdAt) {
+          existingCreatedAt = value.createdAt as string
+        }
+      }
+    } catch {
+      // Record doesn't exist, that's ok
+    }
+
+    const record: Record<string, unknown> = {
+      $type: collection,
+      title,
+      content,
+      createdAt: existingCreatedAt,
+    }
+
+    if (existingTranslations) {
+      record.translations = existingTranslations
+    }
+
     const result = await agent.com.atproto.repo.putRecord({
       repo: agent.assertDid,
       collection,
       rkey,
-      record: {
-        $type: collection,
-        title,
-        content,
-        createdAt: new Date().toISOString(),
-      },
+      record,
     })
 
     return { uri: result.data.uri, cid: result.data.cid }
