@@ -29,6 +29,37 @@ function buildUrl(service: string, username: string): string {
   return config.urlTemplate.replace('{username}', username)
 }
 
+// Render compact link buttons for profile area
+export function renderLinkButtons(data: LinkCollection | null): string {
+  if (!data || !data.links || data.links.length === 0) {
+    return ''
+  }
+
+  const domainMap: Record<string, string> = {
+    github: 'github.com',
+    x: 'x.com',
+    youtube: 'youtube.com',
+  }
+
+  const buttons = data.links.map(link => {
+    const { service, username } = link
+    const config = serviceConfig[service as keyof typeof serviceConfig]
+    if (!config) return ''
+
+    const url = buildUrl(service, username)
+    const domain = domainMap[service] || service
+
+    return `
+      <a href="${url}" class="link-btn link-btn-${service}" title="${domain}" target="_blank" rel="noopener noreferrer">
+        <span class="link-btn-icon">${config.icon}</span>
+        <span class="link-btn-name">${domain}/${username}</span>
+      </a>
+    `
+  }).join('')
+
+  return `<div class="link-buttons">${buttons}</div>`
+}
+
 // Render link item for display
 function renderLinkItem(link: LinkItem): string {
   const { service, username } = link
@@ -99,8 +130,7 @@ export function renderLinkPage(data: LinkCollection | null, handle: string, isOw
     return `
       <div class="link-container">
         <div class="link-header">
-          <h2>Links</h2>
-          <div class="link-header-actions">
+                    <div class="link-header-actions">
             <a href="${jsonUrl}" class="json-btn">json</a>
             ${editBtn}
           </div>
@@ -116,8 +146,7 @@ export function renderLinkPage(data: LinkCollection | null, handle: string, isOw
   return `
     <div class="link-container">
       <div class="link-header">
-        <h2>Links</h2>
-        <div class="link-header-actions">
+                <div class="link-header-actions">
           <a href="${jsonUrl}" class="json-btn">json</a>
           ${editBtn}
         </div>

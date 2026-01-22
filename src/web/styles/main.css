@@ -2007,6 +2007,71 @@ body {
   height: 16px;
 }
 
+/* Browser row layout */
+.browser-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.browser-row .collection-buttons {
+  margin-bottom: 0;
+}
+
+/* Link buttons (compact, next to collection buttons) */
+.link-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  text-decoration: none;
+  color: #fff;
+  font-size: 12px;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.link-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.link-btn-icon {
+  width: 14px;
+  height: 14px;
+  display: flex;
+  align-items: center;
+}
+
+.link-btn-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.link-btn-name {
+  font-weight: 500;
+}
+
+/* Link button colors */
+.link-btn-github {
+  background: #24292e;
+}
+
+.link-btn-x {
+  background: #000000;
+}
+
+.link-btn-youtube {
+  background: #ff0000;
+}
+
 .no-collections,
 .no-records {
   padding: 20px;

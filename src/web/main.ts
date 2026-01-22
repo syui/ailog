@@ -15,7 +15,7 @@ import { renderFooter } from './components/footer'
 import { renderChatListPage, renderChatThreadPage, renderChatEditForm } from './components/chat'
 import { renderCardPage } from './components/card'
 import { renderRsePage } from './components/rse'
-import { renderLinkPage } from './components/link'
+import { renderLinkPage, renderLinkButtons } from './components/link'
 import { checkMigrationStatus, renderMigrationPage, setupMigrationButton } from './components/card-migrate'
 import { showLoading, hideLoading } from './components/loading'
 
@@ -357,8 +357,9 @@ async function render(route: Route): Promise<void> {
       }
 
     } else {
-      // User page: compact collection buttons + posts (use pre-loaded collections)
-      html += `<div id="browser">${renderCollectionButtons(collections, handle)}</div>`
+      // User page: compact collection buttons + link buttons + posts
+      const links = await getLinks(did)
+      html += `<div id="browser" class="browser-row">${renderCollectionButtons(collections, handle)}${renderLinkButtons(links)}</div>`
 
       // Language selector above content
       html += renderLangSelector(langList)
