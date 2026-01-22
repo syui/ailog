@@ -167,9 +167,10 @@ async function render(route: Route): Promise<void> {
     // Build page
     let html = renderHeader(handle, oauthEnabled)
 
-    // Mode tabs (Blog/Browser/Post/Chat/PDS)
+    // Mode tabs (Blog/Browser/Post/Chat/Link/PDS)
     const activeTab = route.type === 'postpage' ? 'post' :
       (route.type === 'chat' || route.type === 'chat-thread' || route.type === 'chat-edit') ? 'chat' :
+      route.type === 'link' ? 'link' :
       (route.type === 'atbrowser' || route.type === 'service' || route.type === 'collection' || route.type === 'record' ? 'browser' : 'blog')
     html += renderModeTabs(handle, activeTab, localOnly)
 

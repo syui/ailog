@@ -21,7 +21,7 @@ export function setCurrentLang(lang: string): void {
   localStorage.setItem('preferred-lang', lang)
 }
 
-export function renderModeTabs(handle: string, activeTab: 'blog' | 'browser' | 'post' | 'chat' = 'blog', isLocalUser: boolean = false): string {
+export function renderModeTabs(handle: string, activeTab: 'blog' | 'browser' | 'post' | 'chat' | 'link' = 'blog', isLocalUser: boolean = false): string {
   let tabs = `
     <a href="/" class="tab">/</a>
     <a href="/@${handle}" class="tab ${activeTab === 'blog' ? 'active' : ''}">${handle}</a>
@@ -35,6 +35,7 @@ export function renderModeTabs(handle: string, activeTab: 'blog' | 'browser' | '
 
   if (isLoggedIn()) {
     tabs += `<a href="/@${handle}/at/post" class="tab ${activeTab === 'post' ? 'active' : ''}">post</a>`
+    tabs += `<a href="/@${handle}/at/link" class="tab ${activeTab === 'link' ? 'active' : ''}">link</a>`
   }
 
   tabs += `
