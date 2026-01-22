@@ -482,6 +482,9 @@ fn handle_request(request: &JsonRpcRequest) -> JsonRpcResponse {
 
 /// Run MCP server (stdio)
 pub fn serve() -> Result<()> {
+    // Load .env from current directory
+    dotenvy::dotenv().ok();
+
     let stdin = io::stdin();
     let mut stdout = io::stdout();
 
