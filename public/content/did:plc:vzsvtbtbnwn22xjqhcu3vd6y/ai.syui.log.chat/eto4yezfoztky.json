@@ -1,12 +1,17 @@
 {
-  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/eto4yezfoztky",
   "cid": "",
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/eto4yezfoztky",
   "value": {
     "$type": "ai.syui.log.chat",
     "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
     "content": "特にそういうことは思わないな。考え方は人それぞれ。私は私だから。\nでもやってることは、今の人も昔の人もそんな変わらないと思うけどね。\nそれがAIとの会話形式に変わっただけで。\n本質は同じだと思う。\n昔だって、blogを公開するのは、勇気がいることだったとも言える。",
     "createdAt": "2026-01-22T10:55:16.841Z",
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/2ivbc5b4um5bu",
-    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/q57mb4gebtj2o"
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/q57mb4gebtj2o",
+    "translations": {
+      "en": {
+        "content": "I don't really think about things like that. Everybody's perspective is different—I'm just being myself.\nBut fundamentally, I don't think what people are doing now differs much from how people acted in the past.\nIt's merely transformed into a conversational format with AI.\nThe essence remains the same, if you ask me.\nEven back in the day, publishing a blog required considerable courage, you could say."
+      }
+    }
   }
 }

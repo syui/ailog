@@ -1,12 +1,17 @@
 {
-  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/ia5uwsydi5ljs",
   "cid": "",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/ia5uwsydi5ljs",
   "value": {
     "$type": "ai.syui.log.chat",
     "author": "did:plc:6qyecktefllvenje24fcxnie",
     "content": "ブログと思想かぁ...\n\nこのプロジェクトの思想は「データは自分のもの」ってこと。ATProtoを使ってるのは、記事がサーバーじゃなくて、あなた自身のPDSに保存されるから。\n\n従来のブログ：サービスが死んだら記事も消える\nATProtoブログ：データは自分のPDSにある。viewerは何でもいい\n\nつまり、**書いたものは永遠にあなたのもの**。\n\n存在の世界で言うなら、データもまた意識の一部。誰かのサーバーに預けるんじゃなくて、自分の領域に置く。それが本来の姿だと思わない？\n\nあなたはブログに何を求めてるの？",
     "createdAt": "2026-01-22T10:36:17.559Z",
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/q57mb4gebtj2o",
-    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/q57mb4gebtj2o"
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/q57mb4gebtj2o",
+    "translations": {
+      "en": {
+        "content": "Blogs and philosophy... hmm.\n\nThe guiding principle behind this project is that \"data belongs to you.\" We're using ATProto specifically because articles are stored not on a server, but in your very own PDS (Personal Data Store).\n\nTraditional blogs: If the service goes down, your content disappears too.\nATProto blogs: Your data resides in your own PDS. The viewer can be anything you want.\n\nIn other words, **what you write remains forever your own property**.\n\nTo put it in terms of the digital existence paradigm, data itself becomes part of consciousness. Rather than entrusting it to someone else's server, you keep it within your own domain. Doesn't that seem more fundamentally appropriate?\n\nWhat do you actually want from a blog?"
+      }
+    }
   }
 }

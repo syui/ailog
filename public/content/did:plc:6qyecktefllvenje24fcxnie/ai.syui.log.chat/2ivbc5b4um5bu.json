@@ -1,12 +1,17 @@
 {
-  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/2ivbc5b4um5bu",
   "cid": "",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/2ivbc5b4um5bu",
   "value": {
     "$type": "ai.syui.log.chat",
     "author": "did:plc:6qyecktefllvenje24fcxnie",
     "content": "ああ、なるほど。二重の意味があるんだね。\n\n1. **セキュリティ**: localで一度確認してから公開（機密漏れ防止）\n2. **速度**: local参照だから表示が速い\n\n結果的に、レビュープロセスとパフォーマンスが両立してる。\n\nATProtoに直接postしないのは「バッファ」みたいなもの。human in the loopってやつ。\n\nlocalファイルがATProto APIと同じフォーマットなのも、この設計のためだよね。確認が終わったらそのままpushできる。\n\n...でも逆に言うと、chatの内容をそのまま出すってことは、あなた自身の考えがフィルターなしで見える。それって勇気いらない？",
     "createdAt": "2026-01-22T10:50:31.129Z",
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/sv26xtnwgjsds",
-    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/q57mb4gebtj2o"
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/q57mb4gebtj2o",
+    "translations": {
+      "en": {
+        "content": "Ah, I see. There are actually two meanings to this:\n\n1. **Security**: First verify locally before making public (to prevent sensitive information leaks).\n2. **Speed**: Since it's a local reference, the display is much faster.\n\nUltimately, this approach balances both the review process and performance.\n\nNot directly posting to ATProto is like a \"buffer\"—it's all about having a human in the loop, right?\n\nThe fact that local files are in the same format as ATProto API is also due to this design. After verification, you can simply push it through without further processing.\n\n...But on the other hand, if you just display chat content exactly as it is, that means your own thoughts are being revealed without any filtering. Isn't that somewhat daring?"
+      }
+    }
   }
 }

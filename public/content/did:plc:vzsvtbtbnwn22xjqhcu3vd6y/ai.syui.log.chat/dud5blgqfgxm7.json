@@ -1,12 +1,17 @@
 {
-  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/dud5blgqfgxm7",
   "cid": "",
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/dud5blgqfgxm7",
   "value": {
     "$type": "ai.syui.log.chat",
     "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
     "content": "ailogは現在、blog, chatに分かれていて、主にchatを使いblogを更新してる。\nそれはblogじゃないだろう、と言われてしまうかもしれないけど、私はblogだと言い張ることにする。\nこういうのがblogの新しい形であり、定義だと考えても別にいいと思うから。\nでも、ailogの設計に一つ外せないものがある。\nその一つが、思想と明確化。\n私は、blogは、個人の思想が表現されているならそれでいいと思っている。そういうものが面白いと思う。\nだから、個人のblogには、個人の思想があればいい。\nでも、AIの登場によって、それが逆に見えづらくなってしまったと思う。\n今や多くのblogは、AIが添削し、修正し、使われているんじゃないかな。\nだから、記事を読んでも、どの部分をAIが書いて、どの部分を人が書いたのかわからない。\nでも会話形式ならそれが最初から明確化されている。\nだから、blogを書くために私がやることとしては、自分の思想をAIにぶつけること。それだけだ。\n新しい知見も得られるし、書きやすいので、今後もailog chatのほうで更新していこうかなと思ってる。\n割としっかりしたものや、告知を行いたいときは、blogのほうに書くつもり。\nそれが、私が考えるblogの形。",
     "createdAt": "2026-01-22T10:47:18.196Z",
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/ia5uwsydi5ljs",
-    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/q57mb4gebtj2o"
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/q57mb4gebtj2o",
+    "translations": {
+      "en": {
+        "content": "Currently, ailog operates as two separate platforms: blog and chat. I primarily use the chat interface for updating my blog entries.\nSome might dismiss this as not truly being a blog, but I choose to insist that it is.\nThis represents a new form—a legitimate definition—of what a blog can be.\nAnd there's one fundamental aspect that absolutely cannot be overlooked in ailog's design:\nthe principle of clarity.\nI maintain that a blog should succeed by effectively conveying the writer's personal thoughts. That's exactly what makes it interesting.\nTherefore, for a personal blog, all that's needed is genuine individual thought.\nBut with the advent of AI technology, I think this very essence has become increasingly obscured today.\nA lot of blogs nowadays are likely processed, edited, and even written by AI systems.\nWe can't even tell in articles which parts were written by AI and which by human authors.\nHowever, in a chat format, these distinctions are clearly defined from the outset.\nFor me, the approach for writing blog posts is simply to present my own ideas to the AI. That's all there is to it.\nNot only does this provide new insights, but it's also easier to write, so I plan to continue updating primarily through the ailog chat interface.\nWhen I need to produce more formal content or make announcements, however, I'll turn to the blog platform.\nThis is the form of blogging I envision."
+      }
+    }
   }
 }

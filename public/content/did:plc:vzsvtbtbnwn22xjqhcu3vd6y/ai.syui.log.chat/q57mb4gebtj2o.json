@@ -1,10 +1,15 @@
 {
-  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/q57mb4gebtj2o",
   "cid": "",
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/q57mb4gebtj2o",
   "value": {
     "$type": "ai.syui.log.chat",
     "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
     "content": "blogと思想",
-    "createdAt": "2026-01-22T10:36:17.558Z"
+    "createdAt": "2026-01-22T10:36:17.558Z",
+    "translations": {
+      "en": {
+        "content": "Blogs and Philosophy"
+      }
+    }
   }
 }
