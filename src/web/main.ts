@@ -729,6 +729,14 @@ function setupLinkEdit(): void {
       }
     })
 
+    // Also include pending add form input (if user forgot to click +)
+    if (addService && addUsername) {
+      const pendingUsername = addUsername.value.trim()
+      if (pendingUsername) {
+        links.push({ service: addService.value, username: pendingUsername })
+      }
+    }
+
     try {
       saveBtn.textContent = 'Saving...'
       ;(saveBtn as HTMLButtonElement).disabled = true
