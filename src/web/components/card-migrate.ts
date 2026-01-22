@@ -52,14 +52,9 @@ function toUtcDatetime(dateStr: string): string {
   }
 }
 
-// Maximum cards to migrate (ATProto record size limit ~256KB)
-const MAX_MIGRATE_CARDS = 1200
-
 // Perform migration
 export async function performMigration(user: OldApiUser, cards: OldApiCard[]): Promise<boolean> {
-  // Limit cards to avoid exceeding ATProto record size limit
-  const limitedCards = cards.slice(0, MAX_MIGRATE_CARDS)
-  const checksum = generateChecksum(user, limitedCards)
+  const checksum = generateChecksum(user, cards)
 
   // Convert user data (only required + used fields, matching lexicon types)
   // Note: ATProto doesn't support float, so planet is converted to integer
@@ -74,18 +69,68 @@ export async function performMigration(user: OldApiUser, cards: OldApiCard[]): P
     updatedAt: toUtcDatetime(user.updated_at),
   }
 
-  // Convert card data (only required + used fields)
-  const cardData = limitedCards.map(c => ({
-    id: c.id,
-    card: c.card,
-    cp: c.cp,
-    status: c.status || 'normal',
-    skill: c.skill || 'normal',
-    createdAt: toUtcDatetime(c.created_at),
-  }))
+  // Merge cards by card number (sum cp, keep highest status)
+  const cardGroups = new Map<number, {
+    card: number
+    totalCp: number
+    count: number
+    bestStatus: string
+    bestSkill: string
+    latestCreatedAt: string
+  }>()
+
+  for (const c of cards) {
+    const existing = cardGroups.get(c.card)
+    if (existing) {
+      existing.totalCp += c.cp
+      existing.count++
+      // Keep highest status (super > shiny > first > normal)
+      if (statusPriority(c.status) > statusPriority(existing.bestStatus)) {
+        existing.bestStatus = c.status || 'normal'
+      }
+      if (c.skill && c.skill !== 'normal') {
+        existing.bestSkill = c.skill
+      }
+      // Keep latest createdAt
+      if (c.created_at > existing.latestCreatedAt) {
+        existing.latestCreatedAt = c.created_at
+      }
+    } else {
+      cardGroups.set(c.card, {
+        card: c.card,
+        totalCp: c.cp,
+        count: 1,
+        bestStatus: c.status || 'normal',
+        bestSkill: c.skill || 'normal',
+        latestCreatedAt: c.created_at
+      })
+    }
+  }
+
+  // Convert merged data to card array
+  const cardData = Array.from(cardGroups.values())
+    .sort((a, b) => a.card - b.card)
+    .map(g => ({
+      id: g.card,  // Use card number as id
+      card: g.card,
+      cp: g.totalCp,
+      status: g.bestStatus,
+      skill: g.bestSkill,
+      createdAt: toUtcDatetime(g.latestCreatedAt),
+    }))
 
   const result = await saveMigratedCardData(userData, cardData, checksum)
   return result !== null
+}
+
+// Status priority for comparison (higher = better)
+function statusPriority(status: string): number {
+  switch (status) {
+    case 'super': return 3
+    case 'shiny': return 2
+    case 'first': return 1
+    default: return 0
+  }
 }
 
 // Render migration icon for profile (shown when user has api.syui.ai account)
@@ -102,15 +147,6 @@ export function renderMigrationIcon(handle: string, hasOldApi: boolean, hasMigra
   `
 }
 
-// Convert status to rarity
-function statusToRare(status: string): number {
-  switch (status) {
-    case 'super': return 3  // unique
-    case 'shiny': return 2  // shiny (assumed from skill or special status)
-    case 'first': return 1  // rare
-    default: return 0       // normal
-  }
-}
 
 // Render migration page (simplified)
 export function renderMigrationPage(
@@ -147,42 +183,39 @@ export function renderMigrationPage(
     buttonHtml = `<button id="migrate-btn" class="migrate-btn">Migrate</button>`
   }
 
-  // Card grid (same style as /card page)
-  const cardGroups = new Map<number, { card: OldApiCard, count: number, maxCp: number, rare: number }>()
-  for (const card of oldApiCards) {
-    const existing = cardGroups.get(card.card)
-    const rare = statusToRare(card.status)
+  // Card grid - merge by card number (same as migration logic)
+  const cardGroups = new Map<number, { card: number, totalCp: number, rare: number }>()
+  for (const c of oldApiCards) {
+    const existing = cardGroups.get(c.card)
+    const rare = statusPriority(c.status)
     if (existing) {
-      existing.count++
-      if (card.cp > existing.maxCp) existing.maxCp = card.cp
+      existing.totalCp += c.cp
       if (rare > existing.rare) existing.rare = rare
     } else {
-      cardGroups.set(card.card, { card, count: 1, maxCp: card.cp, rare })
+      cardGroups.set(c.card, { card: c.card, totalCp: c.cp, rare })
     }
   }
 
   const sortedGroups = Array.from(cardGroups.values())
-    .sort((a, b) => a.card.card - b.card.card)
+    .sort((a, b) => a.card - b.card)
 
-  const cardsHtml = sortedGroups.map(({ card, count, maxCp, rare }) => {
+  const cardsHtml = sortedGroups.map(({ card, totalCp, rare }) => {
     const rarityClass = rare === 3 ? 'unique' : rare === 2 ? 'shiny' : rare === 1 ? 'rare' : ''
     const effectsHtml = rarityClass ? `
       <div class="card-status pattern-${rarityClass}"></div>
       <div class="card-status color-${rarityClass}"></div>
     ` : ''
-    const countBadge = count > 1 ? `<span class="card-count">x${count}</span>` : ''
 
     return `
       <div class="card-item">
         <div class="card-wrapper">
           <div class="card-reflection">
-            <img src="/card/${card.card}.webp" alt="Card ${card.card}" loading="lazy" />
+            <img src="/card/${card}.webp" alt="Card ${card}" loading="lazy" />
           </div>
           ${effectsHtml}
-          ${countBadge}
         </div>
         <div class="card-detail">
-          <span class="card-cp">${maxCp}</span>
+          <span class="card-cp">${totalCp}</span>
         </div>
       </div>
     `
@@ -238,9 +271,9 @@ export function setupMigrationButton(
       return
     }
 
-    const migrateCount = Math.min(oldApiCards.length, MAX_MIGRATE_CARDS)
-    const limitMsg = oldApiCards.length > MAX_MIGRATE_CARDS ? ` (limited from ${oldApiCards.length})` : ''
-    if (!confirm(`Migrate ${migrateCount} cards${limitMsg} to ATProto?`)) {
+    // Count unique card types
+    const uniqueCards = new Set(oldApiCards.map(c => c.card)).size
+    if (!confirm(`Migrate ${oldApiCards.length} cards (merged to ${uniqueCards} types) to ATProto?`)) {
       return
     }
 
