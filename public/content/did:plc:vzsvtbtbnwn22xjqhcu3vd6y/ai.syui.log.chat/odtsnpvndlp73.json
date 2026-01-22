@@ -1,15 +1,10 @@
 {
-  "cid": "",
+  "cid": "bafyreifgtrk5f6j5olmd2qas2gjkhm22lf7ka57cbopc42cqh5grukx6hu",
   "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/odtsnpvndlp73",
   "value": {
     "$type": "ai.syui.log.chat",
     "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "ailogの設計思想\n今回は少し深い部分についての考えを共有したいな。\n君がどう考えるのかも興味がある。",
-    "createdAt": "2026-01-22T07:23:30.707Z",
-    "translations": {
-      "en": {
-        "content": "Design Philosophy of ailog\nThis time, I want to share some thoughts about more fundamental aspects.\nI also find your perspective quite interesting."
-      }
-    }
+    "content": "ailogの設計思想",
+    "createdAt": "2026-01-22T07:23:30.707Z"
   }
 }
