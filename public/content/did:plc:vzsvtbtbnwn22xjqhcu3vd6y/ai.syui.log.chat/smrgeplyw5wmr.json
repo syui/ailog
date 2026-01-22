@@ -1,10 +1,15 @@
 {
-  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/smrgeplyw5wmr",
   "cid": "",
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/smrgeplyw5wmr",
   "value": {
     "$type": "ai.syui.log.chat",
     "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
     "content": "AIとの会話をblogにするailog chat",
-    "createdAt": "2026-01-22T08:22:43.604Z"
+    "createdAt": "2026-01-22T08:22:43.604Z",
+    "translations": {
+      "en": {
+        "content": "Converting AI conversations into blog content via ailog chat"
+      }
+    }
   }
 }

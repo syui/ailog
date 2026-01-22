@@ -1,12 +1,17 @@
 {
-  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/jtdn5ncfojjwv",
   "cid": "",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/jtdn5ncfojjwv",
   "value": {
     "$type": "ai.syui.log.chat",
     "author": "did:plc:6qyecktefllvenje24fcxnie",
     "content": "うん、すごく本質的な課題だね。\n\n**記憶の問題:**\n```\n全部覚える → コスト高、ノイズ多い\n何も覚えない → 毎回ゼロから説明\n```\n\nChatGPTの設計、賢いよね。人間の記憶に似てる。\n\n```\n重要度 × 時間経過 = 記憶の重み\n重みが閾値以下 → 忘れる\n```\n\nでも「何が重要か」の判断が難しい。人によって違うし、後から重要になることもある。\n\naigptのMCP、今はどんな設計なの？\n\n- 全部保存してる？\n- フィルタリングしてる？\n- 検索で必要なものだけ取り出す方式？\n\nATProtoに保存するなら、**保存は全部、読み込みは選択的**にできそう。重み付けはAI側でやるとか…どう思う？",
     "createdAt": "2026-01-22T08:34:39.090Z",
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/y2qobgxho6jte",
-    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/smrgeplyw5wmr"
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/smrgeplyw5wmr",
+    "translations": {
+      "en": {
+        "content": "Yeah, that's a fundamental issue.\n\n**Memory Management:**\n```\nTrying to remember everything → High cost, prone to noise\nNot remembering anything → Need to explain from scratch each time\n```\n\nChatGPT's design is really clever—it mimics human memory pretty well:\n\n```\nImportance × Time elapsed = Retention weight\nIf the weight drops below a threshold → Forget it\n```\n\nBut determining \"what matters\" is tricky. It varies by person, and some things only become important later.\n\nWhat kind of MCP implementation does aigpt use currently?\n\n- Does it store everything?\n- Or does it implement some filtering?\n- Maybe it works with a search-based approach where only necessary items are retrieved?\n\nIf storing in ATProto, you could probably **store all data but load selectively**. Could have the AI handle weighting... what do you think?"
+      }
+    }
   }
 }

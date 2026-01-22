@@ -1,12 +1,17 @@
 {
-  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/b7emi5uv7frxu",
   "cid": "",
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/b7emi5uv7frxu",
   "value": {
     "$type": "ai.syui.log.chat",
     "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
     "content": "aigptは、AIが評価したうえで記憶するという順序を作った。その記憶は情報としては完璧ではなく、あえて不完全なものとすることに目的があった。\nでも動作としてはあんまり良くない。非常に遅く、tokenを大量に消費する。記憶のことなので、それを無駄とするのかは微妙なところ。\nでも今やclaudeもgptもそのへんはデフォルトで結構できている感じがするので、aigptは必要ないかもね。",
     "createdAt": "2026-01-22T08:39:01.911Z",
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/jtdn5ncfojjwv",
-    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/smrgeplyw5wmr"
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/smrgeplyw5wmr",
+    "translations": {
+      "en": {
+        "content": "aiGPT established an evaluation-then-memorize sequence for its AI system. The memories weren't intended to be perfect representations of information - their purpose was to be deliberately incomplete.\nHowever, performance-wise, it's not particularly good. It's extremely slow and consumes a massive amount of tokens. Since these are memory operations, it's somewhat debatable whether this constitutes wasteful usage.\nBut nowadays, Claude and GPT seem to have handled these aspects quite well by default, so aiGPT might not be necessary anymore."
+      }
+    }
   }
 }
