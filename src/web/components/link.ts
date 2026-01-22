@@ -1,4 +1,4 @@
-import type { LinkCollection } from '../lib/api'
+import type { LinkCollection, LinkItem } from '../lib/api'
 
 // Service configurations
 const serviceConfig = {
@@ -19,6 +19,9 @@ const serviceConfig = {
   },
 }
 
+// Available services for dropdown
+export const availableServices = ['github', 'x', 'youtube'] as const
+
 // Build URL from service and username
 function buildUrl(service: string, username: string): string {
   const config = serviceConfig[service as keyof typeof serviceConfig]
@@ -26,37 +29,101 @@ function buildUrl(service: string, username: string): string {
   return config.urlTemplate.replace('{username}', username)
 }
 
+// Render link item for display
+function renderLinkItem(link: LinkItem): string {
+  const { service, username } = link
+  const config = serviceConfig[service as keyof typeof serviceConfig]
+  if (!config) return ''
+
+  const url = buildUrl(service, username)
+
+  return `
+    <a href="${url}" class="link-item link-${service}" target="_blank" rel="noopener noreferrer">
+      <div class="link-icon">${config.icon}</div>
+      <div class="link-info">
+        <span class="link-service">${config.name}</span>
+        <span class="link-username">@${username}</span>
+      </div>
+    </a>
+  `
+}
+
+// Render edit form for a link
+function renderLinkEditItem(link: LinkItem, index: number): string {
+  const serviceOptions = availableServices.map(s =>
+    `<option value="${s}" ${s === link.service ? 'selected' : ''}>${serviceConfig[s].name}</option>`
+  ).join('')
+
+  return `
+    <div class="link-edit-item" data-index="${index}">
+      <select class="link-edit-service" data-index="${index}">
+        ${serviceOptions}
+      </select>
+      <input type="text" class="link-edit-username" data-index="${index}" value="${link.username}" placeholder="username">
+      <button type="button" class="link-edit-remove" data-index="${index}">×</button>
+    </div>
+  `
+}
+
 // Render link page
-export function renderLinkPage(data: LinkCollection | null, _handle: string): string {
-  if (!data || !data.links || data.links.length === 0) {
+export function renderLinkPage(data: LinkCollection | null, handle: string, isOwner = false): string {
+  const jsonUrl = `/@${handle}/at/collection/ai.syui.at.link/self`
+  const links = data?.links || []
+  const editBtn = isOwner ? `<button id="link-edit-btn" class="edit-btn">edit</button>` : ''
+
+  // Edit form (hidden by default)
+  const editItems = links.map((link, i) => renderLinkEditItem(link, i)).join('')
+  const newServiceOptions = availableServices.map(s =>
+    `<option value="${s}">${serviceConfig[s].name}</option>`
+  ).join('')
+
+  const editForm = isOwner ? `
+    <div id="link-edit-form" class="link-edit-form" style="display: none;">
+      <div id="link-edit-list">${editItems}</div>
+      <div class="link-edit-add">
+        <select id="link-add-service">
+          ${newServiceOptions}
+        </select>
+        <input type="text" id="link-add-username" placeholder="username">
+        <button type="button" id="link-add-btn">+</button>
+      </div>
+      <div class="link-edit-actions">
+        <button type="button" id="link-edit-cancel">Cancel</button>
+        <button type="button" id="link-edit-save">Save</button>
+      </div>
+      <div id="link-edit-status"></div>
+    </div>
+  ` : ''
+
+  if (links.length === 0) {
     return `
       <div class="link-container">
-        <p class="link-empty">No links found.</p>
+        <div class="link-header">
+          <h2>Links</h2>
+          <div class="link-header-actions">
+            <a href="${jsonUrl}" class="json-btn">json</a>
+            ${editBtn}
+          </div>
+        </div>
+        ${editForm}
+        <p class="link-empty" id="link-display">No links found.</p>
       </div>
     `
   }
 
-  const items = data.links.map(link => {
-    const { service, username } = link
-    const config = serviceConfig[service as keyof typeof serviceConfig]
-    if (!config) return ''
-
-    const url = buildUrl(service, username)
-
-    return `
-      <a href="${url}" class="link-item link-${service}" target="_blank" rel="noopener noreferrer">
-        <div class="link-icon">${config.icon}</div>
-        <div class="link-info">
-          <span class="link-service">${config.name}</span>
-          <span class="link-username">@${username}</span>
-        </div>
-      </a>
-    `
-  }).join('')
+  const items = links.map(link => renderLinkItem(link)).join('')
 
   return `
     <div class="link-container">
-      <div class="link-grid">${items}</div>
+      <div class="link-header">
+        <h2>Links</h2>
+        <div class="link-header-actions">
+          <a href="${jsonUrl}" class="json-btn">json</a>
+          ${editBtn}
+        </div>
+      </div>
+      ${editForm}
+      <div class="link-grid" id="link-display">${items}</div>
     </div>
   `
 }

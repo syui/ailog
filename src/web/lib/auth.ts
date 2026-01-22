@@ -343,6 +343,36 @@ export async function updateChat(
   }
 }
 
+// Update links (ai.syui.at.link)
+export async function updateLinks(
+  links: { service: string; username: string }[]
+): Promise<{ uri: string; cid: string } | null> {
+  if (!agent) return null
+
+  const collection = 'ai.syui.at.link'
+
+  try {
+    const record = {
+      $type: collection,
+      links,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    }
+
+    const result = await agent.com.atproto.repo.putRecord({
+      repo: agent.assertDid,
+      collection,
+      rkey: 'self',
+      record,
+    })
+
+    return { uri: result.data.uri, cid: result.data.cid }
+  } catch (err) {
+    console.error('Update links error:', err)
+    throw err
+  }
+}
+
 // Save migrated card data to ai.syui.card.old
 export async function saveMigratedCardData(
   user: {

@@ -3,7 +3,7 @@ import './styles/card.css'
 import './styles/card-migrate.css'
 import { getConfig, resolveHandle, getProfile, getPosts, getPost, describeRepo, listRecords, getRecord, getPds, getNetworks, getChatMessages, getCards, getRse, getLinks } from './lib/api'
 import { parseRoute, onRouteChange, navigate, type Route } from './lib/router'
-import { login, logout, handleCallback, restoreSession, isLoggedIn, getLoggedInHandle, getLoggedInDid, deleteRecord, updatePost, updateChat } from './lib/auth'
+import { login, logout, handleCallback, restoreSession, isLoggedIn, getLoggedInHandle, getLoggedInDid, deleteRecord, updatePost, updateChat, updateLinks } from './lib/auth'
 import { validateRecord } from './lib/lexicon'
 import { renderHeader } from './components/header'
 import { renderProfile } from './components/profile'
@@ -258,7 +258,7 @@ async function render(route: Route): Promise<void> {
     } else if (route.type === 'link') {
       // Link page
       const links = await getLinks(did)
-      html += `<div id="content">${renderLinkPage(links, handle)}</div>`
+      html += `<div id="content">${renderLinkPage(links, handle, isOwner)}</div>`
       html += `<nav class="back-nav"><a href="/@${handle}">${handle}</a></nav>`
 
     } else if (route.type === 'chat') {
@@ -404,6 +404,11 @@ async function render(route: Route): Promise<void> {
     if (route.type === 'chat-edit' && isOwner) {
       const chatCollection = config.chatCollection || 'ai.syui.log.chat'
       setupChatEdit(chatCollection, handle)
+    }
+
+    // Setup link edit
+    if (route.type === 'link' && isOwner) {
+      setupLinkEdit()
     }
 
     // Setup validate button for record detail
@@ -641,6 +646,105 @@ function setupChatEdit(collection: string, handle: string): void {
       statusEl.innerHTML = `<span class="chat-edit-error">Error: ${err}</span>`
       saveBtn.textContent = 'Save'
       saveBtn.disabled = false
+    }
+  })
+}
+
+// Setup link edit
+function setupLinkEdit(): void {
+  const editBtn = document.getElementById('link-edit-btn')
+  const editForm = document.getElementById('link-edit-form')
+  const linkDisplay = document.getElementById('link-display')
+  const editList = document.getElementById('link-edit-list')
+  const cancelBtn = document.getElementById('link-edit-cancel')
+  const saveBtn = document.getElementById('link-edit-save')
+  const addBtn = document.getElementById('link-add-btn')
+  const addService = document.getElementById('link-add-service') as HTMLSelectElement
+  const addUsername = document.getElementById('link-add-username') as HTMLInputElement
+  const statusEl = document.getElementById('link-edit-status')
+
+  if (!editBtn || !editForm || !editList) return
+
+  let linkIndex = editList.querySelectorAll('.link-edit-item').length
+
+  // Show edit form
+  editBtn.addEventListener('click', () => {
+    if (linkDisplay) linkDisplay.style.display = 'none'
+    editForm.style.display = 'block'
+    editBtn.style.display = 'none'
+  })
+
+  // Cancel edit
+  cancelBtn?.addEventListener('click', () => {
+    editForm.style.display = 'none'
+    if (linkDisplay) linkDisplay.style.display = ''
+    editBtn.style.display = ''
+  })
+
+  // Add new link
+  addBtn?.addEventListener('click', () => {
+    const service = addService.value
+    const username = addUsername.value.trim()
+    if (!username) return
+
+    const serviceNames: Record<string, string> = { github: 'GitHub', x: 'X', youtube: 'YouTube' }
+    const options = ['github', 'x', 'youtube'].map(s =>
+      `<option value="${s}" ${s === service ? 'selected' : ''}>${serviceNames[s]}</option>`
+    ).join('')
+
+    const newItem = document.createElement('div')
+    newItem.className = 'link-edit-item'
+    newItem.dataset.index = String(linkIndex++)
+    newItem.innerHTML = `
+      <select class="link-edit-service" data-index="${newItem.dataset.index}">
+        ${options}
+      </select>
+      <input type="text" class="link-edit-username" data-index="${newItem.dataset.index}" value="${username}" placeholder="username">
+      <button type="button" class="link-edit-remove" data-index="${newItem.dataset.index}">×</button>
+    `
+    editList.appendChild(newItem)
+    addUsername.value = ''
+  })
+
+  // Remove link (event delegation)
+  editList.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement
+    if (target.classList.contains('link-edit-remove')) {
+      const item = target.closest('.link-edit-item')
+      item?.remove()
+    }
+  })
+
+  // Save links
+  saveBtn?.addEventListener('click', async () => {
+    const items = editList.querySelectorAll('.link-edit-item')
+    const links: { service: string; username: string }[] = []
+
+    items.forEach(item => {
+      const service = (item.querySelector('.link-edit-service') as HTMLSelectElement)?.value
+      const username = (item.querySelector('.link-edit-username') as HTMLInputElement)?.value.trim()
+      if (service && username) {
+        links.push({ service, username })
+      }
+    })
+
+    try {
+      saveBtn.textContent = 'Saving...'
+      ;(saveBtn as HTMLButtonElement).disabled = true
+
+      await updateLinks(links)
+
+      if (statusEl) statusEl.innerHTML = '<span class="link-edit-success">Saved!</span>'
+
+      // Refresh page
+      setTimeout(() => {
+        render(parseRoute())
+      }, 1000)
+    } catch (err) {
+      console.error('Update failed:', err)
+      if (statusEl) statusEl.innerHTML = `<span class="link-edit-error">Error: ${err}</span>`
+      saveBtn.textContent = 'Save'
+      ;(saveBtn as HTMLButtonElement).disabled = false
     }
   })
 }
