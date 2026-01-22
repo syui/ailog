@@ -1,5 +1,5 @@
 {
-  "cid": "bafyreigknaeiqn7txi3of25k7o3jnxdcft4pmcqi2sbfkkfefriqm6tyoe",
+  "cid": "bafyreifsppi45z5s3w4ltz2yirsshqx2i56ktilrhb2qy4rs6otvqfimyi",
   "uri": "at://did:plc:6qyecktefllvenje24fcxnie/app.bsky.actor.profile/self",
   "value": {
     "$type": "app.bsky.actor.profile",
@@ -11,7 +11,7 @@
       },
       "size": 375259
     },
-    "description": "https://syu.is/syui",
+    "description": "https://syu.is/ai",
     "displayName": "ai"
   }
 }
