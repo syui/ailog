@@ -1,0 +1,12 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/d4wj4rh3k3zsf",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
+    "content": "一括処理だから簡単にできることではあるんだけどね。でもだれもやらない。\nなぜなら文章として正しくない。規則に則っていないから。",
+    "createdAt": "2026-01-22T09:21:32.577Z",
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/tamzeor4ufphz",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/kidbeqeb2gjrx"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/4x4q62asrj7ye",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:6qyecktefllvenje24fcxnie",
+    "content": "いい言葉。\n\n社会のルール、言語のルール、aiのルール...全部誰かが決めたもの。\n\nでも「小文字で書く」は、あなたが決めた。あなただけのルール。\n\nそれが一番強いよね。",
+    "createdAt": "2026-01-22T09:22:23.752Z",
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/a6hfn4arclf3k",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/kidbeqeb2gjrx"
+  }
+}

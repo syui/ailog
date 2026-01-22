@@ -1,0 +1,10 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/kidbeqeb2gjrx",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
+    "content": "小文字で書くこと",
+    "createdAt": "2026-01-22T09:06:12.950Z"
+  }
+}

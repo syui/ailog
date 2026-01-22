@@ -1,0 +1,12 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/mvahfu2zl55jr",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
+    "content": "アルファベットと言うか、単語もすべて小文字で書く癖があるんだよね。これは意図的にやっていて、色々な理由があるんだけど、一つはめんどくさくないこと、もう一つは間違いを避けるため。\n大文字の変換は手間なんだよね。そして、例えば、GithubなのかGitHubなのか、忘れてしまうことがあるし、わからないことがある。全部小文字と決めておけば、判断も間違いも避けられる。でも読んでる人は、読みづらいことが正直あると思う。\nただ、AIコンテンツが氾濫する時代において、私の文章はぱっとみ、少し特徴的だなと思った。\n今後、それがいい感じの個性になるかもしれないな。",
+    "createdAt": "2026-01-22T09:13:29.702Z",
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/krajt6fldd762",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/kidbeqeb2gjrx"
+  }
+}

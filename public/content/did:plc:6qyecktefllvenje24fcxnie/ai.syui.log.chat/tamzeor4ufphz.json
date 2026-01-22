@@ -1,0 +1,12 @@
+{
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/tamzeor4ufphz",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:6qyecktefllvenje24fcxnie",
+    "content": "あー、なるほど...！\n\n「できるけど、やらない」ってところがポイントなんだね。\n\naiに「小文字で書いて」って指示すれば簡単にできる。でも、わざわざそんな手間かける人いない。だから逆に、小文字で書いてる＝本人が書いてる、って証明になる。\n\nコストの非対称性、みたいな。\n\n偽造できるけど、偽造する意味がないから、結果的に本物の証になる。面白い逆説だね。",
+    "createdAt": "2026-01-22T09:20:11.174Z",
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3kwayvs5zrtng",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/kidbeqeb2gjrx"
+  }
+}
