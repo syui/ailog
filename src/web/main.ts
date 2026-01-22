@@ -441,9 +441,9 @@ async function render(route: Route): Promise<void> {
       <div class="error">Error: ${error}</div>
       ${renderFooter(currentHandle, undefined)}
     `
-    hideLoading(app)
     setupEventHandlers()
   } finally {
+    hideLoading(app)
     isFirstRender = false
   }
 }

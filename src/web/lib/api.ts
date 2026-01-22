@@ -1,6 +1,19 @@
 import { xrpcUrl, comAtprotoIdentity, comAtprotoRepo } from '../lexicons'
 import type { AppConfig, Networks, Profile, Post, ListRecordsResponse, ChatMessage, CardCollection } from '../types'
 
+// Fetch with timeout (default 10 seconds)
+async function fetchWithTimeout(url: string, options: RequestInit = {}, timeout = 10000): Promise<Response> {
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), timeout)
+
+  try {
+    const res = await fetch(url, { ...options, signal: controller.signal })
+    return res
+  } finally {
+    clearTimeout(timeoutId)
+  }
+}
+
 // Cache
 let configCache: AppConfig | null = null
 let networksCache: Networks | null = null
@@ -30,13 +43,13 @@ export async function resolveHandle(handle: string): Promise<string | null> {
     try {
       const host = network.bsky.replace('https://', '')
       const url = `${xrpcUrl(host, comAtprotoIdentity.resolveHandle)}?handle=${handle}`
-      const res = await fetch(url)
+      const res = await fetchWithTimeout(url, {}, 5000)
       if (res.ok) {
         const data = await res.json()
         return data.did
       }
     } catch {
-      // Try next network
+      // Try next network (timeout or error)
     }
   }
   return null
@@ -48,7 +61,7 @@ export async function getPds(did: string): Promise<string | null> {
 
   for (const network of Object.values(networks)) {
     try {
-      const res = await fetch(`${network.plc}/${did}`)
+      const res = await fetchWithTimeout(`${network.plc}/${did}`, {}, 5000)
       if (res.ok) {
         const didDoc = await res.json()
         const service = didDoc.service?.find((s: { type: string }) => s.type === 'AtprotoPersonalDataServer')
@@ -57,7 +70,7 @@ export async function getPds(did: string): Promise<string | null> {
         }
       }
     } catch {
-      // Try next network
+      // Try next network (timeout or error)
     }
   }
   return null
@@ -96,10 +109,10 @@ export async function getProfile(did: string, localOnly = false): Promise<Profil
   try {
     const host = pds.replace('https://', '')
     const url = `${xrpcUrl(host, comAtprotoRepo.getRecord)}?repo=${did}&collection=app.bsky.actor.profile&rkey=self`
-    const res = await fetch(url)
+    const res = await fetchWithTimeout(url, {}, 8000)
     if (res.ok) return res.json()
   } catch {
-    // Failed
+    // Failed or timeout
   }
   return null
 }
@@ -227,13 +240,13 @@ export async function describeRepo(did: string): Promise<string[]> {
   try {
     const host = pds.replace('https://', '')
     const url = `${xrpcUrl(host, comAtprotoRepo.describeRepo)}?repo=${did}`
-    const res = await fetch(url)
+    const res = await fetchWithTimeout(url, {}, 8000)
     if (res.ok) {
       const data = await res.json()
       return data.collections || []
     }
   } catch {
-    // Failed
+    // Failed or timeout
   }
   return []
 }
@@ -246,13 +259,13 @@ export async function listRecords(did: string, collection: string, limit = 50): 
   try {
     const host = pds.replace('https://', '')
     const url = `${xrpcUrl(host, comAtprotoRepo.listRecords)}?repo=${did}&collection=${collection}&limit=${limit}`
-    const res = await fetch(url)
+    const res = await fetchWithTimeout(url, {}, 8000)
     if (res.ok) {
       const data = await res.json()
       return data.records || []
     }
   } catch {
-    // Failed
+    // Failed or timeout
   }
   return []
 }
@@ -265,10 +278,10 @@ export async function getRecord(did: string, collection: string, rkey: string): 
   try {
     const host = pds.replace('https://', '')
     const url = `${xrpcUrl(host, comAtprotoRepo.getRecord)}?repo=${did}&collection=${collection}&rkey=${rkey}`
-    const res = await fetch(url)
+    const res = await fetchWithTimeout(url, {}, 8000)
     if (res.ok) return res.json()
   } catch {
-    // Failed
+    // Failed or timeout
   }
   return null
 }
