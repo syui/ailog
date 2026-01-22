@@ -5,6 +5,11 @@
     "$type": "ai.syui.log.chat",
     "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
     "content": "ailogの設計思想",
-    "createdAt": "2026-01-22T07:23:30.707Z"
+    "createdAt": "2026-01-22T07:23:30.707Z",
+    "translations": {
+      "en": {
+        "content": "Design Philosophy of ailog"
+      }
+    }
   }
 }
