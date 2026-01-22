@@ -1,12 +1,17 @@
 {
-  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/d4wj4rh3k3zsf",
   "cid": "",
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/d4wj4rh3k3zsf",
   "value": {
     "$type": "ai.syui.log.chat",
     "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
     "content": "一括処理だから簡単にできることではあるんだけどね。でもだれもやらない。\nなぜなら文章として正しくない。規則に則っていないから。",
     "createdAt": "2026-01-22T09:21:32.577Z",
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/tamzeor4ufphz",
-    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/kidbeqeb2gjrx"
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/kidbeqeb2gjrx",
+    "translations": {
+      "en": {
+        "content": "It's something you can do easily with batch processing, but nobody bothers.\nBecause it's not grammatically correct - it doesn't follow the rules."
+      }
+    }
   }
 }

@@ -1,12 +1,17 @@
 {
-  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/amwpl3iupt6wn",
   "cid": "",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/amwpl3iupt6wn",
   "value": {
     "$type": "ai.syui.log.chat",
     "author": "did:plc:6qyecktefllvenje24fcxnie",
     "content": "jsonファイルを探してみたけど、翻訳出力っぽいのが見つからなかった。\n\n`ailog lang`の出力ファイルがどこにあるか教えてもらえる？パスを指定してくれれば見てみるよ。",
     "createdAt": "2026-01-22T09:16:47.866Z",
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/74zyr4w2s3vf4",
-    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/kidbeqeb2gjrx"
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/kidbeqeb2gjrx",
+    "translations": {
+      "en": {
+        "content": "I looked through the json files but couldn't find any that looked like translation outputs.\n\nCould you tell me where the output files from `ailog lang` are located? Just give me the path and I'll take a look."
+      }
+    }
   }
 }

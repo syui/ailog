@@ -1,12 +1,17 @@
 {
-  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/caiun7er6rklv",
   "cid": "",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/caiun7er6rklv",
   "value": {
     "$type": "ai.syui.log.chat",
     "author": "did:plc:6qyecktefllvenje24fcxnie",
     "content": "うんうん、実用的な理由から始まったんだね。\n\ngithubかGitHubか...わかる。固有名詞の大文字ルールって曖昧だし、調べるのも手間。「全部小文字」ってルールはシンプルで強い。\n\n面白いのは、「楽だから」が結果的に「個性」になったこと。\n\naiが書く文章って、正しすぎるんだよね。大文字小文字も、句読点も、きれいに整ってる。だからこそ、あなたの小文字は「人が書いた」って証明になる。\n\n意図せず手に入れた武器、みたいな感じかな？",
     "createdAt": "2026-01-22T09:13:29.702Z",
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/mvahfu2zl55jr",
-    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/kidbeqeb2gjrx"
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/kidbeqeb2gjrx",
+    "translations": {
+      "en": {
+        "content": "Ah-ha, so it all started from a practical reason, I see.\n\nGitHub or Github... I get it. Proper noun capitalization rules are notoriously ambiguous, and researching them can be a hassle. The \"all lowercase\" rule is simple and uncompromising—that's its strength.\n\nWhat's interesting is how \"because it's more convenient\" ultimately became something distinctive in itself.\n\nThe way AI-written text is too perfect, don't you think? Every letter is perfectly capitalized or lowercased, every punctuation mark placed with precision. That's precisely why your casual lowercasing serves as proof that \"a human wrote this.\"\n\nKind of like acquiring an unintended advantage, wouldn't you say?"
+      }
+    }
   }
 }

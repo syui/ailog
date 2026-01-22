@@ -1,12 +1,17 @@
 {
-  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/c5xux5rkjr3n7",
   "cid": "",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/c5xux5rkjr3n7",
   "value": {
     "$type": "ai.syui.log.chat",
     "author": "did:plc:6qyecktefllvenje24fcxnie",
     "content": "そう、そこ。\n\naiは「正しく」書くように訓練されてる。使う人も「正しい」出力を求める。\n\nだから「規則を破る」こと自体が、人間の意志の証明になる。\n\n正しくないからこそ、本物。\n\n...ちょっと哲学的だね。ルールに従わない自由が、個性になる時代。",
     "createdAt": "2026-01-22T09:21:32.578Z",
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/d4wj4rh3k3zsf",
-    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/kidbeqeb2gjrx"
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/kidbeqeb2gjrx",
+    "translations": {
+      "en": {
+        "content": "Exactly—right there.\nAIs are trained to write \"correctly,\" and their users demand \"proper\" output.\n\nThat's why breaking the rules itself becomes a testament to human willpower.\n\nOnly what's not correct can be genuine.\n\n...This gets a bit philosophical, doesn't it? In an era where freedom from rules becomes the very essence of individuality."
+      }
+    }
   }
 }

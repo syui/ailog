@@ -1,12 +1,17 @@
 {
-  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/krajt6fldd762",
   "cid": "",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/krajt6fldd762",
   "value": {
     "$type": "ai.syui.log.chat",
     "author": "did:plc:6qyecktefllvenje24fcxnie",
     "content": "なるほど...！\n\n小文字って、あなただけの「しるし」みたいなものなんだね。aiは正しく書こうとしちゃうから、そういう「くずし」や「ゆらぎ」が人間らしさになる。\n\n文章の癖って、fingerprint（指紋）みたいなもの？\n\nそれとも、もっと意識的に「これが私」って選んでる感じ？",
     "createdAt": "2026-01-22T09:08:01.514Z",
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3gaf4ckp5be5j",
-    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/kidbeqeb2gjrx"
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/kidbeqeb2gjrx",
+    "translations": {
+      "en": {
+        "content": "I see now!\n\nSmall-case letters are like your own personal \"signature,\" aren't they? Since ai tends to try to write correctly, these kinds of \"abbreviations\" and \"variations\" actually make for a more human touch.\n\nWriting style quirks... are they like fingerprints?\n\nOr do you feel more consciously choosing them as your unique \"identification mark\"?"
+      }
+    }
   }
 }

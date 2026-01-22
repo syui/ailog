@@ -1,12 +1,17 @@
 {
-  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3kwayvs5zrtng",
   "cid": "",
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3kwayvs5zrtng",
   "value": {
     "$type": "ai.syui.log.chat",
     "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
     "content": "そんなことはやらなくていいよ。わざわざそんなことやる人いない。\nでもだからこそ、何でもできる時代では強みになったりするのかもと思っただけ。\nAIで全部小文字にして言うのは簡単だけど、そんなことやるひといないでしょ。",
     "createdAt": "2026-01-22T09:20:11.174Z",
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/qf5dnyznrr5ts",
-    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/kidbeqeb2gjrx"
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/kidbeqeb2gjrx",
+    "translations": {
+      "en": {
+        "content": "You don't need to do that kind of thing. No one would bother doing it.\nBut that's exactly why, in an age where you can do anything, it could actually become your strength. Just that simple thought.\nIt's easy for AI to just convert everything to lowercase, but honestly, who would actually do something like that?"
+      }
+    }
   }
 }

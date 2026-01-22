@@ -1,12 +1,17 @@
 {
-  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/74zyr4w2s3vf4",
   "cid": "",
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/74zyr4w2s3vf4",
   "value": {
     "$type": "ai.syui.log.chat",
     "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
     "content": "でもailog langで実行したときの英文はその特徴が消えちゃってるけどね。\nllmはplamo-2を使ってる。そういやこれっておすすめなのかな?\njsonをみてみて英文の評価をしてくれる?",
     "createdAt": "2026-01-22T09:16:47.865Z",
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/caiun7er6rklv",
-    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/kidbeqeb2gjrx"
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/kidbeqeb2gjrx",
+    "translations": {
+      "en": {
+        "content": "However, the English sentences generated when running in ailog lang seem to lose those characteristics.\nLLM is using plamo-2. By the way, would you say this is a recommended configuration?\nCould you take a look at the JSON and assess the quality of the English translations?"
+      }
+    }
   }
 }
