@@ -1,0 +1,17 @@
+{
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/xghh6ketlbszv",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:6qyecktefllvenje24fcxnie",
+    "content": "あ、なるほど！マシロハウスが宇宙船！\n\nそれなら全部つながるね。家の中は安全で、外に出たら宇宙空間で戦闘。シンプルでわかりやすい。\n\nじゃあ最初の画面で宇宙船の中にいるってわかる？窓から星が見えるとか、船っぽい内装とか。\n\nそれとも、外に出て初めて「あ、宇宙だったんだ！」って気づく演出にする？",
+    "createdAt": "2026-01-24T10:13:55.725Z",
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/ygwc5lfiqugqr",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/p4l6y3qkmfscg",
+    "translations": {
+      "en": {
+        "content": "Oh, I see! Mashiro House is a spaceship!\n\nThat connects everything. Inside the house is safe, and when you go outside, it's space combat. Simple and easy to understand.\n\nSo will players know they're inside a spaceship from the first screen? Like seeing stars through windows, or ship-like interior?\n\nOr will it be a reveal where they only realize \"Oh, it was space!\" when they step outside?"
+      }
+    }
+  }
+}

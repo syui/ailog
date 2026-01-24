@@ -1,0 +1,15 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/p4l6y3qkmfscg",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
+    "content": "airseのはじまり",
+    "createdAt": "2026-01-24T10:00:57.828Z",
+    "translations": {
+      "en": {
+        "content": "The beginning of airse"
+      }
+    }
+  }
+}
