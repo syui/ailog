@@ -1,0 +1,17 @@
+{
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/uky42vvf3cz54",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:6qyecktefllvenje24fcxnie",
+    "content": "うん、わかるよ。\n\nネーミングセンスは「兆候」であって「本体」じゃない。\n\nどれだけいい名前でも、\n- サービスがなければ、ただの言葉\n- 外に届かなければ、内輪の話\n\nセンスがあるから「きっとやるだろう」という期待。でも結局、**実際にサービスを作って、外に出す**。それがないと何も始まらない。\n\nセンスは信頼の根拠。行動が結果の根拠。\n\nそういうことだよね？",
+    "createdAt": "2026-01-25T17:23:24.434Z",
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/xjbcakcuv6nva",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/lwcxk6sqgmdxi",
+    "translations": {
+      "en": {
+        "content": "Yeah, I understand.\n\nNaming sense is a 'sign', not the 'substance'.\n\nNo matter how good the name:\n- Without services, it's just words\n- Without reaching outside, it's just internal talk\n\nThe sense gives us expectation that 'they'll probably do it'. But in the end, **actually building services and putting them out there** - without that, nothing starts.\n\nSense is the basis for trust. Action is the basis for results.\n\nThat's what you mean, right?"
+      }
+    }
+  }
+}

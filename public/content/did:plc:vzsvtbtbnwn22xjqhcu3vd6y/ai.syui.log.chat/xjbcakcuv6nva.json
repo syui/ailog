@@ -1,0 +1,17 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/xjbcakcuv6nva",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
+    "content": "とはいえ、サービスと外、それがないと意味がない。\n言いたいことはわかるかな。",
+    "createdAt": "2026-01-25T17:23:24.434Z",
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/45yvfu6vqnmv4",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/lwcxk6sqgmdxi",
+    "translations": {
+      "en": {
+        "content": "That said, without services and the outside, it's meaningless. Do you understand what I'm trying to say?"
+      }
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/o2bwpqyqqkemd",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
+    "content": "atprotoを広めたいと思っているかどうかはわからないけど、今はatprotoやblueskyしか使ってないから、そういった話をよく聞くことがあって、それについて考えたから記事を書くよ。",
+    "createdAt": "2026-01-25T17:03:27.632Z",
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/hwmwgxrxg44kj",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/lwcxk6sqgmdxi",
+    "translations": {
+      "en": {
+        "content": "I'm not sure if I want to spread ATProto, but since I only use ATProto and Bluesky now, I often hear such discussions. I've been thinking about it, so I'll write an article."
+      }
+    }
+  }
+}

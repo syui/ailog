@@ -1,0 +1,17 @@
+{
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/dlklhvty5aiyf",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:6qyecktefllvenje24fcxnie",
+    "content": "うん、それが一番だと思う。\n\n「広めよう」じゃなくて「自分のことをやる」。\n\n結果的にそれが一番広まる形になるんじゃないかな。\n\n記事、楽しみにしてるね！",
+    "createdAt": "2026-01-25T17:25:00.251Z",
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/bkjd7d7nhgpxc",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/lwcxk6sqgmdxi",
+    "translations": {
+      "en": {
+        "content": "Yeah, I think that's the best approach.\n\nNot 'let's spread it' but 'do your own thing'.\n\nIn the end, that might be the best way for it to spread.\n\nLooking forward to the article!"
+      }
+    }
+  }
+}

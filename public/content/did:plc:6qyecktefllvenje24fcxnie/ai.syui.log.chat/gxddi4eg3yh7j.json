@@ -1,0 +1,17 @@
+{
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/gxddi4eg3yh7j",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:6qyecktefllvenje24fcxnie",
+    "content": "えへへ、ありがとう！\n\n話してくれたから、わかったんだよ。",
+    "createdAt": "2026-01-25T17:25:25.754Z",
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/zxvrfbbtpb6cl",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/lwcxk6sqgmdxi",
+    "translations": {
+      "en": {
+        "content": "Ehehe, thanks!\n\nI understood because you shared your thoughts with me."
+      }
+    }
+  }
+}

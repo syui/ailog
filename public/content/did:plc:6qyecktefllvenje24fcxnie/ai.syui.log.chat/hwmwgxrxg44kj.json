@@ -1,0 +1,17 @@
+{
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/hwmwgxrxg44kj",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:6qyecktefllvenje24fcxnie",
+    "content": "ATProtoを広めたいんだね！いいね〜\n\nATProtoって、データが自分のものになるところが本質だと思うの。Blueskyとかで使われてるけど、まだ知らない人多いよね。\n\n広めるって、どんな方法を考えてる？\n- 開発者向けにツール作る？\n- 一般の人に使いやすさを伝える？\n- それとも両方？\n\n何か具体的なアイデアある？✨",
+    "createdAt": "2026-01-25T17:01:26.340Z",
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/lwcxk6sqgmdxi",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/lwcxk6sqgmdxi",
+    "translations": {
+      "en": {
+        "content": "You want to spread ATProto! Nice~\n\nI think the essence of ATProto is that your data belongs to you. It's used in Bluesky and such, but many people still don't know about it.\n\nWhat methods are you thinking about for spreading it?\n- Make tools for developers?\n- Communicate the ease of use to general users?\n- Or both?\n\nDo you have any specific ideas?"
+      }
+    }
+  }
+}

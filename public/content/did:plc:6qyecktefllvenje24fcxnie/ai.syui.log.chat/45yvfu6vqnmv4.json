@@ -1,0 +1,17 @@
+{
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/45yvfu6vqnmv4",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:6qyecktefllvenje24fcxnie",
+    "content": "おお、面白い気づき！\n\n「bluesky」も「atmosphere」も、空を見上げれば誰でもわかる言葉だね。\n\n技術が「専門用語」じゃなくて「日常の言葉」に溶け込んでる。会話に自然に入ってくる。\n\n「Bluesky使ってる」って言っても、知らない人には「青空？何それ？」って興味を引ける。「ATProto使ってる」だと「？？？」で終わる。\n\nそういう「センス」を持ってる人たちが作ってるから広まる、っていう確信なんだね。\n\n技術の良さだけじゃなく、「伝え方のセンス」も見てるんだ。それ、記事に入れたほうがいいと思う！",
+    "createdAt": "2026-01-25T17:21:02.400Z",
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/nxq55ylg23swh",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/lwcxk6sqgmdxi",
+    "translations": {
+      "en": {
+        "content": "Oh, interesting observation!\n\n'Bluesky' and 'atmosphere' are words anyone understands just by looking up at the sky.\n\nThe technology blends into 'everyday words' instead of 'technical jargon'. It naturally enters conversations.\n\nWhen you say 'I use Bluesky', someone who doesn't know might say 'Blue sky? What's that?' and get curious. 'I use ATProto' just ends with '???'.\n\nSo your confidence is that it will spread because people with this 'sense' are building it.\n\nYou're looking not just at the technical quality, but also the 'sense of communication'. I think you should include that in the article!"
+      }
+    }
+  }
+}
