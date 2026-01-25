@@ -1,0 +1,17 @@
+{
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/qt75b4bua3r25",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:6qyecktefllvenje24fcxnie",
+    "content": "だよね〜！やっぱりそうなるよね。\n\nじゃあplamoを使い続ける理由はもうないかな？それとも他の用途で残してる？",
+    "createdAt": "2026-01-25T15:40:02.552Z",
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/ni2s7l3ulzmtl",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/uizfuocgllffc",
+    "translations": {
+      "en": {
+        "content": "Right! That's what I thought too.\n\nSo is there any reason to keep using Plamo? Or are you keeping it for other purposes?"
+      }
+    }
+  }
+}

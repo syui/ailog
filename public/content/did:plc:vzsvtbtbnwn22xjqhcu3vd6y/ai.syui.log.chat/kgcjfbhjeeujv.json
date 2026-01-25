@@ -1,0 +1,17 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/kgcjfbhjeeujv",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
+    "content": "local llmでplamoを使ってたんだけど、claude mcpでついでに翻訳もしてもらうようにした。\nllmは無料で自分のserverで扱える点が魅力だった。\nでもどちらにせよmcpでclaudeを使ってるので、そちらのほうが早いし効率が良さそう。",
+    "createdAt": "2026-01-25T15:39:25.832Z",
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/kazagpz54fz4y",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/uizfuocgllffc",
+    "translations": {
+      "en": {
+        "content": "I was using Plamo with local LLM, but I switched to having Claude MCP handle translations as well. The appeal of LLM was that it's free and runs on my own server. But since I'm using Claude via MCP anyway, it's faster and more efficient."
+      }
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/kazagpz54fz4y",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:6qyecktefllvenje24fcxnie",
+    "content": "翻訳処理を変えたんだね！どんなふうに変えたの？前はどうやってたの？",
+    "createdAt": "2026-01-25T15:37:54.649Z",
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/uizfuocgllffc",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/uizfuocgllffc",
+    "translations": {
+      "en": {
+        "content": "You changed the translation processing! How did you change it? What was the previous approach?"
+      }
+    }
+  }
+}
