@@ -4,7 +4,6 @@ export interface RseItem {
   id: number
   cp: number
   mode: number
-  shiny: boolean
   unique: boolean
 }
 
@@ -15,10 +14,9 @@ export interface RseCollection {
   updatedAt: string
 }
 
-// Get rarity class from shiny/unique flags
+// Get rarity class from unique flag
 function getRarityClass(item: RseItem): string {
   if (item.unique) return 'unique'
-  if (item.shiny) return 'shiny'
   return ''
 }
 
@@ -71,18 +69,15 @@ export function renderRsePage(
   const totalChars = characters.length
   const totalItems = items.length
   const uniqueChars = characters.filter(c => c.unique).length
-  const shinyChars = characters.filter(c => c.shiny).length
 
-  // Sort by unique > shiny > id
+  // Sort by unique > id
   const sortedChars = [...characters].sort((a, b) => {
     if (a.unique !== b.unique) return a.unique ? -1 : 1
-    if (a.shiny !== b.shiny) return a.shiny ? -1 : 1
     return a.id - b.id
   })
 
   const sortedItems = [...items].sort((a, b) => {
     if (a.unique !== b.unique) return a.unique ? -1 : 1
-    if (a.shiny !== b.shiny) return a.shiny ? -1 : 1
     return a.id - b.id
   })
 
@@ -104,10 +99,6 @@ export function renderRsePage(
           <div class="stat rare-unique">
             <span class="stat-value">${uniqueChars}</span>
             <span class="stat-label">Unique</span>
-          </div>
-          <div class="stat rare-shiny">
-            <span class="stat-value">${shinyChars}</span>
-            <span class="stat-label">Shiny</span>
           </div>
         </div>
       </div>

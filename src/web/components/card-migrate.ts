@@ -192,7 +192,7 @@ export function renderMigrationPage(
     .sort((a, b) => a.card - b.card)
 
   const cardsHtml = sortedGroups.map(({ card, totalCp, rare, isUnique }) => {
-    const rarityClass = isUnique ? 'unique' : rare >= 4 ? 'shiny' : rare >= 1 ? 'rare' : ''
+    const rarityClass = isUnique ? 'unique' : rare >= 1 ? 'rare' : ''
     const effectsHtml = rarityClass ? `
       <div class="card-status pattern-${rarityClass}"></div>
       <div class="card-status color-${rarityClass}"></div>

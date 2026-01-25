@@ -17,8 +17,7 @@ export interface CardCollection {
 // Get rarity class name
 function getRarityClass(card: UserCard): string {
   if (card.unique) return 'unique'
-  if (card.rare >= 4) return 'shiny'  // first(5), second(4)
-  if (card.rare >= 1) return 'rare'   // third(3), fourth(2), fifth(1)
+  if (card.rare >= 1) return 'rare'
   return ''
 }
 
@@ -89,8 +88,7 @@ export function renderCardPage(
   // Count by rarity
   const rarityCount = {
     normal: cards.filter(c => !c.unique && c.rare === 0).length,
-    rare: cards.filter(c => !c.unique && c.rare >= 1 && c.rare < 4).length,
-    shiny: cards.filter(c => !c.unique && c.rare >= 4).length,
+    rare: cards.filter(c => !c.unique && c.rare >= 1).length,
     unique: cards.filter(c => c.unique).length,
   }
 
@@ -138,10 +136,6 @@ export function renderCardPage(
           <div class="stat rare-unique">
             <span class="stat-value">${rarityCount.unique}</span>
             <span class="stat-label">Unique</span>
-          </div>
-          <div class="stat rare-shiny">
-            <span class="stat-value">${rarityCount.shiny}</span>
-            <span class="stat-label">Shiny</span>
           </div>
           <div class="stat rare-rare">
             <span class="stat-value">${rarityCount.rare}</span>
