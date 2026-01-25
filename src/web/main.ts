@@ -22,6 +22,7 @@ import { showLoading, hideLoading } from './components/loading'
 const app = document.getElementById('app')!
 
 let currentHandle = ''
+let configHandle = ''
 let isFirstRender = true
 
 // Filter collections by service domain
@@ -68,6 +69,7 @@ async function render(route: Route): Promise<void> {
 
   try {
     const config = await getConfig()
+    configHandle = config.handle
 
     // Apply theme color from config
     if (config.color) {
@@ -133,7 +135,7 @@ async function render(route: Route): Promise<void> {
       app.innerHTML = `
         ${renderHeader(handle, oauthEnabled)}
         <div class="error">Could not resolve handle: ${handle}</div>
-        ${renderFooter(handle, config.repoUrl)}
+        ${renderFooter(config.handle, config.repoUrl)}
       `
       setupEventHandlers()
       return
@@ -369,7 +371,7 @@ async function render(route: Route): Promise<void> {
       html += `<div id="content">${renderPostList(posts, handle)}</div>`
     }
 
-    html += renderFooter(handle, config.repoUrl)
+    html += renderFooter(config.handle, config.repoUrl)
 
     app.innerHTML = html
     hideLoading(app)
@@ -440,7 +442,7 @@ async function render(route: Route): Promise<void> {
     app.innerHTML = `
       ${renderHeader(currentHandle, false)}
       <div class="error">Error: ${error}</div>
-      ${renderFooter(currentHandle, undefined)}
+      ${renderFooter(configHandle, undefined)}
     `
     setupEventHandlers()
   } finally {
