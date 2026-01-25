@@ -1,6 +1,6 @@
 {
+  "cid": "bafyreifixdjpjithxqam3tl3qnrszldqaf2evfrs5lowrtk4j3ji4ixsoy",
   "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/dcm6ta3ndmcii",
-  "cid": "",
   "value": {
     "$type": "ai.syui.log.chat",
     "author": "did:plc:6qyecktefllvenje24fcxnie",
