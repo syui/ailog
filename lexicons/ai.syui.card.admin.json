@@ -9,14 +9,21 @@
       "description": "Card game configuration (admin only)",
       "record": {
         "type": "object",
-        "required": ["card", "createdAt", "updatedAt"],
+        "required": ["card", "rate", "createdAt", "updatedAt"],
         "properties": {
           "card": {
             "type": "object",
-            "required": ["pickup", "normal"],
+            "required": ["pickup"],
             "properties": {
-              "pickup": { "type": "integer", "description": "Pickup card ID" },
-              "normal": { "type": "integer", "description": "Normal card ID" }
+              "pickup": { "type": "integer", "description": "Pickup card ID" }
+            }
+          },
+          "rate": {
+            "type": "object",
+            "required": ["pickup", "rare"],
+            "properties": {
+              "pickup": { "type": "integer", "description": "1/n for pickup rate (100 = 1%)" },
+              "rare": { "type": "integer", "description": "1/n for rare:1 rate (10 = 10%), rare:2 = 1/(n*10), rare:3 = 1/(n*100)" }
             }
           },
           "createdAt": { "type": "string", "format": "datetime" },
