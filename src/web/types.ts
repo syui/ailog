@@ -100,6 +100,7 @@ export interface UserCard {
   cp: number
   rare: number
   cid: string
+  unique: boolean
 }
 
 export interface CardCollection {

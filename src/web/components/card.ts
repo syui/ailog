@@ -5,6 +5,7 @@ export interface UserCard {
   cp: number
   rare: number
   cid: string
+  unique: boolean
 }
 
 export interface CardCollection {
@@ -14,19 +15,17 @@ export interface CardCollection {
 }
 
 // Get rarity class name
-function getRarityClass(rare: number): string {
-  switch (rare) {
-    case 1: return 'rare'
-    case 2: return 'shiny'
-    case 3: return 'unique'
-    default: return ''
-  }
+function getRarityClass(card: UserCard): string {
+  if (card.unique) return 'unique'
+  if (card.rare >= 4) return 'shiny'  // first(5), second(4)
+  if (card.rare >= 1) return 'rare'   // third(3), fourth(2), fifth(1)
+  return ''
 }
 
 
 // Render single card with optional count badge
 export function renderCard(card: UserCard, baseUrl: string = '/card', count?: number): string {
-  const rarityClass = getRarityClass(card.rare)
+  const rarityClass = getRarityClass(card)
   const imageUrl = `${baseUrl}/${card.id}.webp`
 
   const effectsHtml = rarityClass ? `
@@ -89,10 +88,10 @@ export function renderCardPage(
 
   // Count by rarity
   const rarityCount = {
-    normal: cards.filter(c => c.rare === 0).length,
-    rare: cards.filter(c => c.rare === 1).length,
-    shiny: cards.filter(c => c.rare === 2).length,
-    unique: cards.filter(c => c.rare === 3).length,
+    normal: cards.filter(c => !c.unique && c.rare === 0).length,
+    rare: cards.filter(c => !c.unique && c.rare >= 1 && c.rare < 4).length,
+    shiny: cards.filter(c => !c.unique && c.rare >= 4).length,
+    unique: cards.filter(c => c.unique).length,
   }
 
   // Group cards by id and count
@@ -101,8 +100,10 @@ export function renderCardPage(
     const existing = cardGroups.get(card.id)
     if (existing) {
       existing.count++
-      // Keep the highest CP/rarity version
-      if (card.cp > existing.card.cp || card.rare > existing.card.rare) {
+      // Keep the unique/highest rarity/CP version
+      if (card.unique && !existing.card.unique ||
+          card.rare > existing.card.rare ||
+          card.cp > existing.card.cp) {
         existing.card = card
       }
     } else {
@@ -110,9 +111,10 @@ export function renderCardPage(
     }
   }
 
-  // Sort by rarity (desc), then by id
+  // Sort by unique first, then rarity (desc), then by id
   const sortedGroups = Array.from(cardGroups.values())
     .sort((a, b) => {
+      if (a.card.unique !== b.card.unique) return a.card.unique ? -1 : 1
       if (b.card.rare !== a.card.rare) return b.card.rare - a.card.rare
       return a.card.id - b.card.id
     })
