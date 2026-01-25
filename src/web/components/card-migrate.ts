@@ -72,37 +72,25 @@ export async function performMigration(user: OldApiUser, cards: OldApiCard[]): P
   // Merge cards by card number (sum cp, keep highest status)
   const cardGroups = new Map<number, {
     card: number
+    firstId: number  // First api.syui.ai card id
     totalCp: number
-    count: number
     bestStatus: string
-    bestSkill: string
-    latestCreatedAt: string
   }>()
 
   for (const c of cards) {
     const existing = cardGroups.get(c.card)
     if (existing) {
       existing.totalCp += c.cp
-      existing.count++
-      // Keep highest status (super > shiny > first > normal)
-      if (statusPriority(c.status) > statusPriority(existing.bestStatus)) {
+      // Keep highest status
+      if (statusToRare(c.status) > statusToRare(existing.bestStatus)) {
         existing.bestStatus = c.status || 'normal'
-      }
-      if (c.skill && c.skill !== 'normal') {
-        existing.bestSkill = c.skill
-      }
-      // Keep latest createdAt
-      if (c.created_at > existing.latestCreatedAt) {
-        existing.latestCreatedAt = c.created_at
       }
     } else {
       cardGroups.set(c.card, {
         card: c.card,
+        firstId: c.id,
         totalCp: c.cp,
-        count: 1,
         bestStatus: c.status || 'normal',
-        bestSkill: c.skill || 'normal',
-        latestCreatedAt: c.created_at
       })
     }
   }
@@ -111,25 +99,27 @@ export async function performMigration(user: OldApiUser, cards: OldApiCard[]): P
   const cardData = Array.from(cardGroups.values())
     .sort((a, b) => a.card - b.card)
     .map(g => ({
-      id: g.card,  // Use card number as id
-      card: g.card,
+      cid: String(g.firstId),  // Original api.syui.ai card id (string)
+      id: g.card,              // Card number
       cp: g.totalCp,
-      status: g.bestStatus,
-      skill: g.bestSkill,
-      createdAt: toUtcDatetime(g.latestCreatedAt),
+      rare: statusToRare(g.bestStatus),
+      unique: g.bestStatus === 'super',
     }))
 
   const result = await saveMigratedCardData(userData, cardData, checksum)
   return result !== null
 }
 
-// Status priority for comparison (higher = better)
-function statusPriority(status: string): number {
+// Convert status to rare value
+function statusToRare(status: string): number {
   switch (status) {
-    case 'super': return 3
-    case 'shiny': return 2
-    case 'first': return 1
-    default: return 0
+    case 'super': return 1
+    case 'first': return 5
+    case 'second': return 4
+    case 'third': return 3
+    case 'fourth': return 2
+    case 'fifth': return 1
+    default: return 0  // normal and others
   }
 }
 
@@ -184,23 +174,25 @@ export function renderMigrationPage(
   }
 
   // Card grid - merge by card number (same as migration logic)
-  const cardGroups = new Map<number, { card: number, totalCp: number, rare: number }>()
+  const cardGroups = new Map<number, { card: number, totalCp: number, rare: number, isUnique: boolean }>()
   for (const c of oldApiCards) {
     const existing = cardGroups.get(c.card)
-    const rare = statusPriority(c.status)
+    const rare = statusToRare(c.status)
+    const isUnique = c.status === 'super'
     if (existing) {
       existing.totalCp += c.cp
       if (rare > existing.rare) existing.rare = rare
+      if (isUnique) existing.isUnique = true
     } else {
-      cardGroups.set(c.card, { card: c.card, totalCp: c.cp, rare })
+      cardGroups.set(c.card, { card: c.card, totalCp: c.cp, rare, isUnique })
     }
   }
 
   const sortedGroups = Array.from(cardGroups.values())
     .sort((a, b) => a.card - b.card)
 
-  const cardsHtml = sortedGroups.map(({ card, totalCp, rare }) => {
-    const rarityClass = rare === 3 ? 'unique' : rare === 2 ? 'shiny' : rare === 1 ? 'rare' : ''
+  const cardsHtml = sortedGroups.map(({ card, totalCp, rare, isUnique }) => {
+    const rarityClass = isUnique ? 'unique' : rare >= 4 ? 'shiny' : rare >= 1 ? 'rare' : ''
     const effectsHtml = rarityClass ? `
       <div class="card-status pattern-${rarityClass}"></div>
       <div class="card-status color-${rarityClass}"></div>

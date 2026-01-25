@@ -15,12 +15,13 @@
             "type": "array",
             "items": {
               "type": "object",
-              "required": ["id", "cp", "rare", "cid"],
+              "required": ["id", "cp", "rare", "cid", "unique"],
               "properties": {
                 "id": { "type": "integer", "description": "Card type ID" },
                 "cp": { "type": "integer", "description": "Card power" },
                 "rare": { "type": "integer", "description": "Rarity level" },
-                "cid": { "type": "string", "description": "Unique card instance ID (TID format)" }
+                "cid": { "type": "string", "description": "Unique card instance ID" },
+                "unique": { "type": "boolean", "description": "Unique card flag" }
               }
             }
           },

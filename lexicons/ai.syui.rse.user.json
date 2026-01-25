@@ -15,13 +15,13 @@
             "type": "array",
             "items": {
               "type": "object",
-              "required": ["id", "cp", "mode", "unique", "shiny"],
+              "required": ["id", "cp", "rare", "cid", "unique"],
               "properties": {
-                "id": { "type": "integer" },
-                "cp": { "type": "integer" },
-                "mode": { "type": "integer" },
-                "unique": { "type": "boolean" },
-                "shiny": { "type": "boolean" }
+                "id": { "type": "integer", "description": "Character type ID" },
+                "cp": { "type": "integer", "description": "Character power" },
+                "rare": { "type": "integer", "description": "Rarity level" },
+                "cid": { "type": "string", "description": "Unique character instance ID" },
+                "unique": { "type": "boolean", "description": "Unique character flag" }
               }
             }
           },
@@ -29,13 +29,13 @@
             "type": "array",
             "items": {
               "type": "object",
-              "required": ["id", "cp", "mode", "unique", "shiny"],
+              "required": ["id", "cp", "rare", "cid", "unique"],
               "properties": {
-                "id": { "type": "integer" },
-                "cp": { "type": "integer" },
-                "mode": { "type": "integer" },
-                "unique": { "type": "boolean" },
-                "shiny": { "type": "boolean" }
+                "id": { "type": "integer", "description": "Item type ID" },
+                "cp": { "type": "integer", "description": "Item power" },
+                "rare": { "type": "integer", "description": "Rarity level" },
+                "cid": { "type": "string", "description": "Unique item instance ID" },
+                "unique": { "type": "boolean", "description": "Unique item flag" }
               }
             }
           },

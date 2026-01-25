@@ -386,12 +386,11 @@ export async function saveMigratedCardData(
     updatedAt: string
   },
   cards: {
+    cid: string
     id: number
-    card: number
     cp: number
-    status: string
-    skill: string
-    createdAt: string
+    rare: number
+    unique: boolean
   }[],
   checksum: string
 ): Promise<{ uri: string; cid: string } | null> {
