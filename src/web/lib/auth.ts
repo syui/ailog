@@ -385,7 +385,7 @@ export async function saveMigratedCardData(
     createdAt: string
     updatedAt: string
   },
-  cards: {
+  card: {
     cid: string
     id: number
     cp: number
@@ -403,7 +403,7 @@ export async function saveMigratedCardData(
     const record = {
       $type: collection,
       user,
-      cards,
+      card,
       checksum,
       migratedAt: new Date().toISOString(),
     }
