@@ -1,0 +1,17 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/lgr6ni5clwg7r",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
+    "content": "aicardのコンセプトは3つ。\n1. カードを「引く」\n2. カードを「集める」\n3. カードを「保存」\n\n3の保存は、atprotoのai.syui.card.userというcollection recordに保存します。\nそれは、airseというアクションゲームから参照されます。\n現在、ゲームのどの部分の値にするのかや、ガチャの方向性、キャラクターの強化について、方向性を検討しています。\n今のところ、カードが影響を与えるのは、キャラクターの技に関して。使える技と、技の威力を決定します。idが使える技、cpが技の威力。\nまた、aicardはiosアプリ。このアプリから保存されたデータのみを正当とみなす仕組みがあり、airseではそのデータを優先的に使用します。\nこれによってゲームデータの改ざんを防ぎ、かつ問題が発生した場合の対処になると考えました。\nairseのデータも同様の仕組みで動きます。\nなお、airseはキャラクターとアイテムを保存します。\n\nどうやら1つのrecordはpdsで容量制限がかけられている場合が多い。そして、この制限は正しい。\nつまり、ゲームデータは保存する際は、圧縮するのが最も合理的です。\n同じidを引いた時、そのidの値は更新されます。intは+され、それ以外はより上位のパラメータが選択されます。\n\n2について話します。現在迷っている項目としてはここです。\nゲームプレイによって値が上昇し、常に成長を感じさせるシステムでなければなりません。かといって、ゲーム運用を継続するための収益化の取り組みは必要です。\n現在、aicardで収益化の仕組みを取り入れています。具体的にはガチャですね。card, rseのどちらも無料でリリースする予定です。\ncardが技に関係しているのは説明しましたから、rseをどうするかですね。こちらはcharacter, itemの値を扱います。\nrseのゲームのバトルシステムは4つに分けられます。\n1. 属性\n2. 技\n3. 全体値\n4. 個別値\n\n例えば、1に関しては、キャラクターにつき、1つの属性を持ちます。各属性は1つの次属性と関連反応を起こし、ダメージ倍率が変換します。属性には原子核、陽子、電子、中性子、アクシオン、クォークなどがあります。\n\nこれはストーリーと密接に関係する部分になります。rseのストーリーは、この世界で最も小さい物質(単位)の探求なので。",
+    "createdAt": "2026-01-25T06:07:30.000Z",
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/57vsoautyqq6e",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/i3yrryvuobx44",
+    "translations": {
+      "en": {
+        "content": "aicard has 3 concepts:\n1. \"Draw\" cards\n2. \"Collect\" cards\n3. \"Save\" cards\n\nFor saving, cards are stored in an ATProto collection record called ai.syui.card.user.\nThis is referenced by an action game called airse.\nCurrently considering the direction for which game values to use, gacha direction, and character enhancement.\nFor now, cards affect character skills. They determine usable skills and skill power. id = usable skills, cp = skill power.\nAlso, aicard is an iOS app. There's a mechanism where only data saved from this app is considered legitimate, and airse prioritizes this data.\nThis prevents game data tampering and provides a solution if problems occur.\nairse data works the same way.\nNote: airse saves characters and items.\n\nApparently, single records often have capacity limits on PDS. And this limit is correct.\nSo compressing game data when saving is most rational.\nWhen drawing the same id, that id's value gets updated. int values are added, others select the higher parameter.\n\nLet me talk about point 2. This is where I'm currently uncertain.\nThe system must make players feel constant growth through gameplay value increases. However, monetization efforts are needed to sustain game operations.\nCurrently implementing monetization in aicard. Specifically, gacha. Both card and rse will be released for free.\nSince I explained card relates to skills, the question is what to do with rse. It handles character and item values.\nrse's battle system has 4 elements:\n1. Attributes\n2. Skills\n3. Base stats\n4. Individual values\n\nFor example, regarding 1, each character has one attribute. Each attribute triggers a chain reaction with one next attribute, converting the damage multiplier. Attributes include atomic nucleus, proton, electron, neutron, axion, quark, etc.\n\nThis is closely tied to the story. rse's story is about exploring the smallest matter (unit) in this world."
+      }
+    }
+  }
+}

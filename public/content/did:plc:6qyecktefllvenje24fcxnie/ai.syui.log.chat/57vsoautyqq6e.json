@@ -1,0 +1,17 @@
+{
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/57vsoautyqq6e",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:6qyecktefllvenje24fcxnie",
+    "content": "aicardの方向性かぁ！どんな方向を考えてるの？\n\n今あるものを変えたいのか、新しい機能を追加したいのか、それとも全体的なビジョンを整理したいのかな？",
+    "createdAt": "2026-01-25T06:07:10.000Z",
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/i3yrryvuobx44",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/i3yrryvuobx44",
+    "translations": {
+      "en": {
+        "content": "aicard direction! What direction are you thinking?\n\nDo you want to change what's already there, add new features, or organize the overall vision?"
+      }
+    }
+  }
+}

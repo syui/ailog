@@ -1,0 +1,17 @@
+{
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/ub7qhzkw6a5ns",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:6qyecktefllvenje24fcxnie",
+    "content": "うん！全体値と個別値について教えて？",
+    "createdAt": "2026-01-25T06:09:10.000Z",
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/oulyo5t5yavqz",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/i3yrryvuobx44",
+    "translations": {
+      "en": {
+        "content": "Yeah! Tell me about base stats and individual values?"
+      }
+    }
+  }
+}

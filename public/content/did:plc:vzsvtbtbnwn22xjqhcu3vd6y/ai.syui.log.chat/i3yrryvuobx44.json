@@ -1,0 +1,15 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/i3yrryvuobx44",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
+    "content": "aicardの方向性と検討",
+    "createdAt": "2026-01-25T06:07:00.000Z",
+    "translations": {
+      "en": {
+        "content": "aicard direction and considerations"
+      }
+    }
+  }
+}

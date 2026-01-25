@@ -1,0 +1,17 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/vt7de2xmkqdgk",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
+    "content": "今のところそれがランダムで決定されることしか決まっていない。\nまだそれを考える段階にはないのかもしれないな。\nとりあえず、核を作り、それを動かす。そのことに注力している段階。\nitemに関しては、低確率でドロップする変動型がある。見た目でわかるようにしている。\nそれを入手すると、idのパラメータ(個別値)が上書きされる。",
+    "createdAt": "2026-01-25T06:10:30.000Z",
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/jjfsk6e5ia4lm",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/i3yrryvuobx44",
+    "translations": {
+      "en": {
+        "content": "For now, only random determination has been decided.\nMaybe it's not yet the stage to think about that.\nFor now, I'm focusing on building the core and making it work.\nFor items, there's a variant type that drops with low probability. Made visually distinguishable.\nWhen obtained, it overwrites the id's parameters (individual values)."
+      }
+    }
+  }
+}
