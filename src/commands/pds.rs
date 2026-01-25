@@ -3,13 +3,12 @@ use serde::Deserialize;
 use std::collections::HashMap;
 
 #[derive(Debug, Deserialize)]
+#[allow(dead_code)]
 struct Network {
     plc: String,
     bsky: String,
-    #[allow(dead_code)]
     web: Option<String>,
     #[serde(rename = "handleDomains")]
-    #[allow(dead_code)]
     handle_domains: Option<Vec<String>>,
 }
 

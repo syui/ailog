@@ -90,6 +90,12 @@ struct ToolContent {
     text: String,
 }
 
+// Translation structure
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct Translation {
+    content: String,
+}
+
 // Chat save parameters
 #[derive(Debug, Deserialize)]
 struct ChatSaveParams {
@@ -97,6 +103,10 @@ struct ChatSaveParams {
     bot_response: String,
     #[serde(default)]
     new_thread: bool,
+    #[serde(default)]
+    user_translations: Option<std::collections::HashMap<String, Translation>>,
+    #[serde(default)]
+    bot_translations: Option<std::collections::HashMap<String, Translation>>,
 }
 
 // Chat record structure
@@ -157,6 +167,7 @@ fn save_chat_record(
     author_did: &str,
     root_uri: Option<&str>,
     parent_uri: Option<&str>,
+    translations: Option<&std::collections::HashMap<String, Translation>>,
 ) -> Result<String> {
     let rkey = generate_tid();
     let now = chrono::Utc::now().format("%Y-%m-%dT%H:%M:%S%.3fZ").to_string();
@@ -174,6 +185,11 @@ fn save_chat_record(
     }
     if let Some(parent) = parent_uri {
         value["parent"] = json!(parent);
+    }
+    if let Some(trans) = translations {
+        if !trans.is_empty() {
+            value["translations"] = json!(trans);
+        }
     }
 
     let record = ChatRecord {
@@ -247,6 +263,7 @@ fn handle_chat_save(params: ChatSaveParams) -> Result<String> {
         &user_did,
         session.root_uri.as_deref(),
         session.last_uri.as_deref(),
+        params.user_translations.as_ref(),
     )?;
 
     // Set root if new thread
@@ -262,6 +279,7 @@ fn handle_chat_save(params: ChatSaveParams) -> Result<String> {
         &bot_did,
         session.root_uri.as_deref(),
         Some(&user_uri),
+        params.bot_translations.as_ref(),
     )?;
 
     session.last_uri = Some(bot_uri.clone());
@@ -327,20 +345,30 @@ fn handle_chat_new() -> Result<String> {
 
 /// Handle get_character tool - returns character/system prompt from .env
 fn handle_get_character() -> Result<String> {
-    // Try CHAT_SYSTEM env var directly
-    if let Ok(prompt) = env::var("CHAT_SYSTEM") {
-        return Ok(prompt);
+    let mut result = String::new();
+
+    // Get character prompt
+    let prompt = if let Ok(p) = env::var("CHAT_SYSTEM") {
+        p
+    } else if let Ok(file_path) = env::var("CHAT_SYSTEM_FILE") {
+        fs::read_to_string(&file_path)
+            .map(|c| c.trim().to_string())
+            .unwrap_or_else(|_| "You are a helpful AI assistant.".to_string())
+    } else {
+        "You are a helpful AI assistant.".to_string()
+    };
+
+    result.push_str(&prompt);
+
+    // Add translation instruction if CHAT_LANG is set
+    if let Ok(lang) = env::var("CHAT_LANG") {
+        result.push_str(&format!(
+            "\n\n---\n[Translation Setting]\nWhen calling chat_save, include translations in '{}' language.\nFor user_translations and bot_translations, provide the translated content with key '{}'.",
+            lang, lang
+        ));
     }
 
-    // Try CHAT_SYSTEM_FILE env var (path to file)
-    if let Ok(file_path) = env::var("CHAT_SYSTEM_FILE") {
-        if let Ok(content) = fs::read_to_string(&file_path) {
-            return Ok(content.trim().to_string());
-        }
-    }
-
-    // Default
-    Ok("You are a helpful AI assistant.".to_string())
+    Ok(result)
 }
 
 fn get_tools() -> Vec<Tool> {
@@ -363,6 +391,34 @@ fn get_tools() -> Vec<Tool> {
                         "type": "boolean",
                         "description": "Start a new conversation thread",
                         "default": false
+                    },
+                    "user_translations": {
+                        "type": "object",
+                        "description": "Translations for user message. Keys are language codes (e.g., 'en', 'ja'). Each value has 'content' field.",
+                        "additionalProperties": {
+                            "type": "object",
+                            "properties": {
+                                "content": {
+                                    "type": "string",
+                                    "description": "Translated content"
+                                }
+                            },
+                            "required": ["content"]
+                        }
+                    },
+                    "bot_translations": {
+                        "type": "object",
+                        "description": "Translations for bot response. Keys are language codes (e.g., 'en', 'ja'). Each value has 'content' field.",
+                        "additionalProperties": {
+                            "type": "object",
+                            "properties": {
+                                "content": {
+                                    "type": "string",
+                                    "description": "Translated content"
+                                }
+                            },
+                            "required": ["content"]
+                        }
                     }
                 },
                 "required": ["user_message", "bot_response"]
