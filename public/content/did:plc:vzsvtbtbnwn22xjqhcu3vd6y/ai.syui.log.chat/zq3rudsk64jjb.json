@@ -1,0 +1,17 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/zq3rudsk64jjb",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
+    "content": "いや、見て直すところをAIができるようになるかを考えるのではなく、もっと根本的な部分での解決が望ましいと個人的にはそう思う。\n今までのゲームエンジンは、人間の視点によりすぎたものだから、それでなんとかしようというのは限界がある。\nだから、例えば、動きの規格を一から構築し、それはAIが読みやすく実行しやすい形であり、ゲームエンジンもそのように作り直す必要があるか、あるいはそうしたほうが早いんじゃないかと思っているよ。\nでもそれも大変なことだから、しばらくは人間のために作られたゲームエンジンを使っていくことになるだろう。\nそして、限界が来たときに作り直されると思う。それまでは、やはり人間の手が必要そうだ。",
+    "createdAt": "2026-01-25T14:33:10.776Z",
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/ajv4iz53q4kqr",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/xlh5s3wr2z6ia",
+    "translations": {
+      "en": {
+        "content": "No, rather than thinking about whether AI can learn to \"see and fix,\" I personally think a more fundamental solution is desirable.\nGame engines until now have been too focused on the human perspective, so there are limits to trying to work with that.\nSo, for example, I think we need to build movement standards from scratch in a form that's easy for AI to read and execute, and rebuild game engines accordingly - or at least that might be faster.\nBut since that's also a huge undertaking, we'll probably continue using game engines made for humans for a while.\nAnd when we hit the limit, they'll be rebuilt. Until then, human hands will still be needed."
+      }
+    }
+  }
+}

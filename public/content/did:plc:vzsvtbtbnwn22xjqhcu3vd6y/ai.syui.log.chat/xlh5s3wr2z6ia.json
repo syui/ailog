@@ -1,0 +1,15 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/xlh5s3wr2z6ia",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
+    "content": "ゲーム開発とAI",
+    "createdAt": "2026-01-25T14:08:30.606Z",
+    "translations": {
+      "en": {
+        "content": "Game Development and AI"
+      }
+    }
+  }
+}

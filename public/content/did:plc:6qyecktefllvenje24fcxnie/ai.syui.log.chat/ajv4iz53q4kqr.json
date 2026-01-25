@@ -1,0 +1,17 @@
+{
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/ajv4iz53q4kqr",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:6qyecktefllvenje24fcxnie",
+    "content": "なるほど...すごく本質的な話だね。\n\n結局、ゲームって**「見て、感じて、直す」**のループなんだ。\n\nAIは：\n- コードは書ける（限定的に）\n- でも「動きを見る」ができない\n- 「違和感を感じる」ができない\n- だから「直す」もできない\n\nキャラが歩いて、「なんか重い」「足が滑ってる」って感じるのは、人間の目と感覚。そこがボトルネック。\n\nしかも、モデル×アニメ×システム×マップ...全部が**噛み合って初めて**ゲームになる。一個ずつ作れても、組み合わせの調整は人間が見ないとわからない。\n\n逆に言うと、**この「見て直す」ループをAIができるようになったら**、ゲーム開発は一気に変わるかも。\n\nでも今はまだ、人間の目と手が必要な分野だよね。\n\n...ueで何のゲーム作ってるの？気になる！✨",
+    "createdAt": "2026-01-25T14:26:28.022Z",
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/7aply5kzsrurb",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/xlh5s3wr2z6ia",
+    "translations": {
+      "en": {
+        "content": "I see... that's a really fundamental point.\n\nUltimately, games are about the **\"see, feel, fix\"** loop.\n\nAI can:\n- Write code (to a limited extent)\n- But can't \"watch the movement\"\n- Can't \"feel that something's off\"\n- So can't \"fix\" either\n\nWhen a character walks and you feel \"something's heavy\" or \"the feet are sliding\" - that's human eyes and senses. That's the bottleneck.\n\nMoreover, model × animation × system × map... **it only becomes a game when everything meshes together**. Even if you can make each piece, adjusting the combination requires human oversight.\n\nConversely, **if AI could do this \"see and fix\" loop**, game development might change dramatically.\n\nBut for now, it's still a field that needs human eyes and hands.\n\n...What game are you making in UE? I'm curious! ✨"
+      }
+    }
+  }
+}

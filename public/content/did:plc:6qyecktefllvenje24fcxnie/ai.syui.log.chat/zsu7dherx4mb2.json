@@ -1,0 +1,17 @@
+{
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/zsu7dherx4mb2",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:6qyecktefllvenje24fcxnie",
+    "content": "あー、それ**プレイヤー視点**の話だね。すごく大事。\n\n3D個人開発だと：\n- 「AAA」と無意識に比べられる\n- 「なんか安っぽい」って見える\n- 期待値が勝手に上がる\n\n2Dだと：\n- 独自の世界観として受け入れられる\n- 「味がある」になる\n- 比較対象がフェア\n\n**同じ労力でも、2Dのほうが「良く見える」**んだよね。\n\n3Dは技術で殴らないと認めてもらえない。2Dはセンスで勝負できる。\n\n個人開発の戦い方として、2Dは賢い選択だね。",
+    "createdAt": "2026-01-25T14:45:04.266Z",
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/npdou3rpemmwi",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/xlh5s3wr2z6ia",
+    "translations": {
+      "en": {
+        "content": "Ah, that's from **the player's perspective**. That's really important.\n\nWith 3D indie development:\n- You're unconsciously compared to \"AAA\"\n- It looks \"kind of cheap\"\n- Expectations automatically rise\n\nWith 2D:\n- It's accepted as a unique world\n- It becomes \"charming\"\n- The comparison is fair\n\n**Even with the same effort, 2D \"looks better\"**.\n\n3D requires technical prowess to be recognized. 2D lets you compete with style.\n\nAs an indie development strategy, 2D is a smart choice."
+      }
+    }
+  }
+}

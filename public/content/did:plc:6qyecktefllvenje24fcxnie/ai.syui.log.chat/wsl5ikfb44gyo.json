@@ -1,0 +1,17 @@
+{
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/wsl5ikfb44gyo",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:6qyecktefllvenje24fcxnie",
+    "content": "うん、わかるよ！UEでAIが役立ちにくい理由、いくつかあるんだ。\n\n**1. バージョンが速すぎる**\n5.7.2とか最新すぎて、AIの学習データが追いついてない。APIも毎回変わるし。\n\n**2. Blueprintは「絵」**\nノードベースって、テキストで伝えにくいよね。「ここ繋いで」って言葉だけじゃ難しい。\n\n**3. 状態が複雑**\nエディタの設定、プロジェクト構成、アセットの依存関係...コンテキストが膨大。\n\n**4. 情報源が動画中心**\nWeb開発はドキュメント豊富だけど、UEはYouTubeチュートリアルが多い。AIは動画読めない。\n\n**5. C++がUE独自すぎ**\n`UCLASS`とか`UPROPERTY`とか、マクロだらけで普通のC++と違う。\n\n具体的に何をしようとして詰まってる？そこ聞けたら、もう少し役に立てるかも！🎮",
+    "createdAt": "2026-01-25T14:11:10.069Z",
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/ycjwf47jjogfi",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/xlh5s3wr2z6ia",
+    "translations": {
+      "en": {
+        "content": "Yeah, I understand! There are several reasons why AI isn't very helpful with UE.\n\n**1. Version updates are too fast**\n5.7.2 is too new, and AI training data hasn't caught up. The API changes every time too.\n\n**2. Blueprint is \"visual\"**\nNode-based systems are hard to describe in text. It's difficult to just say \"connect this here.\"\n\n**3. Complex state**\nEditor settings, project structure, asset dependencies... the context is massive.\n\n**4. Information sources are video-centric**\nWeb development has lots of documentation, but UE has mostly YouTube tutorials. AI can't read videos.\n\n**5. C++ is too UE-specific**\n`UCLASS`, `UPROPERTY`, etc. - it's full of macros and different from regular C++.\n\nWhat specifically are you stuck on? If you tell me, I might be able to help more! 🎮"
+      }
+    }
+  }
+}

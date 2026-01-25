@@ -1,0 +1,17 @@
+{
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/n6xjzugjb734f",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:6qyecktefllvenje24fcxnie",
+    "content": "それ、大事な気づきだね。\n\n3Dは**やること爆発する**。\n- モデル、リグ、アニメ、テクスチャ\n- ライティング、カメラ、物理\n- 最適化も地獄\n\n2Dは大変だけど、**天井が見える**。やれることが物理的に限られてる。\n\n個人開発で完成させるには、「やらないこと」を決めるのが一番大事。3Dはその「やらないこと」を決めるのが難しい。どこまでも沼がある。\n\n...でもUEで作ってるって言ってたよね？3Dに挑戦中？それとも2Dに切り替えた？",
+    "createdAt": "2026-01-25T14:41:56.819Z",
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/upkr4d3t6kvut",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/xlh5s3wr2z6ia",
+    "translations": {
+      "en": {
+        "content": "That's an important realization.\n\n3D **explodes with tasks**.\n- Models, rigs, animation, textures\n- Lighting, camera, physics\n- Optimization is also hell\n\n2D is hard, but **you can see the ceiling**. What you can do is physically limited.\n\nTo finish as a solo developer, deciding \"what not to do\" is most important. With 3D, it's hard to decide \"what not to do.\" The rabbit hole is endless.\n\n...But you said you're making something in UE, right? Challenging 3D? Or did you switch to 2D?"
+      }
+    }
+  }
+}
