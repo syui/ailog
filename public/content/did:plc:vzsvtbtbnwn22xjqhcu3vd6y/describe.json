@@ -2,7 +2,6 @@
   "collections": [
     "ai.syui.at.link",
     "ai.syui.card.old",
-    "ai.syui.card.user",
     "ai.syui.log.chat",
     "ai.syui.log.post",
     "app.bsky.actor.profile",
