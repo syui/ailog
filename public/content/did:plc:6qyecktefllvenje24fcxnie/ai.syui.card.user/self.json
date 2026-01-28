@@ -1,0 +1,46 @@
+{
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.card.user/self",
+  "cid": "bafyreicjbb6qdl77sdsma5ep674znlgvnhenqqogppx3mmawlpengoxol4",
+  "value": {
+    "card": [
+      {
+        "cp": 464,
+        "id": 1,
+        "cid": "5w4xmnyzukh62",
+        "rare": 1,
+        "unique": false
+      },
+      {
+        "cp": 634,
+        "id": 0,
+        "cid": "6lzqdddvggzcs",
+        "rare": 0,
+        "unique": false
+      },
+      {
+        "cp": 2,
+        "id": 2,
+        "cid": "5cjxquqzywetg",
+        "rare": 0,
+        "unique": false
+      },
+      {
+        "cp": 3,
+        "id": 3,
+        "cid": "bmdlhjwedjlmu",
+        "rare": 0,
+        "unique": false
+      },
+      {
+        "cp": 43,
+        "id": 13,
+        "cid": "25kp6sbgcdug7",
+        "rare": 4,
+        "unique": true
+      }
+    ],
+    "$type": "ai.syui.card.user",
+    "createdAt": "2026-01-28T17:10:10.535Z",
+    "updatedAt": "2026-01-28T17:10:10.535Z"
+  }
+}

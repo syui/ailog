@@ -21,10 +21,12 @@
                 "id": { "type": "integer", "description": "Ability ID" },
                 "name": { "type": "string", "description": "Ability name (ai, quark, neutron, atom, sun)" },
                 "kind": { "type": "string", "description": "Attribute type (consciousness, matter)" },
+                "color": { "type": "string", "description": "Color code (e.g., #ffd700)" },
                 "level": { "type": "integer", "description": "Hierarchy level (0=fundamental)" },
                 "relation": { "type": "array", "items": { "type": "integer" }, "description": "Advantage IDs" },
                 "weakness": { "type": "array", "items": { "type": "integer" }, "description": "Weakness IDs" },
-                "multiplier": { "type": "integer", "description": "Damage multiplier percent (e.g., 150 = 1.5x)" }
+                "multiplier": { "type": "integer", "description": "Damage multiplier percent (e.g., 150 = 1.5x)" },
+                "phantom": { "type": "boolean", "description": "Whether this ability is phantom/lost" }
               }
             }
           },
@@ -52,6 +54,26 @@
                 "id": { "type": "integer", "description": "System ID" },
                 "name": { "type": "string", "description": "System name" },
                 "domain": { "type": "string", "description": "System domain (ability, unique, account, planet, origin)" }
+              }
+            }
+          },
+          "item": {
+            "type": "array",
+            "description": "Item definitions",
+            "items": {
+              "type": "object",
+              "required": ["id", "name", "text"],
+              "properties": {
+                "id": { "type": "integer", "description": "Item ID" },
+                "name": { "type": "string", "description": "Item name" },
+                "text": {
+                  "type": "object",
+                  "description": "Item description (localized)",
+                  "properties": {
+                    "en": { "type": "string", "description": "English text" },
+                    "ja": { "type": "string", "description": "Japanese text" }
+                  }
+                }
               }
             }
           },

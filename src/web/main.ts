@@ -1,7 +1,7 @@
 import './styles/main.css'
 import './styles/card.css'
 import './styles/card-migrate.css'
-import { getConfig, resolveHandle, getProfile, getPosts, getPost, describeRepo, listRecords, getRecord, getPds, getNetworks, getChatMessages, getCards, getRse, getLinks } from './lib/api'
+import { getConfig, resolveHandle, getProfile, getPosts, getPost, describeRepo, listRecords, getRecord, getPds, getNetworks, getChatMessages, getCards, getCardAdmin, getRse, getRseAdmin, getLinks } from './lib/api'
 import { parseRoute, onRouteChange, navigate, type Route } from './lib/router'
 import { login, logout, handleCallback, restoreSession, isLoggedIn, getLoggedInHandle, getLoggedInDid, deleteRecord, updatePost, updateChat, updateLinks } from './lib/auth'
 import { validateRecord } from './lib/lexicon'
@@ -253,9 +253,17 @@ async function render(route: Route): Promise<void> {
       html += `<nav class="back-nav"><a href="/@${handle}">${handle}</a></nav>`
 
     } else if (route.type === 'rse') {
-      // RSE page
-      const rseData = await getRse(did)
-      html += `<div id="content">${renderRsePage(rseData, handle)}</div>`
+      // RSE page with character cards
+      const cardCollection = config.cardCollection || 'ai.syui.card.user'
+      const adminDid = config.bot?.did || config.did || did
+      const [rseData, cards, adminData, rseAdminData] = await Promise.all([
+        getRse(did),
+        getCards(did, cardCollection),
+        getCardAdmin(adminDid),
+        getRseAdmin(adminDid)
+      ])
+      const userCards = cards?.card || []
+      html += `<div id="content">${renderRsePage(rseData, handle, userCards, adminData, rseAdminData)}</div>`
       html += `<nav class="back-nav"><a href="/@${handle}">${handle}</a></nav>`
 
     } else if (route.type === 'link') {

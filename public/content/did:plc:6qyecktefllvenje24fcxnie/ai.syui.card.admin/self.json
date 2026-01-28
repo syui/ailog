@@ -1,0 +1,31 @@
+{
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.card.admin/self",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.card.admin",
+    "gacha": {
+      "pickup": 13,
+      "rate": {
+        "rare": 10,
+        "pickup": 100
+      }
+    },
+    "card": [
+      { "id": 0, "character": 0, "name": { "ja": "アイ", "en": "ai" }, "text": { "ja": "アイの基礎ステータスは、このカードのcpを基準にアップする。", "en": "This card's CP is referenced for the character's base status" }, "cp": "status", "effect": "status" },
+      { "id": 1, "character": 0, "name": { "ja": "夢幻", "en": "dream" }, "text": { "ja": "質量解放により星間空間を自由に移動する。飛行時間は、このカードのcpを基準に延長される。", "en": "This card's CP is referenced for flight duration" }, "cp": "time", "effect": "fly", "key": "R1" },
+      { "id": 2, "character": 0, "name": { "ja": "光彩", "en": "shiny" }, "text": { "ja": "モードと呼ばれる変身を行う。スキル発動時、動作スピードがアップする。継続時間及び効果は、このカードのcpを基準にアップする。", "en": "This card's CP is referenced for transformation duration" }, "cp": "time", "effect": "mode", "key": "L1" },
+      { "id": 3, "character": 0, "name": { "ja": "中性子", "en": "neutron" }, "text": { "ja": "手のひらに中性子星を作り出して前方に放つ。ヒットした敵に物理と属性の大ダメージを与える。敵に与える物理ダメージは、このカードのcpを基準にアップする。", "en": "This card's CP is referenced for physical damage" }, "cp": "damage", "effect": "damage" , "key": "Y" },
+      { "id": 13, "character": 0, "name": { "ja": "創造", "en": "create" }, "text": { "ja": "自身の周囲に真空を作り出し、物理と属性の範囲ダメージを与える。敵に与える属性ダメージは、このカードのcpを基準にアップする。", "en": "This card's CP is referenced for elemental damage" }, "cp": "damage", "effect": "damage", "key": "X" },
+      { "id": 100, "character": 1, "name": { "ja": "ユイ", "en": "yui" }, "text": { "ja": "", "en": "" }, "cp": "", "effect": "" },
+      { "id": 101, "character": 1, "name": { "ja": "", "en": "" }, "text": { "ja": "", "en": "" }, "cp": "", "effect": "" },
+      { "id": 200, "character": 2, "name": { "ja": "ドラゴン", "en": "dragon" }, "text": { "ja": "", "en": "" }, "cp": "", "effect": "" },
+      { "id": 201, "character": 2, "name": { "ja": "", "en": "" }, "text": { "ja": "", "en": "" }, "cp": "", "effect": "" },
+      { "id": 300, "character": 3, "name": { "ja": "ロボット", "en": "robot" }, "text": { "ja": "", "en": "" }, "cp": "", "effect": "" },
+      { "id": 301, "character": 3, "name": { "ja": "", "en": "" }, "text": { "ja": "", "en": "" }, "cp": "", "effect": "" },
+      { "id": 400, "character": 4, "name": { "ja": "こんにゃーん", "en": "conyan" }, "text": { "ja": "", "en": "" }, "cp": "", "effect": "" },
+      { "id": 401, "character": 4, "name": { "ja": "", "en": "" }, "text": { "ja": "", "en": "" }, "cp": "", "effect": "" }
+    ],
+    "createdAt": "2026-01-25T09:02:20.000Z",
+    "updatedAt": "2026-01-25T09:02:20.000Z"
+  }
+}

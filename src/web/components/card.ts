@@ -14,6 +14,33 @@ export interface CardCollection {
   updatedAt: string
 }
 
+export interface CardAdminEntry {
+  id: number
+  character: number
+  name: { ja: string; en: string }
+  text: { ja: string; en: string }
+  cp: string
+  effect: string
+  key?: string | null
+}
+
+export interface CardAdminData {
+  gacha: { pickup: number; rate: { rare: number; pickup: number } }
+  card: CardAdminEntry[]
+}
+
+// Get current language
+function getLang(): string {
+  return localStorage.getItem('preferredLang') || 'ja'
+}
+
+// Get localized text
+function getLocalizedText(obj: { ja: string; en: string } | undefined): string {
+  if (!obj) return ''
+  const lang = getLang()
+  return obj[lang as 'ja' | 'en'] || obj.ja || obj.en || ''
+}
+
 // Get rarity class name
 function getRarityClass(card: UserCard): string {
   if (card.unique) return 'unique'
@@ -21,9 +48,13 @@ function getRarityClass(card: UserCard): string {
   return ''
 }
 
-
-// Render single card with optional count badge
-export function renderCard(card: UserCard, baseUrl: string = '/card', count?: number): string {
+// Render single card with optional count badge and admin info
+export function renderCard(
+  card: UserCard,
+  baseUrl: string = '/card',
+  count?: number,
+  adminEntry?: CardAdminEntry
+): string {
   const rarityClass = getRarityClass(card)
   const imageUrl = `${baseUrl}/${card.id}.webp`
 
@@ -33,6 +64,21 @@ export function renderCard(card: UserCard, baseUrl: string = '/card', count?: nu
   ` : ''
 
   const countBadge = count && count > 1 ? `<span class="card-count">x${count}</span>` : ''
+
+  // Admin info (name, key, text)
+  const name = adminEntry ? getLocalizedText(adminEntry.name) : ''
+  const text = adminEntry ? getLocalizedText(adminEntry.text) : ''
+  const key = adminEntry?.key || ''
+
+  const infoHtml = (name || text || key) ? `
+    <div class="card-info">
+      <div class="card-info-header">
+        <span class="card-info-name">${name}</span>
+        ${key ? `<button class="card-key-btn">${key}</button>` : ''}
+      </div>
+      ${text ? `<div class="card-info-text">${text}</div>` : ''}
+    </div>
+  ` : ''
 
   return `
     <div class="card-item">
@@ -46,6 +92,7 @@ export function renderCard(card: UserCard, baseUrl: string = '/card', count?: nu
       <div class="card-detail">
         <span class="card-cp">${card.cp}</span>
       </div>
+      ${infoHtml}
     </div>
   `
 }
@@ -109,13 +156,9 @@ export function renderCardPage(
     }
   }
 
-  // Sort by unique first, then rarity (desc), then by id
+  // Sort by id
   const sortedGroups = Array.from(cardGroups.values())
-    .sort((a, b) => {
-      if (a.card.unique !== b.card.unique) return a.card.unique ? -1 : 1
-      if (b.card.rare !== a.card.rare) return b.card.rare - a.card.rare
-      return a.card.id - b.card.id
-    })
+    .sort((a, b) => a.card.id - b.card.id)
 
   const cardsHtml = sortedGroups.map(({ card, count }) => {
     return renderCard(card, '/card', count)

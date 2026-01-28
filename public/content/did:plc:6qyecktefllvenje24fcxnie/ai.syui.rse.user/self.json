@@ -1,0 +1,83 @@
+{
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.rse.user/self",
+  "cid": "bafyreih36zbcu2jx3yqxpjftvagarinwalaiodwxgyi5fqnw4iqkgslmya",
+  "value": {
+    "item": [
+      {
+        "cp": 0,
+        "id": 0,
+        "cid": "0",
+        "rare": 0,
+        "unique": true
+      },
+      {
+        "cp": 1,
+        "id": 1,
+        "cid": "1",
+        "rare": 0,
+        "unique": false
+      },
+      {
+        "cp": 2,
+        "id": 2,
+        "cid": "2",
+        "rare": 0,
+        "unique": false
+      },
+      {
+        "cp": 3,
+        "id": 3,
+        "cid": "3",
+        "rare": 0,
+        "unique": false
+      },
+      {
+        "cp": 4,
+        "id": 4,
+        "cid": "4",
+        "rare": 0,
+        "unique": false
+      },
+      {
+        "cp": 5,
+        "id": 5,
+        "cid": "5",
+        "rare": 0,
+        "unique": false
+      }
+    ],
+    "$type": "ai.syui.rse.user",
+    "character": [
+      {
+        "cp": 0,
+        "id": 0,
+        "cid": "0",
+        "rare": 0,
+        "unique": true
+      },
+      {
+        "cp": 1,
+        "id": 1,
+        "cid": "1",
+        "rare": 0,
+        "unique": false
+      },
+      {
+        "cp": 2,
+        "id": 2,
+        "cid": "2",
+        "rare": 0,
+        "unique": false
+      },
+      {
+        "cp": 3,
+        "id": 3,
+        "cid": "3",
+        "rare": 0,
+        "unique": false
+      }
+    ],
+    "createdAt": "2026-01-28T12:04:27.000Z",
+    "updatedAt": "2026-01-28T12:04:27.000Z"
+  }
+}

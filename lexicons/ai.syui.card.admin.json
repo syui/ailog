@@ -6,24 +6,55 @@
     "main": {
       "type": "record",
       "key": "literal:self",
-      "description": "Card game configuration (admin only)",
+      "description": "Card game configuration and master data (admin only)",
       "record": {
         "type": "object",
-        "required": ["card", "rate", "createdAt", "updatedAt"],
+        "required": ["gacha", "card", "createdAt", "updatedAt"],
         "properties": {
-          "card": {
+          "gacha": {
             "type": "object",
-            "required": ["pickup"],
+            "required": ["pickup", "rate"],
             "properties": {
-              "pickup": { "type": "integer", "description": "Pickup card ID" }
+              "pickup": { "type": "integer", "description": "Pickup card ID" },
+              "rate": {
+                "type": "object",
+                "required": ["pickup", "rare"],
+                "properties": {
+                  "pickup": { "type": "integer", "description": "1/n for pickup rate (100 = 1%)" },
+                  "rare": { "type": "integer", "description": "1/n for rare:1 rate (10 = 10%), rare:2 = 1/(n*10), rare:3 = 1/(n*100)" }
+                }
+              }
             }
           },
-          "rate": {
-            "type": "object",
-            "required": ["pickup", "rare"],
-            "properties": {
-              "pickup": { "type": "integer", "description": "1/n for pickup rate (100 = 1%)" },
-              "rare": { "type": "integer", "description": "1/n for rare:1 rate (10 = 10%), rare:2 = 1/(n*10), rare:3 = 1/(n*100)" }
+          "card": {
+            "type": "array",
+            "description": "Card master data",
+            "items": {
+              "type": "object",
+              "required": ["id", "character", "name", "text", "cp", "effect"],
+              "properties": {
+                "id": { "type": "integer", "description": "Card ID" },
+                "character": { "type": "integer", "description": "Associated character ID" },
+                "name": {
+                  "type": "object",
+                  "required": ["ja", "en"],
+                  "properties": {
+                    "ja": { "type": "string" },
+                    "en": { "type": "string" }
+                  }
+                },
+                "text": {
+                  "type": "object",
+                  "required": ["ja", "en"],
+                  "properties": {
+                    "ja": { "type": "string" },
+                    "en": { "type": "string" }
+                  }
+                },
+                "cp": { "type": "string", "description": "CP type (status, time, damage)" },
+                "effect": { "type": "string", "description": "Effect type (status, fly, mode, damage)" },
+                "key": { "type": "string", "description": "Key binding (R1, L1, Y, X, etc.)" }
+              }
             }
           },
           "createdAt": { "type": "string", "format": "datetime" },

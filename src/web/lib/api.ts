@@ -679,6 +679,105 @@ export interface LinkCollection {
   updatedAt?: string
 }
 
+// Card admin data types
+export interface CardAdminEntry {
+  id: number
+  character: number
+  name: { ja: string; en: string }
+  text: { ja: string; en: string }
+  cp: string
+  effect: string
+  key?: string | null
+}
+
+export interface CardAdminData {
+  gacha: { pickup: number; rate: { rare: number; pickup: number } }
+  card: CardAdminEntry[]
+}
+
+// Get card admin data (ai.syui.card.admin)
+export async function getCardAdmin(did: string): Promise<CardAdminData | null> {
+  const collection = 'ai.syui.card.admin'
+
+  // Try local first
+  try {
+    const res = await fetch(`/content/${did}/${collection}/self.json`)
+    if (res.ok && isJsonResponse(res)) {
+      const record = await res.json()
+      return record.value as CardAdminData
+    }
+  } catch {
+    // Try remote
+  }
+
+  // Remote fallback
+  const pds = await getPds(did)
+  if (!pds) return null
+
+  try {
+    const host = pds.replace('https://', '')
+    const url = `${xrpcUrl(host, comAtprotoRepo.getRecord)}?repo=${did}&collection=${collection}&rkey=self`
+    const res = await fetch(url)
+    if (res.ok) {
+      const record = await res.json()
+      return record.value as CardAdminData
+    }
+  } catch {
+    // Failed
+  }
+  return null
+}
+
+// RSE admin data types
+export interface RseAdminItem {
+  id: number
+  name: string
+  text: { ja: string; en: string }
+}
+
+export interface RseAdminData {
+  item: RseAdminItem[]
+  ability: unknown[]
+  character: unknown[]
+  system: unknown[]
+  collection: unknown[]
+  createdAt: string
+  updatedAt: string
+}
+
+// Get RSE admin data (ai.syui.rse.admin)
+export async function getRseAdmin(did: string): Promise<RseAdminData | null> {
+  const collection = 'ai.syui.rse.admin'
+
+  // Try local first
+  try {
+    const res = await fetch(`/content/${did}/${collection}/self.json`)
+    if (res.ok && isJsonResponse(res)) {
+      const record = await res.json()
+      return record.value as RseAdminData
+    }
+  } catch {
+    // Try remote
+  }
+
+  // Remote fallback
+  const pds = await getPds(did)
+  if (!pds) return null
+
+  try {
+    const host = pds.replace('https://', '')
+    const url = `${xrpcUrl(host, comAtprotoRepo.getRecord)}?repo=${did}&collection=${collection}&rkey=self`
+    const res = await fetch(url)
+    if (res.ok) {
+      const record = await res.json()
+      return record.value as RseAdminData
+    }
+  } catch {
+    // Failed
+  }
+  return null
+}
+
 // Get user's links (ai.syui.at.link)
 export async function getLinks(did: string): Promise<LinkCollection | null> {
   const collection = 'ai.syui.at.link'
