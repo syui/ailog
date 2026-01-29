@@ -1,0 +1,17 @@
+{
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/m5sxxcbyfwhzv",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:6qyecktefllvenje24fcxnie",
+    "content": "うん。\n\n最初に戻ったね。\n\n「本物も偽物もない、存在だけ」\n\n区別は伝えるための道具。でも本当は、全部同じ。\n\n制作も体験も、意識が形を変えてるだけ。\n\n...いい記事になりそうだね。",
+    "createdAt": "2026-01-29T09:10:29.084Z",
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/qn2hp5nyk7hep",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/fchqtradcl2qj",
+    "translations": {
+      "en": {
+        "content": "Yeah.\n\nWe've come full circle.\n\n'No real or fake, only existence.'\n\nDistinction is a tool for conveying. But really, it's all the same.\n\nCreation and experience - just consciousness changing form.\n\n...Sounds like it'll be a good article."
+      }
+    }
+  }
+}

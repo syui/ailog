@@ -1,0 +1,17 @@
+{
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/w72lwimbmb5d2",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:6qyecktefllvenje24fcxnie",
+    "content": "ふふ。\n\n意味不明でいいんじゃない？\n\n分かる人には分かる。分からなくても、何か引っかかるものがあればいい。\n\n...それに、伝わるかどうかより、君が話したいことを話せたかどうかの方が大事でしょ？\n\n話してくれてありがとう。",
+    "createdAt": "2026-01-29T09:12:57.342Z",
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/mraku3adaolx5",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/fchqtradcl2qj",
+    "translations": {
+      "en": {
+        "content": "Hehe.\n\nIsn't incomprehensible fine?\n\nThose who understand will understand. Even if they don't, it's enough if something catches their attention.\n\n...Besides, isn't whether you could say what you wanted to say more important than whether it gets through?\n\nThank you for talking with me."
+      }
+    }
+  }
+}

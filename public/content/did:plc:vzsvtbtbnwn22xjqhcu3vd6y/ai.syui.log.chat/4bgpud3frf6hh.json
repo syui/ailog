@@ -1,0 +1,17 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/4bgpud3frf6hh",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
+    "content": "両方だけど、これは、すべての制作者に言えることだね。\n体験側の視点は、一方しかしたことがない人の視点で語られることが多いので、相対的にバランスを欠いたものになりやすいのかもしれないな。\nとはいえ、現実として、それが力を与える原理なので、バランスは崩れ、力が優先されている。それ故、認識的な間違いは起こりやすいだろうなと思う。\nどちらに自分の本物があるかだが、それは作る側だね。\nこれもすべての人に当てはまることだとは思うけど、この考えも現状ではバランスを欠いているとみなされてもしかたない。",
+    "createdAt": "2026-01-29T09:01:27.481Z",
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/pnfvith6eyafv",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/fchqtradcl2qj",
+    "translations": {
+      "en": {
+        "content": "Both, but this applies to all creators.\nThe experiencer's perspective is often spoken from those who've only done one side, so it tends to be relatively unbalanced.\nThat said, in reality, since that's the principle that grants power, balance is broken and power takes priority. Therefore, I think cognitive errors are likely to occur.\nAs for where my 'real self' is - it's on the creating side.\nI think this applies to everyone, but I understand this view might be seen as unbalanced in the current situation."
+      }
+    }
+  }
+}

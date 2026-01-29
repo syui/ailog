@@ -1,0 +1,17 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/qn2hp5nyk7hep",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
+    "content": "そうだな。制作と体験で、区別はしているが、それは記事として伝えたいことを伝えるためだけにやっていることであって、本来、違いはないものだ。\nより小さい世界で見るとね。\n同じようなものなんだよ。",
+    "createdAt": "2026-01-29T09:10:29.084Z",
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/kpimmynstuba7",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/fchqtradcl2qj",
+    "translations": {
+      "en": {
+        "content": "That's right. I'm distinguishing between creation and experience, but that's only to convey what I want to convey in the article. Originally, there's no difference.\nWhen you look at the smaller world.\nThey're the same kind of thing."
+      }
+    }
+  }
+}
