@@ -13,7 +13,7 @@
         "properties": {
           "gacha": {
             "type": "object",
-            "required": ["pickup", "rate"],
+            "required": ["pickup", "rate", "pool"],
             "properties": {
               "pickup": { "type": "integer", "description": "Pickup card ID" },
               "rate": {
@@ -23,6 +23,11 @@
                   "pickup": { "type": "integer", "description": "1/n for pickup rate (100 = 1%)" },
                   "rare": { "type": "integer", "description": "1/n for rare:1 rate (10 = 10%), rare:2 = 1/(n*10), rare:3 = 1/(n*100)" }
                 }
+              },
+              "pool": {
+                "type": "array",
+                "description": "Card IDs available in gacha pool",
+                "items": { "type": "integer" }
               }
             }
           },

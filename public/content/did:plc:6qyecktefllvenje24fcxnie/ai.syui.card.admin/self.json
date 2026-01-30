@@ -5,10 +5,8 @@
     "$type": "ai.syui.card.admin",
     "gacha": {
       "pickup": 13,
-      "rate": {
-        "rare": 10,
-        "pickup": 100
-      }
+      "rate": { "rare": 10, "pickup": 100 },
+      "pool": [0, 1, 2, 3, 13]
     },
     "card": [
       { "id": 0, "character": 0, "name": { "ja": "アイ", "en": "ai" }, "text": { "ja": "アイの基礎ステータスは、このカードのcpを基準にアップする。", "en": "This card's CP is referenced for the character's base status" }, "cp": "status", "effect": "status" },
