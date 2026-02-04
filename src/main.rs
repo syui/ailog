@@ -188,6 +188,15 @@ enum NotifyCommands {
     Count,
     /// Mark all notifications as seen
     Seen,
+    /// Poll for new notifications (runs continuously, NDJSON output)
+    Listen {
+        /// Poll interval in seconds
+        #[arg(short, long, default_value = "30")]
+        interval: u64,
+        /// Filter by reason (mention, reply, like, repost, follow, quote)
+        #[arg(short, long)]
+        reason: Vec<String>,
+    },
 }
 
 #[derive(Subcommand)]
@@ -261,6 +270,9 @@ async fn main() -> Result<()> {
                 }
                 NotifyCommands::Seen => {
                     commands::notify::update_seen().await?;
+                }
+                NotifyCommands::Listen { interval, reason } => {
+                    commands::notify::listen(interval, &reason).await?;
                 }
             }
         }
