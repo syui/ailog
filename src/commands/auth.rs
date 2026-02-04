@@ -1,28 +1,13 @@
-use anyhow::{Context, Result};
-use serde::{Deserialize, Serialize};
+use anyhow::Result;
 
 use super::token::{self, Session};
-use crate::lexicons::{self, com_atproto_server};
-
-#[derive(Debug, Serialize)]
-struct CreateSessionRequest {
-    identifier: String,
-    password: String,
-}
-
-#[derive(Debug, Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct CreateSessionResponse {
-    did: String,
-    handle: String,
-    access_jwt: String,
-    refresh_jwt: String,
-}
+use crate::lexicons::com_atproto_server;
+use crate::types::{CreateSessionRequest, CreateSessionResponse};
+use crate::xrpc::XrpcClient;
 
 /// Login to ATProto PDS
 pub async fn login(handle: &str, password: &str, pds: &str, is_bot: bool) -> Result<()> {
-    let client = reqwest::Client::new();
-    let url = lexicons::url(pds, &com_atproto_server::CREATE_SESSION);
+    let client = XrpcClient::new(pds);
 
     let req = CreateSessionRequest {
         identifier: handle.to_string(),
@@ -32,20 +17,8 @@ pub async fn login(handle: &str, password: &str, pds: &str, is_bot: bool) -> Res
     let account_type = if is_bot { "bot" } else { "user" };
     println!("Logging in to {} as {} ({})...", pds, handle, account_type);
 
-    let res = client
-        .post(&url)
-        .json(&req)
-        .send()
-        .await
-        .context("Failed to send login request")?;
-
-    if !res.status().is_success() {
-        let status = res.status();
-        let body = res.text().await.unwrap_or_default();
-        anyhow::bail!("Login failed: {} - {}", status, body);
-    }
-
-    let session_res: CreateSessionResponse = res.json().await?;
+    let session_res: CreateSessionResponse =
+        client.call_unauth(&com_atproto_server::CREATE_SESSION, &req).await?;
 
     let session = Session {
         did: session_res.did,
@@ -65,40 +38,32 @@ pub async fn login(handle: &str, password: &str, pds: &str, is_bot: bool) -> Res
     Ok(())
 }
 
-/// Refresh access token
-pub async fn refresh_session() -> Result<Session> {
-    let session = token::load_session()?;
-    let pds = session.pds.as_deref().unwrap_or("bsky.social");
+/// Refresh a session (shared logic for user and bot)
+async fn do_refresh(session: &Session, pds: &str) -> Result<Session> {
+    let client = XrpcClient::new(pds);
 
-    let client = reqwest::Client::new();
-    let url = lexicons::url(pds, &com_atproto_server::REFRESH_SESSION);
+    let new_session: CreateSessionResponse = client
+        .call_bearer(&com_atproto_server::REFRESH_SESSION, &session.refresh_jwt)
+        .await?;
 
-    let res = client
-        .post(&url)
-        .header("Authorization", format!("Bearer {}", session.refresh_jwt))
-        .send()
-        .await
-        .context("Failed to refresh session")?;
-
-    if !res.status().is_success() {
-        let status = res.status();
-        let body = res.text().await.unwrap_or_default();
-        anyhow::bail!("Refresh failed: {} - {}. Try logging in again.", status, body);
-    }
-
-    let new_session: CreateSessionResponse = res.json().await?;
-
-    let session = Session {
+    Ok(Session {
         did: new_session.did,
         handle: new_session.handle,
         access_jwt: new_session.access_jwt,
         refresh_jwt: new_session.refresh_jwt,
         pds: Some(pds.to_string()),
-    };
+    })
+}
 
-    token::save_session(&session)?;
+/// Refresh access token
+pub async fn refresh_session() -> Result<Session> {
+    let session = token::load_session()?;
+    let pds = session.pds.as_deref().unwrap_or("bsky.social");
 
-    Ok(session)
+    let new_session = do_refresh(&session, pds).await?;
+    token::save_session(&new_session)?;
+
+    Ok(new_session)
 }
 
 /// Refresh bot access token
@@ -106,33 +71,8 @@ pub async fn refresh_bot_session() -> Result<Session> {
     let session = token::load_bot_session()?;
     let pds = session.pds.as_deref().unwrap_or("bsky.social");
 
-    let client = reqwest::Client::new();
-    let url = lexicons::url(pds, &com_atproto_server::REFRESH_SESSION);
+    let new_session = do_refresh(&session, pds).await?;
+    token::save_bot_session(&new_session)?;
 
-    let res = client
-        .post(&url)
-        .header("Authorization", format!("Bearer {}", session.refresh_jwt))
-        .send()
-        .await
-        .context("Failed to refresh bot session")?;
-
-    if !res.status().is_success() {
-        let status = res.status();
-        let body = res.text().await.unwrap_or_default();
-        anyhow::bail!("Bot refresh failed: {} - {}. Try 'ailog login --bot' again.", status, body);
-    }
-
-    let new_session: CreateSessionResponse = res.json().await?;
-
-    let session = Session {
-        did: new_session.did,
-        handle: new_session.handle,
-        access_jwt: new_session.access_jwt,
-        refresh_jwt: new_session.refresh_jwt,
-        pds: Some(pds.to_string()),
-    };
-
-    token::save_bot_session(&session)?;
-
-    Ok(session)
+    Ok(new_session)
 }

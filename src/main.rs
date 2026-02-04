@@ -1,7 +1,11 @@
 mod commands;
+mod error;
 mod lexicons;
 mod lms;
 mod mcp;
+mod tid;
+mod types;
+mod xrpc;
 
 use anyhow::Result;
 use clap::{Parser, Subcommand};
@@ -157,11 +161,33 @@ enum Commands {
     #[command(alias = "v")]
     Version,
 
+    /// Notification commands
+    #[command(alias = "n")]
+    Notify {
+        #[command(subcommand)]
+        command: NotifyCommands,
+    },
+
     /// PDS commands
     Pds {
         #[command(subcommand)]
         command: PdsCommands,
     },
+}
+
+#[derive(Subcommand)]
+enum NotifyCommands {
+    /// List notifications (JSON)
+    #[command(alias = "ls")]
+    List {
+        /// Max number of notifications
+        #[arg(short, long, default_value = "25")]
+        limit: u32,
+    },
+    /// Get unread count (JSON)
+    Count,
+    /// Mark all notifications as seen
+    Seen,
 }
 
 #[derive(Subcommand)]
@@ -187,22 +213,22 @@ async fn main() -> Result<()> {
             commands::auth::login(&handle, &password, &server, bot).await?;
         }
         Commands::Lexicon { file } => {
-            commands::post::put_lexicon(&file).await?;
+            commands::record::put_lexicon(&file).await?;
         }
         Commands::Post { file, collection, rkey } => {
-            commands::post::put_record(&file, &collection, rkey.as_deref()).await?;
+            commands::record::put_record(&file, &collection, rkey.as_deref()).await?;
         }
         Commands::Get { collection, limit } => {
-            commands::post::get_records(&collection, limit).await?;
+            commands::record::get_records(&collection, limit).await?;
         }
         Commands::Delete { collection, rkey } => {
-            commands::post::delete_record(&collection, &rkey).await?;
+            commands::record::delete_record(&collection, &rkey).await?;
         }
         Commands::Sync { output, bot, collection } => {
-            commands::post::sync_to_local(&output, bot, collection.as_deref()).await?;
+            commands::sync::sync_to_local(&output, bot, collection.as_deref()).await?;
         }
         Commands::Push { input, collection, bot } => {
-            commands::post::push_to_remote(&input, &collection, bot).await?;
+            commands::push::push_to_remote(&input, &collection, bot).await?;
         }
         Commands::Gen { input, output } => {
             commands::gen::generate(&input, &output)?;
@@ -224,6 +250,19 @@ async fn main() -> Result<()> {
         }
         Commands::Version => {
             println!("{}", env!("CARGO_PKG_VERSION"));
+        }
+        Commands::Notify { command } => {
+            match command {
+                NotifyCommands::List { limit } => {
+                    commands::notify::list(limit).await?;
+                }
+                NotifyCommands::Count => {
+                    commands::notify::count().await?;
+                }
+                NotifyCommands::Seen => {
+                    commands::notify::update_seen().await?;
+                }
+            }
         }
         Commands::Pds { command } => {
             match command {

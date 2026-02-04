@@ -51,7 +51,6 @@ pub fn save_session(session: &Session) -> Result<()> {
     let path = token_path()?;
     let content = serde_json::to_string_pretty(session)?;
     fs::write(&path, content)?;
-    println!("Token saved to {:?}", path);
     Ok(())
 }
 
@@ -69,6 +68,5 @@ pub fn save_bot_session(session: &Session) -> Result<()> {
     let path = bot_token_path()?;
     let content = serde_json::to_string_pretty(session)?;
     fs::write(&path, content)?;
-    println!("Bot token saved to {:?}", path);
     Ok(())
 }

@@ -1,6 +1,9 @@
 pub mod auth;
 pub mod token;
-pub mod post;
+pub mod record;
+pub mod sync;
+pub mod push;
+pub mod notify;
 pub mod gen;
 pub mod lang;
 pub mod did;

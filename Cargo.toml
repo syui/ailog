@@ -23,3 +23,4 @@ chrono = { version = "0.4", features = ["serde"] }
 rand = "0.8"
 dotenvy = "0.15"
 rustyline = "15"
+thiserror = "2"

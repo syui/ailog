@@ -8,6 +8,7 @@ use std::fs;
 use std::path::Path;
 
 use crate::commands::token::{self, BUNDLE_ID};
+use crate::tid;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct ChatMessage {
@@ -135,19 +136,6 @@ fn save_session(session: &ChatSession) -> Result<()> {
     Ok(())
 }
 
-/// Generate TID
-fn generate_tid() -> String {
-    use rand::Rng;
-    const CHARSET: &[u8] = b"234567abcdefghijklmnopqrstuvwxyz";
-    let mut rng = rand::thread_rng();
-    (0..13)
-        .map(|_| {
-            let idx = rng.gen_range(0..CHARSET.len());
-            CHARSET[idx] as char
-        })
-        .collect()
-}
-
 /// Call LLM API
 async fn call_llm(client: &reqwest::Client, url: &str, model: &str, messages: &[ChatMessage]) -> Result<String> {
     let max_tokens = env::var("CHAT_MAX_TOKENS")
@@ -185,7 +173,7 @@ fn save_chat_local(
     root_uri: Option<&str>,
     parent_uri: Option<&str>,
 ) -> Result<String> {
-    let rkey = generate_tid();
+    let rkey = tid::generate_tid();
     let now = chrono::Utc::now().format("%Y-%m-%dT%H:%M:%S%.3fZ").to_string();
     let uri = format!("at://{}/ai.syui.log.chat/{}", did, rkey);
 

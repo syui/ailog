@@ -6,6 +6,7 @@ use std::fs;
 use std::env;
 
 use crate::commands::token;
+use crate::tid;
 
 const BUNDLE_ID: &str = "ai.syui.log";
 
@@ -146,19 +147,6 @@ fn save_mcp_session(session: &McpSession) -> Result<()> {
     Ok(())
 }
 
-/// Generate TID (timestamp-based ID)
-fn generate_tid() -> String {
-    const CHARSET: &[u8] = b"234567abcdefghijklmnopqrstuvwxyz";
-    use rand::Rng;
-    let mut rng = rand::thread_rng();
-    (0..13)
-        .map(|_| {
-            let idx = rng.gen_range(0..CHARSET.len());
-            CHARSET[idx] as char
-        })
-        .collect()
-}
-
 /// Save chat record to local file
 fn save_chat_record(
     output_dir: &str,
@@ -169,7 +157,7 @@ fn save_chat_record(
     parent_uri: Option<&str>,
     translations: Option<&std::collections::HashMap<String, Translation>>,
 ) -> Result<String> {
-    let rkey = generate_tid();
+    let rkey = tid::generate_tid();
     let now = chrono::Utc::now().format("%Y-%m-%dT%H:%M:%S%.3fZ").to_string();
     let uri = format!("at://{}/ai.syui.log.chat/{}", did, rkey);
 
