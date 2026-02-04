@@ -135,6 +135,27 @@ enum Commands {
         server: String,
     },
 
+    /// Reply to a post
+    Reply {
+        /// Reply text
+        text: String,
+        /// Parent post URI (at://...)
+        #[arg(long)]
+        uri: Option<String>,
+        /// Parent post CID
+        #[arg(long)]
+        cid: Option<String>,
+        /// Root post URI (defaults to parent if omitted)
+        #[arg(long)]
+        root_uri: Option<String>,
+        /// Root post CID (defaults to parent if omitted)
+        #[arg(long)]
+        root_cid: Option<String>,
+        /// JSON with root/parent info (from `notify listen` output)
+        #[arg(long)]
+        json: Option<String>,
+    },
+
     /// Chat with AI
     #[command(alias = "c")]
     Chat {
@@ -247,6 +268,19 @@ async fn main() -> Result<()> {
         }
         Commands::Did { handle, server } => {
             commands::did::resolve(&handle, &server).await?;
+        }
+        Commands::Reply { text, uri, cid, root_uri, root_cid, json } => {
+            if let Some(json_str) = json {
+                commands::reply::reply_json(&json_str, &text).await?;
+            } else {
+                let parent_uri = uri.as_deref()
+                    .expect("--uri is required (or use --json)");
+                let parent_cid = cid.as_deref()
+                    .expect("--cid is required (or use --json)");
+                let r_uri = root_uri.as_deref().unwrap_or(parent_uri);
+                let r_cid = root_cid.as_deref().unwrap_or(parent_cid);
+                commands::reply::reply(&text, r_uri, r_cid, parent_uri, parent_cid).await?;
+            }
         }
         Commands::Chat { message, new } => {
             lms::chat::run(message.as_deref(), new).await?;

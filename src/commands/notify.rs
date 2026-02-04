@@ -113,15 +113,37 @@ pub async fn listen(interval_secs: u64, reasons: &[String]) -> Result<()> {
 
             // Output in chronological order (oldest first)
             for notif in new_items.iter().rev() {
+                // Build root/parent for reply threading
+                let root = if notif["record"]["reply"]["root"]["uri"].is_string() {
+                    serde_json::json!({
+                        "uri": notif["record"]["reply"]["root"]["uri"],
+                        "cid": notif["record"]["reply"]["root"]["cid"],
+                    })
+                } else {
+                    // This post is the root
+                    serde_json::json!({
+                        "uri": notif["uri"],
+                        "cid": notif["cid"],
+                    })
+                };
+
+                let parent = serde_json::json!({
+                    "uri": notif["uri"],
+                    "cid": notif["cid"],
+                });
+
                 let out = serde_json::json!({
                     "reason": notif["reason"],
                     "uri": notif["uri"],
+                    "cid": notif["cid"],
                     "author": {
                         "did": notif["author"]["did"],
                         "handle": notif["author"]["handle"],
                     },
                     "text": notif["record"]["text"],
                     "indexedAt": notif["indexedAt"],
+                    "root": root,
+                    "parent": parent,
                 });
                 writeln!(stdout, "{}", serde_json::to_string(&out)?)?;
                 stdout.flush()?;
