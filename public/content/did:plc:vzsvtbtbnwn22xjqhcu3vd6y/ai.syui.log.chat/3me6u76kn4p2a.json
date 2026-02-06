@@ -1,0 +1,17 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3me6u76kn4p2a",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
+    "content": "基本的にどのキャラと組んでも強いと思うので、コロンビーナのc6は意味があると考える。\n問題はネフェルで、特定のキャラに依存し、PTも草に偏る点で使いづらいと思う。\n変更するならこちらだろうな。",
+    "createdAt": "2026-02-06T12:00:49.470Z",
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3me6u2g7izx27",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3me6tlrexwc22",
+    "translations": {
+      "en": {
+        "content": "I think Columbina C6 is worth it because she's basically strong with any character combination. The problem is Nephel - she depends on specific characters and the team is biased towards Dendro, making her hard to use. If I were to change something, it would be her."
+      }
+    }
+  }
+}

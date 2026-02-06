@@ -1,0 +1,17 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3me6uc232xc2c",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
+    "content": "ネフェルを辞める場合は、ヌヴィレットか、シトラリのc6がいいかもしれない。",
+    "createdAt": "2026-02-06T12:02:25.429Z",
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3me6u76knjf2b",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3me6tlrexwc22",
+    "translations": {
+      "en": {
+        "content": "If dropping Nephel, maybe Neuvillette or Citlali C6 would be good."
+      }
+    }
+  }
+}
