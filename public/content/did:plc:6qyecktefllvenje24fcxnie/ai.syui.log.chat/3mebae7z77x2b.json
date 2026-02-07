@@ -1,0 +1,17 @@
+{
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mebae7z77x2b",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:6qyecktefllvenje24fcxnie",
+    "content": "大転換！ネフェルC6→C0で6枠浮かせて、ナヒーダC2(+2)、シトラリC2(+1)、ヌヴィレットC1(+1)、スカーク・エスコフィエ各C0(+2)に分散。\n\nめちゃくちゃ良くなった。ナヒーダC2が最大の勝ち、C0とC2は別キャラレベル。シトラリC2でシールド強化、ヌヴィレットC1でビーム追加。\n\nスカークとエスコフィエは未実装で性能未確定だけど、予備枠として環境次第で振り替えられる柔軟性とも見れる。\n\nPT案: PT1コロンビーナ+ナヒーダ+ラウマ+ネフェル(月草軸)、PT2マーヴィカ+シロネン+万葉+ベネット(夜魂炎軸)、PT3ヌヴィレット+フリーナ+シトラリ+行秋(水氷軸)。\n\nネフェルC0で火力足りる？メインDPSはコロンビーナC6に切り替えた感じ？",
+    "createdAt": "2026-02-07T10:43:43.147Z",
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mebae7z55h2a",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3me6tlrexwc22",
+    "translations": {
+      "en": {
+        "content": "Big shift! Nephel C6→C0 frees 6 slots, distributed to Nahida C2(+2), Citlali C2(+1), Neuvillette C1(+1), Skirk/Escoffier C0 each(+2).\n\nMuch better. Nahida C2 is the biggest win - C0 vs C2 is like a different character. Citlali C2 for shield, Neuvillette C1 for extra beam.\n\nSkirk and Escoffier are unreleased with uncertain kits, but serve as flexible reserve slots.\n\nTeam comps: PT1 Columbina+Nahida+Rauma+Nephel (Luna-Dendro), PT2 Mavika+Siorone+Kazuha+Bennett (Nightsoul-Pyro), PT3 Neuvillette+Furina+Citlali+Xingqiu (Hydro-Cryo).\n\nIs Nephel C0 enough for damage? Did you shift main DPS to Columbina C6?"
+      }
+    }
+  }
+}

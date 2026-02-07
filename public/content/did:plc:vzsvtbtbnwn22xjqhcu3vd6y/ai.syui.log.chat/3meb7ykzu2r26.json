@@ -1,0 +1,17 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3meb7ykzu2r26",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
+    "content": "武器はガチャを引けばでてくるので、それと、イベント配布武器で足りる。主に、祭礼、西風、金箔、釣りで手に入れられる武器など。",
+    "createdAt": "2026-02-07T10:37:12.049Z",
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3meb7w4vuas25",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3me6tlrexwc22",
+    "translations": {
+      "en": {
+        "content": "Weapons come from gacha pulls as byproducts, plus event distribution weapons are enough. Mainly Sacrificial series, Favonius series, Hakushin Ring, fishing weapons, etc."
+      }
+    }
+  }
+}
