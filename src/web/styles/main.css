@@ -2359,6 +2359,8 @@ button.tab {
   gap: 10px;
   padding: 12px 0;
   border-bottom: 1px solid #e0e0e0;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .chat-message:last-child {
@@ -2420,6 +2422,10 @@ button.tab {
 .chat-content {
   line-height: 1.5;
   color: #1a1a1a;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .chat-content p {
@@ -2437,6 +2443,7 @@ button.tab {
   overflow-x: auto;
   font-size: 0.9rem;
   margin: 8px 0;
+  max-width: 100%;
 }
 
 .chat-content code {
@@ -2461,13 +2468,13 @@ button.tab {
   border-collapse: collapse;
   margin: 8px 0;
   font-size: 0.9rem;
+  max-width: 100%;
 }
 
 .chat-content th,
 .chat-content td {
   border: 1px solid #ddd;
   padding: 6px 10px;
-  white-space: nowrap;
 }
 
 .chat-content th {
