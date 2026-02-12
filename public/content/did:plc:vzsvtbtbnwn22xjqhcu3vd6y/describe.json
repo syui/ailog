@@ -4,6 +4,7 @@
     "ai.syui.card.old",
     "ai.syui.log.chat",
     "ai.syui.log.post",
+    "ai.syui.rse.user",
     "app.bsky.actor.profile",
     "app.bsky.feed.post",
     "app.bsky.feed.repost",

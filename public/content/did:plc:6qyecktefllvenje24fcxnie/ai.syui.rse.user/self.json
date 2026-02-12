@@ -44,6 +44,13 @@
         "cid": "5",
         "rare": 0,
         "unique": false
+      },
+						{
+        "cp": 6,
+        "id": 6,
+        "cid": "6",
+        "rare": 0,
+        "unique": false
       }
     ],
     "$type": "ai.syui.rse.user",

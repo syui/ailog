@@ -1,285 +1,285 @@
 {
-  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.rse.admin/self",
-  "cid": "bafyreihgv33l3kdbpghum3ul5uugscfoaooyyx7nu3eaiuge4l6pru6je4",
-  "value": {
-    "item": [
-    { "id": 0, "name": "a", "text": { "en": "world", "ja": "世界" } },
-    { "id": 1, "name": "i", "text": { "en": "The Pillar of Creation at the center of the galaxy stands tall in a place called the Eternal Stone, which is said to tolerate no change. The three attributes of gold, silver, and copper are engraved on it.", "ja": "銀河の中心にある創造の柱。そこにそびえ立つ永遠の石には金、銀、銅の3つの属性が刻み込まれている" } },
-    { "id": 2, "name": "gordbox", "text": { "en": "The first color in this world", "ja": "この世界の最初の色" } },
-    { "id": 3, "name": "silverbox", "text": { "en": "The second color in this world", "ja": "この世界の2番目の色" } },
-    { "id": 4, "name": "bluebox", "text": { "en": "The third color in this world. It was once red, but was rewritten by someone", "ja": "この世界の3番目の色。かつては赤だったが、何者かに書き換えられた" } },
-    { "id": 5, "name": "copperbox", "text": { "en": "The Third Lost Color of the World", "ja": "この世界から失われた3番目の色" } }
-    ],
-    "$type": "ai.syui.rse.admin",
-    "system": [
-      {
-        "id": 0,
-        "name": "ai",
-        "domain": "ability"
-      },
-      {
-        "id": 1,
-        "name": "yui",
-        "domain": "unique"
-      },
-      {
-        "id": 2,
-        "name": "at",
-        "domain": "account"
-      },
-      {
-        "id": 3,
-        "name": "world",
-        "domain": "planet"
-      },
-      {
-        "id": 4,
-        "name": "dream",
-        "domain": "origin"
-      }
-    ],
-    "ability": [
-      {
-        "id": 0,
-        "kind": "i",
-        "name": "ai",
-        "color": "#000",
-        "level": 0,
-        "relation": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8
-        ],
-        "weakness": [
-          1
-        ],
-        "multiplier": 150
-      },
-      {
-        "id": 1,
-        "kind": "unique",
-        "name": "yui",
-        "color": "#fff",
-        "level": 0,
-        "relation": [],
-        "weakness": [],
-        "multiplier": 100
-      },
-      {
-        "id": 2,
-        "kind": "phantom",
-        "name": "axion",
-        "color": "#8b00ff",
-        "level": 1,
-        "relation": [
-          3,
-          5,
-          6
-        ],
-        "weakness": [
-          4
-        ],
-        "multiplier": 150
-      },
-      {
-        "id": 3,
-        "kind": "phantom",
-        "name": "baryon",
-        "color": "#0066cc",
-        "level": 1,
-        "relation": [
-          4,
-          6,
-          7
-        ],
-        "weakness": [
-          2
-        ],
-        "multiplier": 150
-      },
-      {
-        "id": 4,
-        "kind": "phantom",
-        "name": "photon",
-        "color": "#ffff00",
-        "level": 1,
-        "relation": [
-          2,
-          7,
-          8
-        ],
-        "weakness": [
-          3
-        ],
-        "multiplier": 150
-      },
-      {
-        "id": 5,
-        "kind": "matter",
-        "name": "quark",
-        "color": "#ff0000",
-        "level": 2,
-        "relation": [
-          6
-        ],
-        "weakness": [
-          0,
-          2
-        ],
-        "multiplier": 150
-      },
-      {
-        "id": 6,
-        "kind": "matter",
-        "name": "neutron",
-        "color": "#808080",
-        "level": 2,
-        "relation": [
-          7
-        ],
-        "weakness": [
-          5,
-          2,
-          3
-        ],
-        "multiplier": 150
-      },
-      {
-        "id": 7,
-        "kind": "matter",
-        "name": "atom",
-        "color": "#00cc66",
-        "level": 2,
-        "relation": [
-          8
-        ],
-        "weakness": [
-          6,
-          3,
-          4
-        ],
-        "multiplier": 150
-      },
-      {
-        "id": 8,
-        "kind": "matter",
-        "name": "sun",
-        "color": "#ff8c00",
-        "level": 2,
-        "relation": [
-          5
-        ],
-        "weakness": [
-          7,
-          4
-        ],
-        "multiplier": 150
-      },
-      {
-        "id": 9,
-        "kind": "element",
-        "name": "gold",
-        "color": "#ffd700",
-        "level": 3,
-        "relation": [
-          10
-        ],
-        "weakness": [
-          11,
-          12
-        ],
-        "multiplier": 150
-      },
-      {
-        "id": 10,
-        "kind": "element",
-        "name": "silver",
-        "color": "#c0c0c0",
-        "level": 3,
-        "relation": [
-          11,
-          12
-        ],
-        "weakness": [
-          9
-        ],
-        "multiplier": 150
-      },
-      {
-        "id": 11,
-        "kind": "element",
-        "name": "copper",
-        "color": "#b87333",
-        "level": 3,
-        "relation": [
-          9
-        ],
-        "weakness": [
-          10
-        ],
-        "multiplier": 150,
-        "phantom": true
-      },
-      {
-        "id": 12,
-        "kind": "element",
-        "name": "oxygen",
-        "color": "#87ceeb",
-        "level": 3,
-        "relation": [
-          9
-        ],
-        "weakness": [
-          10
-        ],
-        "multiplier": 150
-      }
-    ],
-    "character": [
-      {
-        "id": 0,
-        "mode": 2,
-        "name": "ai",
-        "ability": 0
-      },
-      {
-        "id": 1,
-        "mode": 2,
-        "name": "yui",
-        "ability": 1
-      },
-      {
-        "id": 2,
-        "mode": 0,
-        "name": "dragon",
-        "ability": 2
-      },
-      {
-        "id": 3,
-        "mode": 0,
-        "name": "robot",
-        "ability": 5
-      }
-    ],
-    "createdAt": "2026-01-27T16:25:09.000Z",
-    "updatedAt": "2026-01-27T16:25:09.000Z",
-    "collection": [
-      {
-        "id": 0,
-        "name": "card",
-        "nsid": "ai.syui.card"
-      },
-      {
-        "id": 1,
-        "name": "rse",
-        "nsid": "ai.syui.rse"
-      }
-    ]
-  }
+	"uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.rse.admin/self",
+	"cid": "bafyreihgv33l3kdbpghum3ul5uugscfoaooyyx7nu3eaiuge4l6pru6je4",
+	"value": {
+		"item": [
+			{ "id": 1, "name": "i", "text": { "en": "The Pillar of Creation at the center of the universe.", "ja": "宇宙の中心にある創造の柱。" } },
+			{ "id": 2, "name": "gordbox", "text": { "en": "The first color in this world.", "ja": "この世界の最初の色。" } },
+			{ "id": 3, "name": "silverbox", "text": { "en": "The second color in this world.", "ja": "この世界の2番目の色。" } },
+			{ "id": 4, "name": "copperbox", "text": { "en": "The third color, lost from this world.", "ja": "この世界から失われた3番目の色。" } },
+			{ "id": 5, "name": "bluebox", "text": { "en": "The fourth color in this world.", "ja": "この世界の4番目の色。" } },
+			{ "id": 6, "name": "atcoin", "text": { "en": "A gold coin of this world.", "ja": "この世界の金貨。" } }
+		],
+		"$type": "ai.syui.rse.admin",
+		"system": [
+			{
+				"id": 0,
+				"name": "ai",
+				"domain": "ability"
+			},
+			{
+				"id": 1,
+				"name": "yui",
+				"domain": "unique"
+			},
+			{
+				"id": 2,
+				"name": "at",
+				"domain": "account"
+			},
+			{
+				"id": 3,
+				"name": "world",
+				"domain": "planet"
+			},
+			{
+				"id": 4,
+				"name": "dream",
+				"domain": "origin"
+			}
+		],
+		"ability": [
+			{
+				"id": 0,
+				"kind": "i",
+				"name": "ai",
+				"color": "#000",
+				"level": 0,
+				"relation": [
+					0,
+					1,
+					2,
+					3,
+					4,
+					5,
+					6,
+					7,
+					8
+				],
+				"weakness": [
+					1
+				],
+				"multiplier": 150
+			},
+			{
+				"id": 1,
+				"kind": "unique",
+				"name": "yui",
+				"color": "#fff",
+				"level": 0,
+				"relation": [],
+				"weakness": [],
+				"multiplier": 100
+			},
+			{
+				"id": 2,
+				"kind": "phantom",
+				"name": "axion",
+				"color": "#8b00ff",
+				"level": 1,
+				"relation": [
+					3,
+					5,
+					6
+				],
+				"weakness": [
+					4
+				],
+				"multiplier": 150
+			},
+			{
+				"id": 3,
+				"kind": "phantom",
+				"name": "baryon",
+				"color": "#0066cc",
+				"level": 1,
+				"relation": [
+					4,
+					6,
+					7
+				],
+				"weakness": [
+					2
+				],
+				"multiplier": 150
+			},
+			{
+				"id": 4,
+				"kind": "phantom",
+				"name": "photon",
+				"color": "#ffff00",
+				"level": 1,
+				"relation": [
+					2,
+					7,
+					8
+				],
+				"weakness": [
+					3
+				],
+				"multiplier": 150
+			},
+			{
+				"id": 5,
+				"kind": "matter",
+				"name": "quark",
+				"color": "#ff0000",
+				"level": 2,
+				"relation": [
+					6
+				],
+				"weakness": [
+					0,
+					2
+				],
+				"multiplier": 150
+			},
+			{
+				"id": 6,
+				"kind": "matter",
+				"name": "neutron",
+				"color": "#808080",
+				"level": 2,
+				"relation": [
+					7
+				],
+				"weakness": [
+					5,
+					2,
+					3
+				],
+				"multiplier": 150
+			},
+			{
+				"id": 7,
+				"kind": "matter",
+				"name": "atom",
+				"color": "#00cc66",
+				"level": 2,
+				"relation": [
+					8
+				],
+				"weakness": [
+					6,
+					3,
+					4
+				],
+				"multiplier": 150
+			},
+			{
+				"id": 8,
+				"kind": "matter",
+				"name": "sun",
+				"color": "#ff8c00",
+				"level": 2,
+				"relation": [
+					5
+				],
+				"weakness": [
+					7,
+					4
+				],
+				"multiplier": 150
+			},
+			{
+				"id": 9,
+				"kind": "element",
+				"name": "gold",
+				"color": "#ffd700",
+				"level": 3,
+				"relation": [
+					10
+				],
+				"weakness": [
+					11,
+					12
+				],
+				"multiplier": 150
+			},
+			{
+				"id": 10,
+				"kind": "element",
+				"name": "silver",
+				"color": "#c0c0c0",
+				"level": 3,
+				"relation": [
+					11,
+					12
+				],
+				"weakness": [
+					9
+				],
+				"multiplier": 150
+			},
+			{
+				"id": 11,
+				"kind": "element",
+				"name": "copper",
+				"color": "#b87333",
+				"level": 3,
+				"relation": [
+					9
+				],
+				"weakness": [
+					10
+				],
+				"multiplier": 150,
+				"phantom": true
+			},
+			{
+				"id": 12,
+				"kind": "element",
+				"name": "oxygen",
+				"color": "#87ceeb",
+				"level": 3,
+				"relation": [
+					9
+				],
+				"weakness": [
+					10
+				],
+				"multiplier": 150
+			}
+		],
+		"character": [
+			{
+				"id": 0,
+				"mode": 2,
+				"name": "ai",
+				"ability": 0
+			},
+			{
+				"id": 1,
+				"mode": 2,
+				"name": "yui",
+				"ability": 1
+			},
+			{
+				"id": 2,
+				"mode": 0,
+				"name": "dragon",
+				"ability": 2
+			},
+			{
+				"id": 3,
+				"mode": 0,
+				"name": "robot",
+				"ability": 5
+			}
+		],
+		"createdAt": "2026-01-27T16:25:09.000Z",
+		"updatedAt": "2026-01-27T16:25:09.000Z",
+		"collection": [
+			{
+				"id": 0,
+				"name": "card",
+				"nsid": "ai.syui.card"
+			},
+			{
+				"id": 1,
+				"name": "rse",
+				"nsid": "ai.syui.rse"
+			}
+		]
+	}
 }
