@@ -91,6 +91,16 @@ async function render(route: Route): Promise<void> {
       await handleCallback()
     }
 
+    // Auto-login if redirected from another domain with ?login=handle
+    if (oauthEnabled && searchParams.has('login')) {
+      const loginHandle = searchParams.get('login')
+      if (loginHandle) {
+        window.history.replaceState({}, '', window.location.pathname)
+        await login(loginHandle)
+        return
+      }
+    }
+
     // Restore session from storage (skip if oauth disabled)
     if (oauthEnabled) {
       await restoreSession()

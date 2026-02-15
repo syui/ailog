@@ -65,8 +65,17 @@ async function initOAuthClient(): Promise<BrowserOAuthClient> {
   return oauthClient
 }
 
+// Primary OAuth domain
+const OAUTH_ORIGIN = 'https://syui.ai'
+
 // Login with handle
 export async function login(handle: string): Promise<void> {
+  // Redirect to primary OAuth domain if on a different domain
+  if (window.location.origin !== OAUTH_ORIGIN) {
+    window.location.href = `${OAUTH_ORIGIN}${window.location.pathname}?login=${encodeURIComponent(handle)}`
+    return
+  }
+
   await setNetworkConfig(handle)
 
   try {
