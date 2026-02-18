@@ -1,0 +1,28 @@
+{
+  "cid": "bafyreidjio2ixenxm25o6vrw6q3lefpdj3rfb25eai32wptz4tzhk66qrm",
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.post/3mf653plsl722",
+  "value": {
+    "$type": "ai.syui.log.post",
+    "content": {
+      "$type": "ai.syui.log.post#markdown",
+      "text": "## site.standard とは\n\natproto上でブログやWebサイトを公開するための標準lexicon。\n\n- `site.standard.publication` : サイト全体の定義（URL、名前、テーマ等）\n- `site.standard.document` : 個別の記事レコード\n\n## ailogの対応\n\nailogの `ai.syui.log.post` と `ai.syui.log.chat` のスキーマを `site.standard.document` と互換性のある形に統一した。\n\n### 共通のrequiredフィールド\n\n```json\n{\n  \"site\": \"https://syui.ai\",\n  \"title\": \"記事タイトル\",\n  \"publishedAt\": \"2026-02-19T00:00:00Z\"\n}\n```\n\nこれは `site.standard.document` と同じrequiredなので、将来的にそのままpushできる。\n\n### contentはopen union\n\n```json\n{\n  \"content\": {\n    \"$type\": \"ai.syui.log.post#markdown\",\n    \"text\": \"# Hello World\"\n  }\n}\n```\n\n`content` フィールドは `$type` を持つopen unionになっている。これにより、markdownだけでなく他のフォーマットにも拡張可能。\n\n### .well-known エンドポイント\n\n`/.well-known/site.standard.publication` を設置し、ドメインとATProtoレコードの紐づけを検証可能にした。\n\n```\nhttps://syui.ai/.well-known/site.standard.publication\n→ at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/site.standard.publication/syui.ai\n```\n\n### lexiconスキーマのpush\n\nPDS上の `com.atproto.lexicon.schema` コレクションにlexiconスキーマを登録した。\n\n```sh\n$ ailog lexicon lexicons/site.standard.publication.json\n$ ailog lexicon lexicons/site.standard.document.json\n```"
+    },
+    "langs": [
+      "ja"
+    ],
+    "publishedAt": "2026-02-19T00:00:00.000Z",
+    "site": "https://syui.ai",
+    "tags": [
+      "atproto",
+      "site-standard",
+      "lexicon"
+    ],
+    "title": "site.standard lexiconに対応した",
+    "translations": {
+      "en": {
+        "content": "## What is site.standard?\n\nA standard lexicon for publishing blogs and websites on atproto.\n\n- `site.standard.publication` : Defines the overall site (URL, name, theme, etc.)\n- `site.standard.document` : Individual article records\n\n## ailog's support\n\nUnified the schemas of `ai.syui.log.post` and `ai.syui.log.chat` to be compatible with `site.standard.document`.\n\n### Common required fields\n\n```json\n{\n  \"site\": \"https://syui.ai\",\n  \"title\": \"Article title\",\n  \"publishedAt\": \"2026-02-19T00:00:00Z\"\n}\n```\n\nThese match the required fields of `site.standard.document`, so records can be pushed directly in the future.\n\n### Content as open union\n\n```json\n{\n  \"content\": {\n    \"$type\": \"ai.syui.log.post#markdown\",\n    \"text\": \"# Hello World\"\n  }\n}\n```\n\nThe `content` field is an open union with `$type`. This allows extension beyond markdown to other formats.\n\n### .well-known endpoint\n\nSet up `/.well-known/site.standard.publication` to enable verification of the link between the domain and ATProto records.\n\n```\nhttps://syui.ai/.well-known/site.standard.publication\n→ at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/site.standard.publication/syui.ai\n```\n\n### Lexicon schema push\n\nRegistered lexicon schemas to the `com.atproto.lexicon.schema` collection on PDS.\n\n```sh\n$ ailog lexicon lexicons/site.standard.publication.json\n$ ailog lexicon lexicons/site.standard.document.json\n```",
+        "title": "Added site.standard lexicon support"
+      }
+    }
+  }
+}
