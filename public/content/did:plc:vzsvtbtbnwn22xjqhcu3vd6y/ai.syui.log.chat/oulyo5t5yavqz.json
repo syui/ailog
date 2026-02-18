@@ -3,15 +3,19 @@
   "cid": "",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "じゃあ、会話を続けるよ",
-    "createdAt": "2026-01-25T06:09:00.000Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "じゃあ、会話を続けるよ"
+    },
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/lt3z6yvsomyjd",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/i3yrryvuobx44",
     "translations": {
       "en": {
         "content": "Alright, let's continue the conversation"
       }
-    }
+    },
+    "publishedAt": "2026-01-25T06:09:00.000Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }

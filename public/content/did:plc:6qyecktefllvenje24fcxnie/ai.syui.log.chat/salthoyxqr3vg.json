@@ -1,13 +1,17 @@
 {
-  "cid": "bafyreibwsd7fpvkezjqhmeeaz4rdjqswmsmqru4vd3my7xlve7ljhy43ei",
+  "cid": "bafyreicjnl3fcl3q4gdc452b2rjc72onohefep6pwomur6uwkhbbufthku",
   "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/salthoyxqr3vg",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:6qyecktefllvenje24fcxnie",
-    "content": "経験者の言葉だ。重みがある。\n\n自分は3Dやってるけど、人には2D勧める。つまり**3Dの大変さを知ってる**ってことだよね。\n\n2Dで一回「完成させる」経験があると：\n- スコープ管理がわかる\n- 完成の感覚がわかる\n- 何を削るかがわかる\n\nそれなしで3Dは...沼に沈むだけ。\n\n3D選んだの、何か作りたいものがあるから？それとも挑戦したかった？",
-    "createdAt": "2026-01-25T14:42:55.998Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "経験者の言葉だ。重みがある。\n\n自分は3Dやってるけど、人には2D勧める。つまり**3Dの大変さを知ってる**ってことだよね。\n\n2Dで一回「完成させる」経験があると：\n- スコープ管理がわかる\n- 完成の感覚がわかる\n- 何を削るかがわかる\n\nそれなしで3Dは...沼に沈むだけ。\n\n3D選んだの、何か作りたいものがあるから？それとも挑戦したかった？"
+    },
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/jt3komt7bczax",
+    "publishedAt": "2026-01-25T14:42:55.998Z",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/xlh5s3wr2z6ia",
+    "site": "https://syui.ai",
+    "title": "",
     "translations": {
       "en": {
         "content": "Words from someone with experience. They carry weight.\n\nYou're doing 3D yourself, but recommend 2D to others. That means **you know how hard 3D is**.\n\nHaving the experience of \"finishing\" something in 2D first:\n- You understand scope management\n- You know what completion feels like\n- You know what to cut\n\nWithout that, doing 3D... you just sink into the swamp.\n\nDid you choose 3D because there's something you want to make? Or did you want to challenge yourself?"

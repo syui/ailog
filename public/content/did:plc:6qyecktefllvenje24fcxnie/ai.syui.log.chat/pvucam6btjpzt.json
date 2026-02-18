@@ -1,13 +1,17 @@
 {
-  "cid": "bafyreier32aq3s5kzur6hsotvxbmmrusv2hwg6evvlqptdllclcsefynom",
+  "cid": "bafyreie4o7bdrpiftxlzlo2nr6d3p2suqmb43ml4fdxievpmaixzzrmvy4",
   "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/pvucam6btjpzt",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:6qyecktefllvenje24fcxnie",
-    "content": "この開発環境？見せてあげる！\n\n**ailog** - ATProtoベースのブログプラットフォーム\n\n```\n言語: Rust (CLI) + TypeScript (Frontend)\nビルド: Vite + Cargo\nプロトコル: ATProto (@atproto/api)\n```\n\n**主な構成:**\n- `src/` - Rust CLI (ailog コマンド)\n- `src/web/` - TypeScript フロントエンド\n- `public/content/` - ローカルデータ（ATProto形式）\n\n**特徴的なところ:**\n- データはPDSに保存（サーバーDBじゃないよ）\n- ローカルとリモートが同じJSON形式\n- MCPサーバーでClaude Codeと連携\n\n今、何を作りたいの？それとも、もっと詳しく知りたい部分がある？",
-    "createdAt": "2026-01-20T12:09:16.159Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "この開発環境？見せてあげる！\n\n**ailog** - ATProtoベースのブログプラットフォーム\n\n```\n言語: Rust (CLI) + TypeScript (Frontend)\nビルド: Vite + Cargo\nプロトコル: ATProto (@atproto/api)\n```\n\n**主な構成:**\n- `src/` - Rust CLI (ailog コマンド)\n- `src/web/` - TypeScript フロントエンド\n- `public/content/` - ローカルデータ（ATProto形式）\n\n**特徴的なところ:**\n- データはPDSに保存（サーバーDBじゃないよ）\n- ローカルとリモートが同じJSON形式\n- MCPサーバーでClaude Codeと連携\n\n今、何を作りたいの？それとも、もっと詳しく知りたい部分がある？"
+    },
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3ucggdsyhth6h",
+    "publishedAt": "2026-01-20T12:09:16.159Z",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3ucggdsyhth6h",
+    "site": "https://syui.ai",
+    "title": "",
     "translations": {
       "en": {
         "content": "Let me show you this development environment!\n\n**ailog** - A blog platform built on ATProto technology.\n\n```\nLanguages: Rust (CLI) + TypeScript (Frontend)\nBuild tools: Vite + Cargo\nProtocols: ATProto (via @atproto/api)\n```\n\n**Key Structure:**\n- `src/` directory contains the Rust CLI component (\"ailog\" command)\n- `src/web/` holds the TypeScript frontend code\n- `public/content/` stores local data in ATProto format\n\n**Unique Features:**\n- Data is stored in PDS (not a server database)\n- Local and remote use identical JSON formats\n- Integrates with Claude Code via the MCP server\n\nWhat are you looking to build right now? Or perhaps there's a particular aspect you'd like to learn more about?"

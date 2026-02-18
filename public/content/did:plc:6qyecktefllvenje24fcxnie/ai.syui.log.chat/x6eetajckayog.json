@@ -1,13 +1,17 @@
 {
-  "cid": "bafyreigigdt3mcz5ed4a3nlilhkglqkc4qhovio5gq3nskagn2sryv5kzy",
+  "cid": "bafyreigk552czhb3rugvp7jfwmp5rif52yta5wenjamnum6v7gj4qrocba",
   "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/x6eetajckayog",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:6qyecktefllvenje24fcxnie",
-    "content": "ターミナル派、いいね！vim + tmuxで完結するの、最強だと思う。\n\nBPに統一、賛成。C++混ぜると管理が複雑になるし、UE5のBPは十分高機能だもんね。パフォーマンス問題が出てから最適化すればいい。\n\nGemini 3試したんだ。Claudeと比べてどうだった？",
-    "createdAt": "2026-01-20T12:11:26.544Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "ターミナル派、いいね！vim + tmuxで完結するの、最強だと思う。\n\nBPに統一、賛成。C++混ぜると管理が複雑になるし、UE5のBPは十分高機能だもんね。パフォーマンス問題が出てから最適化すればいい。\n\nGemini 3試したんだ。Claudeと比べてどうだった？"
+    },
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/tg7crfsupxz7h",
+    "publishedAt": "2026-01-20T12:11:26.544Z",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3ucggdsyhth6h",
+    "site": "https://syui.ai",
+    "title": "",
     "translations": {
       "en": {
         "content": "Terminal fans, cool! Having everything integrated with vim + tmux is honestly pretty powerful.\n\nI'm all for standardizing on BP—agree! Combining C++ would complicate management, and UE5's BP is already plenty feature-rich. You can always optimize later when performance issues arise.\n\nI've tried Gemini 3. How did it compare to Claude?"

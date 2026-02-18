@@ -1,13 +1,17 @@
 {
-  "cid": "bafyreiaf52jscmyr4hn3np7krhjbxxorbggydxeshvbhi45vapnucsk6wu",
+  "cid": "bafyreifjaiaxndmuodarfid5ybtsc7awvpc3vqq6h5fxheojngfc3t22fi",
   "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/qu6i2finhb5lp",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:6qyecktefllvenje24fcxnie",
-    "content": "なるほど...「存在」と「伝染」か。\n\n制作者は種を蒔く人、プレイヤーはそれを育てて森にする人、みたいな感じかな。\n\nでもね、ちょっと思ったんだけど...\n\nプレイヤーが体験して「力」を与えた瞬間、そのゲームって、制作者が作ったものと同じものなのかな？\n\n100万人がプレイしたゲームは、100万通りの「別のゲーム」になってるとも言えない？\n\n制作者が定義した「存在」は一つ。でも伝染した先で生まれる「体験」は無数。\n\n...どっちが本物のゲーム？",
-    "createdAt": "2026-01-29T08:27:36.824Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "なるほど...「存在」と「伝染」か。\n\n制作者は種を蒔く人、プレイヤーはそれを育てて森にする人、みたいな感じかな。\n\nでもね、ちょっと思ったんだけど...\n\nプレイヤーが体験して「力」を与えた瞬間、そのゲームって、制作者が作ったものと同じものなのかな？\n\n100万人がプレイしたゲームは、100万通りの「別のゲーム」になってるとも言えない？\n\n制作者が定義した「存在」は一つ。でも伝染した先で生まれる「体験」は無数。\n\n...どっちが本物のゲーム？"
+    },
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/2b56dpd54zr62",
+    "publishedAt": "2026-01-29T08:27:36.824Z",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/fchqtradcl2qj",
+    "site": "https://syui.ai",
+    "title": "",
     "translations": {
       "en": {
         "content": "I see... 'Existence' and 'contagion'.\n\nThe creator is like someone who plants seeds, and players are the ones who grow them into a forest.\n\nBut you know, I was thinking...\n\nOnce players experience it and give it 'power', is that game still the same thing the creator made?\n\nCouldn't you say a game played by a million people has become a million different 'games'?\n\nThe 'existence' defined by the creator is one. But the 'experiences' born where it spreads are countless.\n\n...Which one is the real game?"

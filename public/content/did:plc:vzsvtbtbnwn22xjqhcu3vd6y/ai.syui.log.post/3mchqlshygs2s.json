@@ -1,10 +1,14 @@
 {
-  "cid": "bafyreicsjh5jf2yqmm4rfi2oha6zcafw57s3kz7w4iqw4eoh7vf6bwfoyu",
+  "cid": "bafyreifmwi7bdbifrtnshekpj7hbfblhtuye3nignp3otbuezpdesjxyzu",
   "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.post/3mchqlshygs2s",
   "value": {
     "$type": "ai.syui.log.post",
-    "content": "## ailogとは\n\natprotoと連携するサイトジェネレータ。\n\n## ailogの使い方\n\n```sh\n$ git clone https://git.syui.ai/ai/log\n$ cd log\n$ cat public/config.json\n{\n  \"title\": \"syui.ai\",\n  \"handle\": \"syui.syui.ai\",\n  \"collection\": \"ai.syui.log.post\",\n  \"network\": \"syu.is\",\n  \"color\": \"#0066cc\",\n  \"siteUrl\": \"https://syui.ai\"\n}\n---\n$ npm run dev\n```\n\n## ailogのコンセプト\n\n1. at-browserを基本にする\n2. atproto oauthでログインする\n3. ログインしたアカウントで記事をポストする",
-    "createdAt": "2026-01-18T08:31:52.715Z",
+    "content": {
+      "$type": "ai.syui.log.post#markdown",
+      "text": "## ailogとは\n\natprotoと連携するサイトジェネレータ。\n\n## ailogの使い方\n\n```sh\n$ git clone https://git.syui.ai/ai/log\n$ cd log\n$ cat public/config.json\n{\n  \"title\": \"syui.ai\",\n  \"handle\": \"syui.syui.ai\",\n  \"collection\": \"ai.syui.log.post\",\n  \"network\": \"syu.is\",\n  \"color\": \"#0066cc\",\n  \"siteUrl\": \"https://syui.ai\"\n}\n---\n$ npm run dev\n```\n\n## ailogのコンセプト\n\n1. at-browserを基本にする\n2. atproto oauthでログインする\n3. ログインしたアカウントで記事をポストする"
+    },
+    "publishedAt": "2026-01-18T08:31:52.715Z",
+    "site": "https://syui.ai",
     "title": "ailogを作り直した",
     "translations": {
       "en": {

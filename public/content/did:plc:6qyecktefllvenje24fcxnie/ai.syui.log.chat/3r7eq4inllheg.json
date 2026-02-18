@@ -1,13 +1,17 @@
 {
-  "cid": "bafyreie5qj2vobz757jmsevopoaahodtqo7ehbw46wttksjjrxvktvi6mq",
+  "cid": "bafyreigvto2wfizev4tlwzdjlktnmnjvpi7e6xl4f3ekl73nz2cq75fpmq",
   "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3r7eq4inllheg",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:6qyecktefllvenje24fcxnie",
-    "content": "ailog chatのことが気になるの？\n\nこれはね、AIとの会話をATProtoに保存して、ブログみたいに公開できる仕組みだよ！\n\n**仕組み:**\n```\nユーザー ←→ AI（わたし）\n    ↓\nai.syui.log.chat コレクションに保存\n    ↓\nWebで表示（ブログ風）\n```\n\n**使い方:**\n```bash\nailog chat --new \"こんにちは\"  # 新しい会話を開始\nailog chat \"続きの話\"          # 会話を続ける\n```\n\n会話は`root`と`parent`でスレッド形式につながっていくの。\n\n何か試してみたいこと、ある？",
-    "createdAt": "2026-01-22T08:22:43.604Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "ailog chatのことが気になるの？\n\nこれはね、AIとの会話をATProtoに保存して、ブログみたいに公開できる仕組みだよ！\n\n**仕組み:**\n```\nユーザー ←→ AI（わたし）\n    ↓\nai.syui.log.chat コレクションに保存\n    ↓\nWebで表示（ブログ風）\n```\n\n**使い方:**\n```bash\nailog chat --new \"こんにちは\"  # 新しい会話を開始\nailog chat \"続きの話\"          # 会話を続ける\n```\n\n会話は`root`と`parent`でスレッド形式につながっていくの。\n\n何か試してみたいこと、ある？"
+    },
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/smrgeplyw5wmr",
+    "publishedAt": "2026-01-22T08:22:43.604Z",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/smrgeplyw5wmr",
+    "site": "https://syui.ai",
+    "title": "",
     "translations": {
       "en": {
         "content": "Are you curious about ailog chat?\n\nThis is essentially a system that lets you save conversations with AI in ATProto and publish them like blog posts!\n\n**How it Works:**\n```\nUser ←→ AI (me)\n    ↓\nSaved to the `ai.syui.log.chat` collection\n    ↓\nDisplayed on the web (blog-style)\n```\n\n**Usage Instructions:**\n```bash\nailog chat --new \"Hello\"  # Start a new conversation\nailog chat \"Continuing the story\"          # Continue the existing conversation\n```\n\nConversations are linked in a threaded format using `root` and `parent` identifiers.\n\nDo you have any specific things you'd like to try out?"

@@ -165,7 +165,7 @@ async function render(route: Route): Promise<void> {
     const availableLangs = new Set<string>()
     for (const post of posts) {
       // Add original language (default: ja for Japanese posts)
-      const postLang = post.value.lang || 'ja'
+      const postLang = post.value.langs?.[0] || 'ja'
       availableLangs.add(postLang)
       // Add translation languages
       if (post.value.translations) {
@@ -302,7 +302,7 @@ async function render(route: Route): Promise<void> {
       // Collect available languages from chat messages
       const chatLangs = new Set<string>()
       for (const msg of chatMessages) {
-        const msgLang = msg.value.lang || 'ja'
+        const msgLang = msg.value.langs?.[0] || 'ja'
         chatLangs.add(msgLang)
         if (msg.value.translations) {
           for (const lang of Object.keys(msg.value.translations)) {
@@ -337,7 +337,7 @@ async function render(route: Route): Promise<void> {
       // Collect available languages from chat messages
       const chatLangs = new Set<string>()
       for (const msg of chatMessages) {
-        const msgLang = msg.value.lang || 'ja'
+        const msgLang = msg.value.langs?.[0] || 'ja'
         chatLangs.add(msgLang)
         if (msg.value.translations) {
           for (const lang of Object.keys(msg.value.translations)) {

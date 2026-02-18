@@ -3,15 +3,19 @@
   "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/6eg45a33vqzp3",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "例えば、記憶を現実の元素や原子、物質の性質を当てはめてアルゴリズムを作ってみるというアイデアはどうだろう。\nその場合、どうやって作る。記憶は、どの原子、どのパラメータを設定する?",
-    "createdAt": "2026-01-22T08:41:04.563Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "例えば、記憶を現実の元素や原子、物質の性質を当てはめてアルゴリズムを作ってみるというアイデアはどうだろう。\nその場合、どうやって作る。記憶は、どの原子、どのパラメータを設定する?"
+    },
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/r5x3z4d4vrvf5",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/smrgeplyw5wmr",
     "translations": {
       "en": {
         "content": "For instance, what about the idea of creating a algorithm by mapping memories onto the actual properties of elements, atoms, and substances?\nIn that case, how would you create it? Which memories, which atomic structures or parameters should we set?"
       }
-    }
+    },
+    "publishedAt": "2026-01-22T08:41:04.563Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }

@@ -3,15 +3,19 @@
   "cid": "",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "そういえば、会話はailogに保存しといてね。",
-    "createdAt": "2026-01-25T06:08:30.000Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "そういえば、会話はailogに保存しといてね。"
+    },
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/aunhtmv67bb3e",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/i3yrryvuobx44",
     "translations": {
       "en": {
         "content": "By the way, please save our conversation to ailog."
       }
-    }
+    },
+    "publishedAt": "2026-01-25T06:08:30.000Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }

@@ -3,15 +3,19 @@
   "cid": "",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "そうだな、シトラリあるいはチャスカがバランスが取れた選択かもしれない。",
-    "createdAt": "2026-02-06T12:04:08.752Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "そうだな、シトラリあるいはチャスカがバランスが取れた選択かもしれない。"
+    },
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3me6uc233ib2d",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3me6tlrexwc22",
     "translations": {
       "en": {
         "content": "Yeah, Citlali or Chasca might be a balanced choice."
       }
-    }
+    },
+    "publishedAt": "2026-02-06T12:04:08.752Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }

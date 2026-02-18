@@ -3,13 +3,17 @@
   "cid": "",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "翻訳処理を変えた話",
-    "createdAt": "2026-01-25T15:37:54.649Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "翻訳処理を変えた話"
+    },
     "translations": {
       "en": {
         "content": "About changing the translation processing"
       }
-    }
+    },
+    "publishedAt": "2026-01-25T15:37:54.649Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }

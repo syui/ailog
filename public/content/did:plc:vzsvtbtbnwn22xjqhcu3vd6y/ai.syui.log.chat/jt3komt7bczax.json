@@ -3,15 +3,19 @@
   "cid": "",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "3dでやってる。\nでも、絶対に初めてのゲーム開発、個人開発は2dでやったほうがいいと思うね。",
-    "createdAt": "2026-01-25T14:42:55.997Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "3dでやってる。\nでも、絶対に初めてのゲーム開発、個人開発は2dでやったほうがいいと思うね。"
+    },
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/n6xjzugjb734f",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/xlh5s3wr2z6ia",
     "translations": {
       "en": {
         "content": "I'm doing it in 3D.\nBut I definitely think first-time game development and solo development should be done in 2D."
       }
-    }
+    },
+    "publishedAt": "2026-01-25T14:42:55.997Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }

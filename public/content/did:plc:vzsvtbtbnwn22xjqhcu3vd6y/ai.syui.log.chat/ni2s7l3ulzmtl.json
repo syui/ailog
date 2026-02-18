@@ -3,15 +3,19 @@
   "cid": "",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "claudeのほうがいいんじゃない。",
-    "createdAt": "2026-01-25T15:40:02.551Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "claudeのほうがいいんじゃない。"
+    },
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/tc3nim6a66qye",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/uizfuocgllffc",
     "translations": {
       "en": {
         "content": "Claude is probably better."
       }
-    }
+    },
+    "publishedAt": "2026-01-25T15:40:02.551Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }

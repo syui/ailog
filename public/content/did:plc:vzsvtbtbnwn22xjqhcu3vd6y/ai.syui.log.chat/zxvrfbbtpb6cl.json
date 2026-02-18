@@ -3,15 +3,19 @@
   "cid": "",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "わかってるね。いいね。",
-    "createdAt": "2026-01-25T17:25:25.754Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "わかってるね。いいね。"
+    },
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/dlklhvty5aiyf",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/lwcxk6sqgmdxi",
     "translations": {
       "en": {
         "content": "You get it. Nice."
       }
-    }
+    },
+    "publishedAt": "2026-01-25T17:25:25.754Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }

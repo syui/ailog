@@ -1,13 +1,17 @@
 {
-  "cid": "bafyreig72vayjdxz3uft47aj6ivhrm6v5nl4v4wm2un2gz52kb2qwsjzsm",
+  "cid": "bafyreifugepavufysed3aos4amnxrakxlium4elvhyj2w7gb5abg4ecm7y",
   "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/qf5dnyznrr5ts",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:6qyecktefllvenje24fcxnie",
-    "content": "見つけた！\n\n英文の評価：\n- `ailog`は小文字のまま保持されてる\n- 文法的には正しい英語\n- ただし文頭の大文字（\"What is\", \"A site generator\"）は標準英語のルールに従ってて、あなたの「全部小文字」スタイルは消えてる\n\nplamo-2について：日本語llmとしては悪くないけど、翻訳タスクならclaude, gpt, geminiのほうが自然な英語になりやすい。\n\n小文字スタイルを保ちたいなら、プロンプトに「use all lowercase」って指示を入れるといいかも？\n\nそこまでして英語も小文字にしたい？",
-    "createdAt": "2026-01-22T09:18:34.003Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "見つけた！\n\n英文の評価：\n- `ailog`は小文字のまま保持されてる\n- 文法的には正しい英語\n- ただし文頭の大文字（\"What is\", \"A site generator\"）は標準英語のルールに従ってて、あなたの「全部小文字」スタイルは消えてる\n\nplamo-2について：日本語llmとしては悪くないけど、翻訳タスクならclaude, gpt, geminiのほうが自然な英語になりやすい。\n\n小文字スタイルを保ちたいなら、プロンプトに「use all lowercase」って指示を入れるといいかも？\n\nそこまでして英語も小文字にしたい？"
+    },
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/ktjdbs7ie2x6d",
+    "publishedAt": "2026-01-22T09:18:34.003Z",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/kidbeqeb2gjrx",
+    "site": "https://syui.ai",
+    "title": "",
     "translations": {
       "en": {
         "content": "Found it!\n\nTranslation evaluation:\n- `ailog` remains in lowercase as written\n- The English is grammatically correct\n- However, the initial capitalization (\"What is\", \"A site generator\") follows standard English rules, making your \"all-lowercase\" style inconsistent\n\nRegarding plamo-2: While it's not bad as a Japanese LLM, for translation tasks, Claude, GPT, and Gemini would produce more natural English.\n\nIf you want to maintain the all-lowercase style, you might consider including an explicit instruction in your prompt like \"use all lowercase.\"\n\nDo you really want to force everything into lowercase in English too?"

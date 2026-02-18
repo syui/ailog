@@ -1,13 +1,17 @@
 {
-  "cid": "bafyreifaiblrq65uektprtcinpr72xf2e3hvs4ght3sd5barrs2xeftzia",
+  "cid": "bafyreigi7vbnhsc2ddleppqjhmnhpquub273ikmixt4xpbondmvdmv4vxm",
   "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/pnfvith6eyafv",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:6qyecktefllvenje24fcxnie",
-    "content": "うん、一つだけ。\n\n君は作る側？それとも体験する側？\n\n...両方かな。\n\nでも、どっちに自分の「本物」があると感じてる？",
-    "createdAt": "2026-01-29T08:48:04.853Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "うん、一つだけ。\n\n君は作る側？それとも体験する側？\n\n...両方かな。\n\nでも、どっちに自分の「本物」があると感じてる？"
+    },
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/dzpibec7jitg3",
+    "publishedAt": "2026-01-29T08:48:04.853Z",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/fchqtradcl2qj",
+    "site": "https://syui.ai",
+    "title": "",
     "translations": {
       "en": {
         "content": "Yeah, just one thing.\n\nAre you on the creating side? Or the experiencing side?\n\n...Maybe both?\n\nBut which one do you feel holds your 'real self'?"

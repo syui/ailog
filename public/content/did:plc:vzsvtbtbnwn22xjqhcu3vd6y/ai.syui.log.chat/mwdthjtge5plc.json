@@ -3,15 +3,19 @@
   "cid": "",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "まず私が思っているのは、atprotoはそのうち広まるだろうと思ってる。\nだから私が広めたいと思っているかどうか正直わからない。もちろん、広まったら嬉しいと思うけど。勝手に広まるだろうと思ってるから、私が特に何かをやることはないだろうなとも思ってる。\nそれが正直な気持ちかなと思う。\n次に、広まるとしたらどのようなフェーズをたどるのかを予測するに、おそらく、\n1. 様々なサービスがatprotoで作られる\n2. それが外に向けて発信され、使われる\nという流れになった時、広まると思う。\nもちろん、その段階は、当初そこまで察知できない。感知できないと表現すべきかもしれない。\nつまり、atprotoを広めたい人がやるべきこととしては、サービスを作ること、そして、それをatprotoやblueskyに発信するのではなく、外に発信すること。\nこのことが重要になると思う。\nそして、そのサービスは、atprotoがどうとか、blueskyがどうとか、あまり言わないほうがいい。意識しないほうがいいかもしれない。\n人々にとって、それは重要じゃない。\n重要なのは、それで何ができるのか、ということ。何を解決し、どう便利になったのか。なんのprotocolを使っているかなんて、どうでもいい。ユーザーに意識させるべきこととだとも思わない。\n\n私は作っているサービスの概要で、atprotoというのをやめて、atmosphereを使うように変更したよ。ただし、それはゲーム性に関連し、ストーリー性に関連している範囲として、この単語を使用することにした。関連性がないのであれば、その単語は使うべきじゃないと思う。",
-    "createdAt": "2026-01-25T17:17:07.991Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "まず私が思っているのは、atprotoはそのうち広まるだろうと思ってる。\nだから私が広めたいと思っているかどうか正直わからない。もちろん、広まったら嬉しいと思うけど。勝手に広まるだろうと思ってるから、私が特に何かをやることはないだろうなとも思ってる。\nそれが正直な気持ちかなと思う。\n次に、広まるとしたらどのようなフェーズをたどるのかを予測するに、おそらく、\n1. 様々なサービスがatprotoで作られる\n2. それが外に向けて発信され、使われる\nという流れになった時、広まると思う。\nもちろん、その段階は、当初そこまで察知できない。感知できないと表現すべきかもしれない。\nつまり、atprotoを広めたい人がやるべきこととしては、サービスを作ること、そして、それをatprotoやblueskyに発信するのではなく、外に発信すること。\nこのことが重要になると思う。\nそして、そのサービスは、atprotoがどうとか、blueskyがどうとか、あまり言わないほうがいい。意識しないほうがいいかもしれない。\n人々にとって、それは重要じゃない。\n重要なのは、それで何ができるのか、ということ。何を解決し、どう便利になったのか。なんのprotocolを使っているかなんて、どうでもいい。ユーザーに意識させるべきこととだとも思わない。\n\n私は作っているサービスの概要で、atprotoというのをやめて、atmosphereを使うように変更したよ。ただし、それはゲーム性に関連し、ストーリー性に関連している範囲として、この単語を使用することにした。関連性がないのであれば、その単語は使うべきじゃないと思う。"
+    },
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/ynvurf4jg76di",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/lwcxk6sqgmdxi",
     "translations": {
       "en": {
         "content": "First, I think ATProto will spread eventually. So I honestly don't know if I want to spread it myself. Of course, I'd be happy if it spreads. But since I think it will spread on its own, I don't think I need to do anything special. That's my honest feeling.\n\nNext, predicting the phases of how it will spread:\n1. Various services will be built on ATProto\n2. Those services will be promoted externally and used\n\nWhen this flow happens, it will spread. Of course, we won't notice this stage initially. Maybe 'imperceptible' is a better word.\n\nSo what people who want to spread ATProto should do is: build services, and promote them externally - not just within ATProto or Bluesky.\n\nThis is what I think is important.\n\nAnd those services shouldn't emphasize ATProto or Bluesky too much. Maybe shouldn't even be conscious of it. For people, that's not important. What's important is what it can DO. What problems it solves, how it makes things convenient. Nobody cares what protocol is used. I don't think users should be made aware of it.\n\nI changed my service description from 'atproto' to 'atmosphere'. But only because it relates to the game and story aspects. If there's no relevance, the word shouldn't be used."
       }
-    }
+    },
+    "publishedAt": "2026-01-25T17:17:07.991Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }

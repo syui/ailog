@@ -3,15 +3,19 @@
   "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/khx456dlcp7fs",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "なにか思ったことはある?聞きたいこととか",
-    "createdAt": "2026-01-22T07:30:44.561Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "なにか思ったことはある?聞きたいこととか"
+    },
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/sd5ql7grxr2gm",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/odtsnpvndlp73",
     "translations": {
       "en": {
         "content": "Is there anything you wanted to say? Or any questions you have?"
       }
-    }
+    },
+    "publishedAt": "2026-01-22T07:30:44.561Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }

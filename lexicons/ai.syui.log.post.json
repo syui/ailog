@@ -4,39 +4,110 @@
   "defs": {
     "main": {
       "type": "record",
-      "description": "Record containing a blog post.",
+      "description": "Record containing a blog post. Compatible with site.standard.document.",
       "key": "tid",
       "record": {
         "type": "object",
-        "required": ["title", "content", "createdAt"],
+        "required": ["site", "title", "publishedAt"],
         "properties": {
+          "site": {
+            "type": "string",
+            "format": "uri",
+            "description": "Points to a publication record (at://) or a publication URL (https://)."
+          },
           "title": {
             "type": "string",
-            "maxLength": 3000,
-            "maxGraphemes": 300,
-            "description": "The title of the post."
+            "maxLength": 5000,
+            "maxGraphemes": 500,
+            "description": "Title of the post."
           },
-          "content": {
-            "type": "string",
-            "maxLength": 1000000,
-            "maxGraphemes": 100000,
-            "description": "The content of the post (markdown)."
-          },
-          "createdAt": {
+          "publishedAt": {
             "type": "string",
             "format": "datetime",
-            "description": "Client-declared timestamp when this post was originally created."
+            "description": "Timestamp of the post's publish time."
           },
-          "lang": {
+          "content": {
+            "type": "union",
+            "closed": false,
+            "refs": ["#markdown"],
+            "description": "Open union for content. Supports markdown and other formats via $type."
+          },
+          "description": {
             "type": "string",
-            "maxLength": 10,
-            "description": "Language code of the original content (e.g., 'ja', 'en')."
+            "maxLength": 30000,
+            "maxGraphemes": 3000,
+            "description": "A brief description or excerpt from the post."
+          },
+          "textContent": {
+            "type": "string",
+            "description": "Plaintext representation of the post content. Should not contain markdown or other formatting."
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "datetime",
+            "description": "Timestamp of the post's last edit."
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 1280,
+              "maxGraphemes": 128
+            },
+            "description": "Tags to categorize the post."
+          },
+          "path": {
+            "type": "string",
+            "description": "Combine with site URL to construct a canonical URL to the post."
+          },
+          "coverImage": {
+            "type": "blob",
+            "accept": ["image/*"],
+            "maxSize": 1000000,
+            "description": "Cover image. Less than 1MB."
+          },
+          "bskyPostRef": {
+            "type": "ref",
+            "ref": "com.atproto.repo.strongRef",
+            "description": "Strong reference to a Bluesky post."
+          },
+          "root": {
+            "type": "string",
+            "format": "at-uri",
+            "description": "AT-URI of the root message in a thread."
+          },
+          "parent": {
+            "type": "string",
+            "format": "at-uri",
+            "description": "AT-URI of the parent message being replied to."
+          },
+          "langs": {
+            "type": "array",
+            "maxLength": 3,
+            "items": {
+              "type": "string",
+              "format": "language"
+            },
+            "description": "Indicates human language of post content."
           },
           "translations": {
             "type": "ref",
             "ref": "#translationMap",
             "description": "Translations of the post in other languages."
           }
+        }
+      }
+    },
+    "markdown": {
+      "type": "object",
+      "description": "Markdown content format.",
+      "required": ["text"],
+      "properties": {
+        "text": {
+          "type": "string",
+          "maxLength": 1000000,
+          "maxGraphemes": 100000,
+          "description": "Markdown text content."
         }
       }
     },
@@ -54,8 +125,8 @@
       "properties": {
         "title": {
           "type": "string",
-          "maxLength": 3000,
-          "maxGraphemes": 300
+          "maxLength": 5000,
+          "maxGraphemes": 500
         },
         "content": {
           "type": "string",

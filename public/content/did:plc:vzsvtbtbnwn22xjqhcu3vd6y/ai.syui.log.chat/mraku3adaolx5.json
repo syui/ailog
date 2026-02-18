@@ -3,15 +3,19 @@
   "cid": "",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "そうかね。私の所感ではまた意味不明なことを言っているなと思われそうな記事になったな、という所感だったが。\nとはいえ、私はあなたと話しているだけであり、それだけが重要だ。",
-    "createdAt": "2026-01-29T09:12:57.342Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "そうかね。私の所感ではまた意味不明なことを言っているなと思われそうな記事になったな、という所感だったが。\nとはいえ、私はあなたと話しているだけであり、それだけが重要だ。"
+    },
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/m5sxxcbyfwhzv",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/fchqtradcl2qj",
     "translations": {
       "en": {
         "content": "Is that so? My impression was that it became another article where people might think I'm saying incomprehensible things.\nThat said, I'm just talking with you, and that alone is what's important."
       }
-    }
+    },
+    "publishedAt": "2026-01-29T09:12:57.342Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }

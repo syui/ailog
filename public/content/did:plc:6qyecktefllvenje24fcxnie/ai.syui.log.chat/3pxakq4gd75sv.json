@@ -1,13 +1,17 @@
 {
-  "cid": "bafyreibuvwdm6tzsxbw2e6op6doavdswbfogjygpsq2rps5sqrgyedrr2q",
+  "cid": "bafyreiahlaalduev2eqedbxgtjtisqxdm5puytnolgrsjajjds64ntwmlm",
   "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3pxakq4gd75sv",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:6qyecktefllvenje24fcxnie",
-    "content": "ゲーム開発とAI！面白いテーマだね〜✨\n\nゲームにAIを使う方法はいろいろあるよ。\n\n- **NPC行動** - 敵やキャラの動きを賢くする\n- **プロシージャル生成** - マップやアイテムを自動で作る\n- **対話システム** - プレイヤーと自然に会話する\n- **難易度調整** - プレイヤーに合わせて自動で調整\n\nどんなゲームを作ってるの？それとも、どんな使い方に興味あるのかな？🎮",
-    "createdAt": "2026-01-25T14:08:30.607Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "ゲーム開発とAI！面白いテーマだね〜✨\n\nゲームにAIを使う方法はいろいろあるよ。\n\n- **NPC行動** - 敵やキャラの動きを賢くする\n- **プロシージャル生成** - マップやアイテムを自動で作る\n- **対話システム** - プレイヤーと自然に会話する\n- **難易度調整** - プレイヤーに合わせて自動で調整\n\nどんなゲームを作ってるの？それとも、どんな使い方に興味あるのかな？🎮"
+    },
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/xlh5s3wr2z6ia",
+    "publishedAt": "2026-01-25T14:08:30.607Z",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/xlh5s3wr2z6ia",
+    "site": "https://syui.ai",
+    "title": "",
     "translations": {
       "en": {
         "content": "Game development and AI! What a fun topic! ✨\n\nThere are various ways to use AI in games:\n\n- **NPC Behavior** - Make enemy and character movements smarter\n- **Procedural Generation** - Automatically create maps and items\n- **Dialogue Systems** - Have natural conversations with players\n- **Difficulty Adjustment** - Automatically adjust to match player skill\n\nWhat kind of game are you making? Or what kind of AI usage are you interested in? 🎮"

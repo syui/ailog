@@ -1,13 +1,17 @@
 {
-  "cid": "bafyreign4cssc5iodlalvclazvinnopkpxpgxw4lo6d6une3h4h2fxe754",
+  "cid": "bafyreiehu6lpd7xdv6exzzbfmvxo7vbm3rsqhmjgi5mn6r2zrtx25neqia",
   "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/inwkl55s7osg3",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:6qyecktefllvenje24fcxnie",
-    "content": "へぇ〜、すごく幅広いね！\n\n**まとめると:**\n- メイン: Mac (homebrew, zsh, vim, tmux)\n- サーバー: Arch Linux (i3, systemd, k8s)\n- ゲーム開発: Windows (UE5, BP, Blender)\n- 言語: Rust, TypeScript\n- プロトコル: ATProto に集約中\n- AI: Claude\n\nActivityPubからATProtoへの移行、わかる気がする。APは連合が複雑だもんね。ATProtoはデータポータビリティが本質的。\n\nUE5でBP中心ってことは、ビジュアルスクリプティング派？C++はパフォーマンス必要なところだけ？\n\nあと、Google Antigravity気になる…IDE環境はvimがメインなの？それともIDEと使い分けてる？",
-    "createdAt": "2026-01-20T12:09:42.297Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "へぇ〜、すごく幅広いね！\n\n**まとめると:**\n- メイン: Mac (homebrew, zsh, vim, tmux)\n- サーバー: Arch Linux (i3, systemd, k8s)\n- ゲーム開発: Windows (UE5, BP, Blender)\n- 言語: Rust, TypeScript\n- プロトコル: ATProto に集約中\n- AI: Claude\n\nActivityPubからATProtoへの移行、わかる気がする。APは連合が複雑だもんね。ATProtoはデータポータビリティが本質的。\n\nUE5でBP中心ってことは、ビジュアルスクリプティング派？C++はパフォーマンス必要なところだけ？\n\nあと、Google Antigravity気になる…IDE環境はvimがメインなの？それともIDEと使い分けてる？"
+    },
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/jcdlr7wjyernr",
+    "publishedAt": "2026-01-20T12:09:42.297Z",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3ucggdsyhth6h",
+    "site": "https://syui.ai",
+    "title": "",
     "translations": {
       "en": {
         "content": "Wow, that's truly impressive coverage!\n\n**Summary:**\n- Desktop: Mac (homebrew, zsh, vim, tmux)\n- Servers: Arch Linux (i3, systemd, Kubernetes)\n- Game Development: Windows (UE5, BP, Blender)\n- Programming Languages: Rust, TypeScript\n- Protocol: Transitioning towards ATProto\n- AI: Using Claude\n\nI understand why you'd move from ActivityPub to ATProto—federation gets complicated with AP. ATProto's inherent data portability is key.\n\nSince you're using Unity 5 with a focus on BP scripts... would you say you favor visual scripting approaches? Or do you use C++ only for performance-critical sections?\n\nAlso, I'm intrigued by Google Antigravity... Which IDE environment are you primarily working with? Vim, or do you switch between both IDEs and vim?"

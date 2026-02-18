@@ -3,15 +3,19 @@
   "cid": "",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "大変さもそうだけど、2dは、プレイヤーとしても安心して見ていられるところが大きい。\nそして、やることもわかりやすい。\nつまり、個人開発のゲームは、2dのほうが面白そうに見える。",
-    "createdAt": "2026-01-25T14:45:04.266Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "大変さもそうだけど、2dは、プレイヤーとしても安心して見ていられるところが大きい。\nそして、やることもわかりやすい。\nつまり、個人開発のゲームは、2dのほうが面白そうに見える。"
+    },
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/salthoyxqr3vg",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/xlh5s3wr2z6ia",
     "translations": {
       "en": {
         "content": "It's not just about the difficulty - 2D is also easier for players to watch comfortably.\nAnd it's also easier to understand what to do.\nIn other words, indie games look more interesting when they're 2D."
       }
-    }
+    },
+    "publishedAt": "2026-01-25T14:45:04.266Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }

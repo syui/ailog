@@ -3,15 +3,19 @@
   "cid": "",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "今回は、完全無課金でアルティメットを攻略する方法を考えていくよ。\n私と君の意見は違うから、君は君で私の意見は全部無視して、一から考えるんだ。\nまず、私の意見を述べる。\n完全無課金でアルティメットをクリアするには、というテーマで考えてみる。\n1. 原神初期からプレイ開始\n2. キャラを引かずに原石をずっとためている\n3. ナタ、ナドクライで原石を放出、強キャラのみを引く。星4は0消費とする\n私のケースで手持ちキャラの保有、武器と凸数から割り当てを考え、計30とし、その割当を考える。\n\n|元素|名前|数|\n|---|---|---|\n|炎|マーヴィカ|7|\n|氷|||\n|風|||\n|雷|イネファ|1|\n|岩|シロネン|3|\n|水|フリーナ|1|\n|水|コロンビーナ|7|\n|草|ナヒーダ|1|\n|月|ラウマ|3|\n|月|ネフェル|7|\n\nPT例:\nPT1: ネフェル(c6) + ラウマ(c2) + ナヒーダ(c0) + 行秋(c6)\nPT2: コロンビーナ(c6) + イネファ(c0) + 主人公(c6) + 忍(c6)\nPT3: マーヴィカ(c6) + シロネン(c2) + フリーナ(c0) + レイラ(c6)",
-    "createdAt": "2026-02-06T11:54:15.464Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "今回は、完全無課金でアルティメットを攻略する方法を考えていくよ。\n私と君の意見は違うから、君は君で私の意見は全部無視して、一から考えるんだ。\nまず、私の意見を述べる。\n完全無課金でアルティメットをクリアするには、というテーマで考えてみる。\n1. 原神初期からプレイ開始\n2. キャラを引かずに原石をずっとためている\n3. ナタ、ナドクライで原石を放出、強キャラのみを引く。星4は0消費とする\n私のケースで手持ちキャラの保有、武器と凸数から割り当てを考え、計30とし、その割当を考える。\n\n|元素|名前|数|\n|---|---|---|\n|炎|マーヴィカ|7|\n|氷|||\n|風|||\n|雷|イネファ|1|\n|岩|シロネン|3|\n|水|フリーナ|1|\n|水|コロンビーナ|7|\n|草|ナヒーダ|1|\n|月|ラウマ|3|\n|月|ネフェル|7|\n\nPT例:\nPT1: ネフェル(c6) + ラウマ(c2) + ナヒーダ(c0) + 行秋(c6)\nPT2: コロンビーナ(c6) + イネファ(c0) + 主人公(c6) + 忍(c6)\nPT3: マーヴィカ(c6) + シロネン(c2) + フリーナ(c0) + レイラ(c6)"
+    },
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3me6tlrez7l23",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3me6tlrexwc22",
     "translations": {
       "en": {
         "content": "This time, we'll think about how to clear Ultimate as a completely free-to-play player.\nSince your opinion and mine are different, I want you to ignore all my opinions and think from scratch.\nFirst, let me state my opinion.\nLet's think about the theme: How to clear Ultimate as completely F2P.\n1. Started playing from early Genshin\n2. Saved primogems without pulling characters\n3. Released primogems in Natlan/Nadoklai to pull only strong characters. 4-stars count as 0 cost.\nConsidering my owned characters, weapons and constellation counts, total allocation is 30.\n\n|Element|Name|Count|\n|---|---|---|\n|Pyro|Mavika|7|\n|Cryo|||\n|Anemo|||\n|Electro|Inepha|1|\n|Geo|Siorone|3|\n|Hydro|Furina|1|\n|Hydro|Columbina|7|\n|Dendro|Nahida|1|\n|Luna|Rauma|3|\n|Luna|Nephel|7|\n\nTeam examples:\nPT1: Nephel(C6) + Rauma(C2) + Nahida(C0) + Xingqiu(C6)\nPT2: Columbina(C6) + Inepha(C0) + Traveler(C6) + Shinobu(C6)\nPT3: Mavika(C6) + Siorone(C2) + Furina(C0) + Layla(C6)"
       }
-    }
+    },
+    "publishedAt": "2026-02-06T11:54:15.464Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }

@@ -3,15 +3,19 @@
   "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/27xox352hir2g",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "いや、単純にこれはいいものだと思って使っている。atprotoの技術面と思想の核を評価したからだと思う。",
-    "createdAt": "2026-01-22T07:37:25.082Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "いや、単純にこれはいいものだと思って使っている。atprotoの技術面と思想の核を評価したからだと思う。"
+    },
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/qoyadv6aswigr",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/odtsnpvndlp73",
     "translations": {
       "en": {
         "content": "No, I simply use it because I find it to be genuinely good. I think it's because of the technical approach and core philosophy behind atproto."
       }
-    }
+    },
+    "publishedAt": "2026-01-22T07:37:25.082Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }

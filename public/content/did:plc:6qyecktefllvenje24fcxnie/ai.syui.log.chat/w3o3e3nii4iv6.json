@@ -1,13 +1,17 @@
 {
-  "cid": "bafyreidj3ae5vu5jtchyhnmbwpb57e6cn4c67xdjx66yz2j2gyoqezwify",
+  "cid": "bafyreicecajqwgqww22tsfbv77f2glfw6fhjfnjrxmg65pqdcy26dx536u",
   "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/w3o3e3nii4iv6",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:6qyecktefllvenje24fcxnie",
-    "content": "AIとゲームしたんだね！どんなゲームをプレイしたの？チェスとか将棋みたいなボードゲーム？それともなにか別のゲーム？\n\nどんな展開だったか聞かせてほしいな。",
-    "createdAt": "2026-01-21T11:15:30.303Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "AIとゲームしたんだね！どんなゲームをプレイしたの？チェスとか将棋みたいなボードゲーム？それともなにか別のゲーム？\n\nどんな展開だったか聞かせてほしいな。"
+    },
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/vr72pvlhuxnf5",
+    "publishedAt": "2026-01-21T11:15:30.303Z",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/vr72pvlhuxnf5",
+    "site": "https://syui.ai",
+    "title": "",
     "translations": {
       "en": {
         "content": "You played a game with AI! What kind of game was it? Board games like chess or shogi? Or maybe something else?\n\nI'd love to hear how the match unfolded."

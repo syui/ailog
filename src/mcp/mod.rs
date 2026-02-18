@@ -152,7 +152,6 @@ fn save_chat_record(
     output_dir: &str,
     did: &str,
     content: &str,
-    author_did: &str,
     root_uri: Option<&str>,
     parent_uri: Option<&str>,
     translations: Option<&std::collections::HashMap<String, Translation>>,
@@ -161,11 +160,16 @@ fn save_chat_record(
     let now = chrono::Utc::now().format("%Y-%m-%dT%H:%M:%S%.3fZ").to_string();
     let uri = format!("at://{}/ai.syui.log.chat/{}", did, rkey);
 
+    let site = std::env::var("SITE_URL").unwrap_or_else(|_| "https://syui.ai".to_string());
     let mut value = json!({
         "$type": "ai.syui.log.chat",
-        "content": content,
-        "author": author_did,
-        "createdAt": now,
+        "site": site,
+        "title": "",
+        "content": {
+            "$type": "ai.syui.log.chat#markdown",
+            "text": content,
+        },
+        "publishedAt": now,
     });
 
     if let Some(root) = root_uri {
@@ -248,7 +252,6 @@ fn handle_chat_save(params: ChatSaveParams) -> Result<String> {
         &output_dir,
         &user_did,
         &params.user_message,
-        &user_did,
         session.root_uri.as_deref(),
         session.last_uri.as_deref(),
         params.user_translations.as_ref(),
@@ -264,7 +267,6 @@ fn handle_chat_save(params: ChatSaveParams) -> Result<String> {
         &output_dir,
         &bot_did,
         &params.bot_response,
-        &bot_did,
         session.root_uri.as_deref(),
         Some(&user_uri),
         params.bot_translations.as_ref(),
@@ -307,8 +309,10 @@ fn handle_chat_list() -> Result<String> {
         let file_path = collection_dir.join(format!("{}.json", rkey));
         if let Ok(content) = fs::read_to_string(&file_path) {
             if let Ok(record) = serde_json::from_str::<Value>(&content) {
-                if let Some(msg) = record["value"]["content"].as_str() {
-                    messages.push(format!("- {}", msg));
+                let msg = record["value"]["content"]["text"].as_str()
+                    .or_else(|| record["value"]["content"].as_str());
+                if let Some(text) = msg {
+                    messages.push(format!("- {}", text));
                 }
             }
         }

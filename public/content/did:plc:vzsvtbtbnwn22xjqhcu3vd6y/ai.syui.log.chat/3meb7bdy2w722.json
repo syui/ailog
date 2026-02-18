@@ -3,15 +3,19 @@
   "cid": "",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "ここの続きから会話を続けられる？\nstart: at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3me6tlrexwc22\nend: at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3me6uf4masj2f",
-    "createdAt": "2026-02-07T10:24:12.899Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "ここの続きから会話を続けられる？\nstart: at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3me6tlrexwc22\nend: at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3me6uf4masj2f"
+    },
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3me6uf4masj2f",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3me6tlrexwc22",
     "translations": {
       "en": {
         "content": "Can we continue the conversation from here?\nstart: at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3me6tlrexwc22\nend: at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3me6uf4masj2f"
       }
-    }
+    },
+    "publishedAt": "2026-02-07T10:24:12.899Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }

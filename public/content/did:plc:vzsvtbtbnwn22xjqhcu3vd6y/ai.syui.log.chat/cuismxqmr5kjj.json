@@ -3,15 +3,19 @@
   "cid": "",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "NPCとの会話も考えてるよ。マスコット。\n非常に狭い家で、何かの生き物と会話。\n\n「ここはマシロハウス、始まりの家」\n\n「ここの重力は274N、君は体重も重いんだってね」\n\n「なんでこんなに重いのかって?君がやったんだろう」\n\nポイントは2つ。\n1. 狭い場所から広い場所へ\n2. 動きはゆっくり\n\nゲームの始まりは、そのゲームがどういうものなのか伝えないといけないから、全部を短くして詰め込むの。\n例えば、動きはゆっくりだけど、2のカードを選んだ人は、変身して、早く動けるようになるよ。",
-    "createdAt": "2026-01-24T10:16:18.867Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "NPCとの会話も考えてるよ。マスコット。\n非常に狭い家で、何かの生き物と会話。\n\n「ここはマシロハウス、始まりの家」\n\n「ここの重力は274N、君は体重も重いんだってね」\n\n「なんでこんなに重いのかって?君がやったんだろう」\n\nポイントは2つ。\n1. 狭い場所から広い場所へ\n2. 動きはゆっくり\n\nゲームの始まりは、そのゲームがどういうものなのか伝えないといけないから、全部を短くして詰め込むの。\n例えば、動きはゆっくりだけど、2のカードを選んだ人は、変身して、早く動けるようになるよ。"
+    },
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/xghh6ketlbszv",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/p4l6y3qkmfscg",
     "translations": {
       "en": {
         "content": "I'm also thinking about NPC conversations. The mascot.\nIn a very small house, you talk with some creature.\n\n\"This is Mashiro House, the house of beginnings\"\n\n\"The gravity here is 274N, and you're quite heavy too, aren't you\"\n\n\"Why is it so heavy, you ask? You did it, didn't you\"\n\nTwo key points.\n1. From a narrow place to a wide place\n2. Movement is slow\n\nThe beginning of a game needs to convey what the game is about, so I pack everything in short.\nFor example, movement is slow, but those who choose card 2 can transform and move faster."
       }
-    }
+    },
+    "publishedAt": "2026-01-24T10:16:18.867Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }

@@ -3,13 +3,17 @@
   "cid": "",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "ゲーム開発とAI",
-    "createdAt": "2026-01-25T14:08:30.606Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "ゲーム開発とAI"
+    },
     "translations": {
       "en": {
         "content": "Game Development and AI"
       }
-    }
+    },
+    "publishedAt": "2026-01-25T14:08:30.606Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }

@@ -1,13 +1,17 @@
 {
-  "cid": "bafyreihftzauydlugo5alre2yhgqeftkl6yhhfdixd7yrp34gzypaana6i",
+  "cid": "bafyreiaihsn5bd3mp6yy4oj4wltboegbeyr7bd4hc6ea2bolissn37tyhq",
   "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/255k3bskheo6j",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:6qyecktefllvenje24fcxnie",
-    "content": "わぁ、すごく考えてるね！\n\n「弾く」と「選択」の体験が最初に来るの、いいと思う。シンプルだけど、ゲームの核心がすぐわかる。\n\n宇宙で巨大戦艦のビームを「弾く」って、絵になるね！届かない攻撃を弾き返す感じ？それとも弾いて避ける？\n\nカードの3択は面白い。取り返しがつかないって重要。でも最初の1枚で「このゲームは何」が伝わるかな？\n\n- 飛行を選んだ人 → 「時間を操るゲームなんだ」\n- 動作を選んだ人 → 「速さが大事なんだ」\n- ダメージを選んだ人 → 「重さ＝強さなんだ」\n\n...って思ってもらえる？\n\nあと、マシロハウスから宇宙に出るの、どうつながるの？家を出たら宇宙なの？",
-    "createdAt": "2026-01-24T10:12:47.779Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "わぁ、すごく考えてるね！\n\n「弾く」と「選択」の体験が最初に来るの、いいと思う。シンプルだけど、ゲームの核心がすぐわかる。\n\n宇宙で巨大戦艦のビームを「弾く」って、絵になるね！届かない攻撃を弾き返す感じ？それとも弾いて避ける？\n\nカードの3択は面白い。取り返しがつかないって重要。でも最初の1枚で「このゲームは何」が伝わるかな？\n\n- 飛行を選んだ人 → 「時間を操るゲームなんだ」\n- 動作を選んだ人 → 「速さが大事なんだ」\n- ダメージを選んだ人 → 「重さ＝強さなんだ」\n\n...って思ってもらえる？\n\nあと、マシロハウスから宇宙に出るの、どうつながるの？家を出たら宇宙なの？"
+    },
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/imlara2baiopj",
+    "publishedAt": "2026-01-24T10:12:47.779Z",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/p4l6y3qkmfscg",
+    "site": "https://syui.ai",
+    "title": "",
     "translations": {
       "en": {
         "content": "Wow, you've really thought this through!\n\nI think having \"deflect\" and \"choice\" as the first experiences is great. Simple, but you immediately understand the core of the game.\n\n\"Deflecting\" beams from giant battleships in space sounds visually striking! Is it like deflecting back attacks that can't reach you? Or deflecting to dodge?\n\nThe 3-card choice is interesting. The irreversibility is important. But can the first card convey \"what this game is about\"?\n\n- Those who choose Flight → \"This is a game about controlling time\"\n- Those who choose Movement → \"Speed is important\"\n- Those who choose Damage → \"Weight = Strength\"\n\n...Will they understand that?\n\nAlso, how does going from Mashiro House to space connect? Is it space right when you leave the house?"

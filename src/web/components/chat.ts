@@ -5,13 +5,13 @@ import { getCurrentLang } from './mode-tabs'
 // Get translated content for a chat message
 function getTranslatedContent(msg: ChatMessage): string {
   const currentLang = getCurrentLang()
-  const originalLang = msg.value.lang || 'ja'
+  const originalLang = msg.value.langs?.[0] || 'ja'
   const translations = msg.value.translations
 
   if (translations && currentLang !== originalLang && translations[currentLang]) {
-    return translations[currentLang].content || msg.value.content
+    return translations[currentLang].content || msg.value.content.text
   }
-  return msg.value.content
+  return msg.value.content.text
 }
 
 // Escape HTML to prevent XSS
@@ -34,6 +34,11 @@ function formatChatTime(dateStr: string): string {
 // Extract rkey from AT URI
 function getRkeyFromUri(uri: string): string {
   return uri.split('/').pop() || ''
+}
+
+// Extract DID from AT URI (at://did:plc:xxx/collection/rkey → did:plc:xxx)
+function getDidFromUri(uri: string): string {
+  return uri.replace('at://', '').split('/')[0]
 }
 
 // Profile info for authors
@@ -96,7 +101,7 @@ export function renderChatThreadList(
   const rootMessages: ChatMessage[] = []
 
   for (const msg of messages) {
-    if (msg.value.author !== userDid) continue
+    if (getDidFromUri(msg.uri) !== userDid) continue
 
     if (!msg.value.root) {
       // No root = explicit conversation start
@@ -104,7 +109,7 @@ export function renderChatThreadList(
     } else if (!allUris.has(msg.value.root)) {
       // Orphaned root - keep only the oldest message per orphaned root
       const existing = orphanedRootFirstMsg.get(msg.value.root)
-      if (!existing || new Date(msg.value.createdAt) < new Date(existing.value.createdAt)) {
+      if (!existing || new Date(msg.value.publishedAt) < new Date(existing.value.publishedAt)) {
         orphanedRootFirstMsg.set(msg.value.root, msg)
       }
     }
@@ -121,14 +126,14 @@ export function renderChatThreadList(
 
   const authors = buildAuthorMap(userDid, userHandle, botDid, botHandle, userProfile, botProfile, pds)
 
-  // Sort by createdAt (newest first)
+  // Sort by publishedAt (newest first)
   const sorted = [...rootMessages].sort((a, b) =>
-    new Date(b.value.createdAt).getTime() - new Date(a.value.createdAt).getTime()
+    new Date(b.value.publishedAt).getTime() - new Date(a.value.publishedAt).getTime()
   )
 
   const items = sorted.map(msg => {
-    const authorDid = msg.value.author
-    const time = formatChatTime(msg.value.createdAt)
+    const authorDid = getDidFromUri(msg.uri)
+    const time = formatChatTime(msg.value.publishedAt)
     const rkey = getRkeyFromUri(msg.uri)
     const author = authors.get(authorDid) || { did: authorDid, handle: authorDid.slice(0, 20) + '...' }
 
@@ -206,14 +211,14 @@ export function renderChatThread(
 
   const authors = buildAuthorMap(userDid, userHandle, botDid, botHandle, userProfile, botProfile, pds)
 
-  // Sort by createdAt
+  // Sort by publishedAt
   const sorted = [...threadMessages].sort((a, b) =>
-    new Date(a.value.createdAt).getTime() - new Date(b.value.createdAt).getTime()
+    new Date(a.value.publishedAt).getTime() - new Date(b.value.publishedAt).getTime()
   )
 
   const items = sorted.map(msg => {
-    const authorDid = msg.value.author
-    const time = formatChatTime(msg.value.createdAt)
+    const authorDid = getDidFromUri(msg.uri)
+    const time = formatChatTime(msg.value.publishedAt)
     const rkey = getRkeyFromUri(msg.uri)
     const author = authors.get(authorDid) || { did: authorDid, handle: authorDid.slice(0, 20) + '...' }
 
@@ -287,7 +292,7 @@ export function renderChatEditForm(
   userHandle: string
 ): string {
   const rkey = message.uri.split('/').pop() || ''
-  const content = message.value.content
+  const content = message.value.content.text
 
   return `
     <div class="chat-edit-container">

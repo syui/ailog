@@ -239,9 +239,13 @@ export async function createPost(
       collection,
       record: {
         $type: collection,
+        site: window.location.origin,
         title,
-        content,
-        createdAt: new Date().toISOString(),
+        content: {
+          $type: `${collection}#markdown`,
+          text: content,
+        },
+        publishedAt: new Date().toISOString(),
       },
     })
 
@@ -264,7 +268,7 @@ export async function updatePost(
   try {
     // Fetch existing record to preserve translations
     let existingTranslations: unknown = undefined
-    let existingCreatedAt: unknown = new Date().toISOString()
+    let existingPublishedAt: unknown = new Date().toISOString()
     try {
       const existing = await agent.com.atproto.repo.getRecord({
         repo: agent.assertDid,
@@ -274,8 +278,8 @@ export async function updatePost(
       if (existing.data.value) {
         const value = existing.data.value as Record<string, unknown>
         existingTranslations = value.translations
-        if (value.createdAt) {
-          existingCreatedAt = value.createdAt
+        if (value.publishedAt) {
+          existingPublishedAt = value.publishedAt
         }
       }
     } catch {
@@ -284,9 +288,13 @@ export async function updatePost(
 
     const record: Record<string, unknown> = {
       $type: collection,
+      site: window.location.origin,
       title,
-      content,
-      createdAt: existingCreatedAt,
+      content: {
+        $type: `${collection}#markdown`,
+        text: content,
+      },
+      publishedAt: existingPublishedAt,
     }
 
     if (existingTranslations) {

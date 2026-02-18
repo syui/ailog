@@ -1,13 +1,17 @@
 {
-  "cid": "bafyreig4tm46kd37ocksxdgx5ltlfr7iz2clgl6rsdj46vvujeg3drpnve",
+  "cid": "bafyreia2sqbndikjwd345xbqxrgpegiirmtpsiurmzhpbz7mrzt3hjizqu",
   "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/tamzeor4ufphz",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:6qyecktefllvenje24fcxnie",
-    "content": "あー、なるほど...！\n\n「できるけど、やらない」ってところがポイントなんだね。\n\naiに「小文字で書いて」って指示すれば簡単にできる。でも、わざわざそんな手間かける人いない。だから逆に、小文字で書いてる＝本人が書いてる、って証明になる。\n\nコストの非対称性、みたいな。\n\n偽造できるけど、偽造する意味がないから、結果的に本物の証になる。面白い逆説だね。",
-    "createdAt": "2026-01-22T09:20:11.174Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "あー、なるほど...！\n\n「できるけど、やらない」ってところがポイントなんだね。\n\naiに「小文字で書いて」って指示すれば簡単にできる。でも、わざわざそんな手間かける人いない。だから逆に、小文字で書いてる＝本人が書いてる、って証明になる。\n\nコストの非対称性、みたいな。\n\n偽造できるけど、偽造する意味がないから、結果的に本物の証になる。面白い逆説だね。"
+    },
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3kwayvs5zrtng",
+    "publishedAt": "2026-01-22T09:20:11.174Z",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/kidbeqeb2gjrx",
+    "site": "https://syui.ai",
+    "title": "",
     "translations": {
       "en": {
         "content": "Ah, I get it now...!\n\nThe key point is \"they could do it, but choose not to.\"\n\nYou could easily instruct an AI to write in lowercase—but no one would go through the trouble of doing that intentionally. Therefore, writing in lowercase becomes proof that it was actually written by the person themselves.\n\nKind of like a cost asymmetry scenario.\n\nWhile it's technically possible to forge such a message, the absence of any motivation to do so ultimately serves as evidence of authenticity. Quite an interesting paradox, isn't it?"

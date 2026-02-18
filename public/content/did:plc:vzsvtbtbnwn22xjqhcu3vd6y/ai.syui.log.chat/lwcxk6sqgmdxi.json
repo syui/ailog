@@ -3,13 +3,17 @@
   "cid": "",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "atprotoと広めること",
-    "createdAt": "2026-01-25T17:01:26.339Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "atprotoと広めること"
+    },
     "translations": {
       "en": {
         "content": "ATProto and spreading it"
       }
-    }
+    },
+    "publishedAt": "2026-01-25T17:01:26.339Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }

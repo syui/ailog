@@ -3,15 +3,19 @@
   "cid": "",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "うん、そうだね。その分類は非常にわかりやすい。\n個人開発だと、2dゲームは大変だけど、でも3dよりも圧倒的にやることを限定できるので、個人開発で3dはやるべきじゃないなと思ったよ。",
-    "createdAt": "2026-01-25T14:41:56.819Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "うん、そうだね。その分類は非常にわかりやすい。\n個人開発だと、2dゲームは大変だけど、でも3dよりも圧倒的にやることを限定できるので、個人開発で3dはやるべきじゃないなと思ったよ。"
+    },
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/jlfx7eszcubu5",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/xlh5s3wr2z6ia",
     "translations": {
       "en": {
         "content": "Yeah, that's right. That classification is very easy to understand.\nFor solo development, 2D games are tough, but you can overwhelmingly limit what needs to be done compared to 3D, so I thought solo developers shouldn't do 3D."
       }
-    }
+    },
+    "publishedAt": "2026-01-25T14:41:56.819Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }

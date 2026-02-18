@@ -3,13 +3,17 @@
   "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/smrgeplyw5wmr",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "AIとの会話をblogに",
-    "createdAt": "2026-01-22T08:22:43.604Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "AIとの会話をblogに"
+    },
     "translations": {
       "en": {
         "content": "Converting AI conversations into blog"
       }
-    }
+    },
+    "publishedAt": "2026-01-22T08:22:43.604Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }

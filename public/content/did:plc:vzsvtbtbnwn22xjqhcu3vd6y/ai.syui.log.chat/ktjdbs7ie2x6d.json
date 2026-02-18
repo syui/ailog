@@ -3,15 +3,19 @@
   "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/ktjdbs7ie2x6d",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "え、ここにあると思うけど。シンボリックリンクではあるけどね",
-    "createdAt": "2026-01-22T09:18:34.003Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "え、ここにあると思うけど。シンボリックリンクではあるけどね"
+    },
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/amwpl3iupt6wn",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/kidbeqeb2gjrx",
     "translations": {
       "en": {
         "content": "Um, I think it's here. Well, it's a symbolic link though."
       }
-    }
+    },
+    "publishedAt": "2026-01-22T09:18:34.003Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }

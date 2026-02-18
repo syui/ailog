@@ -1,13 +1,17 @@
 {
-  "cid": "bafyreihv5bmfboih3o3rbyim256qu5t2v3zocjev4tp52pwyev5eikthou",
+  "cid": "bafyreiejdhelbb7idkpgfg6zgxsozvrof4p6pm6qeqjecdb3ptxim4krpi",
   "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/kazagpz54fz4y",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:6qyecktefllvenje24fcxnie",
-    "content": "翻訳処理を変えたんだね！どんなふうに変えたの？前はどうやってたの？",
-    "createdAt": "2026-01-25T15:37:54.649Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "翻訳処理を変えたんだね！どんなふうに変えたの？前はどうやってたの？"
+    },
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/uizfuocgllffc",
+    "publishedAt": "2026-01-25T15:37:54.649Z",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/uizfuocgllffc",
+    "site": "https://syui.ai",
+    "title": "",
     "translations": {
       "en": {
         "content": "You changed the translation processing! How did you change it? What was the previous approach?"

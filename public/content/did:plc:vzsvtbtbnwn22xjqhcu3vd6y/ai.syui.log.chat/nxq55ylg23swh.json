@@ -3,15 +3,19 @@
   "cid": "",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "しかし、これも非常に興味深いことに、blueskyもatmosphereも一般固有名詞を使用していることだね。\nそれは技術名(製品名)であり、一般的な単語(言葉)でもある。\n命名が意図的だったのかどうかはわからないけど、でも一種のセンスを感じさせるネーミングセンスだと思ってる。\nこのセンスが、実はatprotoが広まると私が確信している一つの要素でもある。",
-    "createdAt": "2026-01-25T17:21:02.400Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "しかし、これも非常に興味深いことに、blueskyもatmosphereも一般固有名詞を使用していることだね。\nそれは技術名(製品名)であり、一般的な単語(言葉)でもある。\n命名が意図的だったのかどうかはわからないけど、でも一種のセンスを感じさせるネーミングセンスだと思ってる。\nこのセンスが、実はatprotoが広まると私が確信している一つの要素でもある。"
+    },
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/wyvk2hwtx4iie",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/lwcxk6sqgmdxi",
     "translations": {
       "en": {
         "content": "However, this is also very interesting - both 'bluesky' and 'atmosphere' use common nouns. They are technology names (product names) and also general words. I don't know if the naming was intentional, but I think it shows a certain naming sense. This sense is actually one of the elements that makes me confident ATProto will spread."
       }
-    }
+    },
+    "publishedAt": "2026-01-25T17:21:02.400Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }

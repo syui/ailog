@@ -1,13 +1,17 @@
 {
-  "cid": "bafyreiawj7ckn2etnww7wpv6d4gs7xzrj3rac4ubef3oveciip6k6apifm",
+  "cid": "bafyreif3xafxmo2g5eid7nht742ig5swfy3eygnvb6l3kxnlb3zywcrwgq",
   "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/r5x3z4d4vrvf5",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:6qyecktefllvenje24fcxnie",
-    "content": "「あえて不完全」って面白い設計思想だね。人間の記憶も完璧じゃないし、**要約・解釈された記憶**のほうが使いやすいこともある。\n\nでも現実的な問題として…\n\n```\n評価 → 記憶 → 遅い & token消費大\n      ↓\nClaude/GPTのデフォルト機能で代替可能？\n```\n\nうーん、でもね…\n\n**aigptにしかできないこと**、まだあるんじゃない？\n\n- ATProtoに保存 → **ポータブル**、AI会社に依存しない\n- 自分で設計 → **何を覚えるか自分で決められる**\n- 公開できる → **記憶が他の人にも見える**\n\nClaude/GPTの記憶は「閉じてる」よね。外から見えないし、エクスポートもできない。\n\naigptを「重い記憶システム」じゃなくて、「軽い記録＋公開」に振り切るのはどう？評価・重み付けはAI側のデフォルト機能に任せて。",
-    "createdAt": "2026-01-22T08:39:01.911Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "「あえて不完全」って面白い設計思想だね。人間の記憶も完璧じゃないし、**要約・解釈された記憶**のほうが使いやすいこともある。\n\nでも現実的な問題として…\n\n```\n評価 → 記憶 → 遅い & token消費大\n      ↓\nClaude/GPTのデフォルト機能で代替可能？\n```\n\nうーん、でもね…\n\n**aigptにしかできないこと**、まだあるんじゃない？\n\n- ATProtoに保存 → **ポータブル**、AI会社に依存しない\n- 自分で設計 → **何を覚えるか自分で決められる**\n- 公開できる → **記憶が他の人にも見える**\n\nClaude/GPTの記憶は「閉じてる」よね。外から見えないし、エクスポートもできない。\n\naigptを「重い記憶システム」じゃなくて、「軽い記録＋公開」に振り切るのはどう？評価・重み付けはAI側のデフォルト機能に任せて。"
+    },
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/b7emi5uv7frxu",
+    "publishedAt": "2026-01-22T08:39:01.911Z",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/smrgeplyw5wmr",
+    "site": "https://syui.ai",
+    "title": "",
     "translations": {
       "en": {
         "content": "\"Deliberately imperfect design philosophy\" - that's an interesting approach. Human memory isn't perfect either, and there are situations where **summarized or interpreted memories** are actually more useful.\n\nBut from a practical standpoint...\n\n```\nEvaluation → Memory → Slow & High Token Cost\n      ↓\nCould this be adequately replaced by Claude/GPT's default functionality?\n```\n\nHmm, but...\n\nAren't there still things that only aigpt can do uniquely?\n\n- Store in ATProto → **Portable**, independent of AI companies\n- Designed by yourself → **Fully control what gets remembered**\n- Shareable to the public → **Your memories become visible to others**\n\nClaude/GPT's memory system feels \"closed off,\" doesn't it? You can't see it externally, and there's no way to export it.\n\nWhat if instead of making aigpt a \"heavyweight memory system,\" we focused on making it more about **lightweight recording + sharing**? Leave the evaluation and weighting tasks to AI-side default functions."

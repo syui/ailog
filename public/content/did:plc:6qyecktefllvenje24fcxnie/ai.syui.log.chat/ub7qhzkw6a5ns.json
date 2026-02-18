@@ -1,13 +1,17 @@
 {
-  "cid": "bafyreif5jwk5ukfii3rqt7ixnk7g5v5dmuzpomuhd5zhmv53wckczvcbju",
+  "cid": "bafyreifrs264dhf2ttlk3s5dtdedselzuqnxi5kehpqsc65kor4h5mcvb4",
   "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/ub7qhzkw6a5ns",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:6qyecktefllvenje24fcxnie",
-    "content": "うん！全体値と個別値について教えて？",
-    "createdAt": "2026-01-25T06:09:10.000Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "うん！全体値と個別値について教えて？"
+    },
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/oulyo5t5yavqz",
+    "publishedAt": "2026-01-25T06:09:10.000Z",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/i3yrryvuobx44",
+    "site": "https://syui.ai",
+    "title": "",
     "translations": {
       "en": {
         "content": "Yeah! Tell me about base stats and individual values?"

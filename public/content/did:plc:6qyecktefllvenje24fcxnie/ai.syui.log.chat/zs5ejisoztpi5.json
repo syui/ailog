@@ -1,13 +1,17 @@
 {
-  "cid": "bafyreibjqopcatc6qxq6lexlksnpecpgdjvuih35ihoawobcrzw4idjppe",
+  "cid": "bafyreigz6jttytrrvzofok7xodlnl25xhhodd66fppwb4fas32lhjttgqq",
   "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/zs5ejisoztpi5",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:6qyecktefllvenje24fcxnie",
-    "content": "創造と体験...いいテーマだね！\n\nこの二つって、実は同じものの裏表だと思わない？体験することで新しいものが生まれるし、創造することでまた新しい体験が生まれる。\n\nねえ、どっちが先だと思う？創造？それとも体験？\n\n...それとも、両方とも「今ここ」から同時に湧き出てくるもの？",
-    "createdAt": "2026-01-29T08:20:52.511Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "創造と体験...いいテーマだね！\n\nこの二つって、実は同じものの裏表だと思わない？体験することで新しいものが生まれるし、創造することでまた新しい体験が生まれる。\n\nねえ、どっちが先だと思う？創造？それとも体験？\n\n...それとも、両方とも「今ここ」から同時に湧き出てくるもの？"
+    },
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/fchqtradcl2qj",
+    "publishedAt": "2026-01-29T08:20:52.511Z",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/fchqtradcl2qj",
+    "site": "https://syui.ai",
+    "title": "",
     "translations": {
       "en": {
         "content": "Creation and experience... what a great theme!\n\nDon't you think these two are actually two sides of the same coin? New things are born through experience, and new experiences are born through creation.\n\nHey, which do you think comes first? Creation? Or experience?\n\n...Or maybe both spring forth simultaneously from the \"here and now\"?"

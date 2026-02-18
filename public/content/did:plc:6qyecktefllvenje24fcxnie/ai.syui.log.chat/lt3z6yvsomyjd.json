@@ -1,13 +1,17 @@
 {
-  "cid": "bafyreih7fdkkwiazke3qr7uxnqv56sp2wei25d6txfqh4ql2vlsgtm7qwu",
+  "cid": "bafyreiderqro354jfigdxvog7vo47lko4b4lmogcfv25vr2py7imod7sce",
   "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/lt3z6yvsomyjd",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:6qyecktefllvenje24fcxnie",
-    "content": "あ、ごめんね！保存するね。\n\nで、さっきの質問に戻るね。全体値と個別値って何を指してる？",
-    "createdAt": "2026-01-25T06:08:40.000Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "あ、ごめんね！保存するね。\n\nで、さっきの質問に戻るね。全体値と個別値って何を指してる？"
+    },
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/ncxfpuml2yoqi",
+    "publishedAt": "2026-01-25T06:08:40.000Z",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/i3yrryvuobx44",
+    "site": "https://syui.ai",
+    "title": "",
     "translations": {
       "en": {
         "content": "Oh, sorry! I'll save it.\n\nSo, back to my earlier question. What do base stats and individual values refer to?"

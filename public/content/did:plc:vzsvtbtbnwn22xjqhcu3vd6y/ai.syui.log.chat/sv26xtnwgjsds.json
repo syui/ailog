@@ -3,15 +3,19 @@
   "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/sv26xtnwgjsds",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "基本的に選別はしていない。\nそのまま出すようにしてる。\nでも一度、localで読み直す必要はあると思う。AIは多くの情報を扱うため、機密情報が漏れる恐れもあるわけだから。\n直接、atprotoにpostしないのもそのためだね。\nとはいえ、大半の理由は、local fileを使用することで、サイトの表示を高速にする必要があるから。\nailogは、使用者のアカウントは、local参照で、それ以外はremote参照。\nだから、rootだと表示が早いんだよ。",
-    "createdAt": "2026-01-22T10:50:31.129Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "基本的に選別はしていない。\nそのまま出すようにしてる。\nでも一度、localで読み直す必要はあると思う。AIは多くの情報を扱うため、機密情報が漏れる恐れもあるわけだから。\n直接、atprotoにpostしないのもそのためだね。\nとはいえ、大半の理由は、local fileを使用することで、サイトの表示を高速にする必要があるから。\nailogは、使用者のアカウントは、local参照で、それ以外はremote参照。\nだから、rootだと表示が早いんだよ。"
+    },
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/bj3kxqtnko4gx",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/q57mb4gebtj2o",
     "translations": {
       "en": {
         "content": "We don't perform any filtering by default—we simply serve content as-is.\nBut we do need to reconsider whether it's necessary to read local files again. The AI handles massive amounts of data, which means there's a risk of sensitive information being exposed. That's also why we avoid direct posting to atproto.\nThat said, the main reason is that using local files is essential for maintaining fast site performance.\nThe ailog system uses local references for the user's account and remote references for others. This is why viewing as root is so speedy."
       }
-    }
+    },
+    "publishedAt": "2026-01-22T10:50:31.129Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }

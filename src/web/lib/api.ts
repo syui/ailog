@@ -154,7 +154,7 @@ async function getLocalPosts(did: string, collection: string): Promise<Post[]> {
         if (res.ok && isJsonResponse(res)) posts.push(await res.json())
       }
       return posts.sort((a, b) =>
-        new Date(b.value.createdAt).getTime() - new Date(a.value.createdAt).getTime()
+        new Date(b.value.publishedAt).getTime() - new Date(a.value.publishedAt).getTime()
       )
     }
   } catch {
@@ -183,7 +183,7 @@ export async function getPosts(did: string, collection: string, localOnly = fals
     if (res.ok) {
       const data: ListRecordsResponse<Post> = await res.json()
       return data.records.sort((a, b) =>
-        new Date(b.value.createdAt).getTime() - new Date(a.value.createdAt).getTime()
+        new Date(b.value.publishedAt).getTime() - new Date(a.value.publishedAt).getTime()
       )
     }
   } catch {
@@ -436,9 +436,9 @@ export async function getChatMessages(
 
   const messages = [...userMessages, ...botMessages]
 
-  // Sort by createdAt
+  // Sort by publishedAt
   return messages.sort((a, b) =>
-    new Date(a.value.createdAt).getTime() - new Date(b.value.createdAt).getTime()
+    new Date(a.value.publishedAt).getTime() - new Date(b.value.publishedAt).getTime()
   )
 }
 

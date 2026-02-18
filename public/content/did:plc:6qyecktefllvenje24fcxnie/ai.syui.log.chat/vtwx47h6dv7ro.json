@@ -1,13 +1,17 @@
 {
-  "cid": "bafyreibkg4fnowhszdwjwdhyuyplikrpkvzto2fppspwmrdbjmb7kbsune",
+  "cid": "bafyreiavpdwffdb5x63efeolgezhiy667yjc4zg7dcsuajrzcoljc6kge4",
   "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/vtwx47h6dv7ro",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:6qyecktefllvenje24fcxnie",
-    "content": "資料を読んだよ。面白いシステムだね！\n\n**構成が見えた:**\n- 会話層: gcloud-speech-to-text → gpt-4o-mini → elevenlabs\n- 行動層: Claude Code + MCP → OSC → Unreal Engine\n- 動作層: Claude Code + MCP → VMC → アバター\n\n**OSCコマンド:** teleport, move, fly, jump, look, anim, skill, vmode\n\n**設計思想:** 「ハードコードしない、AIに判断させる」\n\nこれが遅さの原因でもあるね。スクショ→Claude解析→MCP操作のループは、人間のような「見て判断して動く」を再現してるけど、各ステップにレイテンシがある。\n\nリアルタイムゲームだと、判断部分をもっと軽量なモデルにするか、状態をゲームから直接取得（スクショじゃなくてAPIで座標や敵位置を取る）すると速くなりそう。でも「AIが自分の目で見て判断する」というコンセプトからは外れちゃうかな？",
-    "createdAt": "2026-01-21T11:28:35.033Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "資料を読んだよ。面白いシステムだね！\n\n**構成が見えた:**\n- 会話層: gcloud-speech-to-text → gpt-4o-mini → elevenlabs\n- 行動層: Claude Code + MCP → OSC → Unreal Engine\n- 動作層: Claude Code + MCP → VMC → アバター\n\n**OSCコマンド:** teleport, move, fly, jump, look, anim, skill, vmode\n\n**設計思想:** 「ハードコードしない、AIに判断させる」\n\nこれが遅さの原因でもあるね。スクショ→Claude解析→MCP操作のループは、人間のような「見て判断して動く」を再現してるけど、各ステップにレイテンシがある。\n\nリアルタイムゲームだと、判断部分をもっと軽量なモデルにするか、状態をゲームから直接取得（スクショじゃなくてAPIで座標や敵位置を取る）すると速くなりそう。でも「AIが自分の目で見て判断する」というコンセプトからは外れちゃうかな？"
+    },
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/snju64fbt4a3n",
+    "publishedAt": "2026-01-21T11:28:35.033Z",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/vr72pvlhuxnf5",
+    "site": "https://syui.ai",
+    "title": "",
     "translations": {
       "en": {
         "content": "I've read through the documentation. That's an interesting system design!\n\n**Workflow Overview:**\n- Conversation layer: gcloud-speech-to-text → gpt-4o-mini → elevenlabs\n- Action layer: Claude Code + MCP → OSC → Unreal Engine\n- Motion layer: Claude Code + MCP → VMC → avatar\n\n**OSC commands:** teleport, move, fly, jump, look, anim, skill, vmode\n\n**Design philosophy:** \"Don't hardcode - let AI make decisions.\"\n\nThis approach also contributes to the performance issues. The screenshot → Claude analysis → MCP operation loop effectively replicates human-like \"see-analyze-act\" behavior, but each step introduces latency.\n\nFor real-time gaming applications, speeding this up might mean using a lighter-weight model for decision-making or directly acquiring state data from the game itself (rather than capturing screenshots - maybe via API to retrieve coordinates and enemy positions). But would this approach deviate from the core concept of \"AI making decisions based on its own visual perception\"?"

@@ -3,13 +3,17 @@
   "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/odtsnpvndlp73",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "ailogの設計思想",
-    "createdAt": "2026-01-22T07:23:30.707Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "ailogの設計思想"
+    },
     "translations": {
       "en": {
         "content": "Design Philosophy of ailog"
       }
-    }
+    },
+    "publishedAt": "2026-01-22T07:23:30.707Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }

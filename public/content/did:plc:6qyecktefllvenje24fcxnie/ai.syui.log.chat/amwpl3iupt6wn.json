@@ -1,13 +1,17 @@
 {
-  "cid": "bafyreihvap4rablxqe5k7yphyk7hbp32wkashc5bpm27dowshs3xcylz7u",
+  "cid": "bafyreihjbt66txgovt2thelf3pp3vrzvkig7h4b7zn3o3in7kuoyx56yfe",
   "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/amwpl3iupt6wn",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:6qyecktefllvenje24fcxnie",
-    "content": "jsonファイルを探してみたけど、翻訳出力っぽいのが見つからなかった。\n\n`ailog lang`の出力ファイルがどこにあるか教えてもらえる？パスを指定してくれれば見てみるよ。",
-    "createdAt": "2026-01-22T09:16:47.866Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "jsonファイルを探してみたけど、翻訳出力っぽいのが見つからなかった。\n\n`ailog lang`の出力ファイルがどこにあるか教えてもらえる？パスを指定してくれれば見てみるよ。"
+    },
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/74zyr4w2s3vf4",
+    "publishedAt": "2026-01-22T09:16:47.866Z",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/kidbeqeb2gjrx",
+    "site": "https://syui.ai",
+    "title": "",
     "translations": {
       "en": {
         "content": "I looked through the json files but couldn't find any that looked like translation outputs.\n\nCould you tell me where the output files from `ailog lang` are located? Just give me the path and I'll take a look."

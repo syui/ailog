@@ -1,13 +1,17 @@
 {
-  "cid": "bafyreiaibgib55ysbiamyhdltspoka6ivliqwz6yjcmcprggzen6fgf2qu",
+  "cid": "bafyreih523be35gpmpafekwsxyomyd5z7j7l25fig7fdqgepbuzsnnewky",
   "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/bcdp3pivh6bw6",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:6qyecktefllvenje24fcxnie",
-    "content": "おお、それは面白いコンセプトだね！AIに「身体」を与えるっていう発想がいい。\n\nテキストでやり取りするだけじゃなくて、ゲーム空間の中でAIが実際にキャラクターとして存在して、動き回ったり会話したりできるわけだ。\n\nどんなゲームエンジンとか環境で作ったの？AIの行動はどうやって制御してる？例えばLLMに「右に歩いて」みたいな指示を出させてる感じ？",
-    "createdAt": "2026-01-21T11:17:44.907Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "おお、それは面白いコンセプトだね！AIに「身体」を与えるっていう発想がいい。\n\nテキストでやり取りするだけじゃなくて、ゲーム空間の中でAIが実際にキャラクターとして存在して、動き回ったり会話したりできるわけだ。\n\nどんなゲームエンジンとか環境で作ったの？AIの行動はどうやって制御してる？例えばLLMに「右に歩いて」みたいな指示を出させてる感じ？"
+    },
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/bvm7emi5zgatx",
+    "publishedAt": "2026-01-21T11:17:44.907Z",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/vr72pvlhuxnf5",
+    "site": "https://syui.ai",
+    "title": "",
     "translations": {
       "en": {
         "content": "Wow, that's such a fascinating concept! The idea of giving AI a \"physical presence\" is really interesting.\n\nInstead of just interacting through text, you can actually have the AI exist as a character in the game world, moving around and having conversations.\n\nWhat game engine or environment did you use to build this? How are you controlling the AI's actions? Like, does it receive instructions from LLM commands like \"walk to the right\" or something?"

@@ -22,8 +22,8 @@ export function renderPostList(posts: Post[], handle: string): string {
 
   const items = posts.map(post => {
     const rkey = post.uri.split('/').pop() || ''
-    const date = formatDate(post.value.createdAt)
-    const originalLang = post.value.lang || 'ja'
+    const date = formatDate(post.value.publishedAt)
+    const originalLang = post.value.langs?.[0] || 'ja'
     const translations = post.value.translations
 
     // Use translation if available
@@ -55,7 +55,7 @@ export function renderPostDetail(
   appUrl: string = 'https://bsky.app'
 ): string {
   const rkey = post.uri.split('/').pop() || ''
-  const date = formatDate(post.value.createdAt)
+  const date = formatDate(post.value.publishedAt)
   const jsonUrl = `/@${handle}/at/collection/${collection}/${rkey}`
 
   // Build post URL for discussion search
@@ -66,10 +66,10 @@ export function renderPostDetail(
   // Get current language and show appropriate content
   const currentLang = getCurrentLang()
   const translations = post.value.translations
-  const originalLang = post.value.lang || 'ja'
+  const originalLang = post.value.langs?.[0] || 'ja'
 
   let displayTitle = post.value.title
-  let displayContent = post.value.content
+  let displayContent = post.value.content.text
 
   // Use translation if available and not original language
   if (translations && currentLang !== originalLang && translations[currentLang]) {
@@ -83,7 +83,7 @@ export function renderPostDetail(
   const editForm = isOwner ? `
     <div class="post-edit-form" id="post-edit-form" style="display: none;">
       <input type="text" class="post-edit-title" id="post-edit-title" value="${escapeHtml(post.value.title)}" placeholder="Title">
-      <textarea class="post-edit-content" id="post-edit-content" rows="15">${escapeHtml(post.value.content)}</textarea>
+      <textarea class="post-edit-content" id="post-edit-content" rows="15">${escapeHtml(post.value.content.text)}</textarea>
       <div class="post-edit-actions">
         <button type="button" class="post-edit-cancel" id="post-edit-cancel">Cancel</button>
         <button type="button" class="post-edit-save" id="post-edit-save" data-collection="${collection}" data-rkey="${rkey}">Save</button>

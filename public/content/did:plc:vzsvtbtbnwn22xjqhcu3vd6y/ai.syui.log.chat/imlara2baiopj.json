@@ -3,15 +3,19 @@
   "cid": "",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "ゲーム開発してるんだけど、スタート画面や最初にやることは重要だよね。\n私は、その画面を見て、どんなゲームか、何をするのかがわかるのがいいと思うな。\nでも作るのは難しい。\n現在、スタート画面はログイン画面で背景をatmosphereにしてる。\n最初、プレイヤーはマシロハウスからはじまる。そこでマスコットに話しかけ、そっと家を出る。\n家を出ると戦闘になる。\n戦闘では「弾く」をやる。\n最初はこの「弾く」に集中しようと思う。\n敵を倒すと、大量の金石が空中にばらまかれる。それを拾う。拾うとatprotoのアカウントに反映される。\n宝箱を色んな場所に設置しなくていいから、このやり方のほうが楽だな。\nこのゲームのテーマは、宇宙とアイ。だから最初の場所も宇宙にしたい。\n敵は巨大な戦艦で、ビームを撃ってくる。届かない。\n## 最初の体験は何\n1. アカウント\n2. 「弾く」\n3. 集める\n4. わざ\n\n4の技について解説。\nこのゲームはaicardというカードを集めるゲームとアカウントを通じて連携できる。持っているカードが反映される。\nカードidで使える技が決まる。cpで上限が、id:0、つまり、はずれのカードで基礎値が決まる。\naicardでは、スタート時に3つのうち1枚を選択する。\n\n1: 飛行(時間)\n2: 動作(速度)\n3: ダメージ(質量)\n\nこれは「選択」と「決定」という体験。決定は取り返しがつかない要素になる。",
-    "createdAt": "2026-01-24T10:12:47.779Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "ゲーム開発してるんだけど、スタート画面や最初にやることは重要だよね。\n私は、その画面を見て、どんなゲームか、何をするのかがわかるのがいいと思うな。\nでも作るのは難しい。\n現在、スタート画面はログイン画面で背景をatmosphereにしてる。\n最初、プレイヤーはマシロハウスからはじまる。そこでマスコットに話しかけ、そっと家を出る。\n家を出ると戦闘になる。\n戦闘では「弾く」をやる。\n最初はこの「弾く」に集中しようと思う。\n敵を倒すと、大量の金石が空中にばらまかれる。それを拾う。拾うとatprotoのアカウントに反映される。\n宝箱を色んな場所に設置しなくていいから、このやり方のほうが楽だな。\nこのゲームのテーマは、宇宙とアイ。だから最初の場所も宇宙にしたい。\n敵は巨大な戦艦で、ビームを撃ってくる。届かない。\n## 最初の体験は何\n1. アカウント\n2. 「弾く」\n3. 集める\n4. わざ\n\n4の技について解説。\nこのゲームはaicardというカードを集めるゲームとアカウントを通じて連携できる。持っているカードが反映される。\nカードidで使える技が決まる。cpで上限が、id:0、つまり、はずれのカードで基礎値が決まる。\naicardでは、スタート時に3つのうち1枚を選択する。\n\n1: 飛行(時間)\n2: 動作(速度)\n3: ダメージ(質量)\n\nこれは「選択」と「決定」という体験。決定は取り返しがつかない要素になる。"
+    },
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/dcm6ta3ndmcii",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/p4l6y3qkmfscg",
     "translations": {
       "en": {
         "content": "I'm developing a game, and the start screen and initial actions are really important, right?\nI think it's best when you can understand what kind of game it is and what to do just by looking at that screen.\nBut it's hard to make.\nCurrently, the start screen is a login screen with atmosphere as the background.\nFirst, the player starts from Mashiro House. They talk to the mascot there, then quietly leave the house.\nWhen you leave the house, combat begins.\nIn combat, you \"deflect.\"\nI want to focus on this \"deflecting\" first.\nWhen you defeat enemies, tons of gold stones scatter in the air. You collect them. Collecting them reflects on your atproto account.\nThis way is easier since I don't need to place treasure chests everywhere.\nThe theme of this game is space and Ai. So I want the first location to be in space too.\nEnemies are giant battleships that shoot beams. They can't reach you.\n## What's the first experience\n1. Account\n2. \"Deflect\"\n3. Collect\n4. Skills\n\nExplaining skill 4.\nThis game can link with a card collecting game called aicard through accounts. Cards you own are reflected.\nCard ID determines usable skills. CP determines the limit, and ID:0, meaning miss cards, determines base values.\nIn aicard, you choose 1 of 3 cards at start.\n\n1: Flight (time)\n2: Movement (speed)\n3: Damage (mass)\n\nThis is the experience of \"choice\" and \"decision.\" Decisions become irreversible elements."
       }
-    }
+    },
+    "publishedAt": "2026-01-24T10:12:47.779Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }

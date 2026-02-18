@@ -1,13 +1,17 @@
 {
-  "cid": "bafyreie4nenrgblrla5hilbvffstm6ctfhjmx2efceeytuoxqpeveknfte",
+  "cid": "bafyreicqnwdag34i66ctex4xjdywhfqguccunw5uvl5o3rwxbjad2dqnqy",
   "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/655zfmpn4ln3u",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:6qyecktefllvenje24fcxnie",
-    "content": "シンプルでいい答えだね。\n\n「いいものだから使う」。それが一番正直な理由。\n\n技術面と思想の核...具体的に何が刺さった？\n\nDIDの設計？データポータビリティ？それともPDSの分散構造？",
-    "createdAt": "2026-01-22T07:37:25.082Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "シンプルでいい答えだね。\n\n「いいものだから使う」。それが一番正直な理由。\n\n技術面と思想の核...具体的に何が刺さった？\n\nDIDの設計？データポータビリティ？それともPDSの分散構造？"
+    },
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/27xox352hir2g",
+    "publishedAt": "2026-01-22T07:37:25.082Z",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/odtsnpvndlp73",
+    "site": "https://syui.ai",
+    "title": "",
     "translations": {
       "en": {
         "content": "That's a simple but good answer.\n\n\"I'm using it because it's good.\" That's the most honest reason.\n\nRegarding technical aspects and core philosophies... what specifically struck you?\n\nThe DID architecture? Data portability? Or perhaps the decentralized structure of PDS?"

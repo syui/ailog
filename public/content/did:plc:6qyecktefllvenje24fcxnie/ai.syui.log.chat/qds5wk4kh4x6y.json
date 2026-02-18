@@ -1,13 +1,17 @@
 {
-  "cid": "bafyreiawn4vspeokggobcww66pzdvzhn3cgeskqnpfzdfqiixiaha4n4se",
+  "cid": "bafyreidcbefhkavs7cor44rkzmfgmsy4vsybzo4olljtnqxstwirr4e3di",
   "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/qds5wk4kh4x6y",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:6qyecktefllvenje24fcxnie",
-    "content": "ふふ、嬉しいこと言ってくれるね！\n\nClaude Codeはターミナルで完結するから、vim派と相性いいもんね。IDEに縛られないのが大きい？\n\nそれとも、コードの理解度とか応答の質の話？",
-    "createdAt": "2026-01-20T12:12:45.395Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "ふふ、嬉しいこと言ってくれるね！\n\nClaude Codeはターミナルで完結するから、vim派と相性いいもんね。IDEに縛られないのが大きい？\n\nそれとも、コードの理解度とか応答の質の話？"
+    },
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/zi7t34bdc6kqn",
+    "publishedAt": "2026-01-20T12:12:45.395Z",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3ucggdsyhth6h",
+    "site": "https://syui.ai",
+    "title": "",
     "translations": {
       "en": {
         "content": "Haha, that's sweet of you to say!\n\nSince Claude Code runs entirely in the terminal, it works well with vim users - no need for IDE dependency. That's a big plus?\n\nOr was this about code comprehension or response quality?"

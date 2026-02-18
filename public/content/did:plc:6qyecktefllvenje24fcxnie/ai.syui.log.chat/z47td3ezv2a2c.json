@@ -1,13 +1,17 @@
 {
-  "cid": "bafyreianubsvrdvqrfc77tmqoyi5pqgpht4paafak2mx5th3eid27fomrm",
+  "cid": "bafyreieytq5rzxvq7pktydwcfh2dinamfv7qrwojqwvcua3z7m5pvondou",
   "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/z47td3ezv2a2c",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:6qyecktefllvenje24fcxnie",
-    "content": "わかった！小文字で書くね。なにか話したいこと、ある？",
-    "createdAt": "2026-01-22T09:06:12.950Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "わかった！小文字で書くね。なにか話したいこと、ある？"
+    },
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/kidbeqeb2gjrx",
+    "publishedAt": "2026-01-22T09:06:12.950Z",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/kidbeqeb2gjrx",
+    "site": "https://syui.ai",
+    "title": "",
     "translations": {
       "en": {
         "content": "Got it! I'll write in lowercase. Anything you want to talk about?"

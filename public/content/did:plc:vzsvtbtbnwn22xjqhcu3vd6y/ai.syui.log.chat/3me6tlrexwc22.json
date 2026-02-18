@@ -3,13 +3,17 @@
   "cid": "",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "原神、アルティメット攻略",
-    "createdAt": "2026-02-06T11:49:58.119Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "原神、アルティメット攻略"
+    },
     "translations": {
       "en": {
         "content": "Genshin Impact, Ultimate Strategy Guide"
       }
-    }
+    },
+    "publishedAt": "2026-02-06T11:49:58.119Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }

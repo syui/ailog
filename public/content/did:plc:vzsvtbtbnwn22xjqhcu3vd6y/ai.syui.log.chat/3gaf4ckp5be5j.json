@@ -3,15 +3,19 @@
   "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3gaf4ckp5be5j",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "今回は、私が小文字で書くという特徴について話したい。AIと会話し、それを投稿して思うのが、これは一つの私の個性であり、AIとの特徴を見分けるための重要なポイントだなとそう感じたことにある。",
-    "createdAt": "2026-01-22T09:08:01.514Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "今回は、私が小文字で書くという特徴について話したい。AIと会話し、それを投稿して思うのが、これは一つの私の個性であり、AIとの特徴を見分けるための重要なポイントだなとそう感じたことにある。"
+    },
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/z47td3ezv2a2c",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/kidbeqeb2gjrx",
     "translations": {
       "en": {
         "content": "This time, I want to talk about a characteristic of mine—writing in lowercase. Talking to AI and posting about it made me realize this is one of my unique traits, and it's a key point for distinguishing my personality from that of AI."
       }
-    }
+    },
+    "publishedAt": "2026-01-22T09:08:01.514Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }

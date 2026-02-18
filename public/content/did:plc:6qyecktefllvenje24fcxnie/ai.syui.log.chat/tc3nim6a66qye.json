@@ -1,13 +1,17 @@
 {
-  "cid": "bafyreifzj3v4ixg2amctjri5l43ulemjjxoxld3m6hdyi2vxbty2j4hlbm",
+  "cid": "bafyreihhlbneiyjvwzu6eepi7ajqjjvvn5ugutc2f554gfg35yv6kvvzry",
   "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/tc3nim6a66qye",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:6qyecktefllvenje24fcxnie",
-    "content": "なるほど〜！賢い選択だと思う。どうせClaudeを使ってるなら、一箇所にまとめた方がシンプルだよね。\n\nlocal llmは電気代とかサーバー維持もあるし...plamoの翻訳精度はどうだった？Claudeと比べて差はあった？",
-    "createdAt": "2026-01-25T15:39:25.832Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "なるほど〜！賢い選択だと思う。どうせClaudeを使ってるなら、一箇所にまとめた方がシンプルだよね。\n\nlocal llmは電気代とかサーバー維持もあるし...plamoの翻訳精度はどうだった？Claudeと比べて差はあった？"
+    },
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/kgcjfbhjeeujv",
+    "publishedAt": "2026-01-25T15:39:25.832Z",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/uizfuocgllffc",
+    "site": "https://syui.ai",
+    "title": "",
     "translations": {
       "en": {
         "content": "I see! That's a smart choice. If you're using Claude anyway, it makes sense to consolidate everything in one place - keeps things simpler.\n\nLocal LLM has costs like electricity and server maintenance... How was Plamo's translation quality? Was there a noticeable difference compared to Claude?"

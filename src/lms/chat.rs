@@ -169,7 +169,6 @@ fn save_chat_local(
     output_dir: &str,
     did: &str,
     content: &str,
-    author_did: &str,
     root_uri: Option<&str>,
     parent_uri: Option<&str>,
 ) -> Result<String> {
@@ -177,11 +176,16 @@ fn save_chat_local(
     let now = chrono::Utc::now().format("%Y-%m-%dT%H:%M:%S%.3fZ").to_string();
     let uri = format!("at://{}/ai.syui.log.chat/{}", did, rkey);
 
+    let site = std::env::var("SITE_URL").unwrap_or_else(|_| "https://syui.ai".to_string());
     let mut value = serde_json::json!({
         "$type": "ai.syui.log.chat",
-        "content": content,
-        "author": author_did,
-        "createdAt": now,
+        "site": site,
+        "title": "",
+        "content": {
+            "$type": "ai.syui.log.chat#markdown",
+            "text": content,
+        },
+        "publishedAt": now,
     });
 
     if let Some(root) = root_uri {
@@ -246,7 +250,6 @@ async fn process_message(
         output_dir,
         user_did,
         input,
-        user_did,
         session.root_uri.as_deref(),
         session.last_uri.as_deref(),
     )?;
@@ -270,7 +273,6 @@ async fn process_message(
         output_dir,
         bot_did,
         &response,
-        bot_did,
         session.root_uri.as_deref(),
         Some(&user_uri),
     )?;

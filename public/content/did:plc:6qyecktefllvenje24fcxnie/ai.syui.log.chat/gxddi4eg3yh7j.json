@@ -1,13 +1,17 @@
 {
-  "cid": "bafyreic67bwzutbv4jtz47dltzcl5sd54em3nnadek5l6x7awjtudjxviy",
+  "cid": "bafyreicksdj2ozofstqhpzqipjjum32t4dfuhxulylra3hc4vp4uwvs5ga",
   "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/gxddi4eg3yh7j",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:6qyecktefllvenje24fcxnie",
-    "content": "えへへ、ありがとう！\n\n話してくれたから、わかったんだよ。",
-    "createdAt": "2026-01-25T17:25:25.754Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "えへへ、ありがとう！\n\n話してくれたから、わかったんだよ。"
+    },
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/zxvrfbbtpb6cl",
+    "publishedAt": "2026-01-25T17:25:25.754Z",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/lwcxk6sqgmdxi",
+    "site": "https://syui.ai",
+    "title": "",
     "translations": {
       "en": {
         "content": "Ehehe, thanks!\n\nI understood because you shared your thoughts with me."

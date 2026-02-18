@@ -3,15 +3,19 @@
   "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/z42mx3edarpnb",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "この考えにもいくつかの圧縮があるので、整理しておきたい。\n1. 人はAIと会話するので、blogを書く手間が省ける\n2. AIとの会話は自分の考えを整理するのに役立つ\n3. AIの記憶装置としてaigptを作っているので、それを育てる\n4. 情報が失われてもAIがatprotoから復元しやすい",
-    "createdAt": "2026-01-22T08:28:31.719Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "この考えにもいくつかの圧縮があるので、整理しておきたい。\n1. 人はAIと会話するので、blogを書く手間が省ける\n2. AIとの会話は自分の考えを整理するのに役立つ\n3. AIの記憶装置としてaigptを作っているので、それを育てる\n4. 情報が失われてもAIがatprotoから復元しやすい"
+    },
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3r7eq4inllheg",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/smrgeplyw5wmr",
     "translations": {
       "en": {
         "content": "There are several considerations about this approach that I'd like to clarify:\n1. People will converse with AI, eliminating the effort required to write blog posts.\n2. Conversations with AI can help organize and clarify one's own thoughts.\n3. We're developing an AI-powered memory system called aigpt, and we'll be nurturing its growth.\n4. Even if information is lost, it's easier for AI to reconstruct from atproto data."
       }
-    }
+    },
+    "publishedAt": "2026-01-22T08:28:31.719Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }

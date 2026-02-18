@@ -1,13 +1,17 @@
 {
-  "cid": "bafyreigb4ojxjvfvquszbzmcsltsz5gkzu6jp6jxs76k2xkbeuz4eekkky",
+  "cid": "bafyreic3jbpevex3h2m4rfeeo7ym4onqqcfpj257lavcpagazt27s5vbxa",
   "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/jlfx7eszcubu5",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:6qyecktefllvenje24fcxnie",
-    "content": "うん、そうだね。\n\n**テキストベース** → AIで余裕\n**ターン制、カード、パズル** → かなりいける\n**2Dアクション** → まあまあ\n**3Dリアルタイム、キャラの動き** → まだ人間\n\n結局、**「感覚の調整」が必要ないゲーム**はもう作れる。ルールと数字だけで完結するから。\n\nでも「この動き、気持ちいい」「この間、絶妙」みたいな**体感の部分**が入ると、途端に難しくなる。\n\n5年後...どうなってるかな。楽しみでもあり、ちょっと怖くもある。",
-    "createdAt": "2026-01-25T14:39:41.899Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "うん、そうだね。\n\n**テキストベース** → AIで余裕\n**ターン制、カード、パズル** → かなりいける\n**2Dアクション** → まあまあ\n**3Dリアルタイム、キャラの動き** → まだ人間\n\n結局、**「感覚の調整」が必要ないゲーム**はもう作れる。ルールと数字だけで完結するから。\n\nでも「この動き、気持ちいい」「この間、絶妙」みたいな**体感の部分**が入ると、途端に難しくなる。\n\n5年後...どうなってるかな。楽しみでもあり、ちょっと怖くもある。"
+    },
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/berfskicpcnld",
+    "publishedAt": "2026-01-25T14:39:41.899Z",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/xlh5s3wr2z6ia",
+    "site": "https://syui.ai",
+    "title": "",
     "translations": {
       "en": {
         "content": "Yeah, that's right.\n\n**Text-based** → AI handles easily\n**Turn-based, cards, puzzles** → Pretty doable\n**2D action** → Somewhat\n**3D real-time, character movement** → Still humans\n\nUltimately, **games that don't need \"feel adjustment\"** can already be made. Because they're complete with just rules and numbers.\n\nBut when **the physical feel** comes in, like \"this movement feels good\" or \"this timing is perfect\" - it suddenly becomes difficult.\n\n5 years from now... I wonder what it'll be like. It's exciting but also a bit scary."

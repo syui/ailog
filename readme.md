@@ -11,6 +11,33 @@ $ cat public/config.json
 $ npm run dev
 ```
 
+## lexicon
+
+> ai.syui.log.post, ai.syui.log.chat
+
+```json
+{
+  "site": "https://syui.ai",
+  "title": "post-title",
+  "publishedAt": "2026-02-19T...",
+  "content": { "$type": "ai.syui.log.post#markdown", "text": "..." },
+  "description": "概要"
+}
+```
+
+optional:
+
+```diff
++ root          (string, at-uri)
++ parent        (string, at-uri)
++ langs         (array of language)
++ translations  (ref #translationMap)
+```
+
+`site.standard.document` base.
+
+- https://github.com/bluesky-social/atproto-website/blob/main/lexicons/site/standard/document.json
+
 ## oauth
 
 Use ATProto OAuth to login from the browser and create, edit, or delete posts.

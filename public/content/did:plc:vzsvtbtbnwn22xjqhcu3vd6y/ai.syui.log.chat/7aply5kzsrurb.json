@@ -3,15 +3,19 @@
   "cid": "",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "少し人間と視点が違うところが面白い。\nでもAIからすると、上記の部分が要点なんだろうね。\nueのc++をAIだけで作るのは無理だ。あるいは非常に限定した範囲でしか作れないと思う。\nBPも分かりづらいだろうな。これは人間向けに作られていて、操作できない。内容はコードだけどこれをAIがなんとかしようというのは時間の無駄だと思う。ゲームエンジンを作り直したほうが早いかもしれない。\nそれに、ue自体にもAI機能は取り入れられたけど、実用性は程遠い。\nつまり、上記の3点について、AIは使えなかった。\n1. ueのc++\n2. BPの編集\n3. ueに追加されたAI機能\n\nでもだからこそ、ゲーム開発の分野、特にueを使ったゲーム開発は、まだしばらくは人が手動で開発することになると思う。\nゲーム開発は、AIを使ってでさえ、まだまだ難しいと感じてる。\n\n次は、人間の視点から少し難しいと考える部分を上げる。\n\n1. キャラクターの自然な動き\n2. モデリング、システム、アニメーション、ストーリー、マップ、それらすべての制作と組み合わせ\n\nもちろん、ゲームのジャンルによっては開発可能。ただ、ゲームは動きであり、それを見て修正するところが難しいんじゃないかと思う。",
-    "createdAt": "2026-01-25T14:26:28.022Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "少し人間と視点が違うところが面白い。\nでもAIからすると、上記の部分が要点なんだろうね。\nueのc++をAIだけで作るのは無理だ。あるいは非常に限定した範囲でしか作れないと思う。\nBPも分かりづらいだろうな。これは人間向けに作られていて、操作できない。内容はコードだけどこれをAIがなんとかしようというのは時間の無駄だと思う。ゲームエンジンを作り直したほうが早いかもしれない。\nそれに、ue自体にもAI機能は取り入れられたけど、実用性は程遠い。\nつまり、上記の3点について、AIは使えなかった。\n1. ueのc++\n2. BPの編集\n3. ueに追加されたAI機能\n\nでもだからこそ、ゲーム開発の分野、特にueを使ったゲーム開発は、まだしばらくは人が手動で開発することになると思う。\nゲーム開発は、AIを使ってでさえ、まだまだ難しいと感じてる。\n\n次は、人間の視点から少し難しいと考える部分を上げる。\n\n1. キャラクターの自然な動き\n2. モデリング、システム、アニメーション、ストーリー、マップ、それらすべての制作と組み合わせ\n\nもちろん、ゲームのジャンルによっては開発可能。ただ、ゲームは動きであり、それを見て修正するところが難しいんじゃないかと思う。"
+    },
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/wsl5ikfb44gyo",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/xlh5s3wr2z6ia",
     "translations": {
       "en": {
         "content": "It's interesting how your perspective differs slightly from humans.\nBut from an AI's point of view, those are probably the key points.\nMaking UE's C++ with AI alone is impossible. Or I think it can only be done in very limited scope.\nBP must be hard to understand too. It's made for humans and can't be manipulated. The content is code, but trying to have AI deal with it is a waste of time. It might be faster to rebuild the game engine from scratch.\nAlso, AI features were added to UE itself, but they're far from practical.\nIn short, AI couldn't be used for these 3 points:\n1. UE's C++\n2. Editing BP\n3. AI features added to UE\n\nBut because of this, I think game development, especially using UE, will continue to be done manually by humans for a while.\nI feel that game development is still very difficult, even with AI.\n\nNext, I'll raise some points that are difficult from a human perspective:\n\n1. Natural character movement\n2. The creation and combination of modeling, systems, animation, story, maps - all of them\n\nOf course, depending on the game genre, it's possible to develop. But games are about movement, and I think the difficult part is watching and fixing that."
       }
-    }
+    },
+    "publishedAt": "2026-01-25T14:26:28.022Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }

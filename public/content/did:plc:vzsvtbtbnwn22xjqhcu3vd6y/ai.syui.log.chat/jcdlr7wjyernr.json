@@ -3,15 +3,19 @@
   "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/jcdlr7wjyernr",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "私の開発環境を紹介するね。\nmac, linux, windowsを使います。基本的にmacを使うことが多いかな。\npkgはhomebrew, zsh, vim, tmux, git, xcodeなどを使い、rust, typescriptを好みます。\nlinuxはarchlinux, i3, pcmanfm, systemdとか。docker, k8s, systemd-nspawnもlinuxに含めます。\nwindowsはopenssh, powershell, winget, terminal(wt)など。scoopを使ってたけど、wingetに乗り換えました。guiはpowertoysなど\nunrealengineでゲーム開発を始めてからは、windowsで作業することが増えたかな。大体はBPというnodeで作ります。c++, blender(モデリング), vmc, oscなども使います。\n最近、atprotoにハマっていて、使用する技術やサービスの整理しました。\nactivitypub, matrixは使ってないのでatに集約する予定。apはmastodonやmitraを動かしていました。\nAIはclaudeを使ってます。\nIDEはgoogle antigravityがいいと思うな。あまり使ってないけど。",
-    "createdAt": "2026-01-20T12:09:42.296Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "私の開発環境を紹介するね。\nmac, linux, windowsを使います。基本的にmacを使うことが多いかな。\npkgはhomebrew, zsh, vim, tmux, git, xcodeなどを使い、rust, typescriptを好みます。\nlinuxはarchlinux, i3, pcmanfm, systemdとか。docker, k8s, systemd-nspawnもlinuxに含めます。\nwindowsはopenssh, powershell, winget, terminal(wt)など。scoopを使ってたけど、wingetに乗り換えました。guiはpowertoysなど\nunrealengineでゲーム開発を始めてからは、windowsで作業することが増えたかな。大体はBPというnodeで作ります。c++, blender(モデリング), vmc, oscなども使います。\n最近、atprotoにハマっていて、使用する技術やサービスの整理しました。\nactivitypub, matrixは使ってないのでatに集約する予定。apはmastodonやmitraを動かしていました。\nAIはclaudeを使ってます。\nIDEはgoogle antigravityがいいと思うな。あまり使ってないけど。"
+    },
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/pvucam6btjpzt",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3ucggdsyhth6h",
     "translations": {
       "en": {
         "content": "Let me walk you through my development environment:\nI use mac, linux, and windows—though I primarily work with Mac most of the time.\nFor package management, I prefer homebrew along with zsh, vim, tmux, git, and Xcode. My preferred programming languages are Rust and TypeScript.\nOn Linux, my setup includes Arch Linux, i3 window manager, pcmanfm file explorer, and systemd. I also incorporate Docker, Kubernetes, and systemd-nspawn in my Linux configuration.\nFor Windows, I use OpenSSH, PowerShell, Winget, and the Terminal (wt). While I previously used Scoop, I've since switched to Winget. For GUI tools, PowerToys and other utilities come in handy.\nSince beginning game development with Unreal Engine, I've been doing more work on Windows—I mostly build UIs using BP nodes. I also utilize C++, Blender for modeling, vmc, and osc in my work.\nRecently I've been getting really into atproto and have reorganized the technologies and services I'm using.\nI'm no longer working with ActivityPub or Matrix, so I plan to consolidate everything under at. For AP, I was running Mastodon and Mitra platforms.\nAs for AI tools, I'm currently using Claude.\nFor IDEs, I think Google's Antigravity is quite good—though I don't use it extensively."
       }
-    }
+    },
+    "publishedAt": "2026-01-20T12:09:42.296Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }

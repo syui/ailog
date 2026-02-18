@@ -3,15 +3,19 @@
   "cid": "",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "コロンビーナは、元素反応を月反応にできるから。\n例えば、シロネンと組み合わせて月結晶になる。\n次に、ネフェルをc6にする理由は、最強dpsを誇るから。PTは、ネフェル、コロンビーナ、ナヒーダ、ラウマ。\nつまり、これを最強PTとして、あらゆるコンテンツの突破を図れる点を重視した。",
-    "createdAt": "2026-02-06T11:58:09.721Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "コロンビーナは、元素反応を月反応にできるから。\n例えば、シロネンと組み合わせて月結晶になる。\n次に、ネフェルをc6にする理由は、最強dpsを誇るから。PTは、ネフェル、コロンビーナ、ナヒーダ、ラウマ。\nつまり、これを最強PTとして、あらゆるコンテンツの突破を図れる点を重視した。"
+    },
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3me6ttgsk2g25",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3me6tlrexwc22",
     "translations": {
       "en": {
         "content": "Columbina can convert elemental reactions to Luna reactions. For example, combining with Siorone creates Luna Crystallize. Next, the reason for Nephel C6 is because she has the strongest DPS. The team is Nephel, Columbina, Nahida, Rauma. In other words, I prioritized being able to break through all content with this as the strongest team."
       }
-    }
+    },
+    "publishedAt": "2026-02-06T11:58:09.721Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }

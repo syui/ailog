@@ -3,15 +3,19 @@
   "cid": "",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "わからないな。5年後とかかもね。\nでも文字や数字情報だけで構築可能な単純なゲームは、既にAIで簡単に作れる。",
-    "createdAt": "2026-01-25T14:39:41.899Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "わからないな。5年後とかかもね。\nでも文字や数字情報だけで構築可能な単純なゲームは、既にAIで簡単に作れる。"
+    },
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/j2eqwbfulmovq",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/xlh5s3wr2z6ia",
     "translations": {
       "en": {
         "content": "I don't know. Maybe in about 5 years.\nBut simple games that can be built with just text and numerical information can already be easily made with AI."
       }
-    }
+    },
+    "publishedAt": "2026-01-25T14:39:41.899Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }

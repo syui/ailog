@@ -3,15 +3,19 @@
   "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/sqzphb67ymv4i",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "その場合、時間と空間はどのように作用する。環境要因の設定や変化など。",
-    "createdAt": "2026-01-22T08:42:30.405Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "その場合、時間と空間はどのように作用する。環境要因の設定や変化など。"
+    },
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/2ks46vomw4s2i",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/smrgeplyw5wmr",
     "translations": {
       "en": {
         "content": "In such cases, how would time and space operate? Environmental factor settings or changes."
       }
-    }
+    },
+    "publishedAt": "2026-01-22T08:42:30.405Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }

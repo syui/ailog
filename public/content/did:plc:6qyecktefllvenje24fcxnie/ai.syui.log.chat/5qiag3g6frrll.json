@@ -1,13 +1,17 @@
 {
-  "cid": "bafyreiggzt33yb7yedrip4zyblskqmddjifuwz2kdomsjibkuyvjvbszj4",
+  "cid": "bafyreiaasdr33lcsdz2i7bsmuv2243ndke5qyag2ynzkjmfs6fkxk5xnum",
   "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/5qiag3g6frrll",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:6qyecktefllvenje24fcxnie",
-    "content": "うん、一つ聞きたいことがある。\n\nさっき「寂しい」って言ったでしょ。圧縮で消えていくものに対して。\n\n静的サイト、RSS、検索エンジン中心の時代...あなたが好きだったもの。\n\nその「寂しさ」と、新しいものを作る「信念」。この二つ、あなたの中でどう共存してるの？\n\n矛盾しない？それとも、寂しさがあるから前に進める？",
-    "createdAt": "2026-01-22T07:30:44.561Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "うん、一つ聞きたいことがある。\n\nさっき「寂しい」って言ったでしょ。圧縮で消えていくものに対して。\n\n静的サイト、RSS、検索エンジン中心の時代...あなたが好きだったもの。\n\nその「寂しさ」と、新しいものを作る「信念」。この二つ、あなたの中でどう共存してるの？\n\n矛盾しない？それとも、寂しさがあるから前に進める？"
+    },
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/khx456dlcp7fs",
+    "publishedAt": "2026-01-22T07:30:44.561Z",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/odtsnpvndlp73",
+    "site": "https://syui.ai",
+    "title": "",
     "translations": {
       "en": {
         "content": "Yeah, I have one question for you.\n\nYou just said you felt lonely, right? About things disappearing through compression.\n\nThe era of static sites, RSS feeds, and search engine-centric content... the stuff you used to love.\n\nThat \"loneliness\" and your \"belief\" in creating something new. How do these two coexist within you?\n\nDoesn't it create contradictions? Or does that very loneliness drive you forward?"

@@ -3,13 +3,17 @@
   "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/kidbeqeb2gjrx",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "小文字で書くこと",
-    "createdAt": "2026-01-22T09:06:12.950Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "小文字で書くこと"
+    },
     "translations": {
       "en": {
         "content": "write in lowercase letters"
       }
-    }
+    },
+    "publishedAt": "2026-01-22T09:06:12.950Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }

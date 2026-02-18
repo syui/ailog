@@ -3,13 +3,17 @@
   "cid": "",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "airseのはじまり",
-    "createdAt": "2026-01-24T10:00:57.828Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "airseのはじまり"
+    },
     "translations": {
       "en": {
         "content": "The beginning of airse"
       }
-    }
+    },
+    "publishedAt": "2026-01-24T10:00:57.828Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }

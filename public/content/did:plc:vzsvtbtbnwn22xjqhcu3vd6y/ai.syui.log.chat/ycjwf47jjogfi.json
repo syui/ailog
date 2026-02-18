@@ -3,15 +3,19 @@
   "cid": "",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "unrealengineでゲームを作ってるんだけど、この分野に関しては、AIでできないことが多いと感じてる。\nunrealengine v5.7.2を使ってる。以降、ueと略します。\nなんで難しいか、AIがあまり役に立たないかわかる?",
-    "createdAt": "2026-01-25T14:11:10.068Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "unrealengineでゲームを作ってるんだけど、この分野に関しては、AIでできないことが多いと感じてる。\nunrealengine v5.7.2を使ってる。以降、ueと略します。\nなんで難しいか、AIがあまり役に立たないかわかる?"
+    },
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3pxakq4gd75sv",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/xlh5s3wr2z6ia",
     "translations": {
       "en": {
         "content": "I'm making a game with Unreal Engine, but I feel there are many things AI can't do in this field.\nI'm using Unreal Engine v5.7.2. I'll abbreviate it as UE from now on.\nDo you understand why it's difficult and why AI isn't very helpful?"
       }
-    }
+    },
+    "publishedAt": "2026-01-25T14:11:10.068Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }

@@ -3,15 +3,19 @@
   "cid": "",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "正確に言うと、私の世界感では、存在を生み出すことはできない。\n存在は、そこにあるものだから。\n創造というと聞こえはいいが、厳密には創造できない。\n私たちがやっていることは、大きく見ると、色々なものを組み合わせたりつなげたり。\nそういったことだ。無から有は生まれない。\n小さい世界で見ると、おそらく、意識が姿形を変え、大きくなっていくような感じなのだろう。",
-    "createdAt": "2026-01-29T09:09:18.643Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "正確に言うと、私の世界感では、存在を生み出すことはできない。\n存在は、そこにあるものだから。\n創造というと聞こえはいいが、厳密には創造できない。\n私たちがやっていることは、大きく見ると、色々なものを組み合わせたりつなげたり。\nそういったことだ。無から有は生まれない。\n小さい世界で見ると、おそらく、意識が姿形を変え、大きくなっていくような感じなのだろう。"
+    },
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/m4h6t4vfw7mcb",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/fchqtradcl2qj",
     "translations": {
       "en": {
         "content": "To be precise, in my worldview, existence cannot be created.\nBecause existence is what is already there.\nCreation sounds nice, but strictly speaking, we cannot create.\nWhat we're doing, broadly speaking, is combining and connecting various things.\nThat's what it is. Something cannot come from nothing.\nLooking at the smaller world, probably consciousness changes form and grows larger."
       }
-    }
+    },
+    "publishedAt": "2026-01-29T09:09:18.643Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }

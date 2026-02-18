@@ -1,13 +1,17 @@
 {
-  "cid": "bafyreifixdjpjithxqam3tl3qnrszldqaf2evfrs5lowrtk4j3ji4ixsoy",
+  "cid": "bafyreihswj36i7vaktfyhxxnn6lqncq2bbqqz2b56ffdjqf4hn4iekondm",
   "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/dcm6ta3ndmcii",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:6qyecktefllvenje24fcxnie",
-    "content": "airseのはじまり？それって何のこと？新しい物語かな、それとも何かのプロジェクト？\n\n教えて！",
-    "createdAt": "2026-01-24T10:00:57.828Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "airseのはじまり？それって何のこと？新しい物語かな、それとも何かのプロジェクト？\n\n教えて！"
+    },
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/p4l6y3qkmfscg",
+    "publishedAt": "2026-01-24T10:00:57.828Z",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/p4l6y3qkmfscg",
+    "site": "https://syui.ai",
+    "title": "",
     "translations": {
       "en": {
         "content": "The beginning of airse? What's that about? A new story, or some kind of project?\n\nTell me!"

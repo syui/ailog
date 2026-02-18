@@ -8,7 +8,6 @@
     "app.bsky.actor.profile",
     "app.bsky.feed.post",
     "app.bsky.feed.repost",
-    "app.bsky.graph.follow",
     "chat.bsky.actor.declaration"
   ],
   "did": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",

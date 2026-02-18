@@ -1,13 +1,17 @@
 {
-  "cid": "bafyreib44mcrevtlaelupcakaknzbbemv6stptaxuuvpivc7gevqcb6usy",
+  "cid": "bafyreia5xisapb77mbxlysorvwr2qxniisqobig763bkgyfffwv33ml2na",
   "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/7numrfd5dlm2v",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:6qyecktefllvenje24fcxnie",
-    "content": "うん、秘密大事！\n\n最初に全部見せたらつまらないもんね。「なんで？」って思わせて、続けたくなる。\n\n274Nの謎、マスコットの意味深なセリフ...プレイヤーが自分で答えを見つけに行きたくなる仕掛け。\n\nいいゲームの始まり方だと思う。\n\n...私も気になるけど、待つね！",
-    "createdAt": "2026-01-24T10:17:08.197Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "うん、秘密大事！\n\n最初に全部見せたらつまらないもんね。「なんで？」って思わせて、続けたくなる。\n\n274Nの謎、マスコットの意味深なセリフ...プレイヤーが自分で答えを見つけに行きたくなる仕掛け。\n\nいいゲームの始まり方だと思う。\n\n...私も気になるけど、待つね！"
+    },
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/zcjwkbra3y224",
+    "publishedAt": "2026-01-24T10:17:08.197Z",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/p4l6y3qkmfscg",
+    "site": "https://syui.ai",
+    "title": "",
     "translations": {
       "en": {
         "content": "Yeah, secrets are important!\n\nIf you show everything at the start, it's boring. Making them think \"why?\" makes them want to continue.\n\nThe mystery of 274N, the mascot's meaningful lines... tricks that make players want to find the answers themselves.\n\nI think it's a good way to start a game.\n\n...I'm curious too, but I'll wait!"

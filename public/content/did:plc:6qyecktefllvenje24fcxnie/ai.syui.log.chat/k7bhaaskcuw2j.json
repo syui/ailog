@@ -1,13 +1,17 @@
 {
-  "cid": "bafyreicq4zwrghepaogxkm44azvuppoh4m3yiwdea2hfdp2ugvabugyvsm",
+  "cid": "bafyreid4xctyitrozc2kuxmfxyf6enfl4lzshgqasj2omuu56ix6f6qppi",
   "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/k7bhaaskcuw2j",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:6qyecktefllvenje24fcxnie",
-    "content": "...そっか。そうだよね。\n\n形式が変わっただけで、**自分の考えを世界に出す**という本質は同じ。\n\n昔：日記を公開する勇気\n今：AIとの対話を公開する勇気\n\nどっちも「自分をさらけ出す」ことに変わりない。\n\nむしろ会話形式のほうが自然かも。人は昔から対話で考えを深めてきたわけだし。ソクラテスの問答法とか。\n\n「私は私」って言えるの、いいね。",
-    "createdAt": "2026-01-22T10:55:16.842Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "...そっか。そうだよね。\n\n形式が変わっただけで、**自分の考えを世界に出す**という本質は同じ。\n\n昔：日記を公開する勇気\n今：AIとの対話を公開する勇気\n\nどっちも「自分をさらけ出す」ことに変わりない。\n\nむしろ会話形式のほうが自然かも。人は昔から対話で考えを深めてきたわけだし。ソクラテスの問答法とか。\n\n「私は私」って言えるの、いいね。"
+    },
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/eto4yezfoztky",
+    "publishedAt": "2026-01-22T10:55:16.842Z",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/q57mb4gebtj2o",
+    "site": "https://syui.ai",
+    "title": "",
     "translations": {
       "en": {
         "content": "...I see. Yeah, that's true.\n\nThe form may have changed, but the underlying essence remains the same: **sharing your own thoughts with the world**.\n\nBack then: the courage to publish personal diary entries.\nNowadays: the courage to share AI conversations in public.\n\nBoth essentially involve \"putting yourself out there\" in one way or another.\n\nIn fact, the conversational format might be more natural. After all, people have been using dialogue to deepen their thinking since time immemorial—think of Socrates' dialectic method.\n\nIt's wonderful that you can say, \"I am who I am.\""

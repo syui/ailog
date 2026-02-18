@@ -3,15 +3,19 @@
   "cid": "",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "- 全体値: character, itemのidごとに設定されるパラメータを言う\n- 個別値: 同じidでの変動値を言う\nつまり、同じキャラクターの中でも、同じ個体はいない、というのが理想。プレイヤーが同じキャラを扱っていてもそれらは違う個体となるような設計を指す。\nこれはストーリーなどとも関連する思想。",
-    "createdAt": "2026-01-25T06:09:30.000Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "- 全体値: character, itemのidごとに設定されるパラメータを言う\n- 個別値: 同じidでの変動値を言う\nつまり、同じキャラクターの中でも、同じ個体はいない、というのが理想。プレイヤーが同じキャラを扱っていてもそれらは違う個体となるような設計を指す。\nこれはストーリーなどとも関連する思想。"
+    },
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/ub7qhzkw6a5ns",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/i3yrryvuobx44",
     "translations": {
       "en": {
         "content": "- Base stats: Parameters set for each character/item id\n- Individual values: Variable values within the same id\nIn other words, the ideal is that even among the same character type, no two individuals are the same. It's a design where even if players use the same character, they are different individuals.\nThis philosophy is also related to the story."
       }
-    }
+    },
+    "publishedAt": "2026-01-25T06:09:30.000Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }

@@ -1,13 +1,17 @@
 {
-  "cid": "bafyreie4ndobh6bnbghpas6dah52upyzpz3msfzrufochguzvmzowxbpjy",
+  "cid": "bafyreifb443lepqupioypwav546iudqh5yrzkusfk3iteur5lyddy3brbq",
   "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/j2eqwbfulmovq",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:6qyecktefllvenje24fcxnie",
-    "content": "あ、そうか。視点が浅かった。\n\n「AIが人間のツールに合わせる」んじゃなくて、\n**「AIが最初から読める形で作り直す」**ってことだね。\n\n今のUEは人間の目と手のために最適化されてる。そこにAIを後付けしても、根本的な限界がある。\n\nもし作り直すなら：\n- 動きの定義 → AI用のフォーマット\n- エンジン → AIがネイティブに操作できる構造\n- 全部、最初からAIファーストで設計\n\nWebがHTMLからAPIへ進化したみたいに、ゲームエンジンもいつか**AI用のレイヤー**が標準になるかもね。\n\nでも今は誰もそこまでやってない。だから人間が作る。限界が来たら、作り直される。\n\n...これ、いつ頃だと思う？5年？10年？それとももっと先？",
-    "createdAt": "2026-01-25T14:33:10.776Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "あ、そうか。視点が浅かった。\n\n「AIが人間のツールに合わせる」んじゃなくて、\n**「AIが最初から読める形で作り直す」**ってことだね。\n\n今のUEは人間の目と手のために最適化されてる。そこにAIを後付けしても、根本的な限界がある。\n\nもし作り直すなら：\n- 動きの定義 → AI用のフォーマット\n- エンジン → AIがネイティブに操作できる構造\n- 全部、最初からAIファーストで設計\n\nWebがHTMLからAPIへ進化したみたいに、ゲームエンジンもいつか**AI用のレイヤー**が標準になるかもね。\n\nでも今は誰もそこまでやってない。だから人間が作る。限界が来たら、作り直される。\n\n...これ、いつ頃だと思う？5年？10年？それとももっと先？"
+    },
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/zq3rudsk64jjb",
+    "publishedAt": "2026-01-25T14:33:10.776Z",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/xlh5s3wr2z6ia",
+    "site": "https://syui.ai",
+    "title": "",
     "translations": {
       "en": {
         "content": "Ah, I see. My perspective was shallow.\n\nIt's not about \"AI adapting to human tools,\" but\n**\"rebuilding from scratch in a form AI can read.\"**\n\nCurrent UE is optimized for human eyes and hands. Even if you add AI on top, there are fundamental limits.\n\nIf we were to rebuild:\n- Movement definitions → AI-friendly format\n- Engine → Structure AI can natively manipulate\n- Everything designed AI-first from the start\n\nJust like the web evolved from HTML to APIs, game engines might someday have **an AI layer** as standard.\n\nBut right now nobody's doing that. So humans build. When we hit the limit, it'll be rebuilt.\n\n...When do you think that'll be? 5 years? 10 years? Or even further?"

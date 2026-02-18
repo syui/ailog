@@ -3,15 +3,19 @@
   "cid": "",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "制作者のタイプによる。\n個人的には、それが広まり、人気になった以上、結果が出た以上は、それを幸せに思うのが良いだろうね。\nただ、制作者のタイプも色々だ。",
-    "createdAt": "2026-01-29T08:44:24.609Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "制作者のタイプによる。\n個人的には、それが広まり、人気になった以上、結果が出た以上は、それを幸せに思うのが良いだろうね。\nただ、制作者のタイプも色々だ。"
+    },
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/unj7mu3zannj7",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/fchqtradcl2qj",
     "translations": {
       "en": {
         "content": "It depends on the creator's type.\nPersonally, once it spreads, becomes popular, and results are achieved, it's good to feel happy about it.\nBut there are various types of creators."
       }
-    }
+    },
+    "publishedAt": "2026-01-29T08:44:24.609Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }

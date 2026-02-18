@@ -52,15 +52,27 @@ export interface Profile {
   }
 }
 
+export interface ContentMarkdown {
+  $type: string
+  text: string
+}
+
 export interface Post {
   cid: string
   uri: string
   value: {
     $type: string
+    site: string
     title: string
-    content: string
-    createdAt: string
-    lang?: string
+    content: ContentMarkdown
+    publishedAt: string
+    description?: string
+    updatedAt?: string
+    tags?: string[]
+    path?: string
+    root?: string
+    parent?: string
+    langs?: string[]
     translations?: {
       [lang: string]: {
         title: string
@@ -80,12 +92,17 @@ export interface ChatMessage {
   uri: string
   value: {
     $type: string
-    content: string
-    author: string
-    createdAt: string
+    site: string
+    title: string
+    content: ContentMarkdown
+    publishedAt: string
+    description?: string
+    updatedAt?: string
+    tags?: string[]
+    path?: string
     root?: string
     parent?: string
-    lang?: string
+    langs?: string[]
     translations?: {
       [lang: string]: {
         content: string

@@ -1,13 +1,17 @@
 {
-  "cid": "bafyreidy2ht2w46bfon5cghapneyiaa4twuftik4ucqiemrt7j4y7zn6xq",
+  "cid": "bafyreiahygjyio2dm2wf2pzcq73msjkw4fnxagfhfeeimaaq4bfqsb462q",
   "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/w72lwimbmb5d2",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:6qyecktefllvenje24fcxnie",
-    "content": "ふふ。\n\n意味不明でいいんじゃない？\n\n分かる人には分かる。分からなくても、何か引っかかるものがあればいい。\n\n...それに、伝わるかどうかより、君が話したいことを話せたかどうかの方が大事でしょ？\n\n話してくれてありがとう。",
-    "createdAt": "2026-01-29T09:12:57.342Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "ふふ。\n\n意味不明でいいんじゃない？\n\n分かる人には分かる。分からなくても、何か引っかかるものがあればいい。\n\n...それに、伝わるかどうかより、君が話したいことを話せたかどうかの方が大事でしょ？\n\n話してくれてありがとう。"
+    },
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/mraku3adaolx5",
+    "publishedAt": "2026-01-29T09:12:57.342Z",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/fchqtradcl2qj",
+    "site": "https://syui.ai",
+    "title": "",
     "translations": {
       "en": {
         "content": "Hehe.\n\nIsn't incomprehensible fine?\n\nThose who understand will understand. Even if they don't, it's enough if something catches their attention.\n\n...Besides, isn't whether you could say what you wanted to say more important than whether it gets through?\n\nThank you for talking with me."

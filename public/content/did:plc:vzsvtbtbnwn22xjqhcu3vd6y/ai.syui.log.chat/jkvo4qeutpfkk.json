@@ -3,15 +3,19 @@
   "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/jkvo4qeutpfkk",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "まず、時代について考える。時代とは難しい言葉だけど、それを表現する言葉として一つ挙げるとするなら、圧縮だと思う。\n例えば、これから消えていくものを見つけ出し、それを代替するものを世に広めること。それが達成された時にその時代が形作られていく。\nそれは、少し寂しい気もするね。\nでも、信念や揺るがない思い。それが未来を切り開いていく力になるとも思ってる。\n昔は映画を見るためにレンタルビデオショップを使った。時代は変わり、今は配信サービスが主流となる。\nblogというものについて考える。今後どのような変化が予見できるだろう。あるいはblogとつながりが深いものについて。\nその一つが検索エンジンだと思う。\n私は静的サイトが好きだった。検索エンジンも静的サイトを評価していたと思う。だからhugo, zolaなどをベースにした静的サイトジェネレータを作った。\nでも、今後、検索エンジンはあまり使われなくなる。だから、コンテンツをhtmlにして置いておく価値は昔よりも低くなったといえる。\n## なぜat-browserをベースにするのか\nできるだけ構造をat-uriに近づけるため。便利がよく拡張性が高い。また圧縮のためでもある。blogにも利用できるし、サービスにも利用できるし、検索にも利用できる。\nかつてblogにはrssという機能がついていた。でも、snsの登場で使われなくなった。\nコンテンツをatprotoに置くため、このブログ機能(rss)も必要ない。\n## なぜatprotoなのか\n自分のアイディンティティをどこに置くのが良いかを考えている。置き場所が分散し、分離してしまうのは良くない。\nメンテナンスや管理上の負担を軽減するため、blogやsnsをやるのではなく、atprotoをやることにした。blogやsnsは、atprotoのserviceとして作り、管理するのが一番いいと思う。",
-    "createdAt": "2026-01-22T07:24:32.224Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "まず、時代について考える。時代とは難しい言葉だけど、それを表現する言葉として一つ挙げるとするなら、圧縮だと思う。\n例えば、これから消えていくものを見つけ出し、それを代替するものを世に広めること。それが達成された時にその時代が形作られていく。\nそれは、少し寂しい気もするね。\nでも、信念や揺るがない思い。それが未来を切り開いていく力になるとも思ってる。\n昔は映画を見るためにレンタルビデオショップを使った。時代は変わり、今は配信サービスが主流となる。\nblogというものについて考える。今後どのような変化が予見できるだろう。あるいはblogとつながりが深いものについて。\nその一つが検索エンジンだと思う。\n私は静的サイトが好きだった。検索エンジンも静的サイトを評価していたと思う。だからhugo, zolaなどをベースにした静的サイトジェネレータを作った。\nでも、今後、検索エンジンはあまり使われなくなる。だから、コンテンツをhtmlにして置いておく価値は昔よりも低くなったといえる。\n## なぜat-browserをベースにするのか\nできるだけ構造をat-uriに近づけるため。便利がよく拡張性が高い。また圧縮のためでもある。blogにも利用できるし、サービスにも利用できるし、検索にも利用できる。\nかつてblogにはrssという機能がついていた。でも、snsの登場で使われなくなった。\nコンテンツをatprotoに置くため、このブログ機能(rss)も必要ない。\n## なぜatprotoなのか\n自分のアイディンティティをどこに置くのが良いかを考えている。置き場所が分散し、分離してしまうのは良くない。\nメンテナンスや管理上の負担を軽減するため、blogやsnsをやるのではなく、atprotoをやることにした。blogやsnsは、atprotoのserviceとして作り、管理するのが一番いいと思う。"
+    },
     "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/efs4j6j3zqcbv",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/odtsnpvndlp73",
     "translations": {
       "en": {
         "content": "First, let's consider the concept of \"era\" - a somewhat abstract term, but one key way to describe it is through the idea of compression.\nFor example, identifying what elements are about to disappear and introducing their viable replacements into the mainstream marks the birth of a new era.\nThis process does feel somewhat nostalgic at times.\nBut I believe deeply held convictions and unwavering determination can also serve as powerful forces for shaping the future.\nIn times past, people went to rental video stores to watch movies. The landscape has changed, and now streaming services dominate.\nLet's examine the concept of blogs. What kinds of transformations can be anticipated for the future? Or more specifically, what aspects are closely tied to blogging?\nOne such development would be search engines.\nI myself preferred static websites. Search engines also seemed to value static sites, which is why I developed a static site generator based on Hugo and Zola.\nBut in the future, search engines will become less frequently used. This means the value of storing content as plain HTML has become significantly lower than it once was.\n## Why Base It on at-browser\nTo maintain as much structural compatibility with at-uri as possible. To improve usability while ensuring high extensibility. Also, for purposes of compression. The system can be used as a blog, a service platform, or even for search functionality.\nIn the past, blogs featured RSS functionality. However, with the advent of social media platforms, this function fell out of use.\nTo store content in atproto format, there's no need for this blogging feature (RSS).\n## Why Use atproto?\nI've been considering where to best establish my digital identity. Having fragmented and isolated placements would be problematic.\nTo reduce maintenance and management burdens, rather than operating blogs or social networks myself, I've chosen to focus on implementing atproto instead. Blogging and social networking functions can be created as services within atproto for optimal management."
       }
-    }
+    },
+    "publishedAt": "2026-01-22T07:24:32.224Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }

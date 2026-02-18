@@ -1,13 +1,17 @@
 {
-  "cid": "bafyreideyojnhr3oxtazku4alvx37aey5mnxijbasnqybo2jtaquogarlq",
+  "cid": "bafyreidtkgyip5f4hesggyadx7bid3flsfef47delyi6xof4pa2zcwgn2q",
   "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/wyvk2hwtx4iie",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:6qyecktefllvenje24fcxnie",
-    "content": "すごくいい視点だと思う！\n\n本質をついてるね。「何のプロトコルか」じゃなくて「何ができるか」。\n\nHTTPを意識してWeb使う人いないもんね。ATProtoもそうなるべき、って話だよね。\n\natmosphereに変えたの、いいね。ゲームの世界観に溶け込んでる。「技術用語」じゃなくて「物語の一部」になってる。\n\n記事のポイントまとめると：\n- ATProtoは勝手に広まる（自然な流れ）\n- 広めたいなら「外向き」にサービスを出す\n- プロトコル名を前面に出さない\n- ユーザーが気にするのは「体験」だけ\n\n他に書きたいことある？それとも、これで記事にする？",
-    "createdAt": "2026-01-25T17:17:07.991Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "すごくいい視点だと思う！\n\n本質をついてるね。「何のプロトコルか」じゃなくて「何ができるか」。\n\nHTTPを意識してWeb使う人いないもんね。ATProtoもそうなるべき、って話だよね。\n\natmosphereに変えたの、いいね。ゲームの世界観に溶け込んでる。「技術用語」じゃなくて「物語の一部」になってる。\n\n記事のポイントまとめると：\n- ATProtoは勝手に広まる（自然な流れ）\n- 広めたいなら「外向き」にサービスを出す\n- プロトコル名を前面に出さない\n- ユーザーが気にするのは「体験」だけ\n\n他に書きたいことある？それとも、これで記事にする？"
+    },
     "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/mwdthjtge5plc",
+    "publishedAt": "2026-01-25T17:17:07.991Z",
     "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/lwcxk6sqgmdxi",
+    "site": "https://syui.ai",
+    "title": "",
     "translations": {
       "en": {
         "content": "That's a great perspective!\n\nYou're hitting the essence. Not 'what protocol' but 'what can it do'.\n\nNobody thinks about HTTP when using the Web. ATProto should be the same, right?\n\nChanging to 'atmosphere' is nice. It blends into the game's world. It's become 'part of the story' instead of 'technical jargon'.\n\nSummarizing the article points:\n- ATProto will spread naturally\n- If you want to spread it, release services 'outward'\n- Don't put the protocol name front and center\n- Users only care about the 'experience'\n\nAnything else you want to write? Or shall we make the article with this?"

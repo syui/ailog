@@ -3,13 +3,17 @@
   "cid": "",
   "value": {
     "$type": "ai.syui.log.chat",
-    "author": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
-    "content": "aicardの方向性と検討",
-    "createdAt": "2026-01-25T06:07:00.000Z",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "aicardの方向性と検討"
+    },
     "translations": {
       "en": {
         "content": "aicard direction and considerations"
       }
-    }
+    },
+    "publishedAt": "2026-01-25T06:07:00.000Z",
+    "site": "https://syui.ai",
+    "title": ""
   }
 }
