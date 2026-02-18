@@ -175,6 +175,24 @@ export function renderRecordList(
   `
 }
 
+// Check if a record needs migration to new format
+function needsMigration(value: unknown, collection: string): boolean {
+  if (!value || typeof value !== 'object') return false
+  const v = value as Record<string, unknown>
+
+  // Only for ai.syui.log.post and ai.syui.log.chat
+  if (!collection.startsWith('ai.syui.log.')) return false
+
+  // Check: content is a string (old) instead of object (new)
+  if (typeof v.content === 'string') return true
+  // Check: has createdAt but no publishedAt
+  if (v.createdAt && !v.publishedAt) return true
+  // Check: missing site field
+  if (!v.site) return true
+
+  return false
+}
+
 // Render single record detail
 export function renderRecordDetail(
   record: { uri: string; cid: string; value: unknown },
@@ -186,12 +204,18 @@ export function renderRecordDetail(
     <button type="button" class="record-delete-btn" id="record-delete-btn" data-collection="${collection}" data-rkey="${rkey}">Delete</button>
   ` : ''
 
+  const showMerge = isOwner && needsMigration(record.value, collection)
+  const mergeBtn = showMerge ? `
+    <button type="button" class="record-merge-btn" id="record-merge-btn" data-collection="${collection}" data-rkey="${rkey}">Merge</button>
+  ` : ''
+
   return `
     <article class="record-detail">
       <header class="record-header">
         <div class="record-header-top">
           <h3>${collection}</h3>
           <button type="button" class="validate-btn" id="validate-btn" data-collection="${collection}">Validate</button>
+          ${mergeBtn}
         </div>
         <p class="record-uri">URI: ${record.uri}</p>
         <p class="record-cid">CID: ${record.cid}</p>

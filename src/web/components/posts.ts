@@ -3,6 +3,17 @@ import { renderMarkdown } from '../lib/markdown'
 import { renderDiscussion, loadDiscussionPosts } from './discussion'
 import { getCurrentLang } from './mode-tabs'
 
+// Extract text content from post content (handles both string and object formats)
+function getContentText(content: unknown): string {
+  if (!content) return ''
+  if (typeof content === 'string') return content
+  if (typeof content === 'object' && content !== null) {
+    const obj = content as Record<string, unknown>
+    if (typeof obj.text === 'string') return obj.text
+  }
+  return ''
+}
+
 // Format date as yyyy/mm/dd
 function formatDate(dateStr: string): string {
   const d = new Date(dateStr)
@@ -61,6 +72,8 @@ export function renderPostDetail(
   // Build post URL for discussion search
   const postUrl = siteUrl ? `${siteUrl}/@${handle}/${rkey}` : `${window.location.origin}/@${handle}/${rkey}`
 
+  const rawContent = getContentText(post.value.content)
+
   const editBtn = isOwner ? `<button type="button" class="post-edit-btn" id="post-edit-btn">Edit</button>` : ''
 
   // Get current language and show appropriate content
@@ -68,22 +81,22 @@ export function renderPostDetail(
   const translations = post.value.translations
   const originalLang = post.value.langs?.[0] || 'ja'
 
-  let displayTitle = post.value.title
-  let displayContent = post.value.content.text
+  let displayTitle = post.value.title || ''
+  let displayContent = rawContent
 
   // Use translation if available and not original language
   if (translations && currentLang !== originalLang && translations[currentLang]) {
     const trans = translations[currentLang]
-    displayTitle = trans.title || post.value.title
-    displayContent = trans.content
+    displayTitle = trans.title || post.value.title || ''
+    displayContent = trans.content || rawContent
   }
 
-  const content = renderMarkdown(displayContent)
+  const content = displayContent ? renderMarkdown(displayContent) : ''
 
   const editForm = isOwner ? `
     <div class="post-edit-form" id="post-edit-form" style="display: none;">
-      <input type="text" class="post-edit-title" id="post-edit-title" value="${escapeHtml(post.value.title)}" placeholder="Title">
-      <textarea class="post-edit-content" id="post-edit-content" rows="15">${escapeHtml(post.value.content.text)}</textarea>
+      <input type="text" class="post-edit-title" id="post-edit-title" value="${escapeHtml(post.value.title || '')}" placeholder="Title">
+      <textarea class="post-edit-content" id="post-edit-content" rows="15">${escapeHtml(rawContent)}</textarea>
       <div class="post-edit-actions">
         <button type="button" class="post-edit-cancel" id="post-edit-cancel">Cancel</button>
         <button type="button" class="post-edit-save" id="post-edit-save" data-collection="${collection}" data-rkey="${rkey}">Save</button>

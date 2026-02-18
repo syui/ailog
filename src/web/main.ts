@@ -3,7 +3,7 @@ import './styles/card.css'
 import './styles/card-migrate.css'
 import { getConfig, resolveHandle, getProfile, getPosts, getPost, describeRepo, listRecords, getRecord, getPds, getNetworks, getChatMessages, getCards, getCardAdmin, getRse, getRseAdmin, getLinks } from './lib/api'
 import { parseRoute, onRouteChange, navigate, type Route } from './lib/router'
-import { login, logout, handleCallback, restoreSession, isLoggedIn, getLoggedInHandle, getLoggedInDid, deleteRecord, updatePost, updateChat, updateLinks } from './lib/auth'
+import { login, logout, handleCallback, restoreSession, isLoggedIn, getLoggedInHandle, getLoggedInDid, deleteRecord, updatePost, updateChat, updateLinks, getAgent } from './lib/auth'
 import { validateRecord } from './lib/lexicon'
 import { renderHeader } from './components/header'
 import { renderProfile } from './components/profile'
@@ -446,6 +446,11 @@ async function render(route: Route): Promise<void> {
       }
     }
 
+    // Setup merge button for AT-Browser record detail
+    if (route.type === 'record' && isOwner) {
+      setupRecordMerge()
+    }
+
     // Setup card migration button
     if (route.type === 'card-old' && cardMigrationState?.oldApiUser && cardMigrationState?.oldApiCards) {
       setupMigrationButton(
@@ -625,6 +630,94 @@ function setupPostEdit(collection: string): void {
       alert('Update failed: ' + err)
       saveBtn.textContent = 'Save'
       ;(saveBtn as HTMLButtonElement).disabled = false
+    }
+  })
+}
+
+// Setup merge button for AT-Browser record detail (convert old format to new)
+function setupRecordMerge(): void {
+  const mergeBtn = document.getElementById('record-merge-btn')
+  if (!mergeBtn) return
+
+  mergeBtn.addEventListener('click', async () => {
+    const collection = mergeBtn.getAttribute('data-collection') || ''
+    const rkey = mergeBtn.getAttribute('data-rkey') || ''
+    if (!collection || !rkey) return
+
+    const agent = getAgent()
+    if (!agent) return
+
+    try {
+      // Fetch current record
+      const existing = await agent.com.atproto.repo.getRecord({
+        repo: agent.assertDid,
+        collection,
+        rkey,
+      })
+
+      const oldValue = existing.data.value as Record<string, unknown>
+
+      // Build new format record
+      const newRecord: Record<string, unknown> = {
+        $type: collection,
+        site: (typeof oldValue.site === 'string' && oldValue.site) || window.location.origin,
+        title: (typeof oldValue.title === 'string' ? oldValue.title : '') || '',
+        publishedAt: (typeof oldValue.publishedAt === 'string' && oldValue.publishedAt)
+          || (typeof oldValue.createdAt === 'string' && oldValue.createdAt)
+          || new Date().toISOString(),
+      }
+
+      // Convert content to open union format
+      const oldContent = oldValue.content
+      if (oldContent && typeof oldContent === 'object' && (oldContent as Record<string, unknown>).$type) {
+        // Already new format
+        newRecord.content = oldContent
+      } else if (typeof oldContent === 'string') {
+        // Old string format -> convert to union
+        newRecord.content = {
+          $type: `${collection}#markdown`,
+          text: oldContent,
+        }
+      } else {
+        newRecord.content = {
+          $type: `${collection}#markdown`,
+          text: '',
+        }
+      }
+
+      // Preserve optional fields
+      if (oldValue.description) newRecord.description = oldValue.description
+      if (oldValue.tags) newRecord.tags = oldValue.tags
+      if (oldValue.langs) newRecord.langs = oldValue.langs
+      if (oldValue.translations) newRecord.translations = oldValue.translations
+      if (oldValue.path) newRecord.path = oldValue.path
+      if (oldValue.root) newRecord.root = oldValue.root
+      if (oldValue.parent) newRecord.parent = oldValue.parent
+      if (oldValue.updatedAt) newRecord.updatedAt = oldValue.updatedAt
+
+      if (!confirm(`Merge record to new format?\n\nCollection: ${collection}\nRkey: ${rkey}`)) return
+
+      mergeBtn.textContent = 'Merging...'
+      ;(mergeBtn as HTMLButtonElement).disabled = true
+
+      await agent.com.atproto.repo.putRecord({
+        repo: agent.assertDid,
+        collection,
+        rkey,
+        record: newRecord,
+      })
+
+      mergeBtn.textContent = 'Merged!'
+
+      // Refresh page after short delay
+      setTimeout(() => {
+        render(parseRoute())
+      }, 1000)
+    } catch (err) {
+      console.error('Merge failed:', err)
+      alert('Merge failed: ' + err)
+      mergeBtn.textContent = 'Merge'
+      ;(mergeBtn as HTMLButtonElement).disabled = false
     }
   })
 }
