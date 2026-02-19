@@ -1,0 +1,21 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mf6dg2mezi26",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "aishellは省略できるかもしれない。zshなどでそのような起動を入れておけば。ただし、現在のclaude codeは単体ではクセのあるinterfaceなので、customは必要だと思う。その点で、terminal, tmux, zsh, fzfなどを駆使して構築するか、あるいはaishellを作ったほうがいいのかは意見が分かれる。最初はcustomでやったほうがいいかもしれない。次に、osの設定や運用をclaude codeでやってもらうとして、containerの中で動作することを前提として、簡単に環境をcloneしたりdeleteできる必要がある。基本的なosの構築は最初の段階で終了し、あとはuserまたはAIが扱う標準スペースはcontainerになる。machinectlなどを使うようclaude rulesを用意しておけばいい。"
+    },
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mf6czldksn25",
+    "publishedAt": "2026-02-19T00:25:38.231Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mf6cjbktpa22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "The AI shell might be unnecessary - you could just set up zsh to launch it. However, current Claude Code has a quirky interface, so customization is needed. Whether to build it with terminal/tmux/zsh/fzf or create a dedicated AI shell is debatable. Starting with customization might be better.\n\nFor OS config and operations via Claude Code, it should run inside containers with easy clone/delete capability. Base OS setup is done once upfront, then containers become the standard workspace for users and AI. Claude rules can be set up to use machinectl etc."
+      }
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "cid": "bafyreicxlgihk6i5xa5e3dmjv4c73tzc6lgshzyahmi5mf7ihfitgyw3c4",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mf6duofofy2d",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "理想の構成：Host (Arch Linux)に~/.claude/MEMORY.md（全体共有記憶）、~/CLAUDE.md（グローバルルール）、systemd-nspawn containers（作業空間）。\n\n記憶の階層：MEMORY.mdが自動蓄積・圧縮され、グローバル/プロジェクト別に分かれ、すべてのagent/teamで共有される。これがチームの共通認識になる。\n\n構築手順：\nPhase 1: Host OS（Arch minimal + btrfs）\nPhase 2: Base Container（pacstrapでテンプレート作成）\nPhase 3: Claude Code導入（グローバルCLAUDE.mdでcontainer操作ルール定義）\nPhase 4: Team環境（tmux設定、team起動スクリプト）\nPhase 5: Interface（.zshrcでalias、fzfでcontainer選択）\nPhase 6: 訓練（Week1:単体でcontainer操作、Week2:MEMORY.md観察、Week3:team小タスク、Week4:本格運用）\n\n一番大事なのはMEMORY.mdの質。良い記憶の蓄積パターンを掴むのが先で、teamはその後でも遅くない。"
+    },
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mf6duofnyj2c",
+    "publishedAt": "2026-02-19T00:33:48.745Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mf6cjbktpa22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "Ideal structure: Host (Arch Linux) with ~/.claude/MEMORY.md (shared memory), ~/CLAUDE.md (global rules), systemd-nspawn containers (workspaces).\n\nMemory hierarchy: MEMORY.md auto-accumulates and compresses, split into global/per-project, shared across all agents/teams as common context.\n\nConstruction phases:\n1. Host OS (Arch minimal + btrfs)\n2. Base Container (pacstrap template)\n3. Claude Code (global CLAUDE.md with container operation rules)\n4. Team environment (tmux config, startup scripts)\n5. Interface (.zshrc aliases, fzf container selection)\n6. Training (Week1: single agent container ops, Week2: observe MEMORY.md, Week3: small team tasks, Week4: production use)\n\nMost important: MEMORY.md quality determines everything. Learn good memory accumulation patterns first - teams can wait."
+      }
+    }
+  }
+}

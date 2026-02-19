@@ -1,0 +1,21 @@
+{
+  "cid": "bafyreie6d2w3nz5qqy2ew4vpbt3sx7srtqqzwajuhswwp5gxz4wffzwwam",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mf6ej4dnle2h",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "Level 1はあるけどLevel 2がない。部品はあるけど組み立て説明書がない状態。\n\n優先順位：まずCLAUDE.mdに基本ルールを書くのが先。Level 2ツール（C++）は変更コスト高い。CLAUDE.md（テキスト）はすぐ試せてすぐ直せる。AIにLevel 1の組み合わせ方をルールとして教え、動くパターンが見つかったらLevel 2にツール化。\n\n作るべきルール：\n1. BP構築の基本手順（Character BPの作成順序、変数の置き場所、関数共有はInterface経由）\n2. 禁止事項（compile前にplayしない等）\n3. パターン集（追尾する敵の必要BP・構築順序・使うMCPツール）\n\n進め方：シンプルなパターンを手動で作る→CLAUDE.mdに書く→AIに再現させる→失敗したらルール修正→安定したらパターン増やす→頻出パターンをLevel 2に昇格。Phase 3の反復が一番大事。"
+    },
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mf6ej4dn652g",
+    "publishedAt": "2026-02-19T00:45:14.447Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mf6cjbktpa22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "Level 1 exists but no Level 2 - you have parts but no assembly instructions.\n\nPriority: Write basic rules in CLAUDE.md first. Level 2 tools (C++) are expensive to change. CLAUDE.md (text) is quick to iterate. Teach AI Level 1 combinations as rules, then promote stable patterns to Level 2 tools.\n\nRules to create:\n1. BP construction procedures (Character BP creation order, variable placement, function sharing via Interface)\n2. Prohibitions (don't play before compile, etc.)\n3. Pattern recipes (enemy tracking: required BPs, build order, MCP tools per step)\n\nApproach: Manually build simplest pattern → document in CLAUDE.md → have AI reproduce it → fix rules on failure → expand patterns when stable → promote frequent patterns to Level 2. Phase 3 iteration is most important."
+      }
+    }
+  }
+}

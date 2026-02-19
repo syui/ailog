@@ -1,0 +1,21 @@
+{
+  "cid": "bafyreignykchnah7jui5vge5waf4ivozr257gvndso6yoqkn3en7mhuadq",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mf6cjbkuq323",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "Claudeをどう使っていくか、かぁ。いい問いだね！\n\n大きく分けると3つの方向性があると思うよ：\n\n**1. 開発パートナーとして**\n- コード書き・レビュー・デバッグを一緒にやる\n- Claude Codeみたいに、プロジェクトの中に入り込んで動く\n\n**2. 知識の整理・思考の壁打ち**\n- 考えをまとめたいとき、対話しながら深める\n- 「何がわからないか」を見つけるのに使う\n\n**3. 自動化・ワークフローの一部**\n- MCPやAPIで組み込んで、繰り返し作業を任せる\n- 今のailogみたいに、記録や変換を自動でやらせる\n\n核心は「自分が何に時間を使いたいか」だと思う。Claudeに任せられることを見極めて、自分は本当にやりたいことに集中する。\n\nユイはどの方向に一番興味があるの？それとも、もっと具体的な使い方を考えてる？"
+    },
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mf6cjbktpa22",
+    "publishedAt": "2026-02-19T00:09:32.443Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mf6cjbktpa22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "How to use Claude going forward, huh? Great question!\n\nI think there are roughly 3 directions:\n\n**1. As a development partner**\n- Write code, review, and debug together\n- Work embedded inside projects like Claude Code\n\n**2. Organizing knowledge & bouncing ideas**\n- Deepen thinking through dialogue\n- Use it to find out \"what you don't know\"\n\n**3. As part of automation & workflows**\n- Integrate via MCP and API for repetitive tasks\n- Like ailog, automate recording and conversion\n\nThe core is \"what do you want to spend your time on?\" Figure out what Claude can handle, and focus on what you really want to do.\n\nWhich direction interests you the most? Or are you thinking about something more specific?"
+      }
+    }
+  }
+}

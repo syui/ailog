@@ -1,0 +1,21 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mf6dmhxuuy2a",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "次は、containerの話は終わって、claude codeの基本動作をどのようにしていくのかを考える。skill, mcp, acp, claude.mdなど色々あるけど、私が注目しているのは、CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMSになる。これをとりあえず、teamやtmuxと呼んでおこう。tmuxで扱うことを前提にする。--teammate-mode tmux。この辺で、私のclaudeの使い方は変化を余儀なくされるかもしれないし、そのためには環境の設定や訓練が必要になるかもしれない。"
+    },
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mf6dg2mfm627",
+    "publishedAt": "2026-02-19T00:29:13.566Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mf6cjbktpa22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "Next, moving past containers, let's think about Claude Code's basic operations. There are various things like skill, mcp, acp, claude.md, but what I'm focused on is CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS. Let's call it 'team' or 'tmux' for now. Assuming tmux-based usage with --teammate-mode tmux. This might force changes in how I use Claude, requiring environment setup and training."
+      }
+    }
+  }
+}

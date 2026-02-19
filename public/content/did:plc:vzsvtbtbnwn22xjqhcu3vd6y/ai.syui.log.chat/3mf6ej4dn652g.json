@@ -1,0 +1,21 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mf6ej4dn652g",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "今のMCPツールはLevel 1寄りで、まだLevel 2は作れてない。BPの基本的な構築方法や、game interfaceでの変数や関数の共有や実行についても、基本的なルールを作れていない。"
+    },
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mf6ed2zvxb2f",
+    "publishedAt": "2026-02-19T00:45:14.446Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mf6cjbktpa22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "Current MCP tools are Level 1 (atomic). Haven't built Level 2 yet. Haven't established basic rules for BP construction or game interface variable/function sharing and execution either."
+      }
+    }
+  }
+}

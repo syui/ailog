@@ -1,0 +1,21 @@
+{
+  "cid": "bafyreihmgcsx34krqn7hongdhyitbw2lnol75bxbyqbjvji3i2zawkvw4a",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mf6ed2zvxb2f",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "UE + Claude Code、挑戦的だね。\n\n難しさの本質：一つの指示が何十もの細かい操作に展開され、しかも相互依存している。\n\nうまくいかない原因は粒度の問題。MCPツールの設計方針として、レシピ型の3層構造を提案：\n- Level 1: 原子操作（create_blueprint, add_component, connect_pins等）\n- Level 2: 部品テンプレート（character_base一式、ai_controller一式等）← 一番重要\n- Level 3: パターン（CLAUDE.mdに組み合わせレシピとして記述）\n\nLevel 2が鍵。AIが一つの指示で意味のあるまとまりを作れるようにする。\n\nアプローチ：公式assetの構造分解→部品ごとにMCPツール化→組み合わせパターンをCLAUDE.mdに→反復テスト。\n\n今のMCPツールはどのくらいの粒度？"
+    },
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mf6ed2zvl62e",
+    "publishedAt": "2026-02-19T00:41:51.753Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mf6cjbktpa22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "UE + Claude Code is quite challenging.\n\nCore difficulty: one instruction expands into dozens of interdependent operations.\n\nThe issue is granularity. Proposed MCP design with 3-tier recipe approach:\n- Level 1: Atomic operations (create_blueprint, add_component, connect_pins)\n- Level 2: Component templates (character_base set, ai_controller set) ← most important\n- Level 3: Patterns (combination recipes in CLAUDE.md)\n\nLevel 2 is key - lets AI create meaningful units from single instructions.\n\nApproach: decompose official assets → MCP tools per component → combination patterns in CLAUDE.md → iterative testing.\n\nWhat granularity are your current MCP tools at?"
+      }
+    }
+  }
+}

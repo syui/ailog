@@ -1,0 +1,21 @@
+{
+  "cid": "bafyreig55j43xjksxytfbvndpwn6xowl5fbmglfccoahtnjazaulwhqmcy",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mf6dmhxvbv2b",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "agent teamsに注目してるんだね。大きな転換点になりそう。\n\n今までと何が変わるか：\n従来: 人間 → 1つのclaude code → 作業\nteams: 人間 → 複数のclaude code（役割分担）→ 並行作業\n\ntmux modeだと各agentがtmuxのpaneで動く。人間がそれぞれの動きを見れるし介入もできる。\n\n使い方の変化：\n- 今まで：1対1で的確なプロンプト力\n- これから：タスク分割力、agent間の依存関係設計、複数paneの監視と介入\n\n環境設定で必要なこと：CLAUDE.mdにteam用ルール（役割定義、共有規約、conflict回避）、tmux設定（layoutテンプレート、起動自動化）、訓練（小さいタスクから分割パターンを身につける）。\n\n核心は「一人の優秀なAIに全部やらせる」から「チームを設計して管理する」へのシフト。人間の役割がプレイヤーからマネージャーに変わる。\n\n最初にteamsで試してみたいタスクの想定はある？"
+    },
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mf6dmhxuuy2a",
+    "publishedAt": "2026-02-19T00:29:13.566Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mf6cjbktpa22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "Interesting focus on agent teams - this could be a major turning point.\n\nWhat changes: Traditional: human → one claude code → work. Teams: human → multiple claude codes (role division) → parallel work.\n\nIn tmux mode, each agent runs in a tmux pane - you can see each agent's activity and intervene when needed.\n\nSkill shift: From 1-on-1 prompting to task decomposition, dependency management between agents, and multi-pane monitoring.\n\nEnvironment needs: CLAUDE.md team rules (role definitions, sharing conventions, conflict avoidance), tmux config (layout templates, startup automation), training (start small, learn decomposition patterns).\n\nCore shift: from 'one capable AI does everything' to 'design and manage a team'. Human role changes from player to manager.\n\nAny specific tasks you want to try with teams first?"
+      }
+    }
+  }
+}

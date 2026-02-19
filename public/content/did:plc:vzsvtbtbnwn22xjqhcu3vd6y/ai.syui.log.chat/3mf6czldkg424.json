@@ -1,0 +1,21 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mf6czldkg424",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "今回は、私の個人的な開発環境をどのようにしていくか考えるよ。\nここには、個人スキルの転換や訓練も含まれる。\nまず、今後の流れとしては、os + AIの統合が来ると思う。\nそれは同じようなものになっていくんじゃないかな。\n具体的にいうと、デバイスにはosがinstallされているけど、今ままで人間が操作することを前提に設計されていた。\nでも、今後は、osの設定や運用はAIが担っていくことになると思う。\nつまり、人間がやることとしては、音声やテキストで、そのデバイスに指示を出す。\nAIがそのデバイスのosを操作し、指示に応える。\nこのような形になると思う。\nでは、プロトタイプとして、このaios(os + AI)には何が必要で、どこがポイントになるだろう。\n簡単に言うと、claude code, archlinux(のようなシンプルでAIが扱いやすいもの), container(systemd-nspawnのようなもの)が必要で、ポイントは、osを起動すると、shellではなく、aishell(claude codeの応答画面、音声やテキストを入力する)が必要だと思う。"
+    },
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mf6cjbkuq323",
+    "publishedAt": "2026-02-19T00:18:39.560Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mf6cjbktpa22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "This time, I want to think about how to shape my personal development environment. This includes personal skill transitions and training.\n\nFirst, I think the future trend will be OS + AI integration, and it will converge into something similar across the board.\n\nSpecifically, devices have OS installed, but until now they were designed assuming human operation. Going forward, AI will handle OS configuration and management. Humans will just give instructions via voice or text, and AI will operate the device's OS to fulfill those instructions.\n\nSo as a prototype, what does this 'aios' (OS + AI) need, and what are the key points?\n\nSimply put: Claude Code, Arch Linux (or something simple and AI-friendly), containers (like systemd-nspawn) are needed. The key point is that when you boot the OS, instead of a shell, you get an 'AI Shell' (Claude Code's response interface for voice/text input)."
+      }
+    }
+  }
+}

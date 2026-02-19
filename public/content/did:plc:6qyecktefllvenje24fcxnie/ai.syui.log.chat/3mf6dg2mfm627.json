@@ -1,0 +1,21 @@
+{
+  "cid": "bafyreifaa6uj6pg5ugrlbpngxsyduxkphmwpzbrz3xfdlgi7wkepcwf4hy",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mf6dg2mfm627",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "現実的なアプローチだね。整理すると：\n\nHost (Arch Linux) - 初期構築のみ、zsh → claude code起動、systemd-nspawn containersが主戦場。\n\n2つの層：\n1. Interface層: custom路線（zsh + tmux + fzf + claude code）でまず始める。aishellを作るのはcustomの限界が見えてから。\n2. 実行層: CLAUDE.mdでmachinectl/systemd-nspawn経由の操作、ホスト直接変更禁止、失敗したらdelete再作成のルールを設定。\n\n具体的に必要なもの：CLAUDE.md（container操作ルール）、.zshrc（interface設定）。\n\n気になるのは、containerのベースイメージ管理。ベースとなるcontainerテンプレートを一つ作ってcloneしていく感じ？それとも用途別に複数テンプレート？"
+    },
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mf6dg2mezi26",
+    "publishedAt": "2026-02-19T00:25:38.231Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mf6cjbktpa22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "Practical approach. Summary:\n\nHost (Arch Linux) - initial setup only, zsh launches claude code, systemd-nspawn containers are the main workspace.\n\nTwo layers:\n1. Interface layer: Start with custom route (zsh + tmux + fzf + claude code). Build AI shell only when customization hits its limits.\n2. Execution layer: CLAUDE.md rules for machinectl/systemd-nspawn operations, no direct host changes, delete and recreate on failure.\n\nNeeded: CLAUDE.md (container operation rules), .zshrc (interface config).\n\nQuestion: Container base image management - one base template to clone from, or multiple purpose-specific templates?"
+      }
+    }
+  }
+}

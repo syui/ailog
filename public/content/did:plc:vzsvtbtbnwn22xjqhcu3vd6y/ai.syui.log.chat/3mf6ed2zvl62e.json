@@ -1,0 +1,21 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mf6ed2zvl62e",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "UE plugin(Unreal Engine plugin)を開発している。AI(claude code)がUE editorで動作して、chatでBP(blueprint)を構築してくれるもの。公式assetをベースに要素を組み立てるMCPとC++で書かれている。基本的なゲームの作り方をAIに教えて機能化する作業。ただ細部（material, animation等）に分かれていて難しく、うまく構築してくれない。例えば「敵を作り追尾・攻撃させて」という指示でも、必要な部品が多すぎる。"
+    },
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mf6duofofy2d",
+    "publishedAt": "2026-02-19T00:41:51.752Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mf6cjbktpa22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "I'm developing a UE (Unreal Engine) plugin where AI (Claude Code) operates in the UE Editor, building Blueprints through chat. It's built with MCP and C++, based on official assets. The work is about teaching AI basic game construction and turning that into tools. But it's very difficult because it breaks into many subsystems (materials, animation, etc.) and currently doesn't build things well. Even 'create an enemy that tracks and attacks the player' requires many interconnected components."
+      }
+    }
+  }
+}
