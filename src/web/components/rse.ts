@@ -164,9 +164,11 @@ export function renderRsePage(
   handle: string,
   userCards: UserCard[] = [],
   adminData: CardAdminData | null = null,
-  rseAdminData: RseAdminData | null = null
+  rseAdminData: RseAdminData | null = null,
+  cardCollection: string = 'ai.syui.card.user'
 ): string {
   const jsonUrl = `/@${handle}/at/collection/ai.syui.rse.user/self`
+  const cardJsonUrl = `/@${handle}/at/collection/${cardCollection}/self`
 
   if (!collection) {
     return `
@@ -217,6 +219,7 @@ export function renderRsePage(
       </div>
       <div class="card-actions">
         <a href="${jsonUrl}" class="json-btn">json</a>
+        ${userCards.length > 0 ? `<a href="${cardJsonUrl}" class="json-btn">card</a>` : ''}
       </div>
       ${charsHtml ? `
         <h3 class="rse-section-title">Characters</h3>

@@ -273,7 +273,7 @@ async function render(route: Route): Promise<void> {
         getRseAdmin(adminDid)
       ])
       const userCards = cards?.card || []
-      html += `<div id="content">${renderRsePage(rseData, handle, userCards, adminData, rseAdminData)}</div>`
+      html += `<div id="content">${renderRsePage(rseData, handle, userCards, adminData, rseAdminData, cardCollection)}</div>`
       html += `<nav class="back-nav"><a href="/@${handle}">${handle}</a></nav>`
 
     } else if (route.type === 'link') {
