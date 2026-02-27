@@ -145,23 +145,37 @@ pub async fn sync_to_local(
         }
     }
 
-    // 3. Sync collection records
-    let records_url = format!(
-        "{}?repo={}&collection={}&limit=100",
-        lexicons::url(pds_host, &com_atproto_repo::LIST_RECORDS),
-        did,
-        collection
-    );
-    let res = client.get(&records_url).send().await?;
-    if res.status().is_success() {
-        let list: ListRecordsResponse = res.json().await?;
-        let collection_dir = format!("{}/{}", did_dir, collection);
-        fs::create_dir_all(&collection_dir)?;
+    // 3. Sync collection records (with pagination)
+    let collection_dir = format!("{}/{}", did_dir, collection);
+    fs::create_dir_all(&collection_dir)?;
 
-        let mut rkeys: Vec<String> = Vec::new();
+    let mut fetched_rkeys: Vec<String> = Vec::new();
+    let mut cursor: Option<String> = None;
+    let mut total_fetched = 0;
+
+    loop {
+        let mut records_url = format!(
+            "{}?repo={}&collection={}&limit=100",
+            lexicons::url(pds_host, &com_atproto_repo::LIST_RECORDS),
+            did,
+            collection
+        );
+        if let Some(ref c) = cursor {
+            records_url.push_str(&format!("&cursor={}", c));
+        }
+
+        let res = client.get(&records_url).send().await?;
+        if !res.status().is_success() {
+            println!("Failed to fetch records: {}", res.status());
+            break;
+        }
+
+        let list: ListRecordsResponse = res.json().await?;
+        let count = list.records.len();
+
         for record in &list.records {
             let rkey = record.uri.split('/').next_back().unwrap_or("unknown");
-            rkeys.push(rkey.to_string());
+            fetched_rkeys.push(rkey.to_string());
             let record_path = format!("{}/{}.json", collection_dir, rkey);
             let record_json = serde_json::json!({
                 "uri": record.uri,
@@ -172,15 +186,37 @@ pub async fn sync_to_local(
             println!("Saved: {}", record_path);
         }
 
-        // Create index.json with list of rkeys
+        total_fetched += count;
+
+        match list.cursor {
+            Some(c) if count > 0 => cursor = Some(c),
+            _ => break,
+        }
+    }
+
+    if total_fetched > 0 {
+        // Merge with existing index.json to preserve local-only entries
         let index_path = format!("{}/index.json", collection_dir);
-        fs::write(&index_path, serde_json::to_string_pretty(&rkeys)?)?;
+        let mut merged_rkeys = fetched_rkeys.clone();
+
+        if let Ok(existing) = fs::read_to_string(&index_path) {
+            if let Ok(existing_rkeys) = serde_json::from_str::<Vec<String>>(&existing) {
+                let fetched_set: std::collections::HashSet<String> =
+                    merged_rkeys.iter().cloned().collect();
+                for rkey in existing_rkeys {
+                    if !fetched_set.contains(&rkey) {
+                        merged_rkeys.push(rkey);
+                    }
+                }
+            }
+        }
+
+        fs::write(&index_path, serde_json::to_string_pretty(&merged_rkeys)?)?;
         println!("Saved: {}", index_path);
 
         println!(
             "Synced {} records from {}",
-            list.records.len(),
-            collection
+            total_fetched, collection
         );
     }
 

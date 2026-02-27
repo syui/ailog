@@ -30,7 +30,6 @@ pub struct PutRecordResponse {
 pub struct ListRecordsResponse {
     pub records: Vec<Record>,
     #[serde(default)]
-    #[allow(dead_code)]
     pub cursor: Option<String>,
 }
 
