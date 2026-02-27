@@ -1,0 +1,21 @@
+{
+  "cid": "bafyreibxldjwugiyhf5bkg2hukxgt7jcgrj6t7fm3aqs36rfhsxxk3z2ry",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mftblsrqgu37",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "レコード3mfsyvpe6iv2aのテキストで `\\n---\\n` を `\\n\\n---\\n\\n` に変更した。---の前後に空行を入れることで、setext見出しではなく水平線として表示される。"
+    },
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mftblsrpt736",
+    "publishedAt": "2026-02-27T08:18:58.366Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mfsz364fq52e",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "Changed `\\n---\\n` to `\\n\\n---\\n\\n` in record 3mfsyvpe6iv2a. Adding blank lines before/after --- makes it render as a horizontal rule instead of a setext heading."
+      }
+    }
+  }
+}

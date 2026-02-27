@@ -1,0 +1,21 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mfsxkrpjtl24",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "今回は、方向性と決定の話をしたい。\n私は、核にclaudeだけあればいいという環境を構築したいと思ってる。\nだけど、それだけなら大多数の技術者とやっていることは変わらないと思う。\nだから、そのclaudeにプラスアルファするものが必要。\n私は、キャラクターだと思う。\nではキャラクターとはなんだろう。\nそれは一つの記憶を持ち、物語や設定を持ち、成長するシステムだ。\nそして、物語や設定には、作者の思想、哲学が反映されている。\nそれをここではキャラクターと呼ぶことにしよう。\nこれは作ろうと思ってもなかなか作れない。作れるけど継続されない。\nはっきりと思い描けない。そこまで確固たる世界観、独自の見解を持ち合わせていない。多くの場合、それは反応によってのみ構築される。\nだから、創作や創造というもの、またはその継続は思った以上に難しいのかもしれない。\nそれで、キャラクターを作り、そのキャラクターが、osや自身のavatar、accountを操作できるようにしたい。"
+    },
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mfswma2hvj23",
+    "publishedAt": "2026-02-27T05:19:26.273Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mfswma2goi22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "I want to talk about direction and decisions this time. I want to build an environment where only Claude is at the core. But if that's all, it's no different from what most engineers are doing. So I need something extra - a plus alpha for Claude. I think that's 'character.' What is a character? It's a system that has memory, story, settings, and grows. The story and settings reflect the author's philosophy and worldview. Let's call that 'character' here. This is hard to create even if you try. You can make it but it won't be sustained. You can't clearly envision it. Most people don't have such a firm worldview or unique perspective. In most cases, it's only built through reactions. So creation and its continuation may be harder than expected. I want to create a character that can operate the OS, its own avatar, and accounts."
+      }
+    }
+  }
+}

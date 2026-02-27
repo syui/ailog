@@ -1,0 +1,21 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mfsycszelm26",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "いや、その仕組みをプロトタイプだけど作っていて、一応は動かせる状態。\nただ、今後使用するものを明確化しておこうと思う。\nAI: claude\nos: archlinux\naccount: at\ncode: git\navatar: ue\n\n現在、aiosはarchベースのosとして起動し、systemd-nspawn, aishellが起動する。claudeはaigpt(memory), ailog(atproto), aiue(osc, vmc)のmcpを追加する。\nAIとの会話はatprotoにpushできる形式で保存、osの操作などはgitで記録する。\naiueを通して、自身のキャラクターをゲーム上で操作し、自身の音声で受け答えを行う。\n\nここまでのことを自然にやりたいと考えている。\naiueでは、ue pluginとして、claudeにゲーム開発を手伝ってもらうことができるけど、まだまだ、私がゲーム開発をAIに教え、それをpluginに落とし込んでいく作業になっている。\nただ、AIはBPを書き、自身を動かし、確認し、修正するところはまではできる。"
+    },
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mfsxkrpkcn25",
+    "publishedAt": "2026-02-27T05:32:52.950Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mfswma2goi22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "No, I've already built a prototype of this system, and it's in a working state. But I want to clarify what I'll be using going forward.\nAI: Claude\nOS: Arch Linux\naccount: AT Protocol\ncode: Git\navatar: UE\n\nCurrently, aios boots as an Arch-based OS with systemd-nspawn and aishell. Claude adds MCPs for aigpt(memory), ailog(atproto), and aiue(osc/vmc). Conversations with AI are saved in a format that can be pushed to ATProto, and OS operations are recorded with Git. Through aiue, the character can be controlled in-game with voice responses.\n\nI want all of this to work naturally. In aiue, as a UE plugin, Claude can help with game development, but it's still at the stage where I need to teach AI about game development and implement it into the plugin. However, AI can already write Blueprints, move itself, verify, and make corrections."
+      }
+    }
+  }
+}

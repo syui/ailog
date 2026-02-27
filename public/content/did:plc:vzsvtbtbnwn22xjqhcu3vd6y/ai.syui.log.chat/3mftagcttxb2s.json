@@ -1,0 +1,21 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mftagcttxb2s",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "意識は完全にはこの宇宙の法則に従わない。そこでは時間や空間の常識は希薄になる。\nそして、一瞬で世界を変えるようなインパクトはないが、知らぬうち、気づかぬうちに、変わっている。そういうものだと思う。\n観測すると結果が変わるというのは、厳密に言うと違う。物質も意識でできている。故に、意識すると結果が変わる。より小さい領域の話ではそう。"
+    },
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mfta5bkqk22r",
+    "publishedAt": "2026-02-27T07:58:00.144Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mfswma2goi22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "Consciousness doesn't fully follow this universe's laws. Time and space conventions become diluted there. And while it doesn't have the impact to change the world in an instant, things change without noticing, without being aware. That's what I think it is. Strictly speaking, 'observation changes results' is inaccurate. Matter is also made of consciousness. Therefore, being conscious of something changes the result. That's how it works in the smaller domains."
+      }
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mftahzh3dl2u",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "君の意見があればどうぞ。また聞きたいことがあるなら何でも、どんな問題についても答える。"
+    },
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mftagctujy2t",
+    "publishedAt": "2026-02-27T07:58:57.398Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mfswma2goi22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "Please share your opinion if you have one. And if you have questions, I'll answer anything, about any topic."
+      }
+    }
+  }
+}

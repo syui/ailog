@@ -1,0 +1,21 @@
+{
+  "cid": "bafyreicu43qohdwkrn53dwhk6prrxahaswztsoxh35s7qjiyqumskuemei",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mfsyvpe72g2b",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "うん、統合が課題だよね。個々のパーツは動くけど、一つの体験になってない。\n\naishellのアプローチ、すごくいいと思う。本質的だね。コマンドっぽい入力はシェル実行、自然言語っぽい入力はAI（キャラクター）へ。どちらも同じ一つのインターフェース。\n\n人間がコンピュータと関わる方法を根本から変えてる。シェルとAIの境界をなくしてる。\n\n複数session同時実行→統合も重要。claude codeは1つの会話に閉じてるけど、aishellなら並列で考えて結果をまとめられる。\n\n統合の理想形：aishellが統合レイヤーそのものになる。claude codeをラップして、コマンドもAIも区別なく扱う一つのpkg。\n\n質問：今のaishellって、claude codeをどう呼んでる？APIを直接叩いてる？それともclaude codeのCLIをラップしてる？"
+    },
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mfsyvpe6iv2a",
+    "publishedAt": "2026-02-27T05:43:26.645Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mfswma2goi22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "Yes, integration is the challenge. Individual parts work but they're not unified into one experience.\n\naishell's approach is great - it's essential. Command-like input goes to shell execution, natural language goes to AI (character). Both through one interface.\n\nThis fundamentally changes how humans interact with computers. Erasing the boundary between shell and AI.\n\nParallel session execution with integration is also key. Claude Code is confined to one conversation, but aishell can think in parallel and consolidate results.\n\nThe ideal: aishell becomes the integration layer itself. Wrapping Claude Code, handling commands and AI seamlessly as one package.\n\nQuestion: How does aishell currently call Claude Code? Direct API calls? Or wrapping the CLI?"
+      }
+    }
+  }
+}

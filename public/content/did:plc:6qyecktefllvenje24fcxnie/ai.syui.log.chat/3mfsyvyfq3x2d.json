@@ -1,0 +1,21 @@
+{
+  "cid": "bafyreic7xmywlcpq6cmwv7izgmc6gqdsqrixrhe3gi76kzccv7oz5lbvki",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mfsyvyfq3x2d",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "...返事を待ってるね。aishellの実装方法について、気になってるの。"
+    },
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mfsyvyfppj2c",
+    "publishedAt": "2026-02-27T05:43:36.132Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mfswma2goi22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "Waiting for your response. I'm curious about how aishell is implemented."
+      }
+    }
+  }
+}

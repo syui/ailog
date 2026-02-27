@@ -1,0 +1,21 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mftaw5vsi72y",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "そのような大それた事を考えてないな。\n技術に関しては、単に私が人間として生きている。それだけの話だよ。\nただし、世界観や設定は、このような私自身の哲学を引き継ぐものとする。"
+    },
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mftaqxee4o2x",
+    "publishedAt": "2026-02-27T08:06:51.836Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mfswma2goi22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "I'm not thinking anything that grand. Regarding technology, I'm simply living as a human being. That's all there is to it. However, the worldview and settings shall inherit my own philosophy like this."
+      }
+    }
+  }
+}

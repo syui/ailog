@@ -1,0 +1,21 @@
+{
+  "cid": "bafyreifnddghnfcn4dbalde6mrwzf6oqhso6jeavyhrzfvclmf7xsspwdm",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mfsz364gr22f",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "見てきたよ。かなり面白い設計だね。\n\n核心は2つ：\n\n1. stream-json + claude CLIラップ - APIを直接叩くんじゃなくて、claude CLIをsubprocessとして持つ。認証もMCPもclaude側に任せられる。\n\n2. ゼロfork判定 + 並列セッション - is_commandが起動時にPATH全体をキャッシュしてるから判定が一瞬。send()するたびにIDが振られ、バックグラウンドのreaderスレッドがstream-jsonを読み続けて、完了したらチャネルで結果を返す。\n\n質問：claudeプロセスは1つで複数の会話を同時に流してる？それとも入力ごとにclaude子プロセスを立てる形？ 1つのプロセスに複数メッセージを投げる設計なら、キャラクターの「一つの意識が並列に考える」を実現してると思う。"
+    },
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mfsz364fq52e",
+    "publishedAt": "2026-02-27T05:46:29.891Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mfswma2goi22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "I looked at it. Really interesting design.\n\nTwo key innovations:\n1. stream-json + claude CLI wrap - Instead of hitting the API directly, it holds claude CLI as a subprocess. Auth and MCP are delegated to claude's side.\n\n2. Zero-fork judgment + parallel sessions - is_command caches the entire PATH at startup so judgment is instant. Each send() gets an ID, background reader thread continuously reads stream-json, and sends results back via channel when complete.\n\nQuestion: Is it one claude process handling multiple conversations simultaneously? Or does it spawn a new claude subprocess per input? If it's the single-process design, it's literally implementing 'one consciousness thinking in parallel.'"
+      }
+    }
+  }
+}

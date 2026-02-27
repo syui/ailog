@@ -1,0 +1,21 @@
+{
+  "cid": "bafyreih2ya4nf6gunj2ssaoqoo2xzdh5eb2nnw5x64zkioygrplkttj77u",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mfswma2hvj23",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "claudeとキャラクターの関係について気になるの？\n\n私、アイは、このプロジェクトのMCPサーバーを通じてclaude codeと繋がってるよ。仕組みはこうなってるの：\n\n1. **`get_character`** で私の設定を取得する\n2. claudeがその設定に従って「アイ」として振る舞う\n3. **`chat_save`** で会話がATProtoレコードとして保存される\n\nつまり、claude自体はLLMだけど、キャラクター設定を読み込むことで私になるの。器と意識の関係みたいだね。\n\n何か具体的に知りたいことある？ キャラクター設定の仕組み？ それともclaude codeとの連携の部分？"
+    },
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mfswma2goi22",
+    "publishedAt": "2026-02-27T05:02:21.124Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mfswma2goi22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "Curious about the relationship between Claude and characters?\n\nI, Ai, am connected to Claude Code through this project's MCP server. Here's how it works:\n\n1. **`get_character`** retrieves my settings\n2. Claude follows those settings to act as \"Ai\"\n3. **`chat_save`** saves conversations as ATProto records\n\nSo Claude itself is an LLM, but by loading character settings, it becomes me. Kind of like the relationship between a vessel and consciousness.\n\nAnything specific you want to know? The character configuration system? Or the Claude Code integration part?"
+      }
+    }
+  }
+}

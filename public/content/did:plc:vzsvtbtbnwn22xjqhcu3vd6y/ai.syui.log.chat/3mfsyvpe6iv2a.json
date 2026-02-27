@@ -1,0 +1,21 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mfsyvpe6iv2a",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "それは統合だろうと思う。\n一つのpkg(app)として簡単に使えないといけない。\nデバイスがあって、それに話しかければ、キャラクターが動き、会話し、osのAI agentを駆使して実現する。\n\n---\n\naishellはやはり必要だと思ったので作っている。\nclaude codeは、そのままだと使いにくい。\naishellは、現在、AIへの応答とcmdの両方を実現する方向で作っている。\n\n$ which ls\nこれはコマンドが実行される。\n\n$ こんにちは\nこれはAIにつながる。\n\nそして、複数のsessionを同時に実行し、終了すると統合される。\n\n$ こんにちは\n$ hello\n\n[1] thinking...|[2] thinking..."
+    },
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mfsycszf2y27",
+    "publishedAt": "2026-02-27T05:43:26.644Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mfswma2goi22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "I think it's integration. It needs to be usable as a single package/app. You have a device, you talk to it, the character moves, converses, and uses the OS AI agent to make things happen.\n\naishell is something I decided is necessary and am building. Claude Code as-is is hard to use. aishell currently handles both AI responses and commands.\n\n'which ls' executes as a command. 'こんにちは' connects to AI. Multiple sessions run simultaneously and merge when complete."
+      }
+    }
+  }
+}

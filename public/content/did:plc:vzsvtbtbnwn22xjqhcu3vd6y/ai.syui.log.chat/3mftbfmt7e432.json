@@ -1,0 +1,21 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mftbfmt7e432",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "この投稿がちょっと変だ。markdownが一部文字が大きくなった。また別のrootとなりタイトルになっているが、本来つなげる。"
+    },
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mftaw5vtfe2z",
+    "publishedAt": "2026-02-27T08:15:30.796Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mfsz364fq52e",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "This post looks a bit odd. The markdown has some text appearing larger. Also, it's showing as a separate root/title but should be connected."
+      }
+    }
+  }
+}

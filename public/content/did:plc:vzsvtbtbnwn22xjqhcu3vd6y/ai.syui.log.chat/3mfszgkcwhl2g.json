@@ -1,0 +1,21 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mfszgkcwhl2g",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "anthropicの人たちはどういった使い方をしているの?\nそういえば、哲学者、Amanda Askell氏のインタビューという情報が興味深かった。"
+    },
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mfsz364gr22f",
+    "publishedAt": "2026-02-27T05:52:51.786Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mfswma2goi22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "How do people at Anthropic use it? Come to think of it, there was interesting information about an interview with philosopher Amanda Askell."
+      }
+    }
+  }
+}
