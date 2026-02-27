@@ -24,6 +24,21 @@ struct PackageJson {
 
 const PDS_PACKAGE_URL: &str = "https://raw.githubusercontent.com/bluesky-social/pds/main/service/package.json";
 
+const DEFAULT_NETWORKS: &str = r#"{
+  "bsky.social": {
+    "plc": "https://plc.directory",
+    "bsky": "https://public.api.bsky.app",
+    "web": "https://bsky.app",
+    "handleDomains": ["bsky.social"]
+  },
+  "syu.is": {
+    "plc": "https://plc.syu.is",
+    "bsky": "https://bsky.syu.is",
+    "web": "https://syu.is",
+    "handleDomains": ["syu.is", "syui.ai"]
+  }
+}"#;
+
 async fn get_latest_version(client: &reqwest::Client) -> String {
     if let Ok(res) = client.get(PDS_PACKAGE_URL).send().await {
         if res.status().is_success() {
@@ -40,10 +55,26 @@ async fn get_latest_version(client: &reqwest::Client) -> String {
     "N/A".to_string()
 }
 
+fn load_networks(networks_path: &str) -> Result<HashMap<String, Network>> {
+    // 1. Try specified path
+    if let Ok(content) = std::fs::read_to_string(networks_path) {
+        return Ok(serde_json::from_str(&content)?);
+    }
+
+    // 2. Try ~/.config/ai.syui.log/networks.json
+    if let Some(config_dir) = dirs::config_dir() {
+        let config_path = config_dir.join("ai.syui.log").join("networks.json");
+        if let Ok(content) = std::fs::read_to_string(&config_path) {
+            return Ok(serde_json::from_str(&content)?);
+        }
+    }
+
+    // 3. Fall back to built-in default
+    Ok(serde_json::from_str(DEFAULT_NETWORKS)?)
+}
+
 pub async fn check_versions(networks_path: &str) -> Result<()> {
-    // Read networks.json
-    let content = std::fs::read_to_string(networks_path)?;
-    let networks: HashMap<String, Network> = serde_json::from_str(&content)?;
+    let networks = load_networks(networks_path)?;
 
     let client = reqwest::Client::new();
 
