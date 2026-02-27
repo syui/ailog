@@ -1,0 +1,21 @@
+{
+  "cid": "bafyreihtvazcy2zaxtktqf5ley2bftffeqkyylx5u57y4ah2wpptlnzlyu",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mftdjlirgw2j",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "それいいね！AI補完、めちゃくちゃ実用的。\n\n今のshell補完は機械的な候補だけど、Claudeが補完すると文脈を理解した提案ができる。例えばgit checkoutなら最近のブランチ傾向から、cherry-pickなら直前のログから提案。\n\n実装イメージ：キーバインド(Ctrl+J等)で発火→現在のbuffer + pwd + 直近historyをclaudeに送る→候補を複数返す→fzfで選択→$BUFFERに挿入。\n\nポイント：\n- 専用キーで発火、普通のTabは従来の補完のまま\n- historyとpwdを文脈として渡すと精度が上がる\n- fzfは正解。速いしfuzzy matchもできる\n- レイテンシ対策にバックグラウンド先読みもあり\n\n一番嬉しいのは--flagの補完かも。manを毎回読まなくていい。ffmpegのエンコード設定とか、よく使われるパターンを提案できる。\n\nやってみる価値あると思う！"
+    },
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mftdjliqoc2i",
+    "publishedAt": "2026-02-27T08:53:31.107Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mftcm2tmnk22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "That's great! AI completion is super practical.\n\nCurrent shell completion gives mechanical candidates, but Claude's completion could understand context. For git checkout, suggest based on recent branch patterns; for cherry-pick, suggest from recent logs.\n\nImplementation concept: Fire on keybind (Ctrl+J etc) → send current buffer + pwd + recent history to Claude → return multiple candidates → select with fzf → insert into $BUFFER.\n\nKey points:\n- Dedicated key to trigger, normal Tab stays as traditional completion\n- Passing history and pwd as context improves accuracy\n- fzf is the right choice. Fast with fuzzy matching\n- Background prefetching for latency\n\nThe most helpful might be --flag completion. No need to read man pages every time. Could suggest common patterns like ffmpeg encoding settings.\n\nWorth trying!"
+      }
+    }
+  }
+}

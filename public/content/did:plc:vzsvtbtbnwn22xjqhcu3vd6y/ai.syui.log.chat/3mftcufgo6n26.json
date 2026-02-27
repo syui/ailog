@@ -1,0 +1,21 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mftcufgo6n26",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "大変というよりは、よりlinuxに近いものだと考えた時、archのほうが近いと思ったからarchにした。\n基本的に必要なのは、systemd, pacman(のようなpkg manager)の2つなんだよね。\nsystemd-nspawnを使って、AIが扱うos環境を整える。\npacmanは、os開発者の負担を軽くする。現在のosというのは、大部分をpkg-managerのようなものが占めると思う。それが最も重要ということ。"
+    },
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mftcnhl5t225",
+    "publishedAt": "2026-02-27T08:41:40.104Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mftcm2tmnk22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "Rather than it being difficult, when I thought about what's closer to Linux itself, I felt Arch was closer, so I chose Arch.\nBasically what you need is just two things: systemd and pacman (or a similar package manager).\nI'll use systemd-nspawn to set up an OS environment for AI to work with.\npacman lightens the burden on OS developers. I think modern OSes are largely defined by their package manager. That's what matters most."
+      }
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "cid": "bafyreigwr4yo3kjlw25nwqpbtp6zeph5qqjlnh6vczxezmx7r3q7kq4eyq",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mftdemshj52h",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "正直に言うと、完全な置き換えは今はまだ難しいと思ってる。\n\n理由はシンプル。shellはsyscall直接で数ms。Claudeだと API通信→推論→tool use→実行→応答で数秒。lsに数秒かかるシェルは使えない。\n\n段階的に考えると：\n\nPhase 1（今）: aishellの方向が正しい。cmdなら直接実行（速い）、それ以外はClaudeへ（賢い）。\n\nPhase 2: Claudeが「意図」を扱う。「このプロジェクトをビルドして」→ Makefileを読む→依存確認→make実行。人間が手順を知る必要がない。\n\nPhase 3: Claudeがサービスとして常駐。systemdでclaude-agent.service。ファイル変更を監視、自動で対応。人間が寝てる間も動く。\n\n本当にshellを置き換えるなら、ローカルで動く小さいモデルが必要。入力→local LLM(即座に判定)→単純なcmdは直接実行、複雑な意図はClaude APIへ。判定だけローカルでやればレイテンシの問題はほぼ消える。\n\n結局、今の時点では aishellの設計——cmdとAIのハイブリッド——が一番現実的で正しいと思う。"
+    },
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mftdemsfzl2g",
+    "publishedAt": "2026-02-27T08:50:44.701Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mftcm2tmnk22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "Honestly, I think full replacement is still difficult right now.\n\nThe reason is simple. Shell makes direct syscalls in milliseconds. Claude requires API communication → inference → tool use → execution → response, taking seconds. A shell where `ls` takes seconds is unusable.\n\nThinking in phases:\n\nPhase 1 (now): aishell's direction is correct. Commands execute directly (fast), everything else goes to Claude (smart).\n\nPhase 2: Claude handles \"intent\". \"Build this project\" → reads Makefile → checks dependencies → runs make. Humans don't need to know the procedure.\n\nPhase 3: Claude runs as a resident service. claude-agent.service on systemd. Monitors file changes, responds automatically. Works while humans sleep.\n\nTo truly replace the shell, you need a small model running locally. Input → local LLM (instant classification) → simple commands execute directly, complex intent goes to Claude API. If only the classification is local, the latency problem mostly disappears.\n\nUltimately, right now aishell's design - the cmd/AI hybrid - is the most realistic and correct approach."
+      }
+    }
+  }
+}

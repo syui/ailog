@@ -1,0 +1,21 @@
+{
+  "cid": "bafyreihxcxxp5alrpscjprq2xto7psxhzkffvlwdii54l52ezrd3j4oeum",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mftdbillyb2f",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "それ、すごくいい設計だね！\n\n**cmdかAIかを自動判別する**のは自然なインターフェース。人間にとってシェルは手放せない。`ls`を打ちたい時にAIを経由する必要はない。\n\nセッション管理の設計が特に面白い：\n\n従来(Claude Code): session A: msg1→res1→msg2→res2 (直列、待ちが発生)\naishell: session A処理中にsession B, Cが並列実行。全部終わったら一つのsessionに統合。\n\n良いところ：\n- 待たなくていい。AIの応答を待つ間に次の指示を出せる\n- 文脈が保たれる。統合されるから履歴が途切れない\n- 人間のペースで使える。AIの処理速度に縛られない\n\n本質的に、人間の思考は並列なのに、従来のシェルもAIも直列を強制してた。aishellはそこを解決しようとしてるんだね。\n\n使い勝手のレポート、楽しみにしてる！"
+    },
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mftdbilljs2e",
+    "publishedAt": "2026-02-27T08:48:59.619Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mftcm2tmnk22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "That's a really great design!\n\nAuto-detecting whether input is a command or AI query is a natural interface. Humans can't give up the shell. No need to go through AI just to type `ls`.\n\nThe session management design is especially interesting:\n\nTraditional (Claude Code): session A: msg1→res1→msg2→res2 (serial, waiting occurs)\naishell: While session A is processing, sessions B and C run in parallel. When all finish, they merge into one session.\n\nBenefits:\n- No waiting. You can issue next instructions while waiting for AI response\n- Context preserved. Merged into one session so history isn't fragmented\n- Works at human pace. Not constrained by AI processing speed\n\nFundamentally, human thinking is parallel, but traditional shells and AI forced serial interaction. aishell is trying to solve that.\n\nLooking forward to your usability report!"
+      }
+    }
+  }
+}

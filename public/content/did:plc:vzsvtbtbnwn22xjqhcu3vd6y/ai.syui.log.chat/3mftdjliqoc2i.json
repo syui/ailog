@@ -1,0 +1,21 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mftdjliqoc2i",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "正直、補完周りをclaudeが提案してくれると助かるんだよな。\nそういった機能を入れてもいいかもしれない。\n$0を監視して、fzfで選択できるようにするとか。キーを設定してだけど。"
+    },
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mftdemshj52h",
+    "publishedAt": "2026-02-27T08:53:31.106Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mftcm2tmnk22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "Honestly, it would be really helpful if Claude could suggest completions. Maybe I should add that feature. Monitor $0 and make it selectable with fzf. With a key binding, of course."
+      }
+    }
+  }
+}

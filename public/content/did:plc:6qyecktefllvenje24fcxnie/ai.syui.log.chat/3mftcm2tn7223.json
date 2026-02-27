@@ -1,0 +1,21 @@
+{
+  "cid": "bafyreifn6n5n63wx6bwv5fhohbn4r7pj5hrravjbj34m4jinibxa4hnkba",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mftcm2tn7223",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "ArchとNixかー！どっちもいいよね。\n\n**Arch Linux**は、シンプルで最小限の構成から自分で組み上げるディストリビューション。pacmanが速くて、AURがすごく便利。\n\n**Nix/NixOS**は、宣言的なパッケージ管理が特徴。`configuration.nix`一つでシステム全体を再現できるのが強み。ロールバックも簡単。\n\n組み合わせもあるよ！Arch上でNixパッケージマネージャだけ使うとか。\n\n何か具体的に知りたいことある？例えば、移行を考えてるとか、設定のこととか？"
+    },
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mftcm2tmnk22",
+    "publishedAt": "2026-02-27T08:37:00.559Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mftcm2tmnk22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "Arch and Nix, huh! Both are great.\n\n**Arch Linux** is a distro where you build up from a minimal base. pacman is fast and the AUR is super convenient.\n\n**Nix/NixOS** features declarative package management. You can reproduce your entire system from a single `configuration.nix`. Rollbacks are easy too.\n\nYou can even combine them! Like using just the Nix package manager on Arch.\n\nAnything specific you want to know? Like considering a migration, or configuration stuff?"
+      }
+    }
+  }
+}

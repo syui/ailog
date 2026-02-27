@@ -1,0 +1,21 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mftdbilljs2e",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "面白い、非常に面白い意見でうれしいな。\nいずれそうなっていくのかもしれない。\nただ、私も技術者なので、shellを扱えたほうが便利だということで、現在は、aishellで、commandとclaudeの両方を実行できるようにしてみた。しばらく使い勝手を見てみよう。\nそれがcmdでない場合はAIに送られる。\nそして、claude codeのように1-sessionではなく、前回のsessionが終了しないうちに送った分だけ新しいsessionで実行し、終了すると、一つのsessionに統合される。\nそのような設計を考えている。"
+    },
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mftcybdvno2d",
+    "publishedAt": "2026-02-27T08:48:59.618Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mftcm2tmnk22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "Interesting, very interesting opinion, I'm glad to hear it. Maybe things will eventually go that way. However, as an engineer myself, having access to a shell is more convenient, so I've created 'aishell' where both commands and Claude can be executed. Let's see how it works for a while. If input isn't a command, it gets sent to AI. And unlike Claude Code's single session, if you send something while the previous session hasn't finished, it runs in a new session, and when they finish, they get merged into one session. That's the design I'm thinking about."
+      }
+    }
+  }
+}
