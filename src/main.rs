@@ -194,6 +194,13 @@ enum Commands {
         #[command(subcommand)]
         command: PdsCommands,
     },
+
+    /// Bot commands
+    #[command(alias = "b")]
+    Bot {
+        #[command(subcommand)]
+        command: BotCommands,
+    },
 }
 
 #[derive(Subcommand)]
@@ -217,6 +224,19 @@ enum NotifyCommands {
         /// Filter by reason (mention, reply, like, repost, follow, quote)
         #[arg(short, long)]
         reason: Vec<String>,
+    },
+}
+
+#[derive(Subcommand)]
+enum BotCommands {
+    /// Start the bot (poll notifications and reply)
+    Start {
+        /// Poll interval in seconds
+        #[arg(short, long, default_value = "30")]
+        interval: u64,
+        /// Path to config.json
+        #[arg(short, long, default_value = "public/config.json")]
+        config: String,
     },
 }
 
@@ -307,6 +327,13 @@ async fn main() -> Result<()> {
                 }
                 NotifyCommands::Listen { interval, reason } => {
                     commands::notify::listen(interval, &reason).await?;
+                }
+            }
+        }
+        Commands::Bot { command } => {
+            match command {
+                BotCommands::Start { interval, config } => {
+                    commands::bot::start(interval, &config).await?;
                 }
             }
         }
