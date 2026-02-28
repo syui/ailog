@@ -36,16 +36,30 @@ impl ClaudeSession {
             .arg("stream-json")
             .arg("--output-format")
             .arg("stream-json")
+            .arg("--verbose")
             .arg("--dangerously-skip-permissions")
             .current_dir(&work_dir)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
-            .stderr(Stdio::null())
+            .stderr(Stdio::piped())
             .spawn()
             .context("failed to start claude process")?;
 
         let stdin = child.stdin.take().context("failed to capture claude stdin")?;
         let stdout = child.stdout.take().context("failed to capture claude stdout")?;
+        let stderr = child.stderr.take().context("failed to capture claude stderr")?;
+
+        // Background task: log stderr
+        tokio::spawn(async move {
+            let reader = BufReader::new(stderr);
+            let mut lines = reader.lines();
+            while let Ok(Some(line)) = lines.next_line().await {
+                eprintln!("bot: claude stderr: {}", line);
+            }
+        });
+
+        // Brief wait to check if the process exits immediately
+        tokio::time::sleep(std::time::Duration::from_millis(500)).await;
 
         let (tx, rx) = tokio::sync::mpsc::channel::<String>(16);
 
@@ -58,8 +72,14 @@ impl ClaudeSession {
             loop {
                 let line = match lines.next_line().await {
                     Ok(Some(l)) => l,
-                    Ok(None) => break,
-                    Err(_) => break,
+                    Ok(None) => {
+                        eprintln!("bot: claude stdout closed");
+                        break;
+                    }
+                    Err(e) => {
+                        eprintln!("bot: claude stdout error: {}", e);
+                        break;
+                    }
                 };
 
                 if line.trim().is_empty() {
@@ -106,7 +126,8 @@ impl ClaudeSession {
             }
 
             // Wait for child to exit
-            let _ = child.wait().await;
+            let status = child.wait().await;
+            eprintln!("bot: claude process exited: {:?}", status);
         });
 
         Ok(Self {
@@ -133,14 +154,10 @@ impl ClaudeSession {
             .context("failed to write to claude stdin")?;
         self.stdin.flush().await?;
 
-        // Wait for response with timeout
-        let response = tokio::time::timeout(
-            std::time::Duration::from_secs(120),
-            self.response_rx.recv(),
-        )
-        .await
-        .context("claude response timed out after 120s")?
-        .context("claude session closed unexpectedly")?;
+        // Wait for response (no timeout — claude may use tools)
+        let response = self.response_rx.recv()
+            .await
+            .context("claude session closed unexpectedly")?;
 
         if response.is_empty() {
             anyhow::bail!("claude returned empty response");
@@ -399,8 +416,8 @@ async fn poll_once(
         eprintln!(
             "bot: processing notification from @{}: {}",
             notif.author_handle,
-            if notif.text.len() > 50 {
-                format!("{}...", &notif.text[..50])
+            if notif.text.chars().count() > 50 {
+                format!("{}...", notif.text.chars().take(50).collect::<String>())
             } else {
                 notif.text.clone()
             }
