@@ -112,8 +112,12 @@ pub async fn get_records(collection: &str, limit: u32) -> Result<()> {
 }
 
 /// Delete a record
-pub async fn delete_record(collection: &str, rkey: &str) -> Result<()> {
-    let session = auth::refresh_session().await?;
+pub async fn delete_record(collection: &str, rkey: &str, is_bot: bool) -> Result<()> {
+    let session = if is_bot {
+        auth::refresh_bot_session().await?
+    } else {
+        auth::refresh_session().await?
+    };
     let pds = session.pds.as_deref().unwrap_or("bsky.social");
     let client = XrpcClient::new(pds);
 

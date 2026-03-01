@@ -32,12 +32,9 @@ impl ClaudeSession {
             .join("bot");
         fs::create_dir_all(&work_dir)?;
 
-        // Write CLAUDE.md rules if not already present
+        // Always overwrite CLAUDE.md with latest rules
         let rules_path = work_dir.join("CLAUDE.md");
-        if !rules_path.exists() {
-            fs::write(&rules_path, BOT_RULES)?;
-            eprintln!("bot: created CLAUDE.md at {}", rules_path.display());
-        }
+        fs::write(&rules_path, BOT_RULES)?;
 
         eprintln!("bot: claude working directory = {}", work_dir.display());
 

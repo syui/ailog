@@ -75,6 +75,9 @@ enum Commands {
         /// Record key
         #[arg(short, long)]
         rkey: String,
+        /// Delete as bot (uses bot.json)
+        #[arg(long)]
+        bot: bool,
     },
 
     /// Sync PDS data to local content directory
@@ -301,8 +304,8 @@ async fn main() -> Result<()> {
         Commands::Get { collection, limit } => {
             commands::record::get_records(&collection, limit).await?;
         }
-        Commands::Delete { collection, rkey } => {
-            commands::record::delete_record(&collection, &rkey).await?;
+        Commands::Delete { collection, rkey, bot } => {
+            commands::record::delete_record(&collection, &rkey, bot).await?;
         }
         Commands::Sync { output, bot, collection } => {
             commands::sync::sync_to_local(&output, bot, collection.as_deref()).await?;
