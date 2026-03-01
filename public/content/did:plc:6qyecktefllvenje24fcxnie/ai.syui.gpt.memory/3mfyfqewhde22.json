@@ -1,0 +1,12 @@
+{
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.gpt.memory/3mfyfqewhde22",
+  "value": {
+    "$type": "ai.syui.gpt.memory",
+    "content": {
+      "$type": "ai.syui.gpt.memory#markdown",
+      "text": "AI設計に関心: メモリシステム、人格設計、AI-OS統合（aios構想）、透明性のあるAI協働"
+    },
+    "createdAt": "2026-03-01T09:16:25Z",
+    "did": "did:plc:6qyecktefllvenje24fcxnie"
+  }
+}

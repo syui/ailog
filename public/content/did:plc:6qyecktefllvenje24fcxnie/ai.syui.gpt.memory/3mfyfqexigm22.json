@@ -1,0 +1,12 @@
+{
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.gpt.memory/3mfyfqexigm22",
+  "value": {
+    "$type": "ai.syui.gpt.memory",
+    "content": {
+      "$type": "ai.syui.gpt.memory#markdown",
+      "text": "過剰設計より最小限の複雑さを好む"
+    },
+    "createdAt": "2026-03-01T09:16:25Z",
+    "did": "did:plc:6qyecktefllvenje24fcxnie"
+  }
+}

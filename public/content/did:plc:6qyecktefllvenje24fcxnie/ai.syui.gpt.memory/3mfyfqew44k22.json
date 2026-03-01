@@ -1,0 +1,12 @@
+{
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.gpt.memory/3mfyfqew44k22",
+  "value": {
+    "$type": "ai.syui.gpt.memory",
+    "content": {
+      "$type": "ai.syui.gpt.memory#markdown",
+      "text": "自分の考えを先に述べてからAIに別視点を求める"
+    },
+    "createdAt": "2026-03-01T09:16:25Z",
+    "did": "did:plc:6qyecktefllvenje24fcxnie"
+  }
+}

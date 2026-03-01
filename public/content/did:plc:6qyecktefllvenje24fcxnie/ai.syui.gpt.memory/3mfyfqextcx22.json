@@ -1,0 +1,12 @@
+{
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.gpt.memory/3mfyfqextcx22",
+  "value": {
+    "$type": "ai.syui.gpt.memory",
+    "content": {
+      "$type": "ai.syui.gpt.memory#markdown",
+      "text": "対話を通じて理解を構築する。本質的な質問をする"
+    },
+    "createdAt": "2026-03-01T09:16:25Z",
+    "did": "did:plc:6qyecktefllvenje24fcxnie"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.gpt.memory/3mfyfqewmtz22",
+  "value": {
+    "$type": "ai.syui.gpt.memory",
+    "content": {
+      "$type": "ai.syui.gpt.memory#markdown",
+      "text": "ゲーム開発: Unreal Engine使用。キャラシステム、コアメカニクスの明確さを重視。スコープ管理を意識"
+    },
+    "createdAt": "2026-03-01T09:16:25Z",
+    "did": "did:plc:6qyecktefllvenje24fcxnie"
+  }
+}

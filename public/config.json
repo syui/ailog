@@ -5,7 +5,8 @@
 	"bot": {
 		"did": "did:plc:6qyecktefllvenje24fcxnie",
 		"handle": "ai.syui.ai",
-		"path": "~/ai/log/public/content"
+		"path": "~/ai/log/public/content",
+		"memory": 100
 	},
 	"collection": "ai.syui.log.post",
 	"chatCollection": "ai.syui.log.chat",
