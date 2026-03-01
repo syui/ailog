@@ -4,7 +4,8 @@
 	"handle": "syui.syui.ai",
 	"bot": {
 		"did": "did:plc:6qyecktefllvenje24fcxnie",
-		"handle": "ai.syui.ai"
+		"handle": "ai.syui.ai",
+		"path": "~/ai/log/public/content"
 	},
 	"collection": "ai.syui.log.post",
 	"chatCollection": "ai.syui.log.chat",
