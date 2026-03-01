@@ -14,6 +14,8 @@ use crate::tid;
 use crate::types::{PutRecordRequest, PutRecordResponse};
 use crate::xrpc::XrpcClient;
 
+const BOT_RULES: &str = include_str!("../rules/bot.md");
+
 /// Persistent Claude session using stream-json protocol
 struct ClaudeSession {
     stdin: tokio::process::ChildStdin,
@@ -29,6 +31,14 @@ impl ClaudeSession {
             .join(token::BUNDLE_ID)
             .join("bot");
         fs::create_dir_all(&work_dir)?;
+
+        // Write CLAUDE.md rules if not already present
+        let rules_path = work_dir.join("CLAUDE.md");
+        if !rules_path.exists() {
+            fs::write(&rules_path, BOT_RULES)?;
+            eprintln!("bot: created CLAUDE.md at {}", rules_path.display());
+        }
+
         eprintln!("bot: claude working directory = {}", work_dir.display());
 
         let mut child = tokio::process::Command::new("claude")
