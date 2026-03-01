@@ -3,6 +3,8 @@
     "ai.syui.card.admin",
     "ai.syui.card.old",
     "ai.syui.card.user",
+    "ai.syui.gpt.core",
+    "ai.syui.gpt.memory",
     "ai.syui.log.chat",
     "ai.syui.rse.admin",
     "ai.syui.rse.user",
