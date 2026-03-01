@@ -7,6 +7,12 @@ export default defineConfig({
   build: {
     outDir: '../../dist',
     emptyOutDir: true,
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'src/web/index.html'),
+        'oauth-cli': resolve(__dirname, 'src/web/oauth/cli/index.html'),
+      },
+    },
   },
   resolve: {
     alias: {

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Authorization Code - ailog</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0a0a0a;
+      color: #e0e0e0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .container {
+      text-align: center;
+      max-width: 480px;
+      padding: 2rem;
+    }
+    h1 {
+      font-size: 1.4rem;
+      margin-bottom: 1.5rem;
+      color: #fff;
+    }
+    .code-box {
+      background: #1a1a1a;
+      border: 2px solid #333;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .code {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 1.6rem;
+      letter-spacing: 0.1em;
+      color: #fff;
+      word-break: break-all;
+      user-select: all;
+    }
+    .copy-btn {
+      background: #333;
+      color: #fff;
+      border: 1px solid #555;
+      border-radius: 6px;
+      padding: 0.6rem 1.5rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      margin-top: 1rem;
+      transition: background 0.2s;
+    }
+    .copy-btn:hover { background: #444; }
+    .copy-btn.copied {
+      background: #2d5a2d;
+      border-color: #4a8a4a;
+    }
+    .hint {
+      color: #888;
+      font-size: 0.85rem;
+      margin-top: 1.5rem;
+      line-height: 1.6;
+    }
+    .error {
+      color: #e55;
+      font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="app">
+    <div class="error">Loading...</div>
+  </div>
+  <script>
+    const params = new URLSearchParams(window.location.search)
+    const code = params.get('code')
+    const error = params.get('error')
+    const app = document.getElementById('app')
+
+    if (error) {
+      app.innerHTML = `
+        <h1>Authorization Error</h1>
+        <p class="error">${error}</p>
+        <p class="hint">Close this page and try again from the CLI.</p>
+      `
+    } else if (code) {
+      app.innerHTML = `
+        <h1>Authorization Complete</h1>
+        <div class="code-box">
+          <div class="code" id="auth-code">${code}</div>
+          <button class="copy-btn" id="copy-btn">Copy</button>
+        </div>
+        <p class="hint">Paste this code into your CLI.<br>You may close this page.</p>
+      `
+      document.getElementById('copy-btn').addEventListener('click', async () => {
+        const btn = document.getElementById('copy-btn')
+        try {
+          await navigator.clipboard.writeText(code)
+          btn.textContent = 'Copied!'
+          btn.classList.add('copied')
+          setTimeout(() => {
+            btn.textContent = 'Copy'
+            btn.classList.remove('copied')
+          }, 2000)
+        } catch {
+          const range = document.createRange()
+          range.selectNode(document.getElementById('auth-code'))
+          window.getSelection().removeAllRanges()
+          window.getSelection().addRange(range)
+        }
+      })
+    } else {
+      app.innerHTML = `
+        <h1>Authorization Code</h1>
+        <p class="error">No code found.</p>
+        <p class="hint">Start the authorization flow from the CLI.</p>
+      `
+    }
+  </script>
+</body>
+</html>

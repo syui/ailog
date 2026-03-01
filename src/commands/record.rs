@@ -119,7 +119,7 @@ pub async fn delete_record(collection: &str, rkey: &str, is_bot: bool) -> Result
         auth::refresh_session().await?
     };
     let pds = session.pds.as_deref().unwrap_or("bsky.social");
-    let client = XrpcClient::new(pds);
+    let client = if is_bot { XrpcClient::new_bot(pds) } else { XrpcClient::new(pds) };
 
     let req = DeleteRecordRequest {
         repo: session.did.clone(),

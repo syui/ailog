@@ -14,7 +14,7 @@ const COLLECTION_MEMORY: &str = "ai.syui.gpt.memory";
 pub async fn get_core(download: bool) -> Result<()> {
     let session = auth::refresh_bot_session().await?;
     let pds = session.pds.as_deref().unwrap_or("bsky.social");
-    let client = XrpcClient::new(pds);
+    let client = XrpcClient::new_bot(pds);
 
     let record: Record = client
         .query_auth(
@@ -41,7 +41,7 @@ pub async fn get_core(download: bool) -> Result<()> {
 pub async fn get_memory(download: bool) -> Result<()> {
     let session = auth::refresh_bot_session().await?;
     let pds = session.pds.as_deref().unwrap_or("bsky.social");
-    let client = XrpcClient::new(pds);
+    let client = XrpcClient::new_bot(pds);
 
     let result: ListRecordsResponse = client
         .query_auth(
@@ -79,7 +79,7 @@ pub async fn get_memory(download: bool) -> Result<()> {
 pub async fn list_memory() -> Result<()> {
     let session = auth::refresh_bot_session().await?;
     let pds = session.pds.as_deref().unwrap_or("bsky.social");
-    let client = XrpcClient::new(pds);
+    let client = XrpcClient::new_bot(pds);
 
     let mut cursor: Option<String> = None;
     let mut all_records: Vec<Record> = Vec::new();
@@ -142,7 +142,7 @@ pub async fn push(collection_name: &str) -> Result<()> {
     let session = auth::refresh_bot_session().await?;
     let pds = session.pds.as_deref().unwrap_or("bsky.social");
     let did = &session.did;
-    let client = XrpcClient::new(pds);
+    let client = XrpcClient::new_bot(pds);
 
     let collection_dir = format!("public/content/{}/{}", did, collection);
     if !std::path::Path::new(&collection_dir).exists() {

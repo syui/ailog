@@ -210,6 +210,15 @@ enum Commands {
         #[command(subcommand)]
         command: BotCommands,
     },
+
+    /// OAuth login to ATProto PDS
+    Oauth {
+        /// Handle (e.g., syui.syui.ai)
+        handle: String,
+        /// Login as bot (saves to bot.json)
+        #[arg(long)]
+        bot: bool,
+    },
 }
 
 #[derive(Subcommand)]
@@ -376,6 +385,9 @@ async fn main() -> Result<()> {
                     commands::pds::check_versions(&networks).await?;
                 }
             }
+        }
+        Commands::Oauth { handle, bot } => {
+            commands::oauth::oauth_login(&handle, bot).await?;
         }
         Commands::Gpt { command } => {
             match command {

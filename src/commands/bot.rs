@@ -368,7 +368,7 @@ async fn poll_once(
     // Refresh bot session
     let session = auth::refresh_bot_session().await?;
     let pds = session.pds.as_deref().unwrap_or("bsky.social");
-    let client = XrpcClient::new(pds);
+    let client = XrpcClient::new_bot(pds);
 
     // Fetch notifications
     let notifications = fetch_notifications(&client, &session.access_jwt).await?;

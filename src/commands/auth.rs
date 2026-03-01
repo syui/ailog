@@ -1,5 +1,6 @@
 use anyhow::Result;
 
+use super::oauth;
 use super::token::{self, Session};
 use crate::lexicons::com_atproto_server;
 use crate::types::{CreateSessionRequest, CreateSessionResponse};
@@ -38,7 +39,7 @@ pub async fn login(handle: &str, password: &str, pds: &str, is_bot: bool) -> Res
     Ok(())
 }
 
-/// Refresh a session (shared logic for user and bot)
+/// Refresh a session (shared logic for user and bot, legacy app-password)
 async fn do_refresh(session: &Session, pds: &str) -> Result<Session> {
     let client = XrpcClient::new(pds);
 
@@ -55,8 +56,13 @@ async fn do_refresh(session: &Session, pds: &str) -> Result<Session> {
     })
 }
 
-/// Refresh access token
+/// Refresh access token (OAuth-aware: tries OAuth first, falls back to legacy)
 pub async fn refresh_session() -> Result<Session> {
+    if oauth::has_oauth_session(false) {
+        let (_oauth, session) = oauth::refresh_oauth_session(false).await?;
+        return Ok(session);
+    }
+
     let session = token::load_session()?;
     let pds = session.pds.as_deref().unwrap_or("bsky.social");
 
@@ -66,8 +72,13 @@ pub async fn refresh_session() -> Result<Session> {
     Ok(new_session)
 }
 
-/// Refresh bot access token
+/// Refresh bot access token (OAuth-aware)
 pub async fn refresh_bot_session() -> Result<Session> {
+    if oauth::has_oauth_session(true) {
+        let (_oauth, session) = oauth::refresh_oauth_session(true).await?;
+        return Ok(session);
+    }
+
     let session = token::load_bot_session()?;
     let pds = session.pds.as_deref().unwrap_or("bsky.social");
 

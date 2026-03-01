@@ -16,7 +16,7 @@ pub async fn push_to_remote(input: &str, collection: &str, is_bot: bool) -> Resu
     };
     let pds = session.pds.as_deref().unwrap_or("bsky.social");
     let did = &session.did;
-    let client = XrpcClient::new(pds);
+    let client = if is_bot { XrpcClient::new_bot(pds) } else { XrpcClient::new(pds) };
 
     // Build collection directory path
     let collection_dir = format!("{}/{}/{}", input, did, collection);
