@@ -1,0 +1,50 @@
+{
+  "lexicon": 1,
+  "id": "ai.syui.gpt.memory",
+  "defs": {
+    "main": {
+      "type": "record",
+      "description": "AI memory snapshot. Each record is a versioned snapshot of accumulated knowledge.",
+      "key": "tid",
+      "record": {
+        "type": "object",
+        "required": ["did", "content", "createdAt"],
+        "properties": {
+          "did": {
+            "type": "string",
+            "format": "did",
+            "description": "DID of the AI agent this memory belongs to."
+          },
+          "content": {
+            "type": "union",
+            "closed": false,
+            "refs": ["#markdown"],
+            "description": "Memory content. Supports markdown and other formats via $type."
+          },
+          "version": {
+            "type": "integer",
+            "description": "Monotonically increasing version number of this memory snapshot."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "datetime",
+            "description": "Timestamp when this memory snapshot was created."
+          }
+        }
+      }
+    },
+    "markdown": {
+      "type": "object",
+      "description": "Markdown content format.",
+      "required": ["text"],
+      "properties": {
+        "text": {
+          "type": "string",
+          "maxLength": 1000000,
+          "maxGraphemes": 100000,
+          "description": "Markdown text content."
+        }
+      }
+    }
+  }
+}

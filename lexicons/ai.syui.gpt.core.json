@@ -1,0 +1,55 @@
+{
+  "lexicon": 1,
+  "id": "ai.syui.gpt.core",
+  "defs": {
+    "main": {
+      "type": "record",
+      "description": "AI identity and personality configuration. Typically one record per AI with rkey 'self'.",
+      "key": "any",
+      "record": {
+        "type": "object",
+        "required": ["did", "handle", "content", "createdAt"],
+        "properties": {
+          "did": {
+            "type": "string",
+            "format": "did",
+            "description": "DID of the AI agent."
+          },
+          "handle": {
+            "type": "string",
+            "description": "Handle of the AI agent."
+          },
+          "content": {
+            "type": "union",
+            "closed": false,
+            "refs": ["#markdown"],
+            "description": "Core personality and instructions. Supports markdown and other formats via $type."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "datetime",
+            "description": "Timestamp when this core record was created."
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "datetime",
+            "description": "Timestamp of the last update."
+          }
+        }
+      }
+    },
+    "markdown": {
+      "type": "object",
+      "description": "Markdown content format.",
+      "required": ["text"],
+      "properties": {
+        "text": {
+          "type": "string",
+          "maxLength": 1000000,
+          "maxGraphemes": 100000,
+          "description": "Markdown text content."
+        }
+      }
+    }
+  }
+}

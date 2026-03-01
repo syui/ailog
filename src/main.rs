@@ -195,6 +195,12 @@ enum Commands {
         command: PdsCommands,
     },
 
+    /// GPT core/memory commands
+    Gpt {
+        #[command(subcommand)]
+        command: GptCommands,
+    },
+
     /// Bot commands
     #[command(alias = "b")]
     Bot {
@@ -237,6 +243,30 @@ enum BotCommands {
         /// Path to config.json
         #[arg(short, long, default_value = "public/config.json")]
         config: String,
+    },
+}
+
+#[derive(Subcommand)]
+enum GptCommands {
+    /// Show core record (AI identity/personality)
+    Core {
+        /// Download to local content directory
+        #[arg(short, long)]
+        download: bool,
+    },
+    /// Show latest memory record
+    Memory {
+        /// Download to local content directory
+        #[arg(short, long)]
+        download: bool,
+        /// List all memory versions
+        #[arg(short, long)]
+        list: bool,
+    },
+    /// Push core/memory records to PDS
+    Push {
+        /// Collection to push (core or memory)
+        collection: String,
     },
 }
 
@@ -341,6 +371,23 @@ async fn main() -> Result<()> {
             match command {
                 PdsCommands::Version { networks } => {
                     commands::pds::check_versions(&networks).await?;
+                }
+            }
+        }
+        Commands::Gpt { command } => {
+            match command {
+                GptCommands::Core { download } => {
+                    commands::gpt::get_core(download).await?;
+                }
+                GptCommands::Memory { download, list } => {
+                    if list {
+                        commands::gpt::list_memory().await?;
+                    } else {
+                        commands::gpt::get_memory(download).await?;
+                    }
+                }
+                GptCommands::Push { collection } => {
+                    commands::gpt::push(&collection).await?;
                 }
             }
         }

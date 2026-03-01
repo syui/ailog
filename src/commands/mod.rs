@@ -11,3 +11,4 @@ pub mod did;
 pub mod index;
 pub mod bot;
 pub mod pds;
+pub mod gpt;
