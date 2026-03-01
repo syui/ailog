@@ -70,9 +70,19 @@ fn get_system_prompt() -> String {
         return prompt;
     }
 
-    // 2. Try CHAT_SYSTEM_FILE env var (path to file)
+    // 2. Try CHAT_SYSTEM_FILE env var (path to file, supports .json and .md/.txt)
     if let Ok(file_path) = env::var("CHAT_SYSTEM_FILE") {
         if let Ok(content) = fs::read_to_string(&file_path) {
+            // If JSON, extract value.content.text
+            if file_path.ends_with(".json") {
+                if let Ok(json) = serde_json::from_str::<serde_json::Value>(&content) {
+                    if let Some(text) = json["value"]["content"]["text"].as_str() {
+                        if !text.is_empty() {
+                            return text.to_string();
+                        }
+                    }
+                }
+            }
             return content.trim().to_string();
         }
     }

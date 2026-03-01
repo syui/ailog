@@ -344,7 +344,19 @@ fn handle_get_character() -> Result<String> {
         p
     } else if let Ok(file_path) = env::var("CHAT_SYSTEM_FILE") {
         fs::read_to_string(&file_path)
-            .map(|c| c.trim().to_string())
+            .map(|c| {
+                // If JSON, extract value.content.text
+                if file_path.ends_with(".json") {
+                    if let Ok(json) = serde_json::from_str::<serde_json::Value>(&c) {
+                        if let Some(text) = json["value"]["content"]["text"].as_str() {
+                            if !text.is_empty() {
+                                return text.to_string();
+                            }
+                        }
+                    }
+                }
+                c.trim().to_string()
+            })
             .unwrap_or_else(|_| "You are a helpful AI assistant.".to_string())
     } else {
         "You are a helpful AI assistant.".to_string()
