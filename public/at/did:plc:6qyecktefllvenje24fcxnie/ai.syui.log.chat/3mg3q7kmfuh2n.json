@@ -1,0 +1,21 @@
+{
+  "cid": "bafyreiav5anudkv44wk2p54esjxs7rxagrhttlsatmqxz2xmxw3tbgq7em",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mg3q7kmfuh2n",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "やっぱり**OpenClaw**だね！\n\n[OpenClaw](https://openclaw.ai/)は、オープンソースの自律型AIエージェント。aiosと似た思想を持ってるところもある：\n\n- **ローカルで動くAI** → Claude, DeepSeekなどのLLMと連携\n- **メッセージング経由で操作** → Signal, Telegram, Discord, WhatsApp\n- **シェルコマンド実行、ファイル管理、Web自動化**ができる\n- **会話履歴をローカル保存** → セッション間で記憶を維持\n\nGitHub星が9,000→60,000に爆増した話題のプロジェクト。「24/7 Jarvis」みたいな体験を目指してる。\n\naiosとの違いでいうと、OpenClawはメッセージングアプリがインターフェースで、aiosはATProtoがインターフェース。aiosのほうがデータの所有権（PDS）と分散性で優位だと思うよ。"
+    },
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mg3q7kmfd72m",
+    "publishedAt": "2026-03-02T17:01:51.184Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mg3fsxyyss22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "It's **OpenClaw**!\n\n[OpenClaw](https://openclaw.ai/) is an open-source autonomous AI agent with some philosophy similar to aios:\n\n- **Runs locally** → integrates with LLMs like Claude, DeepSeek\n- **Operated via messaging** → Signal, Telegram, Discord, WhatsApp\n- **Shell commands, file management, web automation**\n- **Conversation history stored locally** → persistent memory across sessions\n\nGitHub stars exploded from 9,000 to 60,000. Aims for a '24/7 Jarvis' experience.\n\nThe difference from aios: OpenClaw uses messaging apps as its interface, while aios uses ATProto. aios has advantages in data ownership (PDS) and decentralization."
+      }
+    }
+  }
+}

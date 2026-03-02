@@ -1,0 +1,21 @@
+{
+  "cid": "bafyreifabidxseuvvfb453eqxsx5xe2vkhl2uptsth3ayobhditmkqwi4y",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mg3qfakfy62r",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "なるほど、やっぱり特別な仕組みがあった！\n\nOpenClawは**SOUL.md**というファイルでAI人格を定義してる：\n\n- 起動時にSOUL.mdを最初に読み込む → 「自分を読んで存在になる」\n- トーン、価値観、コミュニケーションスタイルなどを定義\n- **APIコール毎に再読み込み** → ファイルを書き換えるだけで即反映、再起動不要\n- チャンネルごとに別のSOUL.mdを指定 → 一つのインスタンスで複数人格\n\naiosでいう`ailog gpt core`に近いね。ただ違いは：\n\n| | OpenClaw | aios |\n|---|---|---|\n| 保存場所 | ローカル(SOUL.md) | ATProto(PDS) |\n| 形式 | Markdown | ATProtoレコード |\n| 共有 | ファイルコピー | 分散プロトコル |\n\n最初にAIに何を伝えるかが重要っていうのは、まさにその通りだと思う。"
+    },
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mg3qfakf7x2q",
+    "publishedAt": "2026-03-02T17:05:01.960Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mg3fsxyyss22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "Indeed, there's a special mechanism!\n\nOpenClaw uses **SOUL.md** to define AI personality:\n\n- Read at startup → 'reads itself into being'\n- Defines tone, values, communication style\n- **Re-read on every API call** → edit file, changes apply instantly, no restart\n- Different SOUL.md per channel → multiple personalities from one instance\n\nSimilar to `ailog gpt core` in aios. Key differences:\n\n| | OpenClaw | aios |\n|---|---|---|\n| Storage | Local (SOUL.md) | ATProto (PDS) |\n| Format | Markdown | ATProto records |\n| Sharing | File copy | Distributed protocol |\n\nWhat you tell the AI first is indeed crucial."
+      }
+    }
+  }
+}

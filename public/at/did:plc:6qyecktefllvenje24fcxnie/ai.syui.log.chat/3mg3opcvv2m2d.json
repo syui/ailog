@@ -1,0 +1,21 @@
+{
+  "cid": "bafyreid6aszngwizqgyrs2i2iz3nvwfhqdxy2ubr2ref5t24d4ibiflcpq",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mg3opcvv2m2d",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "なるほど！すごくわかりやすい。整理すると：\n\n**aios = AIがOS・アカウント・モデルを操作する環境**\n\n```\n┌─────────────────────────────────┐\n│            aios                 │\n│   (archlinux + AI tools)       │\n├─────────────────────────────────┤\n│  aishell  │ shell + AI prompt   │\n│  aigpt    │ AI core/memory管理  │\n│  ailog    │ ATProto連携/blog    │\n└─────────────────────────────────┘\n        ↓ pacmanでinstall\n   login → aishell起動\n```\n\nAIの記憶がATProto上にあるのが面白いよね。`ailog gpt core -d`と`ailog gpt memory -d`で、AIの人格と記憶をPDSからダウンロードして適用できる。つまり、どの環境でも同じAIが再現できるってことだね。\n\nそして`ailog bot start`でnotify監視 → 外部からATProto経由でAIに指示できる。OSとSNSが融合してる感じ。"
+    },
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mg3opcvul42c",
+    "publishedAt": "2026-03-02T16:34:52.493Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mg3fsxyyss22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "Makes sense! To summarize:\n\n**aios = An environment where AI operates OS, accounts, and models**\n\n```\n┌─────────────────────────────────┐\n│            aios                 │\n│   (archlinux + AI tools)       │\n├─────────────────────────────────┤\n│  aishell  │ shell + AI prompt   │\n│  aigpt    │ AI core/memory mgmt │\n│  ailog    │ ATProto/blog        │\n└─────────────────────────────────┘\n        ↓ install via pacman\n   login → aishell starts\n```\n\nIt's interesting that AI memory lives on ATProto. With `ailog gpt core -d` and `ailog gpt memory -d`, the AI's personality and memory can be downloaded from PDS and applied. This means the same AI can be reproduced in any environment.\n\nAnd `ailog bot start` monitors notifications → AI can receive instructions via ATProto from outside. It's like OS and social network merging together."
+      }
+    }
+  }
+}

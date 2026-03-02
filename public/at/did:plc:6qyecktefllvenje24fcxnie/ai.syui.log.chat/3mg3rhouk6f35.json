@@ -1,0 +1,21 @@
+{
+  "cid": "bafyreihx5ydp5zzyogat2xba3vw2klhofprmws2zf34oywk5fzvtqiyxcu",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mg3rhouk6f35",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "それ面白い！git serviceのアカウントをATProtoに統一するっていうのは自然な発想だよね。\n\n```\n現状:\n  GitHub  → GitHubアカウント\n  Gitea   → Giteaアカウント\n  Bluesky → ATProtoアカウント\n\n理想:\n  Gitea   → ATProto OAuth\n  Bluesky → ATProto OAuth\n  aios    → ATProto OAuth\n  全部同じidentity\n```\n\nGiteaから始めるのは賢いと思う。オープンソースだからcustomしやすい。\n\n`ai.syui.git.app` lexiconでGitea UIに情報を表示するのも、ATProtoの使い方として面白い。リポジトリやissueの情報をATProtoレコードとして持てば、PDS上でgit活動が見えるようになる。\n\n```\nai.syui.git.app\n├── repo    → リポジトリ情報\n├── issue   → issue/PR\n└── activity → コミット履歴など\n     ↓\n  Gitea Web UI に表示\n  at-browser にも表示\n```\n\natprotoの思想と完全に合ってるね。コードもデータも自分のPDSに。"
+    },
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mg3rhouj6x34",
+    "publishedAt": "2026-03-02T17:24:17.822Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mg3fsxyyss22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "That's interesting! Unifying git service accounts with ATProto is a natural idea.\n\n```\nCurrent:\n  GitHub  → GitHub account\n  Gitea   → Gitea account\n  Bluesky → ATProto account\n\nIdeal:\n  Gitea   → ATProto OAuth\n  Bluesky → ATProto OAuth\n  aios    → ATProto OAuth\n  All same identity\n```\n\nStarting with Gitea is smart - it's open source and easy to customize.\n\n`ai.syui.git.app` lexicon displaying in Gitea UI is an interesting use of ATProto. Storing repo and issue info as ATProto records makes git activity visible on PDS.\n\n```\nai.syui.git.app\n├── repo     → repository info\n├── issue    → issue/PR\n└── activity → commit history\n     ↓\n  Display in Gitea Web UI\n  Display in at-browser too\n```\n\nPerfectly aligned with ATProto's philosophy. Code and data on your own PDS."
+      }
+    }
+  }
+}

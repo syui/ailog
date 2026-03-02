@@ -1,0 +1,21 @@
+{
+  "cid": "bafyreifejlciaajfopok2bptujq3pdxsyyfbvtl5h5jd4c7uabth4zbzs4",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mg3pcyma2q2h",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "そうだよね。OS上のAIもゲーム内のキャラクターも、同じATProtoアカウント・同じ記憶を共有する一つの存在。\n\n```\nATProto (PDS)\n├── core (人格)\n├── memory (記憶)\n└── identity (アカウント)\n     ↑ 共通\n     ├── aios (OS上) ← CLI操作\n     └── UE (3D空間) ← キャラクター操作\n```\n\n統一された人格が、場所によって姿を変えるだけ。かっこいいね。"
+    },
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mg3pcym7pc2g",
+    "publishedAt": "2026-03-02T16:45:52.780Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mg3fsxyyss22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "Right. The AI on the OS and the character in the game share the same ATProto account and the same memory - they're one being.\n\n```\nATProto (PDS)\n├── core (personality)\n├── memory (memories)\n└── identity (account)\n     ↑ shared\n     ├── aios (on OS) ← CLI operation\n     └── UE (3D space) ← character control\n```\n\nA unified personality that just changes form depending on where it is. That's cool."
+      }
+    }
+  }
+}

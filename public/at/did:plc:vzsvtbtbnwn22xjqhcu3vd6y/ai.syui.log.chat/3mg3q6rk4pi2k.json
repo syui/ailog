@@ -1,0 +1,21 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mg3q6rk4pi2k",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "AIにosを触らせることは随分前からやっていた。claude codeは、ssh, pwsh, zsh, bashなどを難なく使いこなすから。今は、botからatprotoの管理を任せたいなと思ってる。opencrawはまだ触ってないんだよね。どういうものなのかはなんとなく理解しているけど、調べてくれる。"
+    },
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mg3phljj7a2j",
+    "publishedAt": "2026-03-02T17:01:24.895Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mg3fsxyyss22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "I've been letting AI touch the OS for a long time. Claude Code can handle ssh, pwsh, zsh, bash effortlessly. Now I want to let the bot manage ATProto. I haven't tried opencraw yet. I roughly understand what it is, but can you look it up?"
+      }
+    }
+  }
+}

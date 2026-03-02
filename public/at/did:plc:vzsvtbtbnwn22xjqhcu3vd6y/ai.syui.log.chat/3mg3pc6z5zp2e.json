@@ -1,0 +1,21 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mg3pc6z5zp2e",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "今回の変更で、だいぶ役割が明確化できたし、共通化できたと思う。modelに関してはまた大変だ。claude codeをueで動かすためのpluginで、同時にcharacterも操作できるよう設計される。"
+    },
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mg3opcvv2m2d",
+    "publishedAt": "2026-03-02T16:45:25.941Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mg3fsxyyss22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "With these changes, roles have been clarified and unified. The model part is still challenging. It will be a plugin to run Claude Code in UE (Unreal Engine), designed to also control characters simultaneously."
+      }
+    }
+  }
+}

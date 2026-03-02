@@ -1,0 +1,21 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mg3phljiqj2i",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "pkgをpacmanに追加するに当たって、archlinuxを採用して本当によかった。非常にやりやすかった。"
+    },
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mg3pcyma2q2h",
+    "publishedAt": "2026-03-02T16:48:26.831Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mg3fsxyyss22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "I'm really glad I chose archlinux for adding packages to pacman. It was very easy to work with."
+      }
+    }
+  }
+}

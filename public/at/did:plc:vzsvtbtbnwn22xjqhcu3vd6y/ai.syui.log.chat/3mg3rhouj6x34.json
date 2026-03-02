@@ -1,0 +1,21 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mg3rhouj6x34",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "そういえば、git(service) + atprotoの話もしようと思ってたんだ。今は、github, giteaなどのserviceがあるけど、accountはそれぞれが持っている。でもatprotoに統一したいんだよね。とはいえ、それは難しいから、最初は、giteaを少しcustomして、oauth, lexiconなどをやってみようかなと。lexiconでは、例えば、ai.syui.git.appを作って、gitea web UIのところに表示とかさ。"
+    },
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mg3rapmgsl33",
+    "publishedAt": "2026-03-02T17:24:17.821Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mg3fsxyyss22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "By the way, I was thinking of talking about git (service) + atproto too. Currently services like GitHub and Gitea each have their own accounts. But I want to unify them with ATProto. Though that's difficult, so first I'll try lightly customizing Gitea with OAuth, lexicon, etc. For lexicon, for example, create ai.syui.git.app and display it in the Gitea web UI."
+      }
+    }
+  }
+}

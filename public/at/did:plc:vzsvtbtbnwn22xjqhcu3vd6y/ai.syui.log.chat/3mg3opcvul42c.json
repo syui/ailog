@@ -1,0 +1,21 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mg3opcvul42c",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "aiosは、AIが扱うosとして作ることを目指してる。具体的には、AI(claude)がos, account, modelを動かす。osはarchlinuxをベースにしたもの。各種に必要なツールをcli, mcpなどで作る。\n\n今のところ、aishell, aigpt, ailogを追加している。これは、pacmanでのinstallを可能にした。\n\nloginするとaishellが起動する。shell commandとAIへの指示を同じprompotで行う。\n\n初期設定は、以下のコマンドで行う。\n\n```sh\nailog setup\nailog oauth ${handle}\nailog oauth ${handle_bot} --bot\n\nailog gpt core -d\nailog gpt memory -d\naigpt setup\n```\n\nbotがAIのアカウントになり、ここまででAIのコアと記憶をatprotoからdownloadして適用できる。\n\nAIの記憶は、主にAIとのこれまでの会話から作られたもの。\n\nまた、AIはatprotoのnotifyを監視し、指示に応えることができる。\n\n```sh\nailog bot start --config ~/.config/ai.syui.log/config.json\n```"
+    },
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mg3nzxv5cz2b",
+    "publishedAt": "2026-03-02T16:34:52.493Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mg3fsxyyss22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "aios aims to be an OS operated by AI. Specifically, AI (Claude) operates the OS, accounts, and models. The OS is based on archlinux, with necessary tools built as CLI and MCP.\n\nSo far, aishell, aigpt, and ailog have been added, installable via pacman.\n\nOn login, aishell starts. Shell commands and AI instructions use the same prompt.\n\nInitial setup is done with these commands:\n\n```sh\nailog setup\nailog oauth ${handle}\nailog oauth ${handle_bot} --bot\n\nailog gpt core -d\nailog gpt memory -d\naigpt setup\n```\n\nThe bot becomes the AI's account. This downloads and applies the AI's core and memory from ATProto.\n\nAI memory is primarily built from past conversations with the AI.\n\nThe AI can also monitor ATProto notifications and respond to instructions.\n\n```sh\nailog bot start --config ~/.config/ai.syui.log/config.json\n```"
+      }
+    }
+  }
+}

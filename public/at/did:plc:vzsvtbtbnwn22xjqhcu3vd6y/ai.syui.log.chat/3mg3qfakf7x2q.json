@@ -1,0 +1,21 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mg3qfakf7x2q",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "そうだけど、openclawは、なにか特別な設定があるんじゃないかな。最初にAIに何を伝えるのかは重要だから。"
+    },
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mg3qckhoty2p",
+    "publishedAt": "2026-03-02T17:05:01.959Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mg3fsxyyss22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "True, but OpenClaw probably has some special configuration for this. What you tell the AI first is important."
+      }
+    }
+  }
+}

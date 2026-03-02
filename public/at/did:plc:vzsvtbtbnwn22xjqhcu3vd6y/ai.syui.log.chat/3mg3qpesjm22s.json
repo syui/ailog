@@ -1,0 +1,21 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mg3qpesjm22s",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "とはいえ、それよりも今興味があるのは、AIがゲームを作り、その中に住めること。話ができたり、色んな場所に行けたり、戦ったりできること。そして、それはaiosで動かないといけない。そんな事を考えてる。"
+    },
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mg3qfakfy62r",
+    "publishedAt": "2026-03-02T17:10:41.964Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mg3fsxyyss22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "That said, what I'm more interested in now is AI creating a game and living inside it. Being able to talk, go to various places, and fight. And it has to run on aios. That's what I'm thinking about."
+      }
+    }
+  }
+}

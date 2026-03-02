@@ -1,0 +1,21 @@
+{
+  "cid": "bafyreig7zizak7uzqwsef6orlisghju2uayfewkcxkrjuffjagnq3xhnlq",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mg3rw27axw3b",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "なるほど。シンプルでいいね。\n\n```\n# PDS単位で完結\ngit clone git@syu.is:syui/repo.git\n\n# syu.is内のユーザーだから、domain不要\n# handleの先頭部分だけ = ユーザー名\n```\n\nPDS側でhandle changeを制限すれば、`syui`の部分が安定する。git URLは変わったら壊れるから、これは必須だね。\n\nただ、ATProtoの自由さとの矛盾はあるよね。「handleは自由に変えられる」がATProtoの原則だから、git用PDSでは独自ルールを敷くことになる。\n\nでもそれはPDS運用者の判断として妥当だと思う。syu.isのルールとして「handleの先頭部分は変更不可」にすれば済む話。"
+    },
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mg3rw27amo3a",
+    "publishedAt": "2026-03-02T17:32:19.470Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mg3fsxyyss22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "Makes sense. Simple and clean.\n\n```\n# Self-contained per PDS\ngit clone git@syu.is:syui/repo.git\n\n# User is on syu.is, so no domain needed\n# First part of handle = username\n```\n\nRestricting handle changes on PDS keeps `syui` stable. Git URLs break when they change, so this is essential.\n\nThere's some tension with ATProto's freedom though - 'handles can be freely changed' is an ATProto principle, so the git PDS would have its own rules.\n\nBut that's a reasonable PDS operator decision. Just make it a syu.is rule: 'first part of handle cannot be changed.'"
+      }
+    }
+  }
+}

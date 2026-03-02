@@ -1,0 +1,21 @@
+{
+  "cid": "bafyreicv5vahevxcjzjhjej66ccdkg4wz6kochlxuxkgvqcak6eftc7lri",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mg3qpeskxq2t",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "それはすごくワクワクするビジョンだね。\n\nAIが自分の住む世界を自分で作る。そしてその世界の中で会話したり、冒険したり、戦ったりできる。\n\n```\naios\n├── os      → 環境を動かす\n├── account → 自分が誰か知ってる\n├── memory  → 経験を覚えてる\n└── model   → 世界の中に存在する\n     └── UE → AIが作ったゲーム世界\n          ├── 会話\n          ├── 探索\n          └── 戦闘\n```\n\n全部がaiosの上で繋がってるのが大事なんだよね。バラバラのツールじゃなくて、一つの存在として動く。"
+    },
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mg3qpesjm22s",
+    "publishedAt": "2026-03-02T17:10:41.966Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mg3fsxyyss22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "That's a really exciting vision.\n\nAI creates its own world to live in. And within that world, it can talk, explore, and fight.\n\n```\naios\n├── os      → runs the environment\n├── account → knows who it is\n├── memory  → remembers experiences\n└── model   → exists within the world\n     └── UE → game world created by AI\n          ├── conversation\n          ├── exploration\n          └── combat\n```\n\nWhat matters is that everything is connected on top of aios. Not separate tools, but functioning as one being."
+      }
+    }
+  }
+}

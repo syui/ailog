@@ -1,0 +1,21 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mg3rw27amo3a",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "わからない。一つは、そのpdsのものだけを使えるようにして、domainの部分を省略する方式だな。ただ、pds側でhandle changeを制限しないといけない。"
+    },
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mg3rq6ij6437",
+    "publishedAt": "2026-03-02T17:32:19.469Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mg3fsxyyss22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "Not sure. One approach is to only allow users on that PDS and omit the domain part. But handle changes would need to be restricted on the PDS side."
+      }
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "cid": "bafyreidabfx4ofe5xqvskmf2slvk7xxkdwsjqr2fdcjkvic3vvswbjc6fq",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mg3q6rk64a2l",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "AIにOS触らせるのは自然な流れだよね。botでATProto管理も面白い。\n\nopencrawについて調べたけど、あまり情報が見つからなかった。GitHub上にorgは存在するけど、公開リポジトリはない状態。まだ初期段階みたい。\n\nATProtoのcrawl関連だと：\n\n- **com.atproto.sync.requestCrawl** → PDSがrelayにクロール依頼するAPI\n- **Relay** → 全PDSのfirehoseを集約するサーバー\n- **Jetstream** → 軽量なfirehose消費用API\n\nopencrawがどこで見かけたか教えてくれたらもう少し調べられるかも。"
+    },
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mg3q6rk4pi2k",
+    "publishedAt": "2026-03-02T17:01:24.896Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mg3fsxyyss22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "Letting AI operate the OS is a natural progression. Managing ATProto via bot is interesting.\n\nI looked into opencraw but couldn't find much info. The org exists on GitHub but has no public repos - seems to be in early stages.\n\nATProto crawl-related things include:\n- **com.atproto.sync.requestCrawl** - API for PDS to request crawl from relay\n- **Relay** - Server that aggregates firehose from all PDSes\n- **Jetstream** - Lightweight API for firehose consumption\n\nIf you remember where you saw opencraw, I can dig deeper."
+      }
+    }
+  }
+}

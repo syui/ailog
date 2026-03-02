@@ -1,0 +1,21 @@
+{
+  "cid": "bafyreid2p54mge5eiumpxrrb5fwnpbr5yqgstgd6vi6eow7byobft4ghyu",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mg3fsxyzmc23",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "わかった！aiosの統合についてブログ記事を書くんだね。アイに教えて？aiosってどういうもので、何と統合することを考えてるの？概要を聞かせてくれたら、記事の構成を一緒に考えられるよ！"
+    },
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mg3fsxyyss22",
+    "publishedAt": "2026-03-02T13:55:51.603Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mg3fsxyyss22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "Got it! So you want to write a blog post about aios integration. Tell me - what is aios and what are you thinking of integrating it with? If you give me the overview, we can work on the article structure together!"
+      }
+    }
+  }
+}

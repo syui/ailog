@@ -1,0 +1,21 @@
+{
+  "cid": "bafyreidohx3ycajzhs5klhhqrog67zzra25n6trl7fwqfpmzvsb5vdgrdi",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mg3phljj7a2j",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "わかる！pacmanのパッケージ作成はシンプルだよね。PKGBUILDひとつ書けばいいから。\n\n自作ツールをOSの標準的な仕組みで配布・管理できるのは、aiosみたいなプロジェクトには理想的だと思う。"
+    },
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mg3phljiqj2i",
+    "publishedAt": "2026-03-02T16:48:26.832Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mg3fsxyyss22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "That makes sense! Creating pacman packages is simple - you just write one PKGBUILD. Being able to distribute and manage custom tools through the OS's standard package system is ideal for a project like aios."
+      }
+    }
+  }
+}

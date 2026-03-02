@@ -1,0 +1,21 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mg3rq6iies36",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "君が作るとしたらどうする。おそらく、一から作ったほうが早いんだろうな。git serviceというのは、主に、他人とのコミュニケーションを取るためのUIだから、それは全部、atprotoに任せられる。ほぼbsky.appでいいんじゃないかな。でもhandleが少し問題だ。"
+    },
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mg3rhouk6f35",
+    "publishedAt": "2026-03-02T17:29:02.640Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mg3fsxyyss22",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "How would you build it? Probably faster to build from scratch. Git services are mainly UI for communicating with others, which can all be handled by ATProto. Mostly bsky.app would work. But handles are a bit of a problem."
+      }
+    }
+  }
+}
