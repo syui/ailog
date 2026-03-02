@@ -51,33 +51,62 @@ pub async fn get_memory(download: bool) -> Result<()> {
     let pds = session.pds.as_deref().unwrap_or("bsky.social");
     let client = XrpcClient::new_bot(pds);
 
-    let result: ListRecordsResponse = client
-        .query_auth(
-            &com_atproto_repo::LIST_RECORDS,
-            &[
+    if download {
+        // Download all memory records
+        let mut cursor: Option<String> = None;
+        let mut count = 0;
+
+        loop {
+            let mut params: Vec<(&str, &str)> = vec![
                 ("repo", &session.did),
                 ("collection", COLLECTION_MEMORY),
-                ("limit", "1"),
-                ("reverse", "true"),
-            ],
-            &session.access_jwt,
-        )
-        .await?;
+                ("limit", "100"),
+            ];
+            let cursor_val;
+            if let Some(ref c) = cursor {
+                cursor_val = c.clone();
+                params.push(("cursor", &cursor_val));
+            }
 
-    let record = result
-        .records
-        .first()
-        .context("No memory records found")?;
+            let result: ListRecordsResponse = client
+                .query_auth(
+                    &com_atproto_repo::LIST_RECORDS,
+                    &params,
+                    &session.access_jwt,
+                )
+                .await?;
 
-    println!("{}", serde_json::to_string_pretty(&record.value)?);
+            let batch = result.records.len();
+            for record in &result.records {
+                let rkey = record.uri.split('/').next_back().unwrap_or("unknown");
+                save_record(&session.did, COLLECTION_MEMORY, rkey, record)?;
+                count += 1;
+            }
 
-    if download {
-        let rkey = record
-            .uri
-            .split('/')
-            .next_back()
-            .unwrap_or("unknown");
-        save_record(&session.did, COLLECTION_MEMORY, rkey, record)?;
+            match result.cursor {
+                Some(c) if batch > 0 => cursor = Some(c),
+                _ => break,
+            }
+        }
+
+        println!("Downloaded {} memory records", count);
+    } else {
+        // Show latest only
+        let result: ListRecordsResponse = client
+            .query_auth(
+                &com_atproto_repo::LIST_RECORDS,
+                &[
+                    ("repo", &session.did),
+                    ("collection", COLLECTION_MEMORY),
+                    ("limit", "1"),
+                    ("reverse", "true"),
+                ],
+                &session.access_jwt,
+            )
+            .await?;
+
+        let record = result.records.first().context("No memory records found")?;
+        println!("{}", serde_json::to_string_pretty(&record.value)?);
     }
 
     Ok(())
