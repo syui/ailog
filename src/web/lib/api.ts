@@ -148,11 +148,14 @@ async function getLocalPosts(did: string, collection: string): Promise<Post[]> {
     const indexRes = await fetch(`/at/${did}/${collection}/index.json`)
     if (indexRes.ok && isJsonResponse(indexRes)) {
       const rkeys: string[] = await indexRes.json()
-      const posts: Post[] = []
-      for (const rkey of rkeys) {
-        const res = await fetch(`/at/${did}/${collection}/${rkey}.json`)
-        if (res.ok && isJsonResponse(res)) posts.push(await res.json())
-      }
+      const results = await Promise.all(
+        rkeys.map(async (rkey) => {
+          const res = await fetch(`/at/${did}/${collection}/${rkey}.json`)
+          if (res.ok && isJsonResponse(res)) return res.json() as Promise<Post>
+          return null
+        })
+      )
+      const posts = results.filter((p): p is Post => p !== null)
       return posts.sort((a, b) =>
         new Date(b.value.publishedAt).getTime() - new Date(a.value.publishedAt).getTime()
       )
