@@ -169,7 +169,7 @@ sync pds data to local content directory.
 ```sh
 $ ailog sync [-o <output>]
 $ ailog s
-$ ailog s -o ./public/content
+$ ailog s -o ./public/at
 $ ailog s -c ai.syui.log.chat
 ```
 
@@ -208,7 +208,7 @@ translate content files using lms.
 ```sh
 $ ailog lang <input> [-f <from>] [-t <to>]
 $ ailog lang ./post.json
-$ ailog lang ./public/content -f ja -t en
+$ ailog lang ./public/at -f ja -t en
 ```
 
 requires `.env`:
@@ -327,10 +327,10 @@ $ ailog chat
 
 ### Data Storage
 
-Messages are saved locally to `public/content/{did}/ai.syui.log.chat/`:
+Messages are saved locally to `public/at/{did}/ai.syui.log.chat/`:
 
 ```
-public/content/
+public/at/
 ├── did:plc:xxx/              # User's messages
 │   └── ai.syui.log.chat/
 │       ├── index.json
