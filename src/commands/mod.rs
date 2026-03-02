@@ -13,3 +13,4 @@ pub mod bot;
 pub mod pds;
 pub mod gpt;
 pub mod oauth;
+pub mod setup;

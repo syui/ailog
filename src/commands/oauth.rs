@@ -15,20 +15,33 @@ struct SiteConfig {
 }
 
 fn load_site_url() -> Result<String> {
-    // Try public/config.json in current directory
-    let config_path = std::path::Path::new("public/config.json");
-    if config_path.exists() {
-        let content = std::fs::read_to_string(config_path)?;
+    // 1. Try public/config.json in current directory
+    let local_path = std::path::Path::new("public/config.json");
+    if local_path.exists() {
+        let content = std::fs::read_to_string(local_path)?;
         let config: SiteConfig = serde_json::from_str(&content)?;
         if let Some(url) = config.site_url {
             return Ok(url.trim_end_matches('/').to_string());
         }
     }
+
+    // 2. Fallback to ~/.config/ai.syui.log/config.json
+    if let Some(cfg_dir) = dirs::config_dir() {
+        let cfg_path = cfg_dir.join(BUNDLE_ID).join("config.json");
+        if cfg_path.exists() {
+            let content = std::fs::read_to_string(&cfg_path)?;
+            let config: SiteConfig = serde_json::from_str(&content)?;
+            if let Some(url) = config.site_url {
+                return Ok(url.trim_end_matches('/').to_string());
+            }
+        }
+    }
+
     anyhow::bail!(
-        "No siteUrl found in public/config.json. \
-         Create config.json with {{\"siteUrl\": \"https://example.com\"}}"
+        "No siteUrl found. Create public/config.json or run ailog oauth with --client-id"
     );
 }
+
 
 fn percent_encode(s: &str) -> String {
     let mut result = String::with_capacity(s.len() * 2);

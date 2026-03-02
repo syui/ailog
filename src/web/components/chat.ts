@@ -64,7 +64,7 @@ function buildAuthorMap(
   let userAvatarUrl = ''
   if (userProfile?.value.avatar) {
     const cid = userProfile.value.avatar.ref.$link
-    userAvatarUrl = pds ? `${pds}/xrpc/com.atproto.sync.getBlob?did=${userDid}&cid=${cid}` : `/content/${userDid}/blob/${cid}`
+    userAvatarUrl = pds ? `${pds}/xrpc/com.atproto.sync.getBlob?did=${userDid}&cid=${cid}` : `/at/${userDid}/blob/${cid}`
   }
   authors.set(userDid, { did: userDid, handle: userHandle, avatarUrl: userAvatarUrl })
 
@@ -72,7 +72,7 @@ function buildAuthorMap(
   let botAvatarUrl = ''
   if (botProfile?.value.avatar) {
     const cid = botProfile.value.avatar.ref.$link
-    botAvatarUrl = pds ? `${pds}/xrpc/com.atproto.sync.getBlob?did=${botDid}&cid=${cid}` : `/content/${botDid}/blob/${cid}`
+    botAvatarUrl = pds ? `${pds}/xrpc/com.atproto.sync.getBlob?did=${botDid}&cid=${cid}` : `/at/${botDid}/blob/${cid}`
   }
   authors.set(botDid, { did: botDid, handle: botHandle, avatarUrl: botAvatarUrl })
 

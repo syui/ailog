@@ -306,7 +306,7 @@ pub async fn run(input: Option<&str>, new_session: bool) -> Result<()> {
     let output_dir = env::var("CHAT_OUTPUT").unwrap_or_else(|_| {
         // Use absolute path from current working directory
         let cwd = env::current_dir().unwrap_or_default();
-        cwd.join("public/content").to_string_lossy().to_string()
+        cwd.join("public/at").to_string_lossy().to_string()
     });
 
     // Load user session for DID

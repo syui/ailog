@@ -225,7 +225,7 @@ fn handle_chat_save(params: ChatSaveParams) -> Result<String> {
     let output_dir = env::var("CHAT_OUTPUT").unwrap_or_else(|_| {
         env::current_dir()
             .unwrap_or_default()
-            .join("public/content")
+            .join("public/at")
             .to_string_lossy()
             .to_string()
     });
@@ -283,7 +283,7 @@ fn handle_chat_list() -> Result<String> {
     let output_dir = env::var("CHAT_OUTPUT").unwrap_or_else(|_| {
         env::current_dir()
             .unwrap_or_default()
-            .join("public/content")
+            .join("public/at")
             .to_string_lossy()
             .to_string()
     });

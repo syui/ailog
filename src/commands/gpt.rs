@@ -1,6 +1,7 @@
 use anyhow::{Context, Result};
 use serde_json::Value;
 use std::fs;
+use std::path::PathBuf;
 
 use super::auth;
 use crate::lexicons::com_atproto_repo;
@@ -9,6 +10,13 @@ use crate::xrpc::XrpcClient;
 
 const COLLECTION_CORE: &str = "ai.syui.gpt.core";
 const COLLECTION_MEMORY: &str = "ai.syui.gpt.memory";
+/// Get base dir: $cfg/ai.syui.log/content/
+fn gpt_base_dir() -> Result<PathBuf> {
+    Ok(dirs::config_dir()
+        .context("Could not find config directory")?
+        .join(super::token::BUNDLE_ID)
+        .join("at"))
+}
 
 /// Get core record (rkey=self)
 pub async fn get_core(download: bool) -> Result<()> {
@@ -144,12 +152,12 @@ pub async fn push(collection_name: &str) -> Result<()> {
     let did = &session.did;
     let client = XrpcClient::new_bot(pds);
 
-    let collection_dir = format!("public/content/{}/{}", did, collection);
-    if !std::path::Path::new(&collection_dir).exists() {
-        anyhow::bail!("Collection directory not found: {}", collection_dir);
+    let collection_dir = gpt_base_dir()?.join(did).join(collection);
+    if !collection_dir.exists() {
+        anyhow::bail!("Collection directory not found: {}", collection_dir.display());
     }
 
-    println!("Pushing {} records from {}", collection_name, collection_dir);
+    println!("Pushing {} records from {}", collection_name, collection_dir.display());
 
     let mut count = 0;
     for entry in fs::read_dir(&collection_dir)? {
@@ -205,19 +213,19 @@ pub async fn push(collection_name: &str) -> Result<()> {
     Ok(())
 }
 
-/// Save a record to local content directory
+/// Save a record to $cfg/ai.syui.gpt/{did}/{collection}/{rkey}.json
 fn save_record(did: &str, collection: &str, rkey: &str, record: &Record) -> Result<()> {
-    let dir = format!("public/content/{}/{}", did, collection);
+    let dir = gpt_base_dir()?.join(did).join(collection);
     fs::create_dir_all(&dir)?;
 
-    let path = format!("{}/{}.json", dir, rkey);
+    let path = dir.join(format!("{}.json", rkey));
     let json = serde_json::json!({
         "uri": record.uri,
         "cid": record.cid,
         "value": record.value,
     });
     fs::write(&path, serde_json::to_string_pretty(&json)?)?;
-    println!("Saved: {}", path);
+    println!("Saved: {}", path.display());
 
     Ok(())
 }

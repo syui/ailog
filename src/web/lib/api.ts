@@ -85,7 +85,7 @@ function isJsonResponse(res: Response): boolean {
 // Load local profile
 async function getLocalProfile(did: string): Promise<Profile | null> {
   try {
-    const res = await fetch(`/content/${did}/app.bsky.actor.profile/self.json`)
+    const res = await fetch(`/at/${did}/app.bsky.actor.profile/self.json`)
     if (res.ok && isJsonResponse(res)) return res.json()
   } catch {
     // Not found
@@ -125,7 +125,7 @@ export function getAvatarUrl(did: string, profile: Profile, localOnly = false): 
 
   // Local mode: use local blob path (sync command downloads this)
   if (localOnly) {
-    return `/content/${did}/blob/${cid}`
+    return `/at/${did}/blob/${cid}`
   }
 
   // Remote mode: use PDS blob URL (requires getPds call from caller if needed)
@@ -145,12 +145,12 @@ export async function getAvatarUrlRemote(did: string, profile: Profile): Promise
 // Load local posts
 async function getLocalPosts(did: string, collection: string): Promise<Post[]> {
   try {
-    const indexRes = await fetch(`/content/${did}/${collection}/index.json`)
+    const indexRes = await fetch(`/at/${did}/${collection}/index.json`)
     if (indexRes.ok && isJsonResponse(indexRes)) {
       const rkeys: string[] = await indexRes.json()
       const posts: Post[] = []
       for (const rkey of rkeys) {
-        const res = await fetch(`/content/${did}/${collection}/${rkey}.json`)
+        const res = await fetch(`/at/${did}/${collection}/${rkey}.json`)
         if (res.ok && isJsonResponse(res)) posts.push(await res.json())
       }
       return posts.sort((a, b) =>
@@ -196,7 +196,7 @@ export async function getPosts(did: string, collection: string, localOnly = fals
 export async function getPost(did: string, collection: string, rkey: string, localOnly = false): Promise<Post | null> {
   // Try local first
   try {
-    const res = await fetch(`/content/${did}/${collection}/${rkey}.json`)
+    const res = await fetch(`/at/${did}/${collection}/${rkey}.json`)
     if (res.ok && isJsonResponse(res)) return res.json()
   } catch {
     // Not found
@@ -224,7 +224,7 @@ export async function getPost(did: string, collection: string, rkey: string, loc
 export async function describeRepo(did: string): Promise<string[]> {
   // Try local first
   try {
-    const res = await fetch(`/content/${did}/describe.json`)
+    const res = await fetch(`/at/${did}/describe.json`)
     if (res.ok && isJsonResponse(res)) {
       const data = await res.json()
       return data.collections || []
@@ -392,12 +392,12 @@ export async function getChatMessages(
   async function loadForDid(did: string): Promise<ChatMessage[]> {
     // Try local first
     try {
-      const res = await fetch(`/content/${did}/${collection}/index.json`)
+      const res = await fetch(`/at/${did}/${collection}/index.json`)
       if (res.ok && isJsonResponse(res)) {
         const rkeys: string[] = await res.json()
         // Load all messages in parallel
         const msgPromises = rkeys.map(async (rkey) => {
-          const msgRes = await fetch(`/content/${did}/${collection}/${rkey}.json`)
+          const msgRes = await fetch(`/at/${did}/${collection}/${rkey}.json`)
           if (msgRes.ok && isJsonResponse(msgRes)) {
             return msgRes.json() as Promise<ChatMessage>
           }
@@ -590,7 +590,7 @@ export async function getCards(
 ): Promise<CardCollection | null> {
   // Try local first
   try {
-    const res = await fetch(`/content/${did}/${collection}/self.json`)
+    const res = await fetch(`/at/${did}/${collection}/self.json`)
     if (res.ok && isJsonResponse(res)) {
       const record = await res.json()
       return record.value as CardCollection
@@ -639,7 +639,7 @@ export async function getRse(did: string): Promise<RseCollection | null> {
 
   // Try local first
   try {
-    const res = await fetch(`/content/${did}/${collection}/self.json`)
+    const res = await fetch(`/at/${did}/${collection}/self.json`)
     if (res.ok && isJsonResponse(res)) {
       const record = await res.json()
       return record.value as RseCollection
@@ -701,7 +701,7 @@ export async function getCardAdmin(did: string): Promise<CardAdminData | null> {
 
   // Try local first
   try {
-    const res = await fetch(`/content/${did}/${collection}/self.json`)
+    const res = await fetch(`/at/${did}/${collection}/self.json`)
     if (res.ok && isJsonResponse(res)) {
       const record = await res.json()
       return record.value as CardAdminData
@@ -751,7 +751,7 @@ export async function getRseAdmin(did: string): Promise<RseAdminData | null> {
 
   // Try local first
   try {
-    const res = await fetch(`/content/${did}/${collection}/self.json`)
+    const res = await fetch(`/at/${did}/${collection}/self.json`)
     if (res.ok && isJsonResponse(res)) {
       const record = await res.json()
       return record.value as RseAdminData
@@ -784,7 +784,7 @@ export async function getLinks(did: string): Promise<LinkCollection | null> {
 
   // Try local first
   try {
-    const res = await fetch(`/content/${did}/${collection}/self.json`)
+    const res = await fetch(`/at/${did}/${collection}/self.json`)
     if (res.ok && isJsonResponse(res)) {
       const record = await res.json()
       return record.value as LinkCollection

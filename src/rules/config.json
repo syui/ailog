@@ -1,0 +1,18 @@
+{
+	"title": "syui.ai",
+	"did": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
+	"handle": "syui.syui.ai",
+	"bot": {
+		"did": "did:plc:6qyecktefllvenje24fcxnie",
+		"handle": "ai.syui.ai",
+		"path": "~/.config/ai.syui.log/at",
+		"memory": 100
+	},
+	"collection": "ai.syui.log.post",
+	"chatCollection": "ai.syui.log.chat",
+	"network": "syu.is",
+	"color": "#EF454A",
+	"siteUrl": "https://syui.ai",
+	"repoUrl": "https://git.syui.ai/ai",
+	"oauth": true
+}

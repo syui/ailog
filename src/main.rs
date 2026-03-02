@@ -84,7 +84,7 @@ enum Commands {
     #[command(alias = "s")]
     Sync {
         /// Output directory
-        #[arg(short, long, default_value = "public/content")]
+        #[arg(short, long, default_value = "public/at")]
         output: String,
         /// Sync bot data (uses bot.json)
         #[arg(long)]
@@ -97,7 +97,7 @@ enum Commands {
     /// Push local content to PDS
     Push {
         /// Input directory
-        #[arg(short, long, default_value = "public/content")]
+        #[arg(short, long, default_value = "public/at")]
         input: String,
         /// Collection (e.g., ai.syui.log.post)
         #[arg(short, long, default_value = "ai.syui.log.post")]
@@ -177,7 +177,7 @@ enum Commands {
     #[command(alias = "i")]
     Index {
         /// Content directory
-        #[arg(short, long, default_value = "public/content")]
+        #[arg(short, long, default_value = "public/at")]
         dir: String,
     },
 
@@ -219,6 +219,9 @@ enum Commands {
         #[arg(long)]
         bot: bool,
     },
+
+    /// Initialize config
+    Setup,
 }
 
 #[derive(Subcommand)]
@@ -388,6 +391,9 @@ async fn main() -> Result<()> {
         }
         Commands::Oauth { handle, bot } => {
             commands::oauth::oauth_login(&handle, bot).await?;
+        }
+        Commands::Setup => {
+            commands::setup::run()?;
         }
         Commands::Gpt { command } => {
             match command {
