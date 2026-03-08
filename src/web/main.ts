@@ -1,7 +1,8 @@
 import './styles/main.css'
 import './styles/card.css'
 import './styles/card-migrate.css'
-import { getConfig, resolveHandle, getProfile, getPosts, getPost, describeRepo, listRecords, getRecord, getPds, getNetworks, getChatMessages, getCards, getCardAdmin, getRse, getRseAdmin, getLinks } from './lib/api'
+import './styles/vrm.css'
+import { getConfig, resolveHandle, getProfile, getPosts, getPost, describeRepo, listRecords, getRecord, getPds, getNetworks, getChatMessages, getCards, getCardAdmin, getRse, getRseAdmin, getLinks, getVrm } from './lib/api'
 import { parseRoute, onRouteChange, navigate, type Route } from './lib/router'
 import { login, logout, handleCallback, restoreSession, isLoggedIn, getLoggedInHandle, getLoggedInDid, deleteRecord, updatePost, updateChat, updateLinks, getAgent } from './lib/auth'
 import { validateRecord } from './lib/lexicon'
@@ -16,6 +17,7 @@ import { renderChatListPage, renderChatThreadPage, renderChatEditForm } from './
 import { renderCardPage } from './components/card'
 import { renderRsePage } from './components/rse'
 import { renderLinkPage, renderLinkButtons } from './components/link'
+import { renderVrmPage, setupVrmPage } from './components/vrm'
 import { checkMigrationStatus, renderMigrationPage, setupMigrationButton } from './components/card-migrate'
 import { showLoading, hideLoading } from './components/loading'
 
@@ -282,6 +284,12 @@ async function render(route: Route): Promise<void> {
       html += `<div id="content">${renderLinkPage(links, handle, isOwner)}</div>`
       html += `<nav class="back-nav"><a href="/@${handle}">${handle}</a></nav>`
 
+    } else if (route.type === 'vrm') {
+      // VRM page
+      const vrmData = await getVrm(did)
+      html += `<div id="content">${renderVrmPage(vrmData, handle)}</div>`
+      html += `<nav class="back-nav"><a href="/@${handle}">${handle}</a></nav>`
+
     } else if (route.type === 'chat') {
       // Chat list page - show threads started by this user
       if (!config.bot) {
@@ -449,6 +457,11 @@ async function render(route: Route): Promise<void> {
     // Setup merge button for AT-Browser record detail
     if (route.type === 'record' && isOwner) {
       setupRecordMerge()
+    }
+
+    // Setup VRM page audio controls
+    if (route.type === 'vrm') {
+      setupVrmPage()
     }
 
     // Setup card migration button

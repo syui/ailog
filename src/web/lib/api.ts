@@ -669,6 +669,52 @@ export async function getRse(did: string): Promise<RseCollection | null> {
   return null
 }
 
+// VRM collection type
+export interface VrmItem {
+  id: number
+  cp: number
+  cid: string
+}
+
+export interface VrmCollection {
+  item: VrmItem[]
+  createdAt: string
+  updatedAt: string
+}
+
+// Get user's VRM collection (ai.syui.vrm)
+export async function getVrm(did: string): Promise<VrmCollection | null> {
+  const collection = 'ai.syui.vrm'
+
+  // Try local first
+  try {
+    const res = await fetch(`/at/${did}/${collection}/self.json`)
+    if (res.ok && isJsonResponse(res)) {
+      const record = await res.json()
+      return record.value as VrmCollection
+    }
+  } catch {
+    // Try remote
+  }
+
+  // Remote fallback
+  const pds = await getPds(did)
+  if (!pds) return null
+
+  try {
+    const host = pds.replace('https://', '')
+    const url = `${xrpcUrl(host, comAtprotoRepo.getRecord)}?repo=${did}&collection=${collection}&rkey=self`
+    const res = await fetch(url)
+    if (res.ok) {
+      const record = await res.json()
+      return record.value as VrmCollection
+    }
+  } catch {
+    // Failed
+  }
+  return null
+}
+
 // Link item type
 export interface LinkItem {
   service: 'github' | 'youtube' | 'x'

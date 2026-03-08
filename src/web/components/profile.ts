@@ -42,6 +42,16 @@ export function getServiceLinks(handle: string, collections: string[]): ServiceL
     })
   }
 
+  // VRM
+  if (collections.includes('ai.syui.vrm')) {
+    services.push({
+      name: 'VRM',
+      icon: '/service/ai.syui.vrm.png',
+      url: `/@${handle}/at/vrm`,
+      collection: 'ai.syui.vrm'
+    })
+  }
+
   // Link
   if (collections.includes('ai.syui.at.link')) {
     services.push({

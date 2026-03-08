@@ -1,0 +1,240 @@
+/* VRM Display Styles */
+
+.vrm-page {
+  padding: 16px 0;
+}
+
+.vrm-header {
+  margin-bottom: 8px;
+}
+
+.vrm-actions-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.vrm-stats {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 16px;
+  background: var(--bg-secondary, #f5f5f5);
+  border-radius: 8px;
+  flex: 1;
+}
+
+.vrm-stats .stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 50px;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.vrm-stats .stat-value {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: var(--text-primary, #333);
+}
+
+.vrm-stats .stat-label {
+  font-size: 0.75em;
+  color: var(--text-secondary, #666);
+}
+
+/* VRM List */
+.vrm-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.vrm-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: var(--bg-secondary, #f5f5f5);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.vrm-item:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Playing state - rotating border */
+.vrm-item.vrm-active {
+  border-color: transparent;
+  background-origin: border-box;
+  background-clip: padding-box;
+}
+
+.vrm-item.vrm-active::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 10px;
+  padding: 2px;
+  background: conic-gradient(
+    from var(--vrm-border-angle, 0deg),
+    transparent 0%,
+    var(--vrm-tier-color, #C0C0C0) 25%,
+    transparent 50%,
+    var(--vrm-tier-color, #C0C0C0) 75%,
+    transparent 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: vrm-border-spin 3s linear infinite;
+  z-index: 0;
+}
+
+@keyframes vrm-border-spin {
+  to {
+    --vrm-border-angle: 360deg;
+  }
+}
+
+@property --vrm-border-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+/* Crown icon */
+.vrm-crown-wrapper {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vrm-crown {
+  width: 40px;
+  height: 40px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+/* Tier-specific glow */
+.vrm-item[data-tier="1"] .vrm-crown {
+  filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
+}
+
+.vrm-item[data-tier="2"] .vrm-crown {
+  filter: drop-shadow(0 0 8px rgba(192, 192, 192, 0.6));
+}
+
+.vrm-item[data-tier="3"] .vrm-crown {
+  filter: drop-shadow(0 0 8px rgba(205, 127, 50, 0.6));
+}
+
+/* Info */
+.vrm-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.vrm-tier-name {
+  font-size: 1.1em;
+  font-weight: bold;
+}
+
+.vrm-track-name {
+  font-size: 0.85em;
+  color: var(--text-secondary, #666);
+}
+
+.vrm-cp {
+  font-size: 0.85em;
+  color: var(--text-secondary, #666);
+}
+
+/* Play button */
+.vrm-actions {
+  flex-shrink: 0;
+}
+
+.vrm-play-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.vrm-play-btn:hover {
+  background: var(--bg-secondary, #f0f0f0);
+}
+
+.vrm-play-icon {
+  width: 28px;
+  height: 28px;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.vrm-play-btn:hover .vrm-play-icon {
+  opacity: 1;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .vrm-stats {
+    background: var(--bg-secondary, #2a2a2a);
+  }
+
+  .vrm-stats .stat-value {
+    color: var(--text-primary, #e0e0e0);
+  }
+
+  .vrm-item {
+    background: var(--bg-secondary, #2a2a2a);
+  }
+
+  .vrm-play-btn:hover {
+    background: var(--bg-secondary, #333);
+  }
+
+  .vrm-play-icon {
+    color: var(--text-primary, #e0e0e0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .vrm-item {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .vrm-crown-wrapper {
+    width: 36px;
+    height: 36px;
+  }
+
+  .vrm-crown {
+    width: 32px;
+    height: 32px;
+  }
+
+  .vrm-stats .stat-value {
+    font-size: 1em;
+  }
+}

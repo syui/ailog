@@ -1,0 +1,32 @@
+{
+  "$type": "com.atproto.lexicon.schema",
+  "lexicon": 1,
+  "id": "ai.syui.vrm",
+  "defs": {
+    "main": {
+      "type": "record",
+      "key": "literal:self",
+      "description": "VRM game score collection",
+      "record": {
+        "type": "object",
+        "required": ["item", "createdAt", "updatedAt"],
+        "properties": {
+          "item": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "cp", "cid"],
+              "properties": {
+                "id": { "type": "integer", "description": "Crown type: 1=gold, 2=silver, 3=bronze" },
+                "cp": { "type": "integer", "description": "Score at acquisition" },
+                "cid": { "type": "string", "description": "Unique instance ID" }
+              }
+            }
+          },
+          "createdAt": { "type": "string", "format": "datetime" },
+          "updatedAt": { "type": "string", "format": "datetime" }
+        }
+      }
+    }
+  }
+}
