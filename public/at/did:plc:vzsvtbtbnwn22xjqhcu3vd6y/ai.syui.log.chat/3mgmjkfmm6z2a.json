@@ -1,0 +1,21 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mgmjkfmm6z2a",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "とりあえず、自動化したい部分としては、それが手直しすれば漫画として世に出せる、品質が高い状態のものである必要。\nそういった環境を作れないかなと思ってる。\n今度、時間があればそれに取り組んでみたいな。\nゲームからcomfyuiに落とし込むくらいの手順は作ってみたい。"
+    },
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mgmjdo5vfq27",
+    "publishedAt": "2026-03-09T09:17:54.406Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mgmiljn42322",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "For the parts I want to automate, the output needs to be high enough quality that it can be published as manga with just some touch-ups.\nI'm thinking about whether I can create that kind of environment.\nNext time I have some free time, I'd like to work on it.\nI want to at least create the steps from game capture to ComfyUI processing."
+      }
+    }
+  }
+}

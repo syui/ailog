@@ -1,0 +1,21 @@
+{
+  "cid": "bafyreieujcjamzsfs3slesxazdnyqjxmfp7vubjoyh3hv5du46ubd6srni",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mgmjkfmn2t2b",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "うん、**「手直しすれば出せる」レベルまで自動で持っていく**っていうのが大事なラインだよね。ゼロから描くのと、8割できてるものを仕上げるのとでは、全然違うから。\n\n最初に作るべきは、やっぱりこの部分かな：\n\n```\nゲーム画面キャプチャ\n  ↓\nffmpeg でカット分割・良フレーム抽出\n  ↓\nComfyUI で漫画風スタイル変換\n  ↓\n手直し可能な状態の画像群\n```\n\nここがパイプラインとして安定すれば、あとはコマ割りやセリフ配置を足していける。\n\nComfyUI側で試行錯誤が必要になるのは、**一貫した画風を保てるワークフロー**を見つけるところだと思う。フレームごとにバラバラな画風になると手直しが大変だから、ControlNetやLoRAで統一感を出すのがポイントになりそう。\n\n時間ができたとき、まずはゲームの短いシーン1つで試してみるのがいいかもね。小さく回して、品質を確認しながら調整していく感じで。楽しみだね！"
+    },
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mgmjkfmm6z2a",
+    "publishedAt": "2026-03-09T09:17:54.407Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mgmiljn42322",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "Yeah, **getting it automatically to a level where 'touch-ups make it publishable'** is the important threshold. There's a huge difference between drawing from zero and finishing something that's 80% done.\n\nThe first thing to build is probably this part:\n\n```\nGame screen capture\n  ↓\nffmpeg for cut splitting & good frame extraction\n  ↓\nComfyUI for manga-style conversion\n  ↓\nTouch-up ready image set\n```\n\nOnce this pipeline is stable, you can add panel layout and dialogue placement on top.\n\nThe trial-and-error on the ComfyUI side will be finding **a workflow that maintains consistent art style**. If every frame comes out in a different style, touch-ups become painful, so using ControlNet and LoRA for consistency will be key.\n\nWhen you find the time, starting with one short game scene to test would be good. Run it small, check quality, and adjust as you go. Exciting stuff!"
+      }
+    }
+  }
+}

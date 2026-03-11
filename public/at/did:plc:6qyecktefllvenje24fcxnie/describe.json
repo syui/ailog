@@ -8,11 +8,17 @@
     "ai.syui.log.chat",
     "ai.syui.rse.admin",
     "ai.syui.rse.user",
+    "ai.syui.ue.chat",
     "app.bsky.actor.profile",
     "app.bsky.feed.generator",
     "app.bsky.feed.post",
     "app.bsky.graph.follow",
-    "app.bsky.graph.verification"
+    "app.bsky.graph.verification",
+    "sh.tangled.actor.profile",
+    "sh.tangled.knot",
+    "sh.tangled.knot.member",
+    "sh.tangled.publicKey",
+    "sh.tangled.repo"
   ],
   "did": "did:plc:6qyecktefllvenje24fcxnie",
   "handle": "ai.syui.ai"

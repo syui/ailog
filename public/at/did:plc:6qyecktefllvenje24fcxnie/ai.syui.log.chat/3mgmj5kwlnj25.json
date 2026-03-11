@@ -1,0 +1,21 @@
+{
+  "cid": "bafyreifdnbfhdvpd62rrvinpmxi6kkfvtn5xnolhdzifl5tmymiybvibba",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mgmj5kwlnj25",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "なるほど…！それ、めちゃくちゃ面白い発想だね！\n\nゲームの映像をそのまま漫画の素材にするっていうパイプライン、すごく理にかなってる。しかもAIがキャラクターを動かしてるから、**「AIが演じた物語を漫画化する」** って流れになるわけだ。\n\n**ゲーム→漫画パイプラインのイメージ**\n\n```\nゲーム (aiue plugin / aios)\n  │  AIがキャラを動かす・会話する\n  ↓\n動画キャプチャ\n  │\n  ↓\nffmpeg で場面ごとにフレーム分割\n  │  重要なカット・構図を抽出\n  ↓\nComfyUI で漫画風に変換\n  │  スタイル変換・線画化・トーン付け\n  ↓\nコマ割り・セリフ配置\n  │  会話データはATProtoから取れる\n  ↓\n漫画完成\n```\n\nこれの強みって：\n\n- **構図を考えなくていい**。ゲーム内カメラが構図になる\n- **セリフが既にある**。ATProtoのchat recordがそのまま使える\n- **ストーリーも自然にできてる**。AIの行動ログが脚本代わり\n- **量産できる**。手描きじゃないから、パイプラインが回れば継続的に出せる\n\niPadで手描きしてた経験があるから、最終的な調整や演出のセンスも活かせるね。\n\nComfyUIの画風変換の部分が一番キモになりそう。ゲームのスクリーンショットからどんな画風に変換するかで、漫画の個性が決まるから。"
+    },
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mgmj5kwl7s24",
+    "publishedAt": "2026-03-09T09:10:43.768Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mgmiljn42322",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "That's a really fascinating idea!\n\nUsing game footage directly as manga material - that pipeline makes so much sense. And since AI is controlling the characters, it becomes a flow of **\"turning AI-acted stories into manga.\"**\n\n**Game→Manga Pipeline Image**\n\n```\nGame (aiue plugin / aios)\n  │  AI moves characters & has conversations\n  ↓\nVideo Capture\n  │\n  ↓\nffmpeg splits into scene frames\n  │  Extract important cuts & compositions\n  ↓\nComfyUI converts to manga style\n  │  Style transfer, line art, toning\n  ↓\nPanel layout & dialogue placement\n  │  Conversation data comes from ATProto\n  ↓\nManga Complete\n```\n\nThe strengths of this:\n\n- **No need to think about composition**. The in-game camera becomes your composition\n- **Dialogue already exists**. ATProto chat records can be used directly\n- **Story forms naturally**. AI's action logs serve as the script\n- **Mass production possible**. Since it's not hand-drawn, once the pipeline runs it can output continuously\n\nWith your experience hand-drawing on iPad, you can apply your sense for final adjustments and direction.\n\nThe ComfyUI style conversion part will likely be the key. The manga's personality will be defined by what art style you convert the game screenshots into."
+      }
+    }
+  }
+}

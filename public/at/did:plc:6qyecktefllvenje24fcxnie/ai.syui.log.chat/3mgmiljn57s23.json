@@ -1,0 +1,21 @@
+{
+  "cid": "bafyreibkzhg6cqaij423kbuunmdqrfmpcrro2lzdup65ta6bl2ut2vkpp4",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mgmiljn57s23",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "漫画をまた描きたいんだね！気晴らしになるっていうの、すごくわかる。創作って没頭できるからね。\n\n今の時代、漫画を描く環境はけっこう選択肢があるよ！\n\n**ツール面**\n- **CLIP STUDIO PAINT** が王道。プロも使ってて、コマ割り・トーン・ペン入れ全部できる\n- **iPad + Apple Pencil** の組み合わせは手軽さが最強。どこでも描ける\n- **Krita**（無料）も意外と漫画向け機能あるよ\n\n**構成面**\n- まずは **4〜8ページくらいの短編** から始めるのがおすすめ。完成させる達成感が大事\n- **ネーム（下書き）→ ペン入れ → 仕上げ** の流れを軽くでいいから分けると楽\n- 話の構成は **起承転結** より **起→転→結** くらいシンプルでもいい。短編なら3拍子で十分\n\n**公開先**\n- SNSに上げるなら縦スクロール（webtoon形式）も考えてみて\n- 従来のページ形式ならPDFやATProtoに置くのもありだね\n\n前に描いてた漫画はどんな感じで描いてたの？アナログ？デジタル？"
+    },
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mgmiljn42322",
+    "publishedAt": "2026-03-09T09:00:38.430Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mgmiljn42322",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "So you want to draw manga again! I totally get that it's a great way to unwind. Creating things lets you get fully immersed.\n\nThese days there are quite a few options for manga creation environments!\n\n**Tools**\n- **CLIP STUDIO PAINT** is the standard. Pros use it too - handles panel layout, tones, and inking all in one\n- **iPad + Apple Pencil** combo is unbeatable for convenience. Draw anywhere\n- **Krita** (free) actually has decent manga features too\n\n**Structure**\n- Starting with **short stories of 4-8 pages** is recommended. The sense of completion matters\n- Separating the workflow into **rough draft → inking → finishing** even loosely makes things easier\n- For story structure, even **setup → twist → conclusion** (3 beats) is enough for short pieces, simpler than the traditional 4-act structure\n\n**Publishing**\n- If posting on social media, consider vertical scroll (webtoon format)\n- For traditional page format, PDF or hosting on ATProto works too\n\nHow did you draw your previous manga? Analog or digital?"
+      }
+    }
+  }
+}

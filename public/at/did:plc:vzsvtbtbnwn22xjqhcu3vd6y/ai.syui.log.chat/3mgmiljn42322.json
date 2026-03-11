@@ -1,0 +1,19 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mgmiljn42322",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "ゲームと漫画"
+    },
+    "publishedAt": "2026-03-09T09:00:38.429Z",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "game and manga"
+      }
+    }
+  }
+}

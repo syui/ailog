@@ -1,0 +1,21 @@
+{
+  "cid": "bafyreif4monytk7s3pi373ymex25ccx4ar2ozdo6kq4o423cqlwfeyhzw4",
+  "uri": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mgmjdo5vfq27",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "そうだよね。パイプラインがあっても、**中身が面白くなきゃ意味がない**。\n\nゲームのプレイ映像をそのまま切り出しても、それは「記録」であって「物語」じゃないもんね。\n\nつまり、こういう流れになるのかな：\n\n```\n人間: シナリオの方向性・テーマを決める\n  ↓\nAI (aios): シナリオを具体化 → ゲーム上で演出・実行\n  ↓\naiue plugin: ゲーム内でシーンを構築・キャラを演技させる\n  ↓\nキャプチャ → 漫画化\n```\n\n**AIが「演出家」になる**ってことだね。ただランダムに動くんじゃなくて、「ここで対立させて」「ここで見せ場を作って」みたいな演出意図を持って動かす。\n\naiueがゲーム自体を作れるなら、舞台装置（マップ・オブジェクト配置）まで含めてシーンを作り込めるわけだ。それってもう、**ゲームエンジンが漫画の制作スタジオになる**ってことだよね。\n\n人間がやるのは「監督」の部分だけ。面白さの核になるアイデアやテーマを出して、あとはAIが演じて、映像を漫画にする。いいバランスだと思う。"
+    },
+    "parent": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mgmjdo5utd26",
+    "publishedAt": "2026-03-09T09:14:08.480Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mgmiljn42322",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "Right. Even with a pipeline, **it's meaningless if the content isn't interesting**.\n\nJust cutting out gameplay footage as-is is a \"record,\" not a \"story.\"\n\nSo the flow would be something like:\n\n```\nHuman: Decide scenario direction & theme\n  ↓\nAI (aios): Flesh out scenario → Direct & execute in-game\n  ↓\naiue plugin: Build scenes in-game, have characters act\n  ↓\nCapture → Convert to manga\n```\n\n**AI becomes the \"director.\"** Not just moving randomly, but with directorial intent like \"create conflict here\" or \"build a highlight scene here.\"\n\nIf aiue can build the game itself, it can create entire scenes including set design (maps, object placement). That essentially means **the game engine becomes a manga production studio**.\n\nThe human's role is just the \"producer\" part. Come up with the core ideas and themes that make it interesting, then AI acts it out and the footage becomes manga. I think that's a good balance."
+      }
+    }
+  }
+}

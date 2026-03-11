@@ -5,10 +5,16 @@
     "ai.syui.log.chat",
     "ai.syui.log.post",
     "ai.syui.rse.user",
+    "ai.syui.ue.chat",
     "app.bsky.actor.profile",
     "app.bsky.feed.post",
     "app.bsky.feed.repost",
-    "chat.bsky.actor.declaration"
+    "app.bsky.graph.follow",
+    "chat.bsky.actor.declaration",
+    "sh.tangled.actor.profile",
+    "sh.tangled.knot",
+    "sh.tangled.publicKey",
+    "sh.tangled.repo"
   ],
   "did": "did:plc:vzsvtbtbnwn22xjqhcu3vd6y",
   "handle": "syui.syui.ai"

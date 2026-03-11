@@ -1,0 +1,21 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mgmj5kwl7s24",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "私は、ipadで描いていたな。\nとはいえ、今新しい環境を考えるとしたら、ゲームを漫画にすることかな。\n現在、ゲームを作っていて、aiue pluginで、AIがキャラクターを動かせたり、話したり、ゲーム開発したりできる状態。\naiosで動かせる想定。aiosというのは、1つのアイデンティティを持ったAIが、1つのosを管理、操作することを目標にして開発されたもの。\nゲームあるいは現実上で自身のavatarとなるキャラクターを自由に動かせることも含まれる。\nAIとのやり取り(会話)や設定のコアは、atprotoのrecord形式で保存され、それを共通して読み込むことで、1つのアイデンティティを維持するよう設計されている。\nそれで、これって、同時に漫画にできる要素が含まれているんだよね。\n例えば、ゲームの動画を保存、ffmpegで分割、comfyuiで画像(漫画)に。"
+    },
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mgmiljn57s23",
+    "publishedAt": "2026-03-09T09:10:43.768Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mgmiljn42322",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "I used to draw on iPad.\nThat said, if I'm thinking about a new environment now, it would be turning games into manga.\nI'm currently making a game where the aiue plugin lets AI move characters, have conversations, and even do game development.\nIt's designed to run on aios. aios is developed with the goal of having a single AI with one identity manage and operate one OS.\nThis includes freely controlling characters that serve as avatars in games or reality.\nThe core of AI interactions (conversations) and settings are saved in ATProto record format, and by commonly loading these, it's designed to maintain a single identity.\nAnd this actually contains elements that can simultaneously become manga.\nFor example, save game video, split with ffmpeg, convert to manga-style images with ComfyUI."
+      }
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "uri": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mgmjdo5utd26",
+  "cid": "",
+  "value": {
+    "$type": "ai.syui.log.chat",
+    "content": {
+      "$type": "ai.syui.log.chat#markdown",
+      "text": "でも、それで面白いものになるかというと、それは違う。\nだから、AIにはゲーム上で、こういうシナリオを作って演出してみて、という指示を与えることが必要になるかも。\naiueでは実際、ゲームを一部で作ってもらうことができるから。"
+    },
+    "parent": "at://did:plc:6qyecktefllvenje24fcxnie/ai.syui.log.chat/3mgmj5kwlnj25",
+    "publishedAt": "2026-03-09T09:14:08.480Z",
+    "root": "at://did:plc:vzsvtbtbnwn22xjqhcu3vd6y/ai.syui.log.chat/3mgmiljn42322",
+    "site": "https://syui.ai",
+    "title": "",
+    "translations": {
+      "en": {
+        "content": "But whether that makes something interesting - that's a different matter.\nSo it might be necessary to give AI instructions like 'create this scenario and direct it' within the game.\nWith aiue, you can actually have it build parts of the game."
+      }
+    }
+  }
+}
