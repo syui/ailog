@@ -291,7 +291,7 @@ async function render(route: Route): Promise<void> {
       html += `<nav class="back-nav"><a href="/@${handle}">${handle}</a></nav>`
 
     } else if (route.type === 'chat') {
-      // Chat list page - show threads started by this user
+      // Chat list page - show all chat collections
       if (!config.bot) {
         html += `<div id="content" class="error">Bot not configured in config.json</div>`
         html += `<nav class="back-nav"><a href="/@${handle}">${handle}</a></nav>`
@@ -300,16 +300,23 @@ async function render(route: Route): Promise<void> {
       const botHandle = config.bot.handle
       const chatCollection = config.chatCollection || 'ai.syui.log.chat'
 
-      // Load messages and profiles in parallel
-      const [chatMessages, botProfile, pds] = await Promise.all([
+      // Load all chat collections in parallel
+      const [logMessages, ueMessages, botProfile, pds] = await Promise.all([
         getChatMessages(did, botDid, chatCollection),
+        getChatMessages(did, botDid, 'ai.syui.ue.chat'),
         getProfile(botDid, false),
         getPds(did)
       ])
 
-      // Collect available languages from chat messages
+      const chatCollections = [
+        { collection: chatCollection, messages: logMessages },
+        { collection: 'ai.syui.ue.chat', messages: ueMessages },
+      ].filter(c => c.messages.length > 0)
+
+      // Collect available languages from all chat messages
+      const allChatMsgs = [...logMessages, ...ueMessages]
       const chatLangs = new Set<string>()
-      for (const msg of chatMessages) {
+      for (const msg of allChatMsgs) {
         const msgLang = msg.value.langs?.[0] || 'ja'
         chatLangs.add(msgLang)
         if (msg.value.translations) {
@@ -321,21 +328,20 @@ async function render(route: Route): Promise<void> {
       langList = Array.from(chatLangs)
 
       html += renderLangSelector(langList)
-      html += `<div id="content">${renderChatListPage(chatMessages, did, handle, botDid, botHandle, profile, botProfile, pds || undefined)}</div>`
+      html += `<div id="content">${renderChatListPage(chatCollections, did, handle, botDid, botHandle, profile, botProfile, pds || undefined)}</div>`
       html += `<nav class="back-nav"><a href="/@${handle}">${handle}</a></nav>`
       }
 
-    } else if (route.type === 'chat-thread' && route.rkey) {
-      // Chat thread page - show full conversation
+    } else if (route.type === 'chat-thread' && route.service && route.rkey) {
+      // Chat thread page - route.service is 'log' or 'ue'
       if (!config.bot) {
         html += `<div id="content" class="error">Bot not configured in config.json</div>`
         html += `<nav class="back-nav"><a href="/@${handle}">${handle}</a></nav>`
       } else {
       const botDid = config.bot.did
       const botHandle = config.bot.handle
-      const chatCollection = config.chatCollection || 'ai.syui.log.chat'
+      const chatCollection = route.service === 'ue' ? 'ai.syui.ue.chat' : (config.chatCollection || 'ai.syui.log.chat')
 
-      // Load messages and profiles in parallel
       const [chatMessages, botProfile, pds] = await Promise.all([
         getChatMessages(did, botDid, chatCollection),
         getProfile(botDid, false),
@@ -360,7 +366,7 @@ async function render(route: Route): Promise<void> {
       html += `<nav class="back-nav"><a href="/@${handle}/at/chat">chat</a></nav>`
       }
 
-    } else if (route.type === 'chat-edit' && route.rkey) {
+    } else if (route.type === 'chat-edit' && route.service && route.rkey) {
       // Chat edit page
       if (!config.bot) {
         html += `<div id="content" class="error">Bot not configured in config.json</div>`
@@ -370,9 +376,8 @@ async function render(route: Route): Promise<void> {
         html += `<nav class="back-nav"><a href="/@${handle}/at/chat">chat</a></nav>`
       } else {
         const botDid = config.bot.did
-        const chatCollection = config.chatCollection || 'ai.syui.log.chat'
+        const chatCollection = route.service === 'ue' ? 'ai.syui.ue.chat' : (config.chatCollection || 'ai.syui.log.chat')
 
-        // Get the specific message
         const chatMessages = await getChatMessages(did, botDid, chatCollection)
         const targetUri = `at://${did}/${chatCollection}/${route.rkey}`
         const message = chatMessages.find(m => m.uri === targetUri)
@@ -463,6 +468,8 @@ async function render(route: Route): Promise<void> {
     if (route.type === 'vrm') {
       setupVrmPage()
     }
+
+
 
     // Setup card migration button
     if (route.type === 'card-old' && cardMigrationState?.oldApiUser && cardMigrationState?.oldApiCards) {

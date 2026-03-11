@@ -2576,6 +2576,35 @@ button.tab {
   }
 }
 
+/* Chat Type Badge */
+.chat-type-badge {
+  font-size: 0.7em;
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+
+.chat-type-badge[data-type="log"] {
+  background: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+}
+
+.chat-type-badge[data-type="ue"] {
+  background: rgba(168, 85, 247, 0.15);
+  color: #a855f7;
+}
+
+@media (prefers-color-scheme: dark) {
+  .chat-type-badge[data-type="log"] {
+    background: rgba(59, 130, 246, 0.25);
+    color: #60a5fa;
+  }
+
+  .chat-type-badge[data-type="ue"] {
+    background: rgba(168, 85, 247, 0.25);
+    color: #c084fc;
+  }
+}
+
 /* Chat Thread List */
 .chat-thread-list {
   display: flex;
@@ -2610,6 +2639,11 @@ button.tab {
   align-items: center;
   gap: 8px;
   margin-bottom: 4px;
+}
+
+.chat-thread-header .chat-type-badge {
+  order: 1;
+  margin-left: auto;
 }
 
 .chat-thread-header .chat-author {

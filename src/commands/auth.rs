@@ -1,3 +1,5 @@
+use std::io::{self, Write};
+
 use anyhow::Result;
 
 use super::oauth;
@@ -6,20 +8,53 @@ use crate::lexicons::com_atproto_server;
 use crate::types::{CreateSessionRequest, CreateSessionResponse};
 use crate::xrpc::XrpcClient;
 
-/// Login to ATProto PDS
+/// Login to ATProto PDS (with 2FA support)
 pub async fn login(handle: &str, password: &str, pds: &str, is_bot: bool) -> Result<()> {
     let client = XrpcClient::new(pds);
 
     let req = CreateSessionRequest {
         identifier: handle.to_string(),
         password: password.to_string(),
+        auth_factor_token: None,
     };
 
     let account_type = if is_bot { "bot" } else { "user" };
     println!("Logging in to {} as {} ({})...", pds, handle, account_type);
 
-    let session_res: CreateSessionResponse =
-        client.call_unauth(&com_atproto_server::CREATE_SESSION, &req).await?;
+    let session_res = match client
+        .call_unauth::<_, CreateSessionResponse>(&com_atproto_server::CREATE_SESSION, &req)
+        .await
+    {
+        Ok(res) => res,
+        Err(e) => {
+            // Check if 2FA is required
+            let err_str = e.to_string();
+            if err_str.contains("AuthFactorTokenRequired") {
+                eprintln!("2FA is enabled. Check your email for a confirmation code.");
+                eprint!("Enter 2FA code: ");
+                io::stderr().flush()?;
+                let mut code = String::new();
+                io::stdin().read_line(&mut code)?;
+                let code = code.trim().to_string();
+
+                if code.is_empty() {
+                    anyhow::bail!("No code entered, aborting.");
+                }
+
+                let req_2fa = CreateSessionRequest {
+                    identifier: handle.to_string(),
+                    password: password.to_string(),
+                    auth_factor_token: Some(code),
+                };
+
+                client
+                    .call_unauth(&com_atproto_server::CREATE_SESSION, &req_2fa)
+                    .await?
+            } else {
+                return Err(e);
+            }
+        }
+    };
 
     let session = Session {
         did: session_res.did,

@@ -9,7 +9,10 @@ function getTranslatedContent(msg: ChatMessage): string {
   const translations = msg.value.translations
 
   if (translations && currentLang !== originalLang && translations[currentLang]) {
-    return translations[currentLang].content || msg.value.content.text
+    const translated = translations[currentLang].content
+    if (typeof translated === 'string') return translated
+    if (translated && typeof translated === 'object' && 'text' in translated) return (translated as { text: string }).text
+    return msg.value.content.text
   }
   return msg.value.content.text
 }
@@ -36,8 +39,8 @@ function getRkeyFromUri(uri: string): string {
   return uri.split('/').pop() || ''
 }
 
-// Extract DID from AT URI (at://did:plc:xxx/collection/rkey → did:plc:xxx)
-function getDidFromUri(uri: string): string {
+// Extract authority from AT URI (at://did:plc:xxx/collection/rkey → did:plc:xxx)
+function getAuthorityFromUri(uri: string): string {
   return uri.replace('at://', '').split('/')[0]
 }
 
@@ -46,6 +49,13 @@ interface AuthorInfo {
   did: string
   handle: string
   avatarUrl?: string
+}
+
+// Handle/DID resolver: maps both handle and DID to DID
+let handleToDidMap = new Map<string, string>()
+
+function resolveAuthorDid(authority: string): string {
+  return handleToDidMap.get(authority) || authority
 }
 
 // Build author info map
@@ -58,6 +68,13 @@ function buildAuthorMap(
   botProfile?: Profile | null,
   pds?: string
 ): Map<string, AuthorInfo> {
+  // Build handle→DID mapping
+  handleToDidMap = new Map<string, string>()
+  handleToDidMap.set(userHandle, userDid)
+  handleToDidMap.set(userDid, userDid)
+  handleToDidMap.set(botHandle, botDid)
+  handleToDidMap.set(botDid, botDid)
+
   const authors = new Map<string, AuthorInfo>()
 
   // User info
@@ -79,6 +96,12 @@ function buildAuthorMap(
   return authors
 }
 
+// Map collection name to chat type slug
+function chatTypeSlug(chatCollection: string): string {
+  if (chatCollection === 'ai.syui.ue.chat') return 'ue'
+  return 'log'
+}
+
 // Render chat threads list (conversations this user started)
 export function renderChatThreadList(
   messages: ChatMessage[],
@@ -88,7 +111,8 @@ export function renderChatThreadList(
   botHandle: string,
   userProfile?: Profile | null,
   botProfile?: Profile | null,
-  pds?: string
+  pds?: string,
+  chatCollection: string = 'ai.syui.log.chat'
 ): string {
   // Build set of all message URIs
   const allUris = new Set(messages.map(m => m.uri))
@@ -101,7 +125,7 @@ export function renderChatThreadList(
   const rootMessages: ChatMessage[] = []
 
   for (const msg of messages) {
-    if (getDidFromUri(msg.uri) !== userDid) continue
+    if (resolveAuthorDid(getAuthorityFromUri(msg.uri)) !== userDid) continue
 
     if (!msg.value.root) {
       // No root = explicit conversation start
@@ -132,7 +156,7 @@ export function renderChatThreadList(
   )
 
   const items = sorted.map(msg => {
-    const authorDid = getDidFromUri(msg.uri)
+    const authorDid = resolveAuthorDid(getAuthorityFromUri(msg.uri))
     const time = formatChatTime(msg.value.publishedAt)
     const rkey = getRkeyFromUri(msg.uri)
     const author = authors.get(authorDid) || { did: authorDid, handle: authorDid.slice(0, 20) + '...' }
@@ -147,13 +171,14 @@ export function renderChatThreadList(
     const preview = lines.join('\n')
 
     return `
-      <a href="/@${userHandle}/at/chat/${rkey}" class="chat-thread-item">
+      <a href="/@${userHandle}/at/chat/${chatTypeSlug(chatCollection)}/${rkey}" class="chat-thread-item">
         <div class="chat-avatar-col">
           ${avatarHtml}
         </div>
         <div class="chat-thread-content">
           <div class="chat-thread-header">
             <span class="chat-author">@${escapeHtml(author.handle)}</span>
+            <span class="chat-type-badge" data-type="${chatTypeSlug(chatCollection)}">${chatTypeSlug(chatCollection)}</span>
             <span class="chat-time">${time}</span>
           </div>
           <div class="chat-thread-preview">${escapeHtml(preview)}</div>
@@ -217,7 +242,7 @@ export function renderChatThread(
   )
 
   const items = sorted.map(msg => {
-    const authorDid = getDidFromUri(msg.uri)
+    const authorDid = resolveAuthorDid(getAuthorityFromUri(msg.uri))
     const time = formatChatTime(msg.value.publishedAt)
     const rkey = getRkeyFromUri(msg.uri)
     const author = authors.get(authorDid) || { did: authorDid, handle: authorDid.slice(0, 20) + '...' }
@@ -230,7 +255,7 @@ export function renderChatThread(
     const content = renderMarkdown(displayContent)
     const recordLink = `/@${author.handle}/at/collection/${chatCollection}/${rkey}`
     const canEdit = loggedInDid && authorDid === loggedInDid
-    const editLink = `/@${userHandle}/at/chat/${rkey}/edit`
+    const editLink = `/@${userHandle}/at/chat/${chatTypeSlug(chatCollection)}/${rkey}/edit`
 
     return `
       <article class="chat-message">
@@ -252,9 +277,15 @@ export function renderChatThread(
   return `<div class="chat-list">${items}</div>`
 }
 
-// Render chat list page
+// Chat collection entry for unified list
+export interface ChatCollectionEntry {
+  collection: string
+  messages: ChatMessage[]
+}
+
+// Render unified chat list page with filter buttons
 export function renderChatListPage(
-  messages: ChatMessage[],
+  collections: ChatCollectionEntry[],
   userDid: string,
   userHandle: string,
   botDid: string,
@@ -263,8 +294,85 @@ export function renderChatListPage(
   botProfile?: Profile | null,
   pds?: string
 ): string {
-  const list = renderChatThreadList(messages, userDid, userHandle, botDid, botHandle, userProfile, botProfile, pds)
-  return `<div class="chat-container">${list}</div>`
+  // Merge all collections into a single list
+  const allMessages: ChatMessage[] = []
+  const messageCollectionMap = new Map<string, string>()
+
+  for (const c of collections) {
+    for (const msg of c.messages) {
+      allMessages.push(msg)
+      messageCollectionMap.set(msg.uri, c.collection)
+    }
+  }
+
+  // Build author map with first collection's params (all share same users)
+  const authors = buildAuthorMap(userDid, userHandle, botDid, botHandle, userProfile, botProfile, pds)
+
+  // Find root messages (same logic as renderChatThreadList)
+  const allUris = new Set(allMessages.map(m => m.uri))
+  const orphanedRootFirstMsg = new Map<string, ChatMessage>()
+  const rootMessages: ChatMessage[] = []
+
+  for (const msg of allMessages) {
+    if (resolveAuthorDid(getAuthorityFromUri(msg.uri)) !== userDid) continue
+
+    if (!msg.value.root) {
+      rootMessages.push(msg)
+    } else if (!allUris.has(msg.value.root)) {
+      const existing = orphanedRootFirstMsg.get(msg.value.root)
+      if (!existing || new Date(msg.value.publishedAt) < new Date(existing.value.publishedAt)) {
+        orphanedRootFirstMsg.set(msg.value.root, msg)
+      }
+    }
+  }
+
+  for (const msg of orphanedRootFirstMsg.values()) {
+    rootMessages.push(msg)
+  }
+
+  if (rootMessages.length === 0) {
+    return '<div class="chat-container"><p class="no-posts">No chat threads yet.</p></div>'
+  }
+
+  // Sort by publishedAt (newest first)
+  const sorted = [...rootMessages].sort((a, b) =>
+    new Date(b.value.publishedAt).getTime() - new Date(a.value.publishedAt).getTime()
+  )
+
+  const items = sorted.map(msg => {
+    const authorDid = resolveAuthorDid(getAuthorityFromUri(msg.uri))
+    const time = formatChatTime(msg.value.publishedAt)
+    const rkey = getRkeyFromUri(msg.uri)
+    const author = authors.get(authorDid) || { did: authorDid, handle: authorDid.slice(0, 20) + '...' }
+    const collection = messageCollectionMap.get(msg.uri) || 'ai.syui.log.chat'
+    const slug = chatTypeSlug(collection)
+
+    const avatarHtml = author.avatarUrl
+      ? `<img class="chat-avatar" src="${author.avatarUrl}" alt="@${escapeHtml(author.handle)}">`
+      : `<div class="chat-avatar-placeholder"></div>`
+
+    const displayContent = getTranslatedContent(msg)
+    const lines = displayContent.split('\n').slice(0, 3)
+    const preview = lines.join('\n')
+
+    return `
+      <a href="/@${userHandle}/at/chat/${slug}/${rkey}" class="chat-thread-item">
+        <div class="chat-avatar-col">
+          ${avatarHtml}
+        </div>
+        <div class="chat-thread-content">
+          <div class="chat-thread-header">
+            <span class="chat-author">@${escapeHtml(author.handle)}</span>
+            <span class="chat-type-badge" data-type="${slug}">${slug}</span>
+            <span class="chat-time">${time}</span>
+          </div>
+          <div class="chat-thread-preview">${escapeHtml(preview)}</div>
+        </div>
+      </a>
+    `
+  }).join('')
+
+  return `<div class="chat-container"><div class="chat-thread-list">${items}</div></div>`
 }
 
 // Render chat thread page
@@ -307,7 +415,7 @@ export function renderChatEditForm(
         <div class="chat-edit-footer">
           <span class="chat-edit-collection">${collection}</span>
           <div class="chat-edit-buttons">
-            <a href="/@${userHandle}/at/chat/${rkey}" class="chat-edit-cancel">Cancel</a>
+            <a href="/@${userHandle}/at/chat/${chatTypeSlug(collection)}/${rkey}" class="chat-edit-cancel">Cancel</a>
             <button type="submit" class="chat-edit-save" id="chat-edit-save" data-rkey="${rkey}">Save</button>
           </div>
         </div>

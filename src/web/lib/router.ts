@@ -81,16 +81,16 @@ export function parseRoute(): Route {
     return { type: 'vrm', handle: vrmMatch[1] }
   }
 
-  // Chat edit: /@handle/at/chat/{rkey}/edit
-  const chatEditMatch = path.match(/^\/@([^/]+)\/at\/chat\/([^/]+)\/edit$/)
+  // Chat edit: /@handle/at/chat/{type}/{rkey}/edit
+  const chatEditMatch = path.match(/^\/@([^/]+)\/at\/chat\/([^/]+)\/([^/]+)\/edit$/)
   if (chatEditMatch) {
-    return { type: 'chat-edit', handle: chatEditMatch[1], rkey: chatEditMatch[2] }
+    return { type: 'chat-edit', handle: chatEditMatch[1], service: chatEditMatch[2], rkey: chatEditMatch[3] }
   }
 
-  // Chat thread: /@handle/at/chat/{rkey}
-  const chatThreadMatch = path.match(/^\/@([^/]+)\/at\/chat\/([^/]+)$/)
+  // Chat thread: /@handle/at/chat/{type}/{rkey}
+  const chatThreadMatch = path.match(/^\/@([^/]+)\/at\/chat\/([^/]+)\/([^/]+)$/)
   if (chatThreadMatch) {
-    return { type: 'chat-thread', handle: chatThreadMatch[1], rkey: chatThreadMatch[2] }
+    return { type: 'chat-thread', handle: chatThreadMatch[1], service: chatThreadMatch[2], rkey: chatThreadMatch[3] }
   }
 
   // Chat list: /@handle/at/chat
@@ -133,10 +133,10 @@ export function navigate(route: Route): void {
     path = `/@${route.handle}/at/card-old`
   } else if (route.type === 'chat' && route.handle) {
     path = `/@${route.handle}/at/chat`
-  } else if (route.type === 'chat-thread' && route.handle && route.rkey) {
-    path = `/@${route.handle}/at/chat/${route.rkey}`
-  } else if (route.type === 'chat-edit' && route.handle && route.rkey) {
-    path = `/@${route.handle}/at/chat/${route.rkey}/edit`
+  } else if (route.type === 'chat-thread' && route.handle && route.service && route.rkey) {
+    path = `/@${route.handle}/at/chat/${route.service}/${route.rkey}`
+  } else if (route.type === 'chat-edit' && route.handle && route.service && route.rkey) {
+    path = `/@${route.handle}/at/chat/${route.service}/${route.rkey}/edit`
   } else if (route.type === 'link' && route.handle) {
     path = `/@${route.handle}/at/link`
   } else if (route.type === 'vrm' && route.handle) {

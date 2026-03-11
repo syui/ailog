@@ -222,6 +222,38 @@ enum Commands {
 
     /// Initialize config
     Setup,
+
+    /// Two-factor authentication (email 2FA)
+    #[command(name = "2fa")]
+    TwoFa {
+        #[command(subcommand)]
+        command: TwoFaCommands,
+    },
+}
+
+#[derive(Subcommand)]
+enum TwoFaCommands {
+    /// Show 2FA status
+    Status {
+        #[arg(long)]
+        bot: bool,
+    },
+    /// Enable email 2FA
+    Enable {
+        #[arg(long)]
+        bot: bool,
+        /// Account email (prompted if not available from session)
+        #[arg(short, long)]
+        email: Option<String>,
+    },
+    /// Disable email 2FA
+    Disable {
+        #[arg(long)]
+        bot: bool,
+        /// Account email (prompted if not available from session)
+        #[arg(short, long)]
+        email: Option<String>,
+    },
 }
 
 #[derive(Subcommand)]
@@ -394,6 +426,19 @@ async fn main() -> Result<()> {
         }
         Commands::Setup => {
             commands::setup::run()?;
+        }
+        Commands::TwoFa { command } => {
+            match command {
+                TwoFaCommands::Status { bot } => {
+                    commands::twofa::status(bot).await?;
+                }
+                TwoFaCommands::Enable { bot, email } => {
+                    commands::twofa::enable(bot, email.as_deref()).await?;
+                }
+                TwoFaCommands::Disable { bot, email } => {
+                    commands::twofa::disable(bot, email.as_deref()).await?;
+                }
+            }
         }
         Commands::Gpt { command } => {
             match command {

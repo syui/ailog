@@ -51,9 +51,45 @@ pub struct DescribeRepoResponse {
 
 /// ATProto createSession request
 #[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct CreateSessionRequest {
     pub identifier: String,
     pub password: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub auth_factor_token: Option<String>,
+}
+
+/// ATProto requestEmailUpdate response
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct RequestEmailUpdateResponse {
+    pub token_required: bool,
+}
+
+/// ATProto updateEmail request
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct UpdateEmailRequest {
+    pub email: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub token: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub email_auth_factor: Option<bool>,
+}
+
+/// ATProto getSession response
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct GetSessionResponse {
+    #[allow(dead_code)]
+    pub did: String,
+    pub handle: String,
+    pub email: Option<String>,
+    #[serde(default)]
+    #[allow(dead_code)]
+    pub email_confirmed: bool,
+    #[serde(default)]
+    pub email_auth_factor: bool,
 }
 
 /// ATProto createSession / refreshSession response
