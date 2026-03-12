@@ -188,7 +188,9 @@ async function render(route: Route): Promise<void> {
       route.type === 'link' ? 'link' :
       (route.type === 'note' || route.type === 'note-detail') ? 'note' :
       (route.type === 'atbrowser' || route.type === 'service' || route.type === 'collection' || route.type === 'record' ? 'browser' : 'blog')
-    html += renderModeTabs(handle, activeTab, localOnly)
+    const noteCollection = 'ai.syui.note.post'
+    const notePosts = localOnly ? await getPosts(did, noteCollection, true) : []
+    html += renderModeTabs(handle, activeTab, localOnly, notePosts.length > 0)
 
     // Check if logged-in user owns this content
     const loggedInDid = getLoggedInDid()
@@ -293,15 +295,12 @@ async function render(route: Route): Promise<void> {
       html += `<nav class="back-nav"><a href="/@${handle}">${handle}</a></nav>`
 
     } else if (route.type === 'note') {
-      // Note list page
-      const noteCollection = 'ai.syui.note.post'
-      const notePosts = await getPosts(did, noteCollection, localOnly)
+      // Note list page (reuse notePosts from above)
       html += `<div id="content">${renderNoteListPage(notePosts, handle)}</div>`
       html += `<nav class="back-nav"><a href="/@${handle}">${handle}</a></nav>`
 
     } else if (route.type === 'note-detail' && route.rkey) {
       // Note detail page
-      const noteCollection = 'ai.syui.note.post'
       const notePost = await getPost(did, noteCollection, route.rkey, localOnly)
       if (notePost) {
         html += `<div id="content">${renderNoteDetailPage(notePost, handle, localOnly)}</div>`
@@ -486,7 +485,6 @@ async function render(route: Route): Promise<void> {
 
     // Setup note detail page
     if (route.type === 'note-detail' && route.rkey) {
-      const noteCollection = 'ai.syui.note.post'
       const notePost = await getPost(did, noteCollection, route.rkey, localOnly)
       if (notePost && localOnly) {
         setupNoteDetail(notePost)
