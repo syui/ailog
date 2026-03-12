@@ -9,3 +9,7 @@ Cargo.lock
 .env
 .mcp.json
 bot
+/public/at/*/ai.syui.ue.*
+/public/at/*/ai.syui.note.*
+/wiki
+/src/rules/note.md
