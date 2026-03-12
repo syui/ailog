@@ -1,5 +1,5 @@
 export interface Route {
-  type: 'home' | 'user' | 'post' | 'postpage' | 'atbrowser' | 'service' | 'collection' | 'record' | 'chat' | 'chat-thread' | 'chat-edit' | 'card' | 'card-old' | 'rse' | 'link' | 'vrm'
+  type: 'home' | 'user' | 'post' | 'postpage' | 'atbrowser' | 'service' | 'collection' | 'record' | 'chat' | 'chat-thread' | 'chat-edit' | 'card' | 'card-old' | 'rse' | 'link' | 'vrm' | 'note' | 'note-detail'
   handle?: string
   rkey?: string
   service?: string
@@ -81,6 +81,18 @@ export function parseRoute(): Route {
     return { type: 'vrm', handle: vrmMatch[1] }
   }
 
+  // Note detail: /@handle/at/note/{rkey}
+  const noteDetailMatch = path.match(/^\/@([^/]+)\/at\/note\/([^/]+)$/)
+  if (noteDetailMatch) {
+    return { type: 'note-detail', handle: noteDetailMatch[1], rkey: noteDetailMatch[2] }
+  }
+
+  // Note list: /@handle/at/note
+  const noteMatch = path.match(/^\/@([^/]+)\/at\/note\/?$/)
+  if (noteMatch) {
+    return { type: 'note', handle: noteMatch[1] }
+  }
+
   // Chat edit: /@handle/at/chat/{type}/{rkey}/edit
   const chatEditMatch = path.match(/^\/@([^/]+)\/at\/chat\/([^/]+)\/([^/]+)\/edit$/)
   if (chatEditMatch) {
@@ -141,6 +153,10 @@ export function navigate(route: Route): void {
     path = `/@${route.handle}/at/link`
   } else if (route.type === 'vrm' && route.handle) {
     path = `/@${route.handle}/at/vrm`
+  } else if (route.type === 'note' && route.handle) {
+    path = `/@${route.handle}/at/note`
+  } else if (route.type === 'note-detail' && route.handle && route.rkey) {
+    path = `/@${route.handle}/at/note/${route.rkey}`
   }
 
   window.history.pushState({}, '', path)

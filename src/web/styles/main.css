@@ -3053,3 +3053,44 @@ button.tab {
     border-top-color: #444;
   }
 }
+
+/* Note styles */
+.note-list { margin: 1rem 0; }
+.note-item { padding: 0.5rem 0; border-bottom: 1px solid #eee; }
+.note-link { display: flex; gap: 1rem; text-decoration: none; color: inherit; }
+.note-link:hover { opacity: 0.7; }
+.note-date { color: #888; font-size: 0.85rem; white-space: nowrap; }
+.note-title { font-weight: 500; }
+.note-tags { margin-top: 0.25rem; }
+.note-tag { font-size: 0.75rem; color: #666; background: #f0f0f0; padding: 0.1rem 0.4rem; border-radius: 3px; margin-right: 0.25rem; }
+.note-empty { color: #888; padding: 2rem 0; text-align: center; }
+
+.note-detail { margin: 1rem 0; }
+.note-detail-title { font-size: 1.4rem; margin-bottom: 0.25rem; }
+.note-detail-meta { color: #888; font-size: 0.85rem; margin-bottom: 1.5rem; }
+.note-section { margin-bottom: 1.5rem; }
+.note-section-label { font-size: 0.8rem; color: #999; border-bottom: 1px solid #eee; padding-bottom: 0.25rem; margin-bottom: 0.75rem; }
+.note-content { line-height: 1.8; }
+.note-paywall { text-align: center; color: #c0a060; margin: 2rem 0; font-size: 0.9rem; }
+
+.note-actions { display: flex; gap: 0.5rem; margin: 1rem 0; flex-wrap: wrap; align-items: center; }
+.note-copy-btn { font-size: 0.8rem; padding: 0.3rem 0.8rem; background: #f5f5f5; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; }
+.note-copy-btn:hover { background: #e8e8e8; }
+.note-copy-status { font-size: 0.8rem; color: #4a4; }
+
+.note-edit { margin: 1rem 0; }
+.note-edit-input { width: 100%; padding: 0.5rem; font-size: 1rem; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 0.5rem; box-sizing: border-box; }
+.note-edit-label { display: block; font-size: 0.8rem; color: #888; margin: 0.75rem 0 0.25rem; }
+.note-edit-textarea { width: 100%; padding: 0.5rem; font-family: monospace; font-size: 0.85rem; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+.note-edit-actions { display: flex; gap: 0.5rem; margin-top: 0.75rem; }
+.note-edit-actions button { padding: 0.3rem 1rem; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; }
+
+@media (prefers-color-scheme: dark) {
+  .note-item { border-bottom-color: #333; }
+  .note-tag { background: #333; color: #aaa; }
+  .note-section-label { border-bottom-color: #333; }
+  .note-copy-btn { background: #2a2a2a; border-color: #444; color: #ccc; }
+  .note-copy-btn:hover { background: #333; }
+  .note-edit-input, .note-edit-textarea { background: #1a1a1a; color: #eee; border-color: #444; }
+  .note-edit-actions button { background: #2a2a2a; border-color: #444; color: #ccc; }
+}

@@ -19,6 +19,7 @@ import { renderRsePage } from './components/rse'
 import { renderLinkPage, renderLinkButtons } from './components/link'
 import { renderVrmPage, setupVrmPage } from './components/vrm'
 import { checkMigrationStatus, renderMigrationPage, setupMigrationButton } from './components/card-migrate'
+import { renderNoteListPage, renderNoteDetailPage, setupNoteDetail } from './components/note'
 import { showLoading, hideLoading } from './components/loading'
 
 const app = document.getElementById('app')!
@@ -185,6 +186,7 @@ async function render(route: Route): Promise<void> {
     const activeTab = route.type === 'postpage' ? 'post' :
       (route.type === 'chat' || route.type === 'chat-thread' || route.type === 'chat-edit') ? 'chat' :
       route.type === 'link' ? 'link' :
+      (route.type === 'note' || route.type === 'note-detail') ? 'note' :
       (route.type === 'atbrowser' || route.type === 'service' || route.type === 'collection' || route.type === 'record' ? 'browser' : 'blog')
     html += renderModeTabs(handle, activeTab, localOnly)
 
@@ -289,6 +291,24 @@ async function render(route: Route): Promise<void> {
       const vrmData = await getVrm(did)
       html += `<div id="content">${renderVrmPage(vrmData, handle)}</div>`
       html += `<nav class="back-nav"><a href="/@${handle}">${handle}</a></nav>`
+
+    } else if (route.type === 'note') {
+      // Note list page
+      const noteCollection = 'ai.syui.note.post'
+      const notePosts = await getPosts(did, noteCollection, localOnly)
+      html += `<div id="content">${renderNoteListPage(notePosts, handle)}</div>`
+      html += `<nav class="back-nav"><a href="/@${handle}">${handle}</a></nav>`
+
+    } else if (route.type === 'note-detail' && route.rkey) {
+      // Note detail page
+      const noteCollection = 'ai.syui.note.post'
+      const notePost = await getPost(did, noteCollection, route.rkey, localOnly)
+      if (notePost) {
+        html += `<div id="content">${renderNoteDetailPage(notePost, handle, localOnly)}</div>`
+      } else {
+        html += `<div id="content" class="error">Note not found</div>`
+      }
+      html += `<nav class="back-nav"><a href="/@${handle}/at/note">note</a></nav>`
 
     } else if (route.type === 'chat') {
       // Chat list page - show all chat collections
@@ -462,6 +482,15 @@ async function render(route: Route): Promise<void> {
     // Setup merge button for AT-Browser record detail
     if (route.type === 'record' && isOwner) {
       setupRecordMerge()
+    }
+
+    // Setup note detail page
+    if (route.type === 'note-detail' && route.rkey) {
+      const noteCollection = 'ai.syui.note.post'
+      const notePost = await getPost(did, noteCollection, route.rkey, localOnly)
+      if (notePost && localOnly) {
+        setupNoteDetail(notePost)
+      }
     }
 
     // Setup VRM page audio controls
